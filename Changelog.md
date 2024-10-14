@@ -2,14 +2,19 @@
 
 __New Features__
 - Updates to HPXML v4.0 final release.
+- Adds 2024 IECC ERI pathway calculation.
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
 - Implements ANSI/RESNET/ICC Standard 301-2022 Addendum E for CFIS systems.
   - **Breaking change**: Removes `VentilationOnlyModeAirflowFraction` input (blower fan assumed to run at max flow rate during ventilation only operation).
   - Allows modeling systems with no strategy to meet remainder of ventilation target (`CFISControls/AdditionalRuntimeOperatingMode="none"`).
+- Relaxes IECC climate zone requirements.
+  - IECC climate zone years other than 2006 are now always optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+  - See [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-climate-zones) for more information.
 
 __Bugfixes__
 - Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.
+- Fixes error if a heating system and a heat pump (that only provides cooling) are attached to the same distribution system.
 - Misc Manual J design load calculation improvements.
 
 ## OpenStudio-ERI v1.8.0

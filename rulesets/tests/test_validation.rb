@@ -74,19 +74,16 @@ class ERI301ValidationTest < Minitest::Test
                                                              'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"]'],
                             'energy-star-SF_National_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
                             'energy-star-SF_National_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
-                            'energy-star-SF_National_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
-                                                              'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
+                            'energy-star-SF_National_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'],
                             'energy-star-SF_OregonWashington_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                                       'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
                             'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]',
                                                              'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]'],
                             'energy-star-MF_National_1.0' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
                             'energy-star-MF_National_1.1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
-                            'energy-star-MF_National_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
-                                                              'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2021"]/ClimateZone'],
+                            'energy-star-MF_National_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]'],
                             'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]',
-                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
-                            'zerh-version_1' => ['Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/ClimateandRiskZones/ClimateZoneIECC[Year="2015"]/ClimateZone'] }
+                                                                      'Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
@@ -126,18 +123,6 @@ class ERI301ValidationTest < Minitest::Test
           hpxml_bldg.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
         end
         hpxml_bldg.state_code = 'CO'
-        zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
-                                                                 zone: zone)
-      elsif error_case.include? 'zerh'
-        versions = { 'zerh-version_1' => ZERHConstants::Ver1,
-                     'zerh-version_2' => ZERHConstants::SFVer2 }
-        version = versions[error_case]
-        hpxml, hpxml_bldg = _create_hpxml('base.xml')
-        hpxml.header.zerh_calculation_version = version
-        hpxml.header.iecc_eri_calculation_version = nil
-        hpxml.header.energystar_calculation_version = nil
         zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,

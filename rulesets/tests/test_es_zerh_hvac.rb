@@ -378,9 +378,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh('base-hvac-elec-resistance-only.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '7'
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -444,9 +442,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _convert_to_es_zerh(hpxml_name, program_version)
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
         hpxml_bldg = hpxml.buildings[0]
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-          climate_zone_iecc.zone = '7'
-        end
+        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
         hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
         hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 727450
         XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -568,9 +564,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '7'
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -1460,7 +1454,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def test_shared_ground_loop_ground_source
+  def test_shared_ground_loop_ground_source_heat_pump
     hpxml_name = 'base-bldgtype-mf-unit-shared-ground-loop-ground-to-air-heat-pump.xml'
     [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
@@ -1491,9 +1485,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.each do |climate_zone_iecc|
-        climate_zone_iecc.zone = '7'
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Duluth, MN'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 727450
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)

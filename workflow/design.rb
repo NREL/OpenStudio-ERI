@@ -45,7 +45,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['debug'] = debug
   args['add_component_loads'] = (add_comp_loads || timeseries_outputs.include?('componentloads'))
   args['skip_validation'] = !debug
-  update_args_hash(measures, measure_subdir, args)
+  measures[measure_subdir] = [args]
 
   # Add OS-HPXML reporting measure to workflow
   measure_subdir = 'hpxml-measures/ReportSimulationOutput'
@@ -68,7 +68,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
   args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path))
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_#{timeseries_output_freq.capitalize}.#{output_format}")))
-  update_args_hash(measures, measure_subdir, args)
+  measures[measure_subdir] = [args]
 
   if diagnostic_output
     # Add OS-HPXML reporting measure to workflow
@@ -84,7 +84,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
     args['include_timeseries_weather'] = true
     args['timeseries_num_decimal_places'] = 3
     args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.diag_output_path))
-    update_args_hash(measures, measure_subdir, args)
+    measures[measure_subdir] << args
   end
 
   run_hpxml_workflow(design.design_dir, measures, measures_dir, debug: debug,

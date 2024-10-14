@@ -92,7 +92,7 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation }
     vent_fan.tested_flow_rate = nil
     vent_fan.flow_rate_not_tested = true
     vent_fan.hours_in_operation = 1

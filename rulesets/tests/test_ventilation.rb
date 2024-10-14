@@ -172,7 +172,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation }
     vent_fan.hours_in_operation = 12
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -226,7 +226,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation }
     vent_fan.fan_power = nil
     vent_fan.fan_power_defaulted = true
     vent_fan.hours_in_operation = 12
@@ -283,7 +283,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation }
     vent_fan.tested_flow_rate = nil
     vent_fan.flow_rate_not_tested = true
     vent_fan.hours_in_operation = 24
@@ -339,7 +339,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation }
     vent_fan.fan_power = nil
     vent_fan.fan_power_defaulted = true
     vent_fan.tested_flow_rate = nil
@@ -687,7 +687,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-cfis.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation }
     vent_fan.fan_power = nil
     vent_fan.fan_power_defaulted = true
     vent_fan.tested_flow_rate = nil
@@ -704,7 +704,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-mechvent-cfis-supplemental-fan-exhaust.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan_suppl = hpxml_bldg.ventilation_fans.select { |vf| vf.is_cfis_supplemental_fan }[0]
+    vent_fan_suppl = hpxml_bldg.ventilation_fans.find { |vf| vf.is_cfis_supplemental_fan }
     vent_fan_suppl.fan_power = nil
     vent_fan_suppl.fan_power_defaulted = true
     vent_fan_suppl.tested_flow_rate = nil
@@ -1055,7 +1055,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }
     vent_fan.fan_power = nil
     vent_fan.fan_power_defaulted = true
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -1080,7 +1080,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }
     vent_fan.in_unit_flow_rate = nil
     vent_fan.flow_rate_not_tested = true
     hpxml_name = File.basename(@tmp_hpxml_path)
@@ -1105,7 +1105,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
-    vent_fan = hpxml_bldg.ventilation_fans.select { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }[0]
+    vent_fan = hpxml_bldg.ventilation_fans.find { |vf| vf.used_for_whole_building_ventilation && vf.is_shared_system }
     vent_fan.fan_power = nil
     vent_fan.fan_power_defaulted = true
     vent_fan.in_unit_flow_rate = nil

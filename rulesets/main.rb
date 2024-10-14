@@ -188,7 +188,9 @@ def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_colu
 
   fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
 
-  CSV.foreach(zip_filepath) do |row|
+  # Note: We don't use the CSV library here because it's slow for large files
+  File.foreach(zip_filepath) do |row|
+    row = row.strip.split(',')
     next unless row[zip_column_index] == zip_code
 
     return row[output_column_index]

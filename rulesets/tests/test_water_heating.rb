@@ -330,8 +330,8 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_bldg.water_heating_systems.each do |w|
       w.fraction_dhw_load_served = 0.0
     end
-    hpxml_bldg.water_heating_systems.select { |w| w.fuel_type == HPXML::FuelTypeElectricity }[0].fraction_dhw_load_served = 0.5
-    hpxml_bldg.water_heating_systems.select { |w| w.fuel_type == HPXML::FuelTypeNaturalGas }[0].fraction_dhw_load_served = 0.5
+    hpxml_bldg.water_heating_systems.find { |w| w.fuel_type == HPXML::FuelTypeElectricity }.fraction_dhw_load_served = 0.5
+    hpxml_bldg.water_heating_systems.find { |w| w.fuel_type == HPXML::FuelTypeNaturalGas }.fraction_dhw_load_served = 0.5
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 

@@ -80,7 +80,7 @@ def calc_renewable_energy_limit(eri_outputs, iecc_version)
     # For compliance purposes, any reduction in energy use of the rated design associated with
     # on-site renewable energy shall not exceed 5 percent of the total energy use.
     return 0.05 * eri_outputs[Constants::CalcTypeERIRatedHome]['Energy Use: Total']
-  elsif ['2015', '2018'].include? iecc_version
+  elsif ['2015', '2018', '2024'].include? iecc_version
     return
   else
     fail 'Unhandled IECC version.'

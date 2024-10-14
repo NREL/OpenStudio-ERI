@@ -212,13 +212,13 @@ def _run_simulation(xml, test_name)
   args = {}
   args['output_dir'] = File.absolute_path(rundir)
   args['hpxml_path'] = xml
-  update_args_hash(measures, measure_subdir, args)
+  measures[measure_subdir] = [args]
 
   # Add reporting measure to workflow
   measure_subdir = 'hpxml-measures/ReportSimulationOutput'
   args = {}
   args['timeseries_frequency'] = 'none'
-  update_args_hash(measures, measure_subdir, args)
+  measures[measure_subdir] = [args]
 
   results = run_hpxml_workflow(rundir, measures, measures_dir)
 
@@ -980,7 +980,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   cooking_range = hpxml_bldg.cooking_ranges[0]
   cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
   oven = hpxml_bldg.ovens[0]
-  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nbeds, cooking_range, oven)
+  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, nbeds, cooking_range, oven)
   btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cr_frac_sens * btu)
   xml_appl_lat += (cr_frac_lat * btu)
@@ -988,7 +988,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Refrigerator
   refrigerator = hpxml_bldg.refrigerators[0]
   refrigerator.usage_multiplier = 1.0 if refrigerator.usage_multiplier.nil?
-  rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_refrigerator_or_freezer_energy(refrigerator)
+  rf_annual_kwh, rf_frac_sens, rf_frac_lat = HotWaterAndAppliances.calc_fridge_or_freezer_energy(nil, refrigerator)
   btu = UnitConversions.convert(rf_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (rf_frac_sens * btu)
   xml_appl_lat += (rf_frac_lat * btu)
@@ -996,7 +996,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Dishwasher
   dishwasher = hpxml_bldg.dishwashers[0]
   dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
-  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(eri_version, nbeds, dishwasher)
+  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, nbeds, dishwasher)
   btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (dw_frac_sens * btu)
   xml_appl_lat += (dw_frac_lat * btu)
@@ -1004,7 +1004,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesWasher
   clothes_washer = hpxml_bldg.clothes_washers[0]
   clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
-  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(eri_version, nbeds, clothes_washer)
+  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, nbeds, clothes_washer)
   btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (cw_frac_sens * btu)
   xml_appl_lat += (cw_frac_lat * btu)
@@ -1012,7 +1012,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesDryer
   clothes_dryer = hpxml_bldg.clothes_dryers[0]
   clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
-  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(eri_version, nbeds, clothes_dryer, clothes_washer)
+  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, nbeds, clothes_dryer, clothes_washer)
   btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cd_frac_sens * btu)
   xml_appl_lat += (cd_frac_lat * btu)
@@ -1020,13 +1020,13 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
   # Water Use
-  xml_water_sens, xml_water_lat = HotWaterAndAppliances.get_water_gains_sens_lat(nbeds)
+  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds)
   s += "#{xml_water_sens} #{xml_water_lat}\n"
 
   # Occupants
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
-  heat_gain, hrs_per_day, frac_sens, frac_lat = Geometry.get_occupancy_default_values()
+  heat_gain, hrs_per_day, frac_sens, frac_lat = Defaults.get_occupancy_values()
   btu = nbeds * heat_gain * hrs_per_day * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
@@ -1093,8 +1093,8 @@ end
 def _get_tstat(eri_version, hpxml_bldg)
   hvac_control = hpxml_bldg.hvac_controls[0]
   tstat = hvac_control.control_type.gsub(' thermostat', '')
-  htg_weekday_setpoints, htg_weekend_setpoints = HVAC.get_default_heating_setpoint(hvac_control.control_type, eri_version)
-  clg_weekday_setpoints, clg_weekend_setpoints = HVAC.get_default_cooling_setpoint(hvac_control.control_type, eri_version)
+  htg_weekday_setpoints, htg_weekend_setpoints = Defaults.get_heating_setpoint(hvac_control.control_type, eri_version)
+  clg_weekday_setpoints, clg_weekend_setpoints = Defaults.get_cooling_setpoint(hvac_control.control_type, eri_version)
 
   htg_weekday_setpoints = htg_weekday_setpoints.split(', ').map(&:to_f)
   htg_weekend_setpoints = htg_weekend_setpoints.split(', ').map(&:to_f)
@@ -1128,8 +1128,8 @@ def _get_dhw(hpxml_bldg)
   has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  ref_pipe_l = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
-  ref_loop_l = HotWaterAndAppliances.get_default_recirc_loop_length(ref_pipe_l)
+  ref_pipe_l = Defaults.get_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
+  ref_loop_l = Defaults.get_recirc_loop_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
   return ref_pipe_l, ref_loop_l
 end
 

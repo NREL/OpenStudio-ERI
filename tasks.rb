@@ -361,34 +361,24 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     end
   elsif hpxml_file.include?('EPA_Tests')
     hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
-    years = [2006]
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
-      years << 2021
-    end
     if hpxml_file.include?('CZ2')
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-      years.each do |year|
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
-                                                                 zone: '2A')
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '2A')
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Tampa, FL'
       hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_FL_Tampa.Intl.AP.722110_TMY3.epw'
       hpxml_bldg.state_code = 'FL'
     elsif hpxml_file.include?('CZ4')
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-      years.each do |year|
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
-                                                                 zone: '4A')
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '4A')
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'St Louis, MO'
       hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_MO_St.Louis-Lambert.Intl.AP.724340_TMY3.epw'
       hpxml_bldg.state_code = 'MO'
     elsif hpxml_file.include?('CZ6')
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
-      years.each do |year|
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
-                                                                 zone: '6A')
-      end
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '6A')
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Burlington, VT'
       hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_VT_Burlington.Intl.AP.726170_TMY3.epw'
       hpxml_bldg.state_code = 'VT'
@@ -1717,13 +1707,14 @@ def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
   has_cond_bsmnt = hpxml_bldg.has_location(HPXML::LocationBasementConditioned)
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
-  piping_length = HotWaterAndAppliances.get_default_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
 
   if hpxml_bldg.hot_water_distributions.size > 0
     if hpxml_bldg.hot_water_distributions[0].system_type == HPXML::DHWDistTypeStandard
+      piping_length = Defaults.get_std_pipe_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
       hpxml_bldg.hot_water_distributions[0].standard_piping_length = piping_length.round(3)
     elsif hpxml_bldg.hot_water_distributions[0].system_type == HPXML::DHWDistTypeRecirc
-      hpxml_bldg.hot_water_distributions[0].recirculation_piping_loop_length = HotWaterAndAppliances.get_default_recirc_loop_length(piping_length).round(3)
+      loop_length = Defaults.get_recirc_loop_length(has_uncond_bsmnt, has_cond_bsmnt, cfa, ncfl)
+      hpxml_bldg.hot_water_distributions[0].recirculation_piping_loop_length = loop_length.round(3)
     end
   end
 end
@@ -1772,7 +1763,7 @@ def set_hpxml_clothes_washer(hpxml_file, eri_version, hpxml_bldg)
                        capacity: 4.2, # ft^3
                        label_usage: 6.0 } # cyc/week
   else
-    default_values = HotWaterAndAppliances.get_clothes_washer_default_values(eri_version)
+    default_values = Defaults.get_clothes_washer_values(eri_version)
   end
 
   hpxml_bldg.clothes_washers.clear
@@ -1804,7 +1795,7 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include?(hpxml_file) ||
      (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_'))
     # Standard gas
-    default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(eri_version, HPXML::FuelTypeNaturalGas)
+    default_values = Defaults.get_clothes_dryer_values(eri_version, HPXML::FuelTypeNaturalGas)
     hpxml_bldg.clothes_dryers.clear
     hpxml_bldg.clothes_dryers.add(id: "ClothesDryer#{hpxml_bldg.clothes_dryers.size + 1}",
                                   is_shared_appliance: false,
@@ -1821,7 +1812,7 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-04.xml'].include?(hpxml_file) ||
         (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_'))
     # Standard electric
-    default_values = HotWaterAndAppliances.get_clothes_dryer_default_values(eri_version, HPXML::FuelTypeElectricity)
+    default_values = Defaults.get_clothes_dryer_values(eri_version, HPXML::FuelTypeElectricity)
     hpxml_bldg.clothes_dryers.clear
     hpxml_bldg.clothes_dryers.add(id: "ClothesDryer#{hpxml_bldg.clothes_dryers.size + 1}",
                                   is_shared_appliance: false,
@@ -1845,7 +1836,7 @@ def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
                                label_annual_gas_cost: 22.23,
                                label_usage: 208 / 52)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
-    default_values = HotWaterAndAppliances.get_dishwasher_default_values(eri_version)
+    default_values = Defaults.get_dishwasher_values(eri_version)
     hpxml_bldg.dishwashers.clear
     hpxml_bldg.dishwashers.add(id: "Dishwasher#{hpxml_bldg.dishwashers.size + 1}",
                                is_shared_appliance: false,
@@ -1874,7 +1865,7 @@ def set_hpxml_refrigerator(hpxml_file, hpxml_bldg)
                                  rated_annual_kwh: rated_annual_kwh)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
     # Standard
-    default_values = HotWaterAndAppliances.get_refrigerator_default_values(hpxml_bldg.building_construction.number_of_bedrooms)
+    default_values = Defaults.get_refrigerator_values(hpxml_bldg.building_construction.number_of_bedrooms)
     hpxml_bldg.refrigerators.clear
     hpxml_bldg.refrigerators.add(id: "Refrigerator#{hpxml_bldg.refrigerators.size + 1}",
                                  location: HPXML::LocationConditionedSpace,
@@ -1898,7 +1889,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml_bldg)
       'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-05.xml'].include?(hpxml_file) ||
      (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_gas_'))
     # Standard gas
-    default_values = HotWaterAndAppliances.get_range_oven_default_values()
+    default_values = Defaults.get_range_oven_values()
     hpxml_bldg.cooking_ranges.clear
     hpxml_bldg.cooking_ranges.add(id: "CookingRange#{hpxml_bldg.cooking_ranges.size + 1}",
                                   location: HPXML::LocationConditionedSpace,
@@ -1911,7 +1902,7 @@ def set_hpxml_cooking_range(hpxml_file, hpxml_bldg)
          'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA/L100A-01.xml'].include?(hpxml_file) ||
         (hpxml_file.include?('EPA_Tests') && hpxml_file.include?('_elec_'))
     # Standard electric
-    default_values = HotWaterAndAppliances.get_range_oven_default_values()
+    default_values = Defaults.get_range_oven_values()
     hpxml_bldg.cooking_ranges.clear
     hpxml_bldg.cooking_ranges.add(id: "CookingRange#{hpxml_bldg.cooking_ranges.size + 1}",
                                   location: HPXML::LocationConditionedSpace,
@@ -1923,7 +1914,7 @@ end
 def set_hpxml_oven(hpxml_file, hpxml_bldg)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('EPA_Tests')
 
-  default_values = HotWaterAndAppliances.get_range_oven_default_values()
+  default_values = Defaults.get_range_oven_values()
   hpxml_bldg.ovens.clear
   hpxml_bldg.ovens.add(id: "Oven#{hpxml_bldg.ovens.size + 1}",
                        is_convection: default_values[:is_convection])
@@ -1973,7 +1964,7 @@ def set_hpxml_lighting(hpxml_file, hpxml_bldg)
                   [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
   else
-    ltg_fracs = Lighting.get_default_fractions()
+    ltg_fracs = Defaults.get_lighting_fractions()
   end
 
   hpxml_bldg.lighting_groups.clear
@@ -2121,6 +2112,7 @@ def create_sample_hpxmls
                   'base-hvac-floor-furnace-propane-only.xml',
                   'base-hvac-furnace-elec-only.xml',
                   'base-hvac-furnace-gas-only.xml',
+                  'base-hvac-furnace-gas-plus-air-to-air-heat-pump-cooling.xml',
                   'base-hvac-ground-to-air-heat-pump.xml',
                   'base-hvac-ground-to-air-heat-pump-cooling-only.xml',
                   'base-hvac-ground-to-air-heat-pump-heating-only.xml',
@@ -2211,6 +2203,7 @@ def create_sample_hpxmls
     hpxml_bldg.building_construction.number_of_bathrooms = nil
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.unit_height_above_grade = nil
     hpxml_bldg.air_infiltration_measurements.each do |measurement|
       measurement.infiltration_type = nil
     end
@@ -2490,30 +2483,16 @@ def create_sample_hpxmls
       if hpxml_bldg.state_code.nil?
         hpxml_bldg.state_code = 'NA'
       end
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.empty?
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(zone: '3A',
-                                                                 year: 2006)
-      end
-    end
-    if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(hpxml.header.iecc_eri_calculation_version) }.size == 0
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(hpxml.header.iecc_eri_calculation_version),
-                                                               zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
+                                                               zone: '3A')
     end
 
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
       hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
-                                                                 zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-      end
     else
       hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
-      if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2021 }.size == 0
-        hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2021,
-                                                                 zone: hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone)
-      end
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
       hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
@@ -2592,12 +2571,6 @@ def create_sample_hpxmls
     hpxml.header.co2index_calculation_version = nil
     hpxml.header.energystar_calculation_version = nil
     hpxml.header.zerh_calculation_version = nil
-    zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == Integer(iecc_version) }.size == 0
-      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: Integer(iecc_version),
-                                                               zone: zone)
-    end
-
     XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
   end
 
