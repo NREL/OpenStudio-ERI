@@ -6,8 +6,9 @@ __New Features__
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
 - Implements ANSI/RESNET/ICC Standard 301-2022 Addendum E for CFIS systems.
-  - **Breaking change**: Removes `VentilationOnlyModeAirflowFraction` input (blower fan assumed to run at max flow rate during ventilation only operation).
-  - Allows modeling systems with no strategy to meet remainder of ventilation target (`CFISControls/AdditionalRuntimeOperatingMode="none"`).
+  - **Breaking change**: Removes `VentilationOnlyModeAirflowFraction` input for CFIS systems (blower fan assumed to run at max flow rate during ventilation only operation).
+  - **Breaking change**: Removes `FanPower`/`FanPowerDefaulted` inputs for CFIS systems (fan power assumed to be HVAC's FanPowerWattsPerCFM multiplied by the blower fan max flow rate).
+  - Allows modeling CFIS systems with no strategy to meet remainder of ventilation target (`CFISControls/AdditionalRuntimeOperatingMode="none"`).
 - Relaxes IECC climate zone requirements.
   - IECC climate zone years other than 2006 are now always optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
   - See [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-climate-zones) for more information.

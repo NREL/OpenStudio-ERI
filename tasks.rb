@@ -2345,6 +2345,9 @@ def create_sample_hpxmls
         ventilation_fan.delivered_ventilation = nil
       end
       ventilation_fan.cfis_vent_mode_airflow_fraction = nil
+      if ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+        ventilation_fan.fan_power = nil
+      end
       next if ventilation_fan.is_cfis_supplemental_fan
 
       if ventilation_fan.hours_in_operation.nil?

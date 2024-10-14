@@ -1601,25 +1601,14 @@ module ERI_301_Ruleset
         end
       else
         # Fan power defaulted
-        fan_w_per_cfm = Defaults.get_mech_vent_fan_efficiency(orig_vent_fan, @eri_version)
-        if orig_vent_fan.flow_rate_not_tested && orig_vent_fan.fan_type == HPXML::MechVentTypeCFIS
-          # For in-unit CFIS systems, the cfm used to determine fan watts shall be the larger of
-          # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
-          htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_vent_fan.distribution_system)
-          q_fan = [400.0 * clg_cap / 12000.0, 240.0 * htg_cap / 12000.0].max
-          unit_fan_power = fan_w_per_cfm * q_fan
-        else
+        if orig_vent_fan.fan_type != HPXML::MechVentTypeCFIS
+          fan_w_per_cfm = Defaults.get_mech_vent_fan_efficiency(orig_vent_fan)
           if not orig_vent_fan.is_shared_system
             unit_fan_power = fan_w_per_cfm * unit_flow_rate
           else
             system_fan_power = fan_w_per_cfm * system_flow_rate
           end
         end
-      end
-
-      cfis_vent_mode_airflow_fraction = nil
-      if orig_vent_fan.fan_type == HPXML::MechVentTypeCFIS
-        cfis_vent_mode_airflow_fraction = 1.0 # 301-2022 Addendum E
       end
 
       new_bldg.ventilation_fans.add(id: orig_vent_fan.id,
@@ -1632,13 +1621,12 @@ module ERI_301_Ruleset
                                     sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
                                     distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                    cfis_vent_mode_airflow_fraction: cfis_vent_mode_airflow_fraction,
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
                                     cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
       new_vent_fan = new_bldg.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
         new_vent_fan.tested_flow_rate = unit_flow_rate.round(2)
-        new_vent_fan.fan_power = unit_fan_power.round(3)
+        new_vent_fan.fan_power = unit_fan_power.round(3) unless unit_fan_power.nil?
       else
         new_vent_fan.rated_flow_rate = system_flow_rate.round(2)
         new_vent_fan.fan_power = system_fan_power.round(3)
