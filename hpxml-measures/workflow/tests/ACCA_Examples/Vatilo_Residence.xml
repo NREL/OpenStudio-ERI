@@ -30,9 +30,11 @@
           </Soil>
         </Site>
         <BuildingConstruction>
+          <YearBuilt>2000</YearBuilt>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
           <NumberofConditionedFloors>1.0</NumberofConditionedFloors>
           <NumberofConditionedFloorsAboveGrade>1.0</NumberofConditionedFloorsAboveGrade>
+          <AverageCeilingHeight>8.0</AverageCeilingHeight>
           <NumberofBedrooms>2</NumberofBedrooms>
           <ConditionedFloorArea>1200.0</ConditionedFloorArea>
         </BuildingConstruction>
@@ -48,7 +50,7 @@
               <HumidityDifference>51.0</HumidityDifference>
               <InternalLoadsSensible>1200.0</InternalLoadsSensible>
               <InternalLoadsLatent>0.0</InternalLoadsLatent>
-              <NumberofOccupants>3</NumberofOccupants>
+              <NumberofOccupants>3.0</NumberofOccupants>
             </ManualJInputs>
           </HVACSizingControl>
         </extension>
@@ -66,11 +68,7 @@
         <AirInfiltration>
           <AirInfiltrationMeasurement>
             <SystemIdentifier id='AirInfiltrationMeasurement1'/>
-            <HousePressure>50.0</HousePressure>
-            <BuildingAirLeakage>
-              <UnitofMeasure>ACH</UnitofMeasure>
-              <AirLeakage>6.5</AirLeakage>
-            </BuildingAirLeakage>
+            <LeakinessDescription>average</LeakinessDescription>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Roofs>
@@ -207,15 +205,15 @@
             <SystemIdentifier id='Window1'/>
             <Area>24.0</Area>
             <Azimuth>0</Azimuth>
+            <GlassLayers>double-pane</GlassLayers>
+            <GlassType>clear</GlassType>
             <UFactor>0.63</UFactor>
             <SHGC>0.69</SHGC>
-            <ExteriorShading>
-              <SystemIdentifier id='Window1ExteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-            </ExteriorShading>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading'/>
-              <SummerShadingCoefficient>0.6</SummerShadingCoefficient>
+              <Type>medium blinds</Type>
+              <BlindsSummerClosedOrOpen>half open</BlindsSummerClosedOrOpen>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
             </InteriorShading>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -223,16 +221,21 @@
             <SystemIdentifier id='Window2'/>
             <Area>36.0</Area>
             <Azimuth>90</Azimuth>
+            <GlassLayers>double-pane</GlassLayers>
+            <GlassType>clear</GlassType>
             <UFactor>0.65</UFactor>
             <SHGC>0.67</SHGC>
-            <ExteriorShading>
-              <SystemIdentifier id='Window2ExteriorShading'/>
-              <SummerShadingCoefficient>0.9</SummerShadingCoefficient>
-            </ExteriorShading>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading'/>
-              <SummerShadingCoefficient>0.6</SummerShadingCoefficient>
+              <Type>medium blinds</Type>
+              <BlindsSummerClosedOrOpen>half open</BlindsSummerClosedOrOpen>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
             </InteriorShading>
+            <InsectScreen>
+              <SystemIdentifier id='Window2InsectScreen'/>
+              <Location>interior</Location>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
+            </InsectScreen>
             <Overhangs>
               <Depth>1.5</Depth>
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
@@ -244,15 +247,15 @@
             <SystemIdentifier id='Window3'/>
             <Area>44.3</Area>
             <Azimuth>270</Azimuth>
+            <GlassLayers>double-pane</GlassLayers>
+            <GlassType>clear</GlassType>
             <UFactor>0.65</UFactor>
             <SHGC>0.67</SHGC>
-            <ExteriorShading>
-              <SystemIdentifier id='Window3ExteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-            </ExteriorShading>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading'/>
-              <SummerShadingCoefficient>0.6</SummerShadingCoefficient>
+              <Type>medium blinds</Type>
+              <BlindsSummerClosedOrOpen>half open</BlindsSummerClosedOrOpen>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
             </InteriorShading>
             <Overhangs>
               <Depth>1.5</Depth>
@@ -265,16 +268,21 @@
             <SystemIdentifier id='Window4'/>
             <Area>15.75</Area>
             <Azimuth>270</Azimuth>
+            <GlassLayers>double-pane</GlassLayers>
+            <GlassType>clear</GlassType>
             <UFactor>0.65</UFactor>
             <SHGC>0.67</SHGC>
-            <ExteriorShading>
-              <SystemIdentifier id='Window4ExteriorShading'/>
-              <SummerShadingCoefficient>0.9</SummerShadingCoefficient>
-            </ExteriorShading>
             <InteriorShading>
               <SystemIdentifier id='Window4InteriorShading'/>
-              <SummerShadingCoefficient>0.6</SummerShadingCoefficient>
+              <Type>medium blinds</Type>
+              <BlindsSummerClosedOrOpen>half open</BlindsSummerClosedOrOpen>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
             </InteriorShading>
+            <InsectScreen>
+              <SystemIdentifier id='Window4InsectScreen'/>
+              <Location>interior</Location>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
+            </InsectScreen>
             <Overhangs>
               <Depth>1.5</Depth>
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
@@ -286,16 +294,21 @@
             <SystemIdentifier id='Window5'/>
             <Area>36.0</Area>
             <Azimuth>0</Azimuth>
+            <GlassLayers>double-pane</GlassLayers>
+            <GlassType>clear</GlassType>
             <UFactor>0.65</UFactor>
             <SHGC>0.67</SHGC>
-            <ExteriorShading>
-              <SystemIdentifier id='Window5ExteriorShading'/>
-              <SummerShadingCoefficient>0.9</SummerShadingCoefficient>
-            </ExteriorShading>
             <InteriorShading>
               <SystemIdentifier id='Window5InteriorShading'/>
-              <SummerShadingCoefficient>0.6</SummerShadingCoefficient>
+              <Type>medium blinds</Type>
+              <BlindsSummerClosedOrOpen>half open</BlindsSummerClosedOrOpen>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
             </InteriorShading>
+            <InsectScreen>
+              <SystemIdentifier id='Window5InsectScreen'/>
+              <Location>interior</Location>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
+            </InsectScreen>
             <Overhangs>
               <Depth>1.5</Depth>
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
@@ -307,16 +320,21 @@
             <SystemIdentifier id='Window6'/>
             <Area>12.0</Area>
             <Azimuth>0</Azimuth>
+            <GlassLayers>double-pane</GlassLayers>
+            <GlassType>clear</GlassType>
             <UFactor>0.63</UFactor>
             <SHGC>0.69</SHGC>
-            <ExteriorShading>
-              <SystemIdentifier id='Window6ExteriorShading'/>
-              <SummerShadingCoefficient>0.9</SummerShadingCoefficient>
-            </ExteriorShading>
             <InteriorShading>
               <SystemIdentifier id='Window6InteriorShading'/>
-              <SummerShadingCoefficient>0.6</SummerShadingCoefficient>
+              <Type>medium blinds</Type>
+              <BlindsSummerClosedOrOpen>half open</BlindsSummerClosedOrOpen>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
             </InteriorShading>
+            <InsectScreen>
+              <SystemIdentifier id='Window6InsectScreen'/>
+              <Location>interior</Location>
+              <SummerFractionCovered>1.0</SummerFractionCovered>
+            </InsectScreen>
             <Overhangs>
               <Depth>1.5</Depth>
               <DistanceToTopOfWindow>1.0</DistanceToTopOfWindow>
