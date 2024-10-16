@@ -2154,7 +2154,7 @@ def create_sample_hpxmls
                   'base-location-portland-or.xml',
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
-                  'base-mechvent-cfis-airflow-fraction-zero.xml',
+                  'base-mechvent-cfis-no-additional-runtime.xml',
                   'base-mechvent-cfis-supplemental-fan-exhaust.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',
@@ -2344,7 +2344,10 @@ def create_sample_hpxmls
         ventilation_fan.rated_flow_rate = nil
         ventilation_fan.delivered_ventilation = nil
       end
-      ventilation_fan.cfis_vent_mode_airflow_fraction = 1.0 if ventilation_fan.cfis_vent_mode_airflow_fraction.nil? && ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+      ventilation_fan.cfis_vent_mode_airflow_fraction = nil
+      if ventilation_fan.fan_type == HPXML::MechVentTypeCFIS
+        ventilation_fan.fan_power = nil
+      end
       next if ventilation_fan.is_cfis_supplemental_fan
 
       if ventilation_fan.hours_in_operation.nil?
