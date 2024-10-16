@@ -191,7 +191,7 @@ jobs:
           mkdir workflow/tests/test_results
           cp -r test_results/*.csv workflow/tests/test_results
           cd workflow/tests
-          pip install pandas --break-system-packages
+          pip install pandas
           python ../../hpxml-measures/workflow/tests/merge.py test_results/sample_files1.csv test_results/sample_files2.csv test_results/sample_files.csv
           rm test_results/sample_files1.csv
           rm test_results/sample_files2.csv
@@ -239,10 +239,10 @@ jobs:
           mkdir workflow/tests/test_results
           cp -r test_results/*.csv workflow/tests/test_results
           
-          pip install numpy --break-system-packages
-          pip install pandas --break-system-packages
-          pip install plotly --break-system-packages
-          pip install kaleido --break-system-packages
+          pip install numpy
+          pip install pandas
+          pip install plotly
+          pip install kaleido
           
           python hpxml-measures/workflow/tests/compare.py -a results
           python hpxml-measures/workflow/tests/compare.py -a visualize
