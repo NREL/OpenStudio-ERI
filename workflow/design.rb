@@ -5,6 +5,8 @@
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 
 class Design
+  DiagnosticFilenameSuffix = 'Diagnostic.msgpack'
+
   def initialize(calc_type: nil, init_calc_type: nil, output_dir: nil, iecc_version: nil, output_format: 'csv')
     @calc_type = calc_type
     @init_calc_type = init_calc_type
@@ -19,7 +21,15 @@ class Design
       @output_dir = output_dir
       @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
       @annual_output_path = File.join(output_dir, 'results', "#{name}.#{output_format}")
-      @diag_output_path = File.join(output_dir, 'results', "#{name}_Diagnostic.msgpack")
+      if [Constants::CalcTypeERIRatedHome,
+          Constants::CalcTypeERIReferenceHome,
+          Constants::CalcTypeERIIndexAdjustmentDesign,
+          Constants::CalcTypeERIIndexAdjustmentReferenceHome,
+          Constants::CalcTypeCO2eRatedHome,
+          Constants::CalcTypeCO2eReferenceHome].include?(calc_type) && init_calc_type.nil?
+        # Only need to create hourly diagnostic output file for certain runs
+        @diag_output_path = File.join(output_dir, 'results', "#{name}_#{DiagnosticFilenameSuffix}")
+      end
       @design_dir = File.join(output_dir, name)
       if not init_calc_type.nil?
         @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
@@ -70,7 +80,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_#{timeseries_output_freq.capitalize}.#{output_format}")))
   measures[measure_subdir] = [args]
 
-  if diagnostic_output
+  if diagnostic_output && !design.diag_output_path.nil?
     # Add OS-HPXML reporting measure to workflow
     measure_subdir = 'hpxml-measures/ReportSimulationOutput'
     args = {}

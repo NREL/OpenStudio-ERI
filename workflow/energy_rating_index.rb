@@ -1085,7 +1085,6 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     design_type = design.calc_type
     diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
     diag_data.delete('Time')
-    File.delete(design.diag_output_path)
 
     hourly_data = Array.new(8760) { Hash.new }
     diag_data.keys.each do |group|
@@ -1103,6 +1102,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
 
     design_hpxmls[design_type] = all_outputs[design_type]['HPXML']
   end
+  FileUtils.rm(Dir[File.join(resultsdir, "*#{Design::DiagnosticFilenameSuffix}")])
 
   # Initial JSON output
   json_output = {
@@ -1184,6 +1184,9 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
       fuel_conv = UnitConversions.convert(1.0, 'kBtu', 'kWh')
       values = data_hashes.map { |h| calculate_opp(h, nil, fuel_conv)[0].round(3) }
       json_output[:on_site_power_production] = values
+
+      values = data_hashes.map { |h| get_end_use(h, EUT::Battery, FT::Elec) }
+      json_output[:battery_storage] = values
     end
 
     json_output[json_element_name] = {}
