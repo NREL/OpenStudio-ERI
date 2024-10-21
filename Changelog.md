@@ -2,6 +2,7 @@
 
 __New Features__
 - Updates to HPXML v4.0 final release.
+- Updates HERS Diagnostic Output to v0.3.0.
 - Adds 2024 IECC ERI pathway calculation.
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
 - Adds inputs for modeling skylight curbs and/or shafts.
