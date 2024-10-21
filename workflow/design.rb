@@ -3,6 +3,7 @@
 # Separate ruby script to allow being called using system() on Windows.
 
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
+require_relative '../rulesets/resources/constants'
 
 class Design
   DiagnosticFilenameSuffix = 'Diagnostic.msgpack'
