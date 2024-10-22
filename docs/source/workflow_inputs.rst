@@ -373,8 +373,8 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   ``InteriorAdjacentTo``                  string                   See [#]_      Yes                  Interior adjacent space type
   ``Area``                                double     ft2           > 0           Yes                  Gross area (including skylights)
   ``Azimuth``                             integer    deg           >= 0, <= 359  No         See [#]_  Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance
-  ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance
+  ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance of outermost material
+  ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance of outermost material
   ``Pitch``                               double     ?/12          >= 0          Yes                  Pitch [#]_
   ``RadiantBarrier``                      boolean                                No         false     Presence of radiant barrier
   ``RadiantBarrierGrade``                 integer                  >= 1, <= 3    See [#]_             Radiant barrier installation grade
@@ -406,8 +406,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
   ``InteriorAdjacentTo``                  string                 See [#]_      Yes                    Interior adjacent space type
   ``Area``                                double   ft2           > 0           Yes                    Gross area
   ``Azimuth``                             integer  deg           >= 0, <= 359  No        See [#]_     Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance
-  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance
+  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance of outermost material
+  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance of outermost material
   ``Insulation/SystemIdentifier``         id                                   Yes                    Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double   F-ft2-hr/Btu  > 0           Yes                    Assembly R-value [#]_
   ======================================  =======  ============  ============  ========  ===========  ==============================
@@ -437,8 +437,8 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
   ``WallType``                            element                See [#]_      Yes                    Wall type (for thermal mass)
   ``Area``                                double   ft2           > 0           Yes                    Gross area (including doors/windows)
   ``Azimuth``                             integer  deg           >= 0, <= 359  No        See [#]_     Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance
-  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance
+  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance of outermost material
+  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance of outermost material
   ``Insulation/SystemIdentifier``         id                                   Yes                    Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double   F-ft2-hr/Btu  > 0           Yes                    Assembly R-value [#]_
   ======================================  =======  ============  ============  ========  ===========  ====================================
