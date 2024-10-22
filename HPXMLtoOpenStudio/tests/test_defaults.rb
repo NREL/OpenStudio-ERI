@@ -3017,9 +3017,10 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     vent_fan.fan_power = 12.5
     vent_fan.rated_flow_rate = 222.0
     vent_fan.cfis_vent_mode_airflow_fraction = 0.5
+    vent_fan.cfis_has_outdoor_air_control = false
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mech_vent_values(default_hpxml_bldg, false, 12.0, 12.5, 222.0, 0.5, HPXML::CFISModeAirHandler)
+    _test_default_mech_vent_values(default_hpxml_bldg, false, 12.0, 12.5, 222.0, 0.5, HPXML::CFISModeAirHandler, false)
 
     # Test defaults w/ CFIS
     vent_fan.is_shared_system = nil
@@ -3028,9 +3029,10 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     vent_fan.rated_flow_rate = nil
     vent_fan.cfis_vent_mode_airflow_fraction = nil
     vent_fan.cfis_addtl_runtime_operating_mode = nil
+    vent_fan.cfis_has_outdoor_air_control = nil
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mech_vent_values(default_hpxml_bldg, false, 8.0, 300.0, 305.4, 1.0, HPXML::CFISModeAirHandler)
+    _test_default_mech_vent_values(default_hpxml_bldg, false, 8.0, 300.0, 305.4, 1.0, HPXML::CFISModeAirHandler, true)
 
     # Test inputs not overridden by defaults w/ CFIS & supplemental fan
     hpxml, hpxml_bldg = _create_hpxml('base-mechvent-cfis-supplemental-fan-exhaust.xml')
@@ -3042,7 +3044,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     suppl_vent_fan.fan_power = 9.0
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mech_vent_values(default_hpxml_bldg, false, 12.0, nil, 222.0, nil, HPXML::CFISModeSupplementalFan)
+    _test_default_mech_vent_values(default_hpxml_bldg, false, 12.0, nil, 222.0, nil, HPXML::CFISModeSupplementalFan, true)
     _test_default_mech_vent_suppl_values(default_hpxml_bldg, false, nil, 9.0, 79.0)
 
     # Test defaults w/ CFIS supplemental fan
@@ -3262,16 +3264,20 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml, hpxml_bldg = _create_hpxml('base-dhw-tank-heat-pump.xml')
     hpxml_bldg.water_heating_systems[0].tank_volume = 44.0
     hpxml_bldg.water_heating_systems[0].operating_mode = HPXML::WaterHeaterOperatingModeHeatPumpOnly
+    hpxml_bldg.water_heating_systems[0].heating_capacity = 4000.0
+    hpxml_bldg.water_heating_systems[0].backup_heating_capacity = 5000.0
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_heat_pump_water_heater_values(default_hpxml_bldg, [44.0, HPXML::WaterHeaterOperatingModeHeatPumpOnly])
+    _test_default_heat_pump_water_heater_values(default_hpxml_bldg, [44.0, HPXML::WaterHeaterOperatingModeHeatPumpOnly, 4000.0, 5000.0])
 
     # Test defaults
     hpxml_bldg.water_heating_systems[0].tank_volume = nil
     hpxml_bldg.water_heating_systems[0].operating_mode = nil
+    hpxml_bldg.water_heating_systems[0].heating_capacity = nil
+    hpxml_bldg.water_heating_systems[0].backup_heating_capacity = nil
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_heat_pump_water_heater_values(default_hpxml_bldg, [50.0, HPXML::WaterHeaterOperatingModeHybridAuto])
+    _test_default_heat_pump_water_heater_values(default_hpxml_bldg, [50.0, HPXML::WaterHeaterOperatingModeHybridAuto, 4811.0, 15355.0])
   end
 
   def test_indirect_water_heaters
@@ -5430,7 +5436,8 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
   end
 
   def _test_default_mech_vent_values(hpxml_bldg, is_shared_system, hours_in_operation, fan_power, flow_rate,
-                                     cfis_vent_mode_airflow_fraction = nil, cfis_addtl_runtime_operating_mode = nil)
+                                     cfis_vent_mode_airflow_fraction = nil, cfis_addtl_runtime_operating_mode = nil,
+                                     cfis_has_outdoor_air_control = nil)
     vent_fan = hpxml_bldg.ventilation_fans.find { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan }
 
     assert_equal(is_shared_system, vent_fan.is_shared_system)
@@ -5450,6 +5457,11 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
       assert_nil(vent_fan.cfis_addtl_runtime_operating_mode)
     else
       assert_equal(cfis_addtl_runtime_operating_mode, vent_fan.cfis_addtl_runtime_operating_mode)
+    end
+    if cfis_has_outdoor_air_control.nil?
+      assert_nil(vent_fan.cfis_has_outdoor_air_control)
+    else
+      assert_equal(cfis_has_outdoor_air_control, vent_fan.cfis_has_outdoor_air_control)
     end
   end
 
@@ -5528,10 +5540,12 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     heat_pump_water_heaters = hpxml_bldg.water_heating_systems.select { |w| w.water_heater_type == HPXML::WaterHeaterTypeHeatPump }
     assert_equal(expected_wh_values.size, heat_pump_water_heaters.size)
     heat_pump_water_heaters.each_with_index do |wh_system, idx|
-      tank_volume, operating_mode = expected_wh_values[idx]
+      tank_volume, operating_mode, htg_cap, backup_htg_cap = expected_wh_values[idx]
 
       assert_equal(tank_volume, wh_system.tank_volume)
       assert_equal(operating_mode, wh_system.operating_mode)
+      assert_in_epsilon(htg_cap, wh_system.heating_capacity, 0.01)
+      assert_in_epsilon(backup_htg_cap, wh_system.backup_heating_capacity, 0.01)
     end
   end
 

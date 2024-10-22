@@ -2742,9 +2742,14 @@ module Defaults
       end
       next unless vent_fan.fan_type == HPXML::MechVentTypeCFIS
 
+      # These apply to CFIS systems
       if vent_fan.cfis_addtl_runtime_operating_mode.nil?
         vent_fan.cfis_addtl_runtime_operating_mode = HPXML::CFISModeAirHandler
         vent_fan.cfis_addtl_runtime_operating_mode_isdefaulted = true
+      end
+      if vent_fan.cfis_has_outdoor_air_control.nil?
+        vent_fan.cfis_has_outdoor_air_control = true
+        vent_fan.cfis_has_outdoor_air_control_isdefaulted = true
       end
       if vent_fan.cfis_vent_mode_airflow_fraction.nil? && (vent_fan.cfis_addtl_runtime_operating_mode == HPXML::CFISModeAirHandler)
         vent_fan.cfis_vent_mode_airflow_fraction = 1.0
@@ -2912,6 +2917,15 @@ module Defaults
         end
       end
       if (water_heating_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump)
+        Waterheater.set_heat_pump_cop(water_heating_system)
+        if water_heating_system.heating_capacity.nil?
+          water_heating_system.heating_capacity = (UnitConversions.convert(0.5, 'kW', 'Btu/hr') * water_heating_system.additional_properties.cop).round
+          water_heating_system.heating_capacity_isdefaulted = true
+        end
+        if water_heating_system.backup_heating_capacity.nil?
+          water_heating_system.backup_heating_capacity = UnitConversions.convert(4.5, 'kW', 'Btu/hr').round
+          water_heating_system.backup_heating_capacity_isdefaulted = true
+        end
         if water_heating_system.tank_volume.nil?
           water_heating_system.tank_volume = get_water_heater_tank_volume(water_heating_system.fuel_type, nbeds, nbaths)
           water_heating_system.tank_volume_isdefaulted = true
