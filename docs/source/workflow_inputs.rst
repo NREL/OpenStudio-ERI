@@ -1840,7 +1840,7 @@ A CFIS system is a supply ventilation system that provides outdoor air to the re
   ``FanType``                                                 string                      central fan integrated supply  Yes                Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true                   Yes                Flow rate [#]_ or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24                    Yes                Hours per day of operation [#]_
-  ``CFISControls/HasOutdoorAirControl``                       boolean                                                    No        true     Presence of controls to block outdoor air when not ventilating [#]_
+  ``CFISControls/HasOutdoorAirControl``                       boolean                                                    Yes                Presence of controls to block outdoor air when not ventilating [#]_
   ``CFISControls/AdditionalRuntimeOperatingMode``             string                      See [#]_                       Yes                How additional ventilation is provided (beyond when the HVAC system is running)
   ``CFISControls/SupplementalFan``                            idref                       See [#]_                       See [#]_           The supplemental fan providing additional ventilation
   ``AttachedToHVACDistributionSystem``                        idref                       See [#]_                       Yes                ID of attached distribution system
