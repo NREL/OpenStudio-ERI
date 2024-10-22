@@ -2155,6 +2155,7 @@ def create_sample_hpxmls
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
                   'base-mechvent-cfis-no-additional-runtime.xml',
+                  'base-mechvent-cfis-no-outdoor-air-control.xml',
                   'base-mechvent-cfis-supplemental-fan-exhaust.xml',
                   'base-mechvent-erv.xml',
                   'base-mechvent-erv-atre-asre.xml',
