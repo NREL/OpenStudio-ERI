@@ -9,8 +9,8 @@ __New Features__
 - Implements ANSI/RESNET/ICC Standard 301-2022 Addendum E for CFIS systems.
   - **Breaking change**: Removes `FanPower`/`FanPowerDefaulted` inputs for CFIS systems (fan power assumed to be HVAC's FanPowerWattsPerCFM multiplied by the blower fan max flow rate).
   - **Breaking change**: Removes `VentilationOnlyModeAirflowFraction` input for CFIS systems (blower fan assumed to run at max flow rate during ventilation only operation).
-  - Allows modeling CFIS systems without automatic flow control of outdoor air (`CFISControls/HasOutdoorAirControl=false`).
-  - Allows modeling CFIS systems with no strategy to meet remainder of ventilation target (`CFISControls/AdditionalRuntimeOperatingMode="none"`).
+  - **Breaking change**: Adds `CFISControls/HasOutdoorAirControl` input for CFIS systems to describe whether there is automatic flow control of outdoor air.
+  - Adds choice of "none" for `CFISControls/AdditionalRuntimeOperatingMode` input for CFIS systems to describe when there is no strategy to meet remainder of ventilation target.
 - Relaxes IECC climate zone requirements.
   - IECC climate zone years other than 2006 are now always optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
   - See [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-climate-zones) for more information.
