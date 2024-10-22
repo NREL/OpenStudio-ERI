@@ -171,7 +171,8 @@ class ERIEnclosureTest < Minitest::Test
 
     # Test CFIS mechanical ventilation that does not quality as a
     # Dwelling Unit Mechanical Ventilation System
-    hpxml_names = ['base-mechvent-cfis-no-additional-runtime.xml'] # FIXME: Add CFIS file w/o outdoor air control
+    hpxml_names = ['base-mechvent-cfis-no-additional-runtime.xml',
+                   'base-mechvent-cfis-no-outdoor-air-control.xml']
 
     hpxml_names.each do |hpxml_name|
       _all_calc_types.each do |calc_type|

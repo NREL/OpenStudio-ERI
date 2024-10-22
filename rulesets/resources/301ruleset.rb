@@ -1622,6 +1622,7 @@ module ERI_301_Ruleset
                                     distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
+                                    cfis_has_outdoor_air_control: orig_vent_fan.cfis_has_outdoor_air_control,
                                     cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
       new_vent_fan = new_bldg.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
@@ -2519,7 +2520,7 @@ module ERI_301_Ruleset
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
       min_nach = 0.30
-    elsif mech_vent_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS && f.cfis_addtl_runtime_operating_mode == HPXML::CFISModeNone }.size > 0
+    elsif mech_vent_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS && (f.cfis_addtl_runtime_operating_mode == HPXML::CFISModeNone || !f.cfis_has_outdoor_air_control) }.size > 0
       # 301-2022 Addendum E
       # Does not quality as Dwelling Unit Mechanical Ventilation System because it has no
       # strategy to meet remainder of ventilation target
