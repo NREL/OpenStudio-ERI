@@ -557,6 +557,7 @@
               <SystemIdentifier id='VentilationFan17'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
+                <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
               </CFISControls>
               <TestedFlowRate>40.0</TestedFlowRate>
@@ -569,6 +570,7 @@
               <SystemIdentifier id='VentilationFan18'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
+                <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>supplemental fan</AdditionalRuntimeOperatingMode>
                 <SupplementalFan idref='VentilationFan5'/>
               </CFISControls>

@@ -1377,6 +1377,7 @@
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
+                <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
               </CFISControls>
               <TestedFlowRate>100.0</TestedFlowRate>

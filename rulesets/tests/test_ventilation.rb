@@ -606,16 +606,22 @@ class ERIMechVentTest < Minitest::Test
                    'base-mechvent-cfis-no-outdoor-air-control.xml']
 
     hpxml_names.each do |hpxml_name|
+      cfis_suppl_flowrate = nil
+      cfis_suppl_power = nil
+      cfis_is_dumvs = true
       if hpxml_name == 'base-mechvent-cfis.xml'
         cfis_mode = HPXML::CFISModeAirHandler
+      elsif hpxml_name == 'base-mechvent-cfis-no-outdoor-air-control.xml'
+        cfis_mode = HPXML::CFISModeAirHandler
+        cfis_is_dumvs = false
       elsif hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml'
         cfis_mode = HPXML::CFISModeSupplementalFan
+        cfis_suppl_flowrate = 120.0
+        cfis_suppl_power = 30.0
       elsif hpxml_name == 'base-mechvent-cfis-no-additional-runtime.xml'
         cfis_mode = HPXML::CFISModeNone
+        cfis_is_dumvs = false
       end
-      cfis_suppl_flowrate = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' ? 120.0 : nil)
-      cfis_suppl_power = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' ? 30.0 : nil)
-      cfis_is_dumvs = (hpxml_name != 'base-mechvent-cfis-no-additional-runtime.xml' & hpxml_name != 'base-mechvent-cfis-no-outdoor-air-control.xml')
 
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
