@@ -2575,7 +2575,7 @@ module ERI_301_Ruleset
     # Returns (is_imbalanced, frac_imbalanced)
     whole_fans = mech_vent_fans.select { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan }
 
-    if whole_fans.any? { |f| !f.is_balanced && f.hours_in_operation < 24 }
+    if whole_fans.count { |f| !f.is_balanced && f.hours_in_operation < 24 } > 1
       return false, 1.0 # Multiple intermittent unbalanced fans, assume imbalanced per ANSI 301-2022
     end
 
