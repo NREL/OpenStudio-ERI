@@ -1706,18 +1706,18 @@ Each exhaust only fan is entered as a ``/HPXML/Building/BuildingDetails/Systems/
   Element                                                     Type               Units    Constraints   Required  Default    Notes
   ==========================================================  =================  =======  ============  ========  =========  =========================================
   ``SystemIdentifier``                                        id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                 string                      exhaust only  Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true  See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``        double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ==========================================================  =================  =======  ============  ========  =========  =========================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
-  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
+  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
 
 .. _vent_fan_supply_only:
 
@@ -1730,18 +1730,18 @@ Each supply only fan is entered as a ``/HPXML/Building/BuildingDetails/Systems/M
   Element                                                     Type               Units    Constraints   Required  Default    Notes
   ==========================================================  =================  =======  ============  ========  =========  =========================================
   ``SystemIdentifier``                                        id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                 string                      supply only   Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true  See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``        double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ==========================================================  =================  =======  ============  ========  =========  =========================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
-  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
+  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
 
 .. _vent_fan_balanced:
 
@@ -1754,18 +1754,18 @@ Each balanced (supply and exhaust) fan is entered as a ``/HPXML/Building/Buildin
   Element                                                     Type               Units    Constraints   Required  Default    Notes
   ==========================================================  =================  =======  ============  ========  =========  =========================================
   ``SystemIdentifier``                                        id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                 string                      balanced      Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true  See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``        double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ==========================================================  =================  =======  ============  ========  =========  =========================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
-  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
+  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
 
 .. _vent_fan_hrv:
 
@@ -1778,19 +1778,19 @@ Each heat recovery ventilator (HRV) is entered as a ``/HPXML/Building/BuildingDe
   Element                                                                   Type               Units    Constraints               Required  Default    Notes
   ========================================================================  =================  =======  ========================  ========  =========  =========================================
   ``SystemIdentifier``                                                      id                                                    Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                                       boolean                     true                      Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                                        boolean                                               Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                               string                      heat recovery ventilator  Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm      >= 0 or true              See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                                      double             hrs/day  >= 0, <= 24               See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                                       boolean                     true                      Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                                        boolean                                               Yes                  Whether it serves multiple dwelling units [#]_
   ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac     > 0, <= 1                 Yes                  (Adjusted) Sensible recovery efficiency [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``                      double or boolean  W        >= 0 or true              Yes                  Fan power or whether fan power is unknown
   ========================================================================  =================  =======  ========================  ========  =========  =========================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
-  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
+  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
          Since OpenStudio-ERI separately models fan electric consumption, ASRE is a preferable input to SRE because it can be directly used in the energy model.
 
@@ -1805,20 +1805,20 @@ Each energy recovery ventilator (ERV) is entered as a ``/HPXML/Building/Building
   Element                                                                   Type               Units    Constraints                 Required  Default    Notes
   ========================================================================  =================  =======  ==========================  ========  =========  =========================================
   ``SystemIdentifier``                                                      id                                                      Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                                       boolean                     true                        Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                                        boolean                                                 Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                               string                      energy recovery ventilator  Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm      >= 0 or true                See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                                      double             hrs/day  >= 0, <= 24                 See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                                       boolean                     true                        Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                                        boolean                                                 Yes                  Whether it serves multiple dwelling units [#]_
   ``TotalRecoveryEfficiency`` or ``AdjustedTotalRecoveryEfficiency``        double             frac     > 0, <= 1                   Yes                  (Adjusted) Total recovery efficiency [#]_
   ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac     > 0, <= 1                   Yes                  (Adjusted) Sensible recovery efficiency [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``                      double or boolean  W        >= 0 or true                Yes                  Fan power or whether fan power is unknown
   ========================================================================  =================  =======  ==========================  ========  =========  =========================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
-  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] Flow rate input required only if IsSharedSystem=false.
   .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
+  .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
   .. [#] AdjustedTotalRecoveryEfficiency (ATRE) is similar to TotalRecoveryEfficiency (TRE), in that it reflects cooling season performance, but excludes fan electric consumption.
          Since OpenStudio-ERI separately models fan electric consumption, ATRE is a preferable input to TRE because it can be directly used in the energy model.
   .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
@@ -1832,27 +1832,31 @@ Central Fan Integrated Supply (CFIS)
 Each central fan integrated supply (CFIS) system is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
 A CFIS system is a supply ventilation system that provides outdoor air to the return duct of a forced-air HVAC system.
 
-  ==========================================================  =================  =======  =============================  ========  =======  =======================================
-  Element                                                     Type               Units    Constraints                    Required  Default  Notes
-  ==========================================================  =================  =======  =============================  ========  =======  =======================================
-  ``SystemIdentifier``                                        id                                                         Yes                Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true                           Yes                Ventilation fan use case [#]_
-  ``FanType``                                                 string                      central fan integrated supply  Yes                Type of ventilation system
-  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true                   Yes                Flow rate [#]_ or whether flow rate unmeasured
-  ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24                    Yes                Hours per day of operation [#]_
-  ``CFISControls/HasOutdoorAirControl``                       boolean                                                    Yes                Presence of controls to block outdoor air when not ventilating [#]_
-  ``CFISControls/AdditionalRuntimeOperatingMode``             string                      See [#]_                       Yes                How additional ventilation is provided (beyond when the HVAC system is running)
-  ``CFISControls/SupplementalFan``                            idref                       See [#]_                       See [#]_           The supplemental fan providing additional ventilation
-  ``AttachedToHVACDistributionSystem``                        idref                       See [#]_                       Yes                ID of attached distribution system
-  ==========================================================  =================  =======  =============================  ========  =======  =======================================
+  ===============================================================  =================  =======  =============================  ========  =======  =======================================
+  Element                                                          Type               Units    Constraints                    Required  Default  Notes
+  ===============================================================  =================  =======  =============================  ========  =======  =======================================
+  ``SystemIdentifier``                                             id                                                         Yes                Unique identifier
+  ``FanType``                                                      string                      central fan integrated supply  Yes                Type of ventilation system
+  ``CFISControls/HasOutdoorAirControl``                            boolean                                                    Yes                Presence of controls to block outdoor air when not ventilating [#]_
+  ``CFISControls/AdditionalRuntimeOperatingMode``                  string                      See [#]_                       Yes                How additional ventilation is provided (beyond when the HVAC system is running)
+  ``CFISControls/SupplementalFan``                                 idref                       See [#]_                       See [#]_           The supplemental fan providing additional ventilation
+  ``CFISControls/extension/SupplementalFanRunsWithAirHandlerFan``  boolean                                                    No [#]_   false    Whether the supplemental fan also runs with the air handler fan [#]_
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``       double or boolean  cfm      >= 0 or true                   Yes                Flow rate [#]_ or whether flow rate unmeasured
+  ``HoursInOperation``                                             double             hrs/day  >= 0, <= 24                    Yes                Hours per day of operation [#]_
+  ``UsedForWholeBuildingVentilation``                              boolean                     true                           Yes                Ventilation fan use case [#]_
+  ``AttachedToHVACDistributionSystem``                             idref                       See [#]_                       Yes                ID of attached distribution system
+  ===============================================================  =================  =======  =============================  ========  =======  =======================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] For example, an electronically-controlled mechanical damper, or an in-line fan that substantially blocks the flow when not running.
   .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan", "supplemental fan", or "none".
   .. [#] SupplementalFan must reference another ``VentilationFan`` where UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
   .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
+  .. [#] SupplementalFanRunsWithAirHandlerFan only applies when AdditionalRuntimeOperatingMode="supplemental fan".
+  .. [#] If SupplementalFanRunsWithAirHandlerFan is true, in addition to its normal operation, the supplemental fan will also run simultaneously with the air handler fan when outdoor air is being brought in.
+         This is typically used with a supplemental exhaust fan to provide "balanced" (supply + exhaust) airflow.
   .. [#] The flow rate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
   .. [#] The HoursInOperation and the flow rate are combined to form the hourly target ventilation rate (e.g., inputs of 90 cfm and 8 hrs/day produce an hourly target ventilation rate of 30 cfm).
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] HVACDistribution type cannot be :ref:`hvac_distribution_hydronic`.
 
 .. _vent_fan_shared:

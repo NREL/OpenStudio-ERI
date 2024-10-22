@@ -1623,7 +1623,8 @@ module ERI_301_Ruleset
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
                                     cfis_has_outdoor_air_control: orig_vent_fan.cfis_has_outdoor_air_control,
-                                    cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
+                                    cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref,
+                                    cfis_supplemental_fan_runs_with_air_handler_fan: orig_vent_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
       new_vent_fan = new_bldg.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
         new_vent_fan.tested_flow_rate = unit_flow_rate.round(2)
@@ -2574,7 +2575,7 @@ module ERI_301_Ruleset
     # Returns (is_imbalanced, frac_imbalanced)
     whole_fans = mech_vent_fans.select { |f| f.used_for_whole_building_ventilation && !f.is_cfis_supplemental_fan }
 
-    if whole_fans.count { |f| !f.is_balanced && f.hours_in_operation < 24 } > 1
+    if whole_fans.any? { |f| !f.is_balanced && f.hours_in_operation < 24 }
       return false, 1.0 # Multiple intermittent unbalanced fans, assume imbalanced per ANSI 301-2022
     end
 

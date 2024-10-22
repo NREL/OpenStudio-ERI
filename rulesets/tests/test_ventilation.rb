@@ -602,6 +602,7 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_cfis
     hpxml_names = ['base-mechvent-cfis.xml',
                    'base-mechvent-cfis-supplemental-fan-exhaust.xml',
+                   'base-mechvent-cfis-supplemental-fan-exhaust-synchronized.xml',
                    'base-mechvent-cfis-no-additional-runtime.xml',
                    'base-mechvent-cfis-no-outdoor-air-control.xml']
 
@@ -609,15 +610,17 @@ class ERIMechVentTest < Minitest::Test
       cfis_suppl_flowrate = nil
       cfis_suppl_power = nil
       cfis_is_dumvs = true
+      cfis_suppl_fan_sync = nil
       if hpxml_name == 'base-mechvent-cfis.xml'
         cfis_mode = HPXML::CFISModeAirHandler
       elsif hpxml_name == 'base-mechvent-cfis-no-outdoor-air-control.xml'
         cfis_mode = HPXML::CFISModeAirHandler
         cfis_is_dumvs = false
-      elsif hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml'
+      elsif hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' || hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust-synchronized.xml'
         cfis_mode = HPXML::CFISModeSupplementalFan
         cfis_suppl_flowrate = 120.0
         cfis_suppl_power = 30.0
+        cfis_suppl_fan_sync = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust-synchronized.xml')
       elsif hpxml_name == 'base-mechvent-cfis-no-additional-runtime.xml'
         cfis_mode = HPXML::CFISModeNone
         cfis_is_dumvs = false
@@ -635,7 +638,8 @@ class ERIMechVentTest < Minitest::Test
           end
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, cfis_mode: cfis_mode,
-                                          cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power }])
+                                          cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power,
+                                          cfis_suppl_fan_sync: cfis_suppl_fan_sync }])
         elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
         elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
@@ -657,7 +661,8 @@ class ERIMechVentTest < Minitest::Test
           end
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, cfis_mode: cfis_mode,
-                                          cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power }])
+                                          cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power,
+                                          cfis_suppl_fan_sync: cfis_suppl_fan_sync }])
         elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
         elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
@@ -679,7 +684,8 @@ class ERIMechVentTest < Minitest::Test
           end
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, cfis_mode: cfis_mode,
-                                          cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power }])
+                                          cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power,
+                                          cfis_suppl_fan_sync: cfis_suppl_fan_sync }])
         elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
         elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
@@ -1274,6 +1280,11 @@ class ERIMechVentTest < Minitest::Test
         assert_nil(cfis_suppl_fan)
       else
         assert_in_delta(expected_values[:cfis_suppl_power], cfis_suppl_fan.fan_power, 0.1)
+      end
+      if expected_values[:cfis_suppl_fan_sync].nil?
+        assert_nil(ventilation_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
+      else
+        assert_equal(expected_values[:cfis_suppl_fan_sync], ventilation_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
       end
     end
     assert_equal(all_expected_values.size, num_mech_vent)
