@@ -20,6 +20,7 @@ __New Features__
 __Bugfixes__
 - Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.
 - Fixes error if a heating system and a heat pump (that only provides cooling) are attached to the same distribution system.
+- Fixes double counting of battery storage losses in ERI calculation; CO2e Index is unaffected.
 - Misc Manual J design load calculation improvements.
 
 ## OpenStudio-ERI v1.8.0
