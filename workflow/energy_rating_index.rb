@@ -304,9 +304,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Other #
   # ===== #
 
-  results[:teu] = calculate_teu(rated_output)
-  results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
   results[:bsl] = get_end_use(rated_output, EUT::Battery, FT::Elec)
+  results[:teu] = calculate_teu(rated_output, results[:bsl])
+  results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
   results[:pefrac] = calculate_pefrac(results[:teu], results[:opp], results[:bsl])
 
   results[:eul_dh] = calculate_dh(rated_output)
@@ -721,12 +721,13 @@ def calculate_ec(output, sys_id, fuel_types, type, is_dfhp_primary = nil, load_f
   return ec
 end
 
-def calculate_teu(output)
+def calculate_teu(output, bsl)
   # Total Energy Use
   # Fossil fuel site energy uses should be converted to equivalent electric energy use
   # in accordance with Equation 4.1-3. Note: Generator fuel consumption is included here.
   teu = get_fuel_use(output, FT::Elec) +
-        0.4 * get_fuel_use(output, non_elec_fuels)
+        0.4 * get_fuel_use(output, non_elec_fuels) -
+        bsl # Battery storage losses are added to TEU later
   return teu
 end
 
