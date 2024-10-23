@@ -5,6 +5,7 @@ require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
+require_relative '../../workflow/design'
 
 class ERIMechVentTest < Minitest::Test
   def setup
@@ -19,6 +20,7 @@ class ERIMechVentTest < Minitest::Test
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    puts
   end
 
   def test_mech_vent_none
@@ -633,9 +635,6 @@ class ERIMechVentTest < Minitest::Test
             # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
             # ventilation requirement is lower, resulting in lower Reference Home fan power
             _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.1 }])
-          elsif cfis_suppl_fan_sync
-            # Supply + supplemental exhaust run simultaneously, so FracImbal < 1
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 28.4 }])
           else
             _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
           end
@@ -659,9 +658,6 @@ class ERIMechVentTest < Minitest::Test
             # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
             # ventilation requirement is lower, resulting in lower Reference Home fan power
             _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.2 }])
-          elsif cfis_suppl_fan_sync
-            # Supply + supplemental exhaust run simultaneously, so FracImbal < 1
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 26.4 }])
           else
             _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 34.9 }])
           end
@@ -1183,7 +1179,7 @@ class ERIMechVentTest < Minitest::Test
   end
 
   def _test_ruleset(hpxml_name, calc_type, iecc_version = nil)
-    require_relative '../../workflow/design'
+    print '.'
     designs = [Design.new(calc_type: calc_type,
                           output_dir: @sample_files_path,
                           iecc_version: iecc_version)]

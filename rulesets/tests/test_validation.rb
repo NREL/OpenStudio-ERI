@@ -6,6 +6,7 @@ require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator.rb'
+require_relative '../../workflow/design'
 
 class ERI301ValidationTest < Minitest::Test
   def setup
@@ -23,6 +24,7 @@ class ERI301ValidationTest < Minitest::Test
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@tmp_output_path)
+    puts
   end
 
   def test_validation_of_schematron_doc
@@ -181,7 +183,7 @@ class ERI301ValidationTest < Minitest::Test
   end
 
   def _test_ruleset(expected_errors)
-    require_relative '../../workflow/design'
+    print '.'
     designs = [Design.new(calc_type: Constants::CalcTypeERIRatedHome)]
     designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 

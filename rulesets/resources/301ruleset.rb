@@ -2567,22 +2567,6 @@ module ERI_301_Ruleset
       if vent_fan.includes_exhaust_air
         cfm_exhaust += unit_flow_rate
       end
-
-      # If a CFIS system has a supplemental fan that runs simultaneously with the air handler fan,
-      # include its airflow
-      next unless (vent_fan.fan_type == HPXML::MechVentTypeCFIS &&
-          vent_fan.cfis_addtl_runtime_operating_mode == HPXML::CFISModeSupplementalFan &&
-          vent_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
-
-      cfis_suppl_fan = vent_fan.cfis_supplemental_fan
-      next if cfis_suppl_fan.flow_rate_not_tested
-
-      if cfis_suppl_fan.includes_supply_air
-        cfm_supply += cfis_suppl_fan.unit_flow_rate
-      end
-      if cfis_suppl_fan.includes_exhaust_air
-        cfm_exhaust += cfis_suppl_fan.unit_flow_rate
-      end
     end
     return cfm_supply, cfm_exhaust
   end
@@ -2602,6 +2586,14 @@ module ERI_301_Ruleset
       else
         return false, 1.0 # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
       end
+    end
+
+    if whole_fans.any? { |f| f.fan_type == HPXML::MechVentTypeCFIS }
+      # Not possible for a CFIS system to be completely balanced, so treat as imbalanced.
+      # (Though note that a CFIS system w/ a supplemental fan that runs simultaneously
+      # with the air handler fan could be balanced for part of the year, but not possible
+      # to know how much of the year up front.)
+      return false, 1.0
     end
 
     cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :total)
