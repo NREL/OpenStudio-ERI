@@ -2567,6 +2567,22 @@ module ERI_301_Ruleset
       if vent_fan.includes_exhaust_air
         cfm_exhaust += unit_flow_rate
       end
+
+      # If a CFIS system has a supplemental fan that runs simultaneously with the air handler fan,
+      # include its airflow
+      next unless (vent_fan.fan_type == HPXML::MechVentTypeCFIS &&
+          vent_fan.cfis_addtl_runtime_operating_mode == HPXML::CFISModeSupplementalFan &&
+          vent_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
+
+      cfis_suppl_fan = vent_fan.cfis_supplemental_fan
+      next if cfis_suppl_fan.flow_rate_not_tested
+
+      if cfis_suppl_fan.includes_supply_air
+        cfm_supply += cfis_suppl_fan.unit_flow_rate
+      end
+      if cfis_suppl_fan.includes_exhaust_air
+        cfm_exhaust += cfis_suppl_fan.unit_flow_rate
+      end
     end
     return cfm_supply, cfm_exhaust
   end
