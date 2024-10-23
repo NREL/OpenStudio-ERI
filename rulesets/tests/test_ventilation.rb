@@ -716,7 +716,8 @@ class ERIMechVentTest < Minitest::Test
 
     calc_type = Constants::CalcTypeERIRatedHome
     _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-    _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, cfis_mode: HPXML::CFISModeAirHandler }])
+    _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, cfis_mode: HPXML::CFISModeAirHandler,
+                                    cfis_control_type: HPXML::CFISControlTypeOptimized }])
 
     # Create derivative file for testing
     hpxml_name = 'base-mechvent-cfis-supplemental-fan-exhaust.xml'
@@ -734,7 +735,7 @@ class ERIMechVentTest < Minitest::Test
     _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
     _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8,
                                     cfis_mode: HPXML::CFISModeSupplementalFan, cfis_suppl_flowrate: 110.0, cfis_suppl_power: 38.5,
-                                    cfis_suppl_fan_sync: false }])
+                                    cfis_suppl_fan_sync: false, cfis_control_type: HPXML::CFISControlTypeOptimized }])
   end
 
   def test_mech_vent_cfm50_infiltration
