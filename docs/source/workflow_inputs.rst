@@ -59,10 +59,10 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version to perform DOE ZERH ERI calculation
   =================================  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] ERICalculation/Version choices are "latest", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
+  .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
-  .. [#] CO2IndexCalculation/Version choices are "latest", "2022C", "2022", or "2019ABCD".
+  .. [#] CO2IndexCalculation/Version choices are "latest", "2022CE", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
          If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".

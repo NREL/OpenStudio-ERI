@@ -612,23 +612,20 @@ class ERIMechVentTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       cfis_suppl_flowrate = nil
       cfis_suppl_power = nil
-      cfis_is_dumvs = true
       cfis_suppl_fan_sync = nil
       cfis_control_type = HPXML::CFISControlTypeOptimized
-      if hpxml_name == 'base-mechvent-cfis.xml'
+      if ['base-mechvent-cfis.xml',
+          'base-mechvent-cfis-no-outdoor-air-control.xml'].include? hpxml_name
         cfis_mode = HPXML::CFISModeAirHandler
-      elsif hpxml_name == 'base-mechvent-cfis-no-outdoor-air-control.xml'
-        cfis_mode = HPXML::CFISModeAirHandler
-        cfis_is_dumvs = false
-      elsif hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust.xml' || hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust-synchronized.xml'
+      elsif ['base-mechvent-cfis-supplemental-fan-exhaust.xml',
+             'base-mechvent-cfis-supplemental-fan-exhaust-synchronized.xml'].include? hpxml_name
         cfis_mode = HPXML::CFISModeSupplementalFan
         cfis_suppl_flowrate = 120.0
         cfis_suppl_power = 30.0
         cfis_suppl_fan_sync = (hpxml_name == 'base-mechvent-cfis-supplemental-fan-exhaust-synchronized.xml')
-      elsif hpxml_name == 'base-mechvent-cfis-no-additional-runtime.xml'
+      elsif ['base-mechvent-cfis-no-additional-runtime.xml'].include? hpxml_name
         cfis_mode = HPXML::CFISModeNone
-        cfis_is_dumvs = false
-      elsif hpxml_name == 'base-mechvent-cfis-control-type-timer.xml'
+      elsif ['base-mechvent-cfis-control-type-timer.xml'].include? hpxml_name
         cfis_mode = HPXML::CFISModeAirHandler
         cfis_control_type = HPXML::CFISControlTypeTimer
       end
@@ -636,7 +633,7 @@ class ERIMechVentTest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          if not cfis_is_dumvs
+          if hpxml_name == 'base-mechvent-cfis-no-additional-runtime.xml'
             # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
             # ventilation requirement is lower, resulting in lower Reference Home fan power
             _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.1 }])
@@ -659,13 +656,7 @@ class ERIMechVentTest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          if not cfis_is_dumvs
-            # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
-            # ventilation requirement is lower, resulting in lower Reference Home fan power
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.2 }])
-          else
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 34.9 }])
-          end
+          _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 34.9 }])
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, cfis_mode: cfis_mode,
                                           cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power,
@@ -682,13 +673,7 @@ class ERIMechVentTest < Minitest::Test
       _all_calc_types.each do |calc_type|
         _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
         if [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          if not cfis_is_dumvs
-            # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
-            # ventilation requirement is lower, resulting in lower Reference Home fan power
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 13.0 }])
-          else
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
-          end
+          _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 26.4 }])
         elsif [Constants::CalcTypeERIRatedHome].include? calc_type
           _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8, cfis_mode: cfis_mode,
                                           cfis_suppl_flowrate: cfis_suppl_flowrate, cfis_suppl_power: cfis_suppl_power,

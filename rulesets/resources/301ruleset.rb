@@ -2522,13 +2522,16 @@ module ERI_301_Ruleset
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
       min_nach = 0.30
-    elsif mech_vent_fans.select { |f| f.fan_type == HPXML::MechVentTypeCFIS && (f.cfis_addtl_runtime_operating_mode == HPXML::CFISModeNone || !f.cfis_has_outdoor_air_control) }.size > 0
-      # 301-2022 Addendum E
-      # Does not quality as Dwelling Unit Mechanical Ventilation System because it has no
-      # strategy to meet remainder of ventilation target
-      min_nach = 0.30
-    elsif Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
-      has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)
+    end
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022CE')
+      if mech_vent_fans.any? { |f| f.fan_type == HPXML::MechVentTypeCFIS && f.cfis_addtl_runtime_operating_mode == HPXML::CFISModeNone }
+        # Does not quality as Dwelling Unit Mechanical Ventilation System because it has no
+        # strategy to meet remainder of ventilation target
+        min_nach = 0.30
+      end
+    end
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
+      has_non_exhaust_systems = mech_vent_fans.any? { |f| f.fan_type != HPXML::MechVentTypeExhaust }
       mech_vent_fans.each do |orig_vent_fan|
         if orig_vent_fan.flow_rate_not_tested || ((a_ext < 0.5) && !has_non_exhaust_systems)
           min_nach = 0.30
@@ -2790,7 +2793,7 @@ module ERI_301_Ruleset
   def self.add_reference_distribution_system(new_bldg)
     new_bldg.hvac_systems.each do |hvac|
       next if hvac.distribution_system_idref.nil?
-      next if new_bldg.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
+      next if new_bldg.hvac_distributions.any? { |d| d.id == hvac.distribution_system_idref }
 
       # Add new DSE distribution if distribution doesn't already exist
       new_bldg.hvac_distributions.add(id: hvac.distribution_system_idref,

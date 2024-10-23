@@ -173,21 +173,34 @@ class ERIEnclosureTest < Minitest::Test
 
     # Test CFIS mechanical ventilation that does not quality as a
     # Dwelling Unit Mechanical Ventilation System
-    hpxml_names = ['base-mechvent-cfis-no-additional-runtime.xml',
-                   'base-mechvent-cfis-no-outdoor-air-control.xml']
+    hpxml_name = 'base-mechvent-cfis-no-additional-runtime.xml'
 
-    hpxml_names.each do |hpxml_name|
-      _all_calc_types.each do |calc_type|
-        _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-        if [Constants::CalcTypeERIRatedHome].include? calc_type
-          _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
-        elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
-          _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
-        elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
-          _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
-        elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
-          _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
-        end
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
+      end
+    end
+
+    # Same as above but prior to 301-2022 Addendum E
+    hpxml_name = _change_eri_version(hpxml_name, '2022C')
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 3.0, height: 9.75, volume: 21600.0) # not 0.3 nACH
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
       end
     end
   end
@@ -352,6 +365,7 @@ class ERIEnclosureTest < Minitest::Test
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
+
     hpxml_name = _change_eri_version(hpxml_name, '2022')
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
