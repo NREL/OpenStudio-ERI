@@ -377,6 +377,7 @@
                 <AdditionalRuntimeOperatingMode>supplemental fan</AdditionalRuntimeOperatingMode>
                 <SupplementalFan idref='VentilationFan2'/>
                 <extension>
+                  <ControlType>optimized</ControlType>
                   <SupplementalFanRunsWithAirHandlerFan>true</SupplementalFanRunsWithAirHandlerFan>
                 </extension>
               </CFISControls>

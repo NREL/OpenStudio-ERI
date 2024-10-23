@@ -374,9 +374,9 @@
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
                 <HasOutdoorAirControl>true</HasOutdoorAirControl>
-                <AdditionalRuntimeOperatingMode>none</AdditionalRuntimeOperatingMode>
+                <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
                 <extension>
-                  <ControlType>optimized</ControlType>
+                  <ControlType>timer</ControlType>
                 </extension>
               </CFISControls>
               <TestedFlowRate>330.0</TestedFlowRate>

@@ -1379,6 +1379,9 @@
               <CFISControls>
                 <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
+                <extension>
+                  <ControlType>optimized</ControlType>
+                </extension>
               </CFISControls>
               <TestedFlowRate>100.0</TestedFlowRate>
               <HoursInOperation>12.0</HoursInOperation>

@@ -2154,6 +2154,7 @@ def create_sample_hpxmls
                   'base-location-portland-or.xml',
                   'base-mechvent-balanced.xml',
                   'base-mechvent-cfis.xml',
+                  'base-mechvent-cfis-control-type-timer.xml',
                   'base-mechvent-cfis-no-additional-runtime.xml',
                   'base-mechvent-cfis-no-outdoor-air-control.xml',
                   'base-mechvent-cfis-supplemental-fan-exhaust.xml',
@@ -2351,6 +2352,9 @@ def create_sample_hpxmls
         ventilation_fan.fan_power = nil
         if ventilation_fan.cfis_has_outdoor_air_control.nil?
           ventilation_fan.cfis_has_outdoor_air_control = true
+        end
+        if ventilation_fan.cfis_control_type.nil?
+          ventilation_fan.cfis_control_type = HPXML::CFISControlTypeOptimized
         end
       end
       next if ventilation_fan.is_cfis_supplemental_fan

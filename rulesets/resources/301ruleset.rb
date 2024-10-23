@@ -1623,6 +1623,7 @@ module ERI_301_Ruleset
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
                                     cfis_has_outdoor_air_control: orig_vent_fan.cfis_has_outdoor_air_control,
+                                    cfis_control_type: orig_vent_fan.cfis_control_type,
                                     cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref,
                                     cfis_supplemental_fan_runs_with_air_handler_fan: orig_vent_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
       new_vent_fan = new_bldg.ventilation_fans[-1]
