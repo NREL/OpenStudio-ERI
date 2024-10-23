@@ -1623,7 +1623,8 @@ module ERI_301_Ruleset
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
                                     cfis_has_outdoor_air_control: orig_vent_fan.cfis_has_outdoor_air_control,
-                                    cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
+                                    cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref,
+                                    cfis_supplemental_fan_runs_with_air_handler_fan: orig_vent_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
       new_vent_fan = new_bldg.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
         new_vent_fan.tested_flow_rate = unit_flow_rate.round(2)
@@ -2585,6 +2586,14 @@ module ERI_301_Ruleset
       else
         return false, 1.0 # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
       end
+    end
+
+    if whole_fans.any? { |f| f.fan_type == HPXML::MechVentTypeCFIS }
+      # Not possible for a CFIS system to be completely balanced, so treat as imbalanced.
+      # (Though note that a CFIS system w/ a supplemental fan that runs simultaneously
+      # with the air handler fan could be balanced for part of the year, but not possible
+      # to know how much of the year up front.)
+      return false, 1.0
     end
 
     cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :total)

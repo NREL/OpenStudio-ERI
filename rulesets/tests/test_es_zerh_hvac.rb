@@ -5,6 +5,7 @@ require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
+require_relative '../../workflow/design'
 
 class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   def setup
@@ -19,6 +20,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    puts
   end
 
   def get_es_zerh_duct_leakage(program_version, value)
@@ -1527,7 +1529,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   end
 
   def _test_ruleset(program_version)
-    require_relative '../../workflow/design'
+    print '.'
     if ESConstants::AllVersions.include? program_version
       designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
                             output_dir: @sample_files_path)]
