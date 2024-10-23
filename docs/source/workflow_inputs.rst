@@ -1840,6 +1840,7 @@ A CFIS system is a supply ventilation system that provides outdoor air to the re
   ``CFISControls/HasOutdoorAirControl``                            boolean                                                    Yes                Presence of controls to block outdoor air when not ventilating [#]_
   ``CFISControls/AdditionalRuntimeOperatingMode``                  string                      See [#]_                       Yes                How additional ventilation is provided (beyond when the HVAC system is running)
   ``CFISControls/SupplementalFan``                                 idref                       See [#]_                       See [#]_           The supplemental fan providing additional ventilation
+  ``CFISControls/extension/ControlType``                           string                      See [#]_                       Yes                Primary air handler fan control strategy [#]_
   ``CFISControls/extension/SupplementalFanRunsWithAirHandlerFan``  boolean                                                    No [#]_   false    Whether the supplemental fan also runs with the air handler fan [#]_
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``       double or boolean  cfm      >= 0 or true                   Yes                Flow rate [#]_ or whether flow rate unmeasured
   ``HoursInOperation``                                             double             hrs/day  >= 0, <= 24                    Yes                Hours per day of operation [#]_
@@ -1851,9 +1852,12 @@ A CFIS system is a supply ventilation system that provides outdoor air to the re
   .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan", "supplemental fan", or "none".
   .. [#] SupplementalFan must reference another ``VentilationFan`` where UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
   .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
+  .. [#] ControlType choices are "optimized" or "timer; "timer" is only allowed if AdditionalRuntimeOperatingMode="air handler fan".
+  .. [#] If ControlType="optimized", ventilation operation is assumed to take advantage of normal HVAC operation as much as possible, resulting in the lowest possible air handler fan energy use.
+         If ControlType="timer", ventilation operation occurs at a fixed interval and may fully, partially, or not coincide with HVAC operation for a given hour, resulting in higher air handler fan energy use.
   .. [#] SupplementalFanRunsWithAirHandlerFan only applies when AdditionalRuntimeOperatingMode="supplemental fan".
   .. [#] If SupplementalFanRunsWithAirHandlerFan is true, in addition to its normal operation, the supplemental fan will also run simultaneously with the air handler fan when outdoor air is being brought in.
-         This is typically used with a supplemental exhaust fan to provide "balanced" (supply + exhaust) airflow.
+         This is typically used with a supplemental exhaust fan to provide balanced (supply + exhaust) airflow, though any additional runtime where the supplemental fan runs by itself will still be imbalanced.
   .. [#] The flow rate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
   .. [#] The HoursInOperation and the flow rate are combined to form the hourly target ventilation rate (e.g., inputs of 90 cfm and 8 hrs/day produce an hourly target ventilation rate of 30 cfm).
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.

@@ -559,6 +559,9 @@
               <CFISControls>
                 <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
+                <extension>
+                  <ControlType>optimized</ControlType>
+                </extension>
               </CFISControls>
               <TestedFlowRate>40.0</TestedFlowRate>
               <HoursInOperation>8.0</HoursInOperation>
@@ -573,6 +576,9 @@
                 <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>supplemental fan</AdditionalRuntimeOperatingMode>
                 <SupplementalFan idref='VentilationFan5'/>
+                <extension>
+                  <ControlType>optimized</ControlType>
+                </extension>
               </CFISControls>
               <TestedFlowRate>42.5</TestedFlowRate>
               <HoursInOperation>8.0</HoursInOperation>
