@@ -5,20 +5,22 @@ require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
+require_relative '../../workflow/design'
 
 class ERIPVTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
-    @schema_validator = XMLValidator.get_schema_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = OpenStudio::XMLValidator.new(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    puts
   end
 
   def test_pv
@@ -26,7 +28,7 @@ class ERIPVTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_pv(hpxml_bldg, [{ location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 180, tilt: 20, power: 4000, inv_eff: 0.96, losses: 0.14, is_shared: false },
                                { location: HPXML::LocationRoof, moduletype: HPXML::PVModuleTypePremium, tracking: HPXML::PVTrackingTypeFixed, azimuth: 90, tilt: 20, power: 1500, inv_eff: 0.96, losses: 0.14, is_shared: false }])
       else
@@ -40,7 +42,7 @@ class ERIPVTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_pv(hpxml_bldg, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 18 }])
       else
         _check_pv(hpxml_bldg)
@@ -53,7 +55,7 @@ class ERIPVTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0, rated_power_output: 6000, round_trip_efficiency: 0.925, is_shared: false }])
       else
         _check_battery(hpxml_bldg)
@@ -66,7 +68,7 @@ class ERIPVTest < Minitest::Test
 
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
-      if [Constants.CalcTypeERIRatedHome].include? calc_type
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
         _check_pv(hpxml_bldg, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 18 }])
         _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 120.0, usable_capacity_kwh: 108.0, rated_power_output: 36000, round_trip_efficiency: 0.925, is_shared: true, nbeds_served: 18 }])
       else
@@ -77,7 +79,7 @@ class ERIPVTest < Minitest::Test
   end
 
   def _test_ruleset(hpxml_name, calc_type)
-    require_relative '../../workflow/design'
+    print '.'
     designs = [Design.new(calc_type: calc_type,
                           output_dir: @sample_files_path)]
 

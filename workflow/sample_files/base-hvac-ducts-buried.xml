@@ -18,7 +18,7 @@
         <Version>SF_National_3.2</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
-        <Version>2021</Version>
+        <Version>2024</Version>
       </IECCERICalculation>
       <ZERHCalculation>
         <Version>SF_2.0</Version>
@@ -56,10 +56,6 @@
       <ClimateandRiskZones>
         <ClimateZoneIECC>
           <Year>2006</Year>
-          <ClimateZone>5B</ClimateZone>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2021</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>

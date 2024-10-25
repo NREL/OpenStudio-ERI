@@ -32,11 +32,11 @@ basedir = File.expand_path(File.dirname(__FILE__))
 def get_program_versions(hpxml_doc)
   versions = []
 
-  { 'ERICalculation/Version' => Constants.ERIVersions,
-    'CO2IndexCalculation/Version' => Constants.ERIVersions,
-    'EnergyStarCalculation/Version' => ESConstants.AllVersions,
-    'IECCERICalculation/Version' => IECCConstants.AllVersions,
-    'ZERHCalculation/Version' => ZERHConstants.AllVersions }.each do |xpath, all_versions|
+  { 'ERICalculation/Version' => Constants::ERIVersions,
+    'CO2IndexCalculation/Version' => Constants::ERIVersions,
+    'EnergyStarCalculation/Version' => ESConstants::AllVersions,
+    'IECCERICalculation/Version' => IECCConstants::AllVersions,
+    'ZERHCalculation/Version' => ZERHConstants::AllVersions }.each do |xpath, all_versions|
     version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string)
     if version == 'latest'
       version = all_versions[-1]
@@ -304,9 +304,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Other #
   # ===== #
 
-  results[:teu] = calculate_teu(rated_output)
-  results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
   results[:bsl] = get_end_use(rated_output, EUT::Battery, FT::Elec)
+  results[:teu] = calculate_teu(rated_output, results[:bsl])
+  results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
   results[:pefrac] = calculate_pefrac(results[:teu], results[:opp], results[:bsl])
 
   results[:eul_dh] = calculate_dh(rated_output)
@@ -620,11 +620,11 @@ end
 
 def get_emissions_co2e(output, fuel = nil)
   if fuel.nil?
-    return output['Emissions: CO2e: RESNET: Net']
+    return output['Emissions: CO2e: ANSI301: Net']
   elsif fuel == FT::Elec
-    return output["Emissions: CO2e: RESNET: #{fuel}: Net"]
+    return output["Emissions: CO2e: ANSI301: #{fuel}: Net"]
   else
-    return output["Emissions: CO2e: RESNET: #{fuel}: Total"]
+    return output["Emissions: CO2e: ANSI301: #{fuel}: Total"]
   end
 end
 
@@ -721,12 +721,13 @@ def calculate_ec(output, sys_id, fuel_types, type, is_dfhp_primary = nil, load_f
   return ec
 end
 
-def calculate_teu(output)
+def calculate_teu(output, bsl)
   # Total Energy Use
   # Fossil fuel site energy uses should be converted to equivalent electric energy use
   # in accordance with Equation 4.1-3. Note: Generator fuel consumption is included here.
   teu = get_fuel_use(output, FT::Elec) +
-        0.4 * get_fuel_use(output, non_elec_fuels)
+        0.4 * get_fuel_use(output, non_elec_fuels) -
+        bsl # Battery storage losses are added to TEU later
   return teu
 end
 
@@ -815,15 +816,15 @@ end
 
 def calculate_eri(design_outputs, resultsdir, output_format, output_filename_prefix: nil, opp_reduction_limit: nil,
                   renewable_energy_limit: nil, skip_csv: false)
-  if design_outputs.keys.include? Constants.CalcTypeERIIndexAdjustmentDesign
-    results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
-                                 design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
+  if design_outputs.keys.include? Constants::CalcTypeERIIndexAdjustmentDesign
+    results_iad = _calculate_eri(design_outputs[Constants::CalcTypeERIIndexAdjustmentDesign],
+                                 design_outputs[Constants::CalcTypeERIIndexAdjustmentReferenceHome])
   else
     results_iad = nil
   end
 
-  results = _calculate_eri(design_outputs[Constants.CalcTypeERIRatedHome],
-                           design_outputs[Constants.CalcTypeERIReferenceHome],
+  results = _calculate_eri(design_outputs[Constants::CalcTypeERIRatedHome],
+                           design_outputs[Constants::CalcTypeERIReferenceHome],
                            results_iad: results_iad,
                            opp_reduction_limit: opp_reduction_limit,
                            renewable_energy_limit: renewable_energy_limit)
@@ -836,12 +837,12 @@ def calculate_eri(design_outputs, resultsdir, output_format, output_filename_pre
 end
 
 def calculate_co2_index(design_outputs, resultsdir, output_format)
-  results_iad = _calculate_eri(design_outputs[Constants.CalcTypeERIIndexAdjustmentDesign],
-                               design_outputs[Constants.CalcTypeERIIndexAdjustmentReferenceHome])
+  results_iad = _calculate_eri(design_outputs[Constants::CalcTypeERIIndexAdjustmentDesign],
+                               design_outputs[Constants::CalcTypeERIIndexAdjustmentReferenceHome])
 
-  if design_outputs.keys.include? Constants.CalcTypeCO2eRatedHome
-    results = _calculate_co2e_index(design_outputs[Constants.CalcTypeCO2eRatedHome],
-                                    design_outputs[Constants.CalcTypeCO2eReferenceHome],
+  if design_outputs.keys.include? Constants::CalcTypeCO2eRatedHome
+    results = _calculate_co2e_index(design_outputs[Constants::CalcTypeCO2eRatedHome],
+                                    design_outputs[Constants::CalcTypeCO2eReferenceHome],
                                     results_iad)
   end
 
@@ -962,9 +963,9 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   rated_eri = rated_eri_results[:eri].round(2)
   rated_wo_opp_eri = rated_eri_results_wo_opp[:eri].round(2)
 
-  if ESConstants.AllVersions.include? ruleset
+  if ESConstants::AllVersions.include? ruleset
     program_abbreviation, program_name = 'ES', 'ENERGY STAR'
-  elsif ZERHConstants.AllVersions.include? ruleset
+  elsif ZERHConstants::AllVersions.include? ruleset
     program_abbreviation, program_name = 'ZERH', 'Zero Energy Ready Home'
   end
   results_csv = File.join(resultsdir, "#{program_abbreviation}_Results.#{output_format}")
@@ -1011,9 +1012,9 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_fr
       energy: values
     }
   end
-  return unless [Constants.CalcTypeERIReferenceHome,
-                 Constants.CalcTypeERIIndexAdjustmentReferenceHome,
-                 Constants.CalcTypeCO2eReferenceHome].include? design_type
+  return unless [Constants::CalcTypeERIReferenceHome,
+                 Constants::CalcTypeERIIndexAdjustmentReferenceHome,
+                 Constants::CalcTypeCO2eReferenceHome].include? design_type
 
   values = data_hashes.map { |h| calculate_reul(h, load_frac, type, is_dfhp_primary).round(2) }
   json_system_output[-1][:load] = values
@@ -1044,8 +1045,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   in_bldg = in_hpxml.buildings[0]
 
   # Gather weather info
-  epw_file = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
-  epw_path = epw_file
+  epw_path = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
   if not File.exist? epw_path
     test_epw_path = File.join(File.dirname(hpxml_path), epw_path)
     epw_path = test_epw_path if File.exist? test_epw_path
@@ -1056,7 +1056,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   end
   if not File.exist? epw_path
     # Can't find EPW location, don't fail just because of that.
-    epw_location = File.basename(epw_file)
+    epw_location = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
     epw_state = 'XX'
   else
     epw_header = File.open(epw_path) { |f| f.readline }
@@ -1086,7 +1086,6 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     design_type = design.calc_type
     diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
     diag_data.delete('Time')
-    File.delete(design.diag_output_path)
 
     hourly_data = Array.new(8760) { Hash.new }
     diag_data.keys.each do |group|
@@ -1104,6 +1103,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
 
     design_hpxmls[design_type] = all_outputs[design_type]['HPXML']
   end
+  FileUtils.rm(Dir[File.join(resultsdir, "*#{Design::DiagnosticFilenameSuffix}")])
 
   # Initial JSON output
   json_output = {
@@ -1145,29 +1145,29 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
                      HPXML::FuelTypeWoodPellets => UnitConversions.convert(1.0, 'kBtu', 'kBtu') }
 
   # Add outputs for each design
-  design_map = { Constants.CalcTypeERIRatedHome => :rated_home_output,
-                 Constants.CalcTypeERIReferenceHome => :hers_reference_home_output,
-                 Constants.CalcTypeERIIndexAdjustmentDesign => :iad_rated_home_output,
-                 Constants.CalcTypeERIIndexAdjustmentReferenceHome => :iad_hers_reference_home_output,
-                 Constants.CalcTypeCO2eReferenceHome => :co2_reference_home_output }
+  design_map = { Constants::CalcTypeERIRatedHome => :rated_home_output,
+                 Constants::CalcTypeERIReferenceHome => :hers_reference_home_output,
+                 Constants::CalcTypeERIIndexAdjustmentDesign => :iad_rated_home_output,
+                 Constants::CalcTypeERIIndexAdjustmentReferenceHome => :iad_hers_reference_home_output,
+                 Constants::CalcTypeCO2eReferenceHome => :co2_reference_home_output }
 
   design_map.each do |design_type, json_element_name|
     data_hashes = design_data_hashes[design_type]
     hpxml_bldg = design_hpxmls[design_type].buildings[0]
 
     # Use rated HPXML to ensure systems across different designs end up in the same order.
-    if [Constants.CalcTypeERIRatedHome, Constants.CalcTypeERIReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[Constants.CalcTypeERIRatedHome]
+    if [Constants::CalcTypeERIRatedHome, Constants::CalcTypeERIReferenceHome].include? design_type
+      rated_hpxml = design_hpxmls[Constants::CalcTypeERIRatedHome]
       rated_bldg = rated_hpxml.buildings[0]
-    elsif [Constants.CalcTypeERIIndexAdjustmentDesign, Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[Constants.CalcTypeERIIndexAdjustmentDesign]
+    elsif [Constants::CalcTypeERIIndexAdjustmentDesign, Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? design_type
+      rated_hpxml = design_hpxmls[Constants::CalcTypeERIIndexAdjustmentDesign]
       rated_bldg = rated_hpxml.buildings[0]
-    elsif [Constants.CalcTypeCO2eRatedHome, Constants.CalcTypeCO2eReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[Constants.CalcTypeCO2eRatedHome]
+    elsif [Constants::CalcTypeCO2eRatedHome, Constants::CalcTypeCO2eReferenceHome].include? design_type
+      rated_hpxml = design_hpxmls[Constants::CalcTypeCO2eRatedHome]
       rated_bldg = rated_hpxml.buildings[0]
     end
 
-    if design_type == Constants.CalcTypeERIRatedHome
+    if design_type == Constants::CalcTypeERIRatedHome
       if has_co2_results
         scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
         if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
@@ -1185,6 +1185,9 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
       fuel_conv = UnitConversions.convert(1.0, 'kBtu', 'kWh')
       values = data_hashes.map { |h| calculate_opp(h, nil, fuel_conv)[0].round(3) }
       json_output[:on_site_power_production] = values
+
+      values = data_hashes.map { |h| get_end_use(h, EUT::Battery, FT::Elec) }
+      json_output[:battery_storage] = values
     end
 
     json_output[json_element_name] = {}
@@ -1277,15 +1280,15 @@ def main(options)
   designs = []
   if not eri_version.nil?
     # ERI designs
-    designs << Design.new(calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
     if not options[:rated_home_only]
-      designs << Design.new(calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-      if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE')
+      designs << Design.new(calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
         # Add IAF designs
-        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-        designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+        designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+        designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
       end
-      if Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2019ABCD')
+      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019ABCD')
       end
     end
   end
@@ -1295,43 +1298,43 @@ def main(options)
     end
 
     # Add CO2e designs
-    designs << Design.new(calc_type: Constants.CalcTypeCO2eRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(calc_type: Constants.CalcTypeCO2eReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(calc_type: Constants::CalcTypeCO2eRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(calc_type: Constants::CalcTypeCO2eReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
 
     # Add IAF designs if we didn't already
-    if designs.find { |d| d.calc_type == Constants.CalcTypeERIIndexAdjustmentDesign }.nil?
-      designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-      designs << Design.new(calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    if designs.find { |d| d.calc_type == Constants::CalcTypeERIIndexAdjustmentDesign }.nil?
+      designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+      designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
     end
   end
   if not es_version.nil?
     # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants.CalcTypeEnergyStarRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
   end
   if not iecc_version.nil?
     # IECC ERI designs
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
   end
   if not zerh_version.nil?
     # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHReference, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants.CalcTypeZERHRated, calc_type: Constants.CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
   end
 
   if designs.size == 0
@@ -1354,10 +1357,10 @@ def main(options)
       # Calculate ERI
       eri_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
       eri_designs = eri_designs.select { |d|
-        [Constants.CalcTypeERIRatedHome,
-         Constants.CalcTypeERIReferenceHome,
-         Constants.CalcTypeERIIndexAdjustmentDesign,
-         Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? d.calc_type
+        [Constants::CalcTypeERIRatedHome,
+         Constants::CalcTypeERIReferenceHome,
+         Constants::CalcTypeERIIndexAdjustmentDesign,
+         Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? d.calc_type
       }
       eri_outputs = retrieve_design_outputs(eri_designs)
 
@@ -1370,10 +1373,10 @@ def main(options)
       # Calculate CO2e Index
       co2_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
       co2_designs = co2_designs.select { |d|
-        [Constants.CalcTypeCO2eRatedHome,
-         Constants.CalcTypeCO2eReferenceHome,
-         Constants.CalcTypeERIIndexAdjustmentDesign,
-         Constants.CalcTypeERIIndexAdjustmentReferenceHome].include? d.calc_type
+        [Constants::CalcTypeCO2eRatedHome,
+         Constants::CalcTypeCO2eReferenceHome,
+         Constants::CalcTypeERIIndexAdjustmentDesign,
+         Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? d.calc_type
       }
       co2_outputs = retrieve_design_outputs(co2_designs)
 
@@ -1399,10 +1402,10 @@ def main(options)
 
     if not es_version.nil?
       # Calculate ES Reference ERI
-      esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarReference }
+      esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants::CalcTypeEnergyStarReference }
       esrd_eri_outputs = retrieve_design_outputs(esrd_eri_designs)
       esrd_eri_results = calculate_eri(esrd_eri_outputs, resultsdir, options[:output_format],
-                                       output_filename_prefix: ESConstants.CalcTypeEnergyStarReference.gsub(' ', ''))
+                                       output_filename_prefix: ESConstants::CalcTypeEnergyStarReference.gsub(' ', ''))
 
       # Calculate Size-Adjusted ERI for Energy Star Reference Homes
       saf = get_saf(esrd_eri_results, es_version, options[:hpxml])
@@ -1410,10 +1413,10 @@ def main(options)
 
       # Calculate ES Rated ERI, w/ On-site Power Production (OPP) restriction as appropriate
       opp_reduction_limit = calc_opp_eri_limit(esrd_eri_results[:eri], saf, es_version)
-      rated_eri_designs = designs.select { |d| d.init_calc_type == ESConstants.CalcTypeEnergyStarRated }
+      rated_eri_designs = designs.select { |d| d.init_calc_type == ESConstants::CalcTypeEnergyStarRated }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
       rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format],
-                                        output_filename_prefix: ESConstants.CalcTypeEnergyStarRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
+                                        output_filename_prefix: ESConstants::CalcTypeEnergyStarRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true
@@ -1435,10 +1438,10 @@ def main(options)
 
     if not zerh_version.nil?
       # Calculate ZERH Reference ERI
-      zerhrd_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHReference }
+      zerhrd_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants::CalcTypeZERHReference }
       zerhrd_eri_outputs = retrieve_design_outputs(zerhrd_eri_designs)
       zerhrd_eri_results = calculate_eri(zerhrd_eri_outputs, resultsdir, options[:output_format],
-                                         output_filename_prefix: ZERHConstants.CalcTypeZERHReference.gsub(' ', ''))
+                                         output_filename_prefix: ZERHConstants::CalcTypeZERHReference.gsub(' ', ''))
 
       # Calculate Size-Adjusted ERI for ZERH Reference Homes
       saf = get_saf(zerhrd_eri_results, zerh_version, options[:hpxml])
@@ -1446,10 +1449,10 @@ def main(options)
 
       # Calculate ZERH Rated ERI
       opp_reduction_limit = calc_opp_eri_limit(zerhrd_eri_results[:eri], saf, zerh_version)
-      rated_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants.CalcTypeZERHRated }
+      rated_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants::CalcTypeZERHRated }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
       rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format],
-                                        output_filename_prefix: ZERHConstants.CalcTypeZERHRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
+                                        output_filename_prefix: ZERHConstants::CalcTypeZERHRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true
@@ -1469,7 +1472,7 @@ def main(options)
       end
     end
 
-    if options[:diagnostic_output] && (Constants.ERIVersions.index(eri_version) >= Constants.ERIVersions.index('2014AE'))
+    if options[:diagnostic_output] && (Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE'))
       # Write HERS diagnostic output?
       puts 'Generating HERS diagnostic output...'
       write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, options[:hpxml], resultsdir)
