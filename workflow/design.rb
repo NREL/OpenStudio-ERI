@@ -3,8 +3,11 @@
 # Separate ruby script to allow being called using system() on Windows.
 
 require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
+require_relative '../rulesets/resources/constants'
 
 class Design
+  DiagnosticFilenameSuffix = 'Diagnostic.msgpack'
+
   def initialize(calc_type: nil, init_calc_type: nil, output_dir: nil, iecc_version: nil, output_format: 'csv')
     @calc_type = calc_type
     @init_calc_type = init_calc_type
@@ -19,7 +22,15 @@ class Design
       @output_dir = output_dir
       @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
       @annual_output_path = File.join(output_dir, 'results', "#{name}.#{output_format}")
-      @diag_output_path = File.join(output_dir, 'results', "#{name}_Diagnostic.msgpack")
+      if [Constants::CalcTypeERIRatedHome,
+          Constants::CalcTypeERIReferenceHome,
+          Constants::CalcTypeERIIndexAdjustmentDesign,
+          Constants::CalcTypeERIIndexAdjustmentReferenceHome,
+          Constants::CalcTypeCO2eRatedHome,
+          Constants::CalcTypeCO2eReferenceHome].include?(calc_type) && init_calc_type.nil?
+        # Only need to create hourly diagnostic output file for certain runs
+        @diag_output_path = File.join(output_dir, 'results', "#{name}_#{DiagnosticFilenameSuffix}")
+      end
       @design_dir = File.join(output_dir, name)
       if not init_calc_type.nil?
         @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
@@ -45,7 +56,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['debug'] = debug
   args['add_component_loads'] = (add_comp_loads || timeseries_outputs.include?('componentloads'))
   args['skip_validation'] = !debug
-  update_args_hash(measures, measure_subdir, args)
+  measures[measure_subdir] = [args]
 
   # Add OS-HPXML reporting measure to workflow
   measure_subdir = 'hpxml-measures/ReportSimulationOutput'
@@ -68,9 +79,9 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
   args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path))
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_#{timeseries_output_freq.capitalize}.#{output_format}")))
-  update_args_hash(measures, measure_subdir, args)
+  measures[measure_subdir] = [args]
 
-  if diagnostic_output
+  if diagnostic_output && !design.diag_output_path.nil?
     # Add OS-HPXML reporting measure to workflow
     measure_subdir = 'hpxml-measures/ReportSimulationOutput'
     args = {}
@@ -84,7 +95,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
     args['include_timeseries_weather'] = true
     args['timeseries_num_decimal_places'] = 3
     args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.diag_output_path))
-    update_args_hash(measures, measure_subdir, args)
+    measures[measure_subdir] << args
   end
 
   run_hpxml_workflow(design.design_dir, measures, measures_dir, debug: debug,

@@ -1,6 +1,6 @@
 {
     "title": "HERS Diagnostic Output",
-    "description": "A schema for detailed diagnostic outputs from RESNET Accredited HERS software tools.",
+    "description": "A schema for detailed diagnostic outputs from RESNET(r) Accredited HERS software tools.",
     "definitions": {
         "SchemaType": {
             "type": "string",
@@ -9,6 +9,23 @@
             ],
             "descriptions": [
                 "HERS Diagnostic Output"
+            ]
+        },
+        "FuelType": {
+            "type": "string",
+            "enum": [
+                "ELECTRICITY",
+                "NATURAL_GAS",
+                "FUEL_OIL_2",
+                "LIQUID_PETROLEUM_GAS",
+                "BIOMASS"
+            ],
+            "descriptions": [
+                "Electricity",
+                "Natural gas",
+                "Fuel oil #2",
+                "Liquid petroleum gas",
+                "Biomass"
             ]
         },
         "HERSDiagnosticOutput": {
@@ -25,7 +42,14 @@
                         },
                         "schema": {
                             "description": "Schema name or identifier",
-                            "notes": "Identifies the schema used to define the data content"
+                            "notes": "Identifies the schema used to define the data content",
+                            "type": "string",
+                            "enum": [
+                                "HERS_DIAGNOSTIC_OUTPUT"
+                            ],
+                            "descriptions": [
+                                "HERS Diagnostic Output"
+                            ]
                         },
                         "schema_version": {
                             "description": "Version of the root schema this data complies with",
@@ -56,7 +80,8 @@
                         },
                         "data_source": {
                             "description": "Source(s) of the data",
-                            "type": "string"
+                            "type": "string",
+                            "notes": "Used by *data publisher* to document methods (e.g. software and version) used to generate data. **Informative note:** `data_source` may be different from ratings source(s) included elsewhere."
                         },
                         "disclaimer": {
                             "description": "Characterization of accuracy, limitations, and applicability of this data",
@@ -122,17 +147,19 @@
                     "description": "HERS Index",
                     "type": "number",
                     "units": "-",
-                    "notes": "Unrounded value based on the latest version of MINHERS"
+                    "notes": "Unrounded value based on the latest version of MINHERS(r)"
                 },
                 "carbon_index": {
-                    "description": "RESNET Carbon Index",
+                    "description": "RESNET(r) Carbon Index",
                     "type": "number",
                     "units": "-",
-                    "notes": "Unrounded value based on the latest version of MINHERS"
+                    "notes": "Unrounded value based on the latest version of MINHERS(r)"
                 },
                 "electricity_co2_emissions_factors": {
                     "description": "Regional emissions factors for electricity use",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number",
                         "minimum": 0.0
@@ -150,9 +177,21 @@
                 "on_site_power_production": {
                     "description": "On-site power production (OPP) of the rated home",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number",
                         "minimum": 0.0
+                    },
+                    "units": "kWh"
+                },
+                "battery_storage": {
+                    "description": "Battery storage charging (+) or discharging (-) of the rated home",
+                    "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
+                    "items": {
+                        "type": "number"
                     },
                     "units": "kWh"
                 },
@@ -163,6 +202,8 @@
                         "conditioned_space_temperature": {
                             "description": "Conditioned space temperature",
                             "type": "array",
+                            "minItems": 8760,
+                            "maxItems": 8760,
                             "items": {
                                 "type": "number"
                             },
@@ -171,6 +212,7 @@
                         "space_heating_system_output": {
                             "description": "Array of outputs for space heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -201,6 +243,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -211,6 +255,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -235,6 +280,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -261,6 +308,7 @@
                         "space_cooling_system_output": {
                             "description": "Array of outputs for space cooling systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -291,6 +339,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -301,6 +351,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -325,6 +376,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -351,6 +404,7 @@
                         "water_heating_system_output": {
                             "description": "Array of outputs for water heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -381,6 +435,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -391,6 +447,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -415,6 +472,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -441,6 +500,7 @@
                         "lighting_and_appliance_energy": {
                             "description": "Lighting and appliance energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -465,6 +525,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -482,6 +544,7 @@
                         "ventilation_energy": {
                             "description": "Ventilation energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -506,6 +569,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -523,6 +588,7 @@
                         "dehumidification_energy": {
                             "description": "Dehumidification energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -547,6 +613,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -579,6 +647,8 @@
                         "conditioned_space_temperature": {
                             "description": "Conditioned space temperature",
                             "type": "array",
+                            "minItems": 8760,
+                            "maxItems": 8760,
                             "items": {
                                 "type": "number"
                             },
@@ -587,6 +657,7 @@
                         "space_heating_system_output": {
                             "description": "Array of outputs for space heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -617,6 +688,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -627,6 +700,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -651,6 +725,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -677,6 +753,7 @@
                         "space_cooling_system_output": {
                             "description": "Array of outputs for space cooling systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -707,6 +784,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -717,6 +796,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -741,6 +821,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -767,6 +849,7 @@
                         "water_heating_system_output": {
                             "description": "Array of outputs for water heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -797,6 +880,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -807,6 +892,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -831,6 +917,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -857,6 +945,7 @@
                         "lighting_and_appliance_energy": {
                             "description": "Lighting and appliance energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -881,6 +970,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -898,6 +989,7 @@
                         "ventilation_energy": {
                             "description": "Ventilation energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -922,6 +1014,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -939,6 +1033,7 @@
                         "dehumidification_energy": {
                             "description": "Dehumidification energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -963,6 +1058,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -995,6 +1092,8 @@
                         "conditioned_space_temperature": {
                             "description": "Conditioned space temperature",
                             "type": "array",
+                            "minItems": 8760,
+                            "maxItems": 8760,
                             "items": {
                                 "type": "number"
                             },
@@ -1003,6 +1102,7 @@
                         "space_heating_system_output": {
                             "description": "Array of outputs for space heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1033,6 +1133,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1043,6 +1145,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1067,6 +1170,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1093,6 +1198,7 @@
                         "space_cooling_system_output": {
                             "description": "Array of outputs for space cooling systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1123,6 +1229,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1133,6 +1241,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1157,6 +1266,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1183,6 +1294,7 @@
                         "water_heating_system_output": {
                             "description": "Array of outputs for water heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1213,6 +1325,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1223,6 +1337,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1247,6 +1362,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1273,6 +1390,7 @@
                         "lighting_and_appliance_energy": {
                             "description": "Lighting and appliance energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1297,6 +1415,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1314,6 +1434,7 @@
                         "ventilation_energy": {
                             "description": "Ventilation energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1338,6 +1459,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1355,6 +1478,7 @@
                         "dehumidification_energy": {
                             "description": "Dehumidification energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1379,6 +1503,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1411,6 +1537,8 @@
                         "conditioned_space_temperature": {
                             "description": "Conditioned space temperature",
                             "type": "array",
+                            "minItems": 8760,
+                            "maxItems": 8760,
                             "items": {
                                 "type": "number"
                             },
@@ -1419,6 +1547,7 @@
                         "space_heating_system_output": {
                             "description": "Array of outputs for space heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1449,6 +1578,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1459,6 +1590,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1483,6 +1615,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1509,6 +1643,7 @@
                         "space_cooling_system_output": {
                             "description": "Array of outputs for space cooling systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1539,6 +1674,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1549,6 +1686,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1573,6 +1711,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1599,6 +1739,7 @@
                         "water_heating_system_output": {
                             "description": "Array of outputs for water heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1629,6 +1770,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1639,6 +1782,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1663,6 +1807,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1689,6 +1835,7 @@
                         "lighting_and_appliance_energy": {
                             "description": "Lighting and appliance energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1713,6 +1860,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1730,6 +1879,7 @@
                         "ventilation_energy": {
                             "description": "Ventilation energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1754,6 +1904,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1771,6 +1923,7 @@
                         "dehumidification_energy": {
                             "description": "Dehumidification energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1795,6 +1948,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1827,6 +1982,8 @@
                         "conditioned_space_temperature": {
                             "description": "Conditioned space temperature",
                             "type": "array",
+                            "minItems": 8760,
+                            "maxItems": 8760,
                             "items": {
                                 "type": "number"
                             },
@@ -1835,6 +1992,7 @@
                         "space_heating_system_output": {
                             "description": "Array of outputs for space heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1865,6 +2023,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1875,6 +2035,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1899,6 +2060,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -1925,6 +2088,7 @@
                         "space_cooling_system_output": {
                             "description": "Array of outputs for space cooling systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -1955,6 +2119,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -1965,6 +2131,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -1989,6 +2156,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -2015,6 +2184,7 @@
                         "water_heating_system_output": {
                             "description": "Array of outputs for water heating systems",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -2045,6 +2215,8 @@
                                     "load": {
                                         "description": "System load",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -2055,6 +2227,7 @@
                                     "energy_use": {
                                         "description": "System energy use",
                                         "type": "array",
+                                        "minItems": 1,
                                         "items": {
                                             "type": "object",
                                             "properties": {
@@ -2079,6 +2252,8 @@
                                                 "energy": {
                                                     "description": "Energy use",
                                                     "type": "array",
+                                                    "minItems": 8760,
+                                                    "maxItems": 8760,
                                                     "items": {
                                                         "type": "number",
                                                         "minimum": 0.0
@@ -2105,6 +2280,7 @@
                         "lighting_and_appliance_energy": {
                             "description": "Lighting and appliance energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -2129,6 +2305,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -2146,6 +2324,7 @@
                         "ventilation_energy": {
                             "description": "Ventilation energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -2170,6 +2349,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -2187,6 +2368,7 @@
                         "dehumidification_energy": {
                             "description": "Dehumidification energy use",
                             "type": "array",
+                            "minItems": 1,
                             "items": {
                                 "type": "object",
                                 "properties": {
@@ -2211,6 +2393,8 @@
                                     "energy": {
                                         "description": "Energy use",
                                         "type": "array",
+                                        "minItems": 8760,
+                                        "maxItems": 8760,
                                         "items": {
                                             "type": "number",
                                             "minimum": 0.0
@@ -2249,28 +2433,13 @@
                 "number_of_stories",
                 "hers_index",
                 "outdoor_drybulb_temperature",
-                "on_site_power_production",
                 "rated_home_output",
-                "hers_reference_home_output"
+                "hers_reference_home_output",
+                "co2_reference_home_output",
+                "iad_rated_home_output",
+                "iad_hers_reference_home_output"
             ],
             "additionalProperties": false
-        },
-        "FuelType": {
-            "type": "string",
-            "enum": [
-                "ELECTRICITY",
-                "NATURAL_GAS",
-                "FUEL_OIL_2",
-                "LIQUID_PETROLEUM_GAS",
-                "BIOMASS"
-            ],
-            "descriptions": [
-                "Electricity",
-                "Natural gas",
-                "Fuel oil #2",
-                "Liquid petroleum gas",
-                "Biomass"
-            ]
         },
         "EnergyOutput": {
             "type": "object",
@@ -2296,6 +2465,8 @@
                 "energy": {
                     "description": "Energy use",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number",
                         "minimum": 0.0
@@ -2339,6 +2510,8 @@
                 "load": {
                     "description": "System load",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number",
                         "minimum": 0.0
@@ -2349,6 +2522,7 @@
                 "energy_use": {
                     "description": "System energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2373,6 +2547,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2401,6 +2577,8 @@
                 "conditioned_space_temperature": {
                     "description": "Conditioned space temperature",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number"
                     },
@@ -2409,6 +2587,7 @@
                 "space_heating_system_output": {
                     "description": "Array of outputs for space heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2439,6 +2618,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2449,6 +2630,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -2473,6 +2655,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -2499,6 +2683,7 @@
                 "space_cooling_system_output": {
                     "description": "Array of outputs for space cooling systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2529,6 +2714,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2539,6 +2726,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -2563,6 +2751,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -2589,6 +2779,7 @@
                 "water_heating_system_output": {
                     "description": "Array of outputs for water heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2619,6 +2810,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2629,6 +2822,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -2653,6 +2847,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -2679,6 +2875,7 @@
                 "lighting_and_appliance_energy": {
                     "description": "Lighting and appliance energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2703,6 +2900,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2720,6 +2919,7 @@
                 "ventilation_energy": {
                     "description": "Ventilation energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2744,6 +2944,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2761,6 +2963,7 @@
                 "dehumidification_energy": {
                     "description": "Dehumidification energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -2785,6 +2988,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -2825,7 +3030,14 @@
                 },
                 "schema": {
                     "description": "Schema name or identifier",
-                    "notes": "Identifies the schema used to define the data content"
+                    "notes": "Identifies the schema used to define the data content",
+                    "type": "string",
+                    "enum": [
+                        "HERS_DIAGNOSTIC_OUTPUT"
+                    ],
+                    "descriptions": [
+                        "HERS Diagnostic Output"
+                    ]
                 },
                 "schema_version": {
                     "description": "Version of the root schema this data complies with",
@@ -2856,7 +3068,8 @@
                 },
                 "data_source": {
                     "description": "Source(s) of the data",
-                    "type": "string"
+                    "type": "string",
+                    "notes": "Used by *data publisher* to document methods (e.g. software and version) used to generate data. **Informative note:** `data_source` may be different from ratings source(s) included elsewhere."
                 },
                 "disclaimer": {
                     "description": "Characterization of accuracy, limitations, and applicability of this data",
@@ -2922,17 +3135,19 @@
             "description": "HERS Index",
             "type": "number",
             "units": "-",
-            "notes": "Unrounded value based on the latest version of MINHERS"
+            "notes": "Unrounded value based on the latest version of MINHERS(r)"
         },
         "carbon_index": {
-            "description": "RESNET Carbon Index",
+            "description": "RESNET(r) Carbon Index",
             "type": "number",
             "units": "-",
-            "notes": "Unrounded value based on the latest version of MINHERS"
+            "notes": "Unrounded value based on the latest version of MINHERS(r)"
         },
         "electricity_co2_emissions_factors": {
             "description": "Regional emissions factors for electricity use",
             "type": "array",
+            "minItems": 8760,
+            "maxItems": 8760,
             "items": {
                 "type": "number",
                 "minimum": 0.0
@@ -2950,9 +3165,21 @@
         "on_site_power_production": {
             "description": "On-site power production (OPP) of the rated home",
             "type": "array",
+            "minItems": 8760,
+            "maxItems": 8760,
             "items": {
                 "type": "number",
                 "minimum": 0.0
+            },
+            "units": "kWh"
+        },
+        "battery_storage": {
+            "description": "Battery storage charging (+) or discharging (-) of the rated home",
+            "type": "array",
+            "minItems": 8760,
+            "maxItems": 8760,
+            "items": {
+                "type": "number"
             },
             "units": "kWh"
         },
@@ -2963,6 +3190,8 @@
                 "conditioned_space_temperature": {
                     "description": "Conditioned space temperature",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number"
                     },
@@ -2971,6 +3200,7 @@
                 "space_heating_system_output": {
                     "description": "Array of outputs for space heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3001,6 +3231,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3011,6 +3243,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3035,6 +3268,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3061,6 +3296,7 @@
                 "space_cooling_system_output": {
                     "description": "Array of outputs for space cooling systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3091,6 +3327,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3101,6 +3339,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3125,6 +3364,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3151,6 +3392,7 @@
                 "water_heating_system_output": {
                     "description": "Array of outputs for water heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3181,6 +3423,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3191,6 +3435,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3215,6 +3460,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3241,6 +3488,7 @@
                 "lighting_and_appliance_energy": {
                     "description": "Lighting and appliance energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3265,6 +3513,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3282,6 +3532,7 @@
                 "ventilation_energy": {
                     "description": "Ventilation energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3306,6 +3557,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3323,6 +3576,7 @@
                 "dehumidification_energy": {
                     "description": "Dehumidification energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3347,6 +3601,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3379,6 +3635,8 @@
                 "conditioned_space_temperature": {
                     "description": "Conditioned space temperature",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number"
                     },
@@ -3387,6 +3645,7 @@
                 "space_heating_system_output": {
                     "description": "Array of outputs for space heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3417,6 +3676,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3427,6 +3688,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3451,6 +3713,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3477,6 +3741,7 @@
                 "space_cooling_system_output": {
                     "description": "Array of outputs for space cooling systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3507,6 +3772,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3517,6 +3784,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3541,6 +3809,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3567,6 +3837,7 @@
                 "water_heating_system_output": {
                     "description": "Array of outputs for water heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3597,6 +3868,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3607,6 +3880,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3631,6 +3905,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3657,6 +3933,7 @@
                 "lighting_and_appliance_energy": {
                     "description": "Lighting and appliance energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3681,6 +3958,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3698,6 +3977,7 @@
                 "ventilation_energy": {
                     "description": "Ventilation energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3722,6 +4002,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3739,6 +4021,7 @@
                 "dehumidification_energy": {
                     "description": "Dehumidification energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3763,6 +4046,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3789,12 +4074,14 @@
             "additionalProperties": false
         },
         "co2_reference_home_output": {
-            "description": "CO2 RaReferenceted Home outputs",
+            "description": "CO2 Reference Home outputs",
             "type": "object",
             "properties": {
                 "conditioned_space_temperature": {
                     "description": "Conditioned space temperature",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number"
                     },
@@ -3803,6 +4090,7 @@
                 "space_heating_system_output": {
                     "description": "Array of outputs for space heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3833,6 +4121,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3843,6 +4133,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3867,6 +4158,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3893,6 +4186,7 @@
                 "space_cooling_system_output": {
                     "description": "Array of outputs for space cooling systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -3923,6 +4217,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -3933,6 +4229,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -3957,6 +4254,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -3983,6 +4282,7 @@
                 "water_heating_system_output": {
                     "description": "Array of outputs for water heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4013,6 +4313,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4023,6 +4325,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4047,6 +4350,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4073,6 +4378,7 @@
                 "lighting_and_appliance_energy": {
                     "description": "Lighting and appliance energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4097,6 +4403,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4114,6 +4422,7 @@
                 "ventilation_energy": {
                     "description": "Ventilation energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4138,6 +4447,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4155,6 +4466,7 @@
                 "dehumidification_energy": {
                     "description": "Dehumidification energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4179,6 +4491,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4211,6 +4525,8 @@
                 "conditioned_space_temperature": {
                     "description": "Conditioned space temperature",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number"
                     },
@@ -4219,6 +4535,7 @@
                 "space_heating_system_output": {
                     "description": "Array of outputs for space heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4249,6 +4566,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4259,6 +4578,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4283,6 +4603,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4309,6 +4631,7 @@
                 "space_cooling_system_output": {
                     "description": "Array of outputs for space cooling systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4339,6 +4662,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4349,6 +4674,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4373,6 +4699,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4399,6 +4727,7 @@
                 "water_heating_system_output": {
                     "description": "Array of outputs for water heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4429,6 +4758,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4439,6 +4770,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4463,6 +4795,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4489,6 +4823,7 @@
                 "lighting_and_appliance_energy": {
                     "description": "Lighting and appliance energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4513,6 +4848,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4530,6 +4867,7 @@
                 "ventilation_energy": {
                     "description": "Ventilation energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4554,6 +4892,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4571,6 +4911,7 @@
                 "dehumidification_energy": {
                     "description": "Dehumidification energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4595,6 +4936,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4627,6 +4970,8 @@
                 "conditioned_space_temperature": {
                     "description": "Conditioned space temperature",
                     "type": "array",
+                    "minItems": 8760,
+                    "maxItems": 8760,
                     "items": {
                         "type": "number"
                     },
@@ -4635,6 +4980,7 @@
                 "space_heating_system_output": {
                     "description": "Array of outputs for space heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4665,6 +5011,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4675,6 +5023,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4699,6 +5048,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4725,6 +5076,7 @@
                 "space_cooling_system_output": {
                     "description": "Array of outputs for space cooling systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4755,6 +5107,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4765,6 +5119,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4789,6 +5144,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4815,6 +5172,7 @@
                 "water_heating_system_output": {
                     "description": "Array of outputs for water heating systems",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4845,6 +5203,8 @@
                             "load": {
                                 "description": "System load",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4855,6 +5215,7 @@
                             "energy_use": {
                                 "description": "System energy use",
                                 "type": "array",
+                                "minItems": 1,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -4879,6 +5240,8 @@
                                         "energy": {
                                             "description": "Energy use",
                                             "type": "array",
+                                            "minItems": 8760,
+                                            "maxItems": 8760,
                                             "items": {
                                                 "type": "number",
                                                 "minimum": 0.0
@@ -4905,6 +5268,7 @@
                 "lighting_and_appliance_energy": {
                     "description": "Lighting and appliance energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4929,6 +5293,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4946,6 +5312,7 @@
                 "ventilation_energy": {
                     "description": "Ventilation energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -4970,6 +5337,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -4987,6 +5356,7 @@
                 "dehumidification_energy": {
                     "description": "Dehumidification energy use",
                     "type": "array",
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
@@ -5011,6 +5381,8 @@
                             "energy": {
                                 "description": "Energy use",
                                 "type": "array",
+                                "minItems": 8760,
+                                "maxItems": 8760,
                                 "items": {
                                     "type": "number",
                                     "minimum": 0.0
@@ -5049,9 +5421,11 @@
         "number_of_stories",
         "hers_index",
         "outdoor_drybulb_temperature",
-        "on_site_power_production",
         "rated_home_output",
-        "hers_reference_home_output"
+        "hers_reference_home_output",
+        "co2_reference_home_output",
+        "iad_rated_home_output",
+        "iad_hers_reference_home_output"
     ],
     "additionalProperties": false
 }

@@ -131,16 +131,16 @@ ES_Results.csv
 
 A ``ES_Results.csv`` file will be produced when requesting the EnergyStarCalculation; see :ref:`hpxml_calculations`.
 
-   ====================================  =====
-   Output                                Notes
-   ====================================  =====
-   Reference Home ERI                    ERI of the ES Reference Home
-   SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
-   SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
-   Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
-   Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
-   ENERGY STAR Certification             PASS or FAIL
-   ====================================  =====
+  ====================================  =====
+  Output                                Notes
+  ====================================  =====
+  Reference Home ERI                    ERI of the ES Reference Home
+  SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
+  SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
+  Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
+  Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
+  ENERGY STAR Certification             PASS or FAIL
+  ====================================  =====
 
 .. _zerh_results_csv:
 
@@ -149,16 +149,16 @@ ZERH_Results.csv
 
 A ``ZERH_Results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
 
-   ====================================  =====
-   Output                                Notes
-   ====================================  =====
-   Reference Home ERI                    ERI of the ZERH Reference Home
-   SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
-   SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
-   Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
-   Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
-   Zero Energy Ready Home Certification  PASS or FAIL
-   ====================================  =====
+  ====================================  =====
+  Output                                Notes
+  ====================================  =====
+  Reference Home ERI                    ERI of the ZERH Reference Home
+  SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
+  SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
+  Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
+  Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
+  Zero Energy Ready Home Certification  PASS or FAIL
+  ====================================  =====
 
 .. _home_annual_outputs_csv:
 
@@ -209,18 +209,18 @@ Annual Energy by Fuel Type
 
 Fuel uses are listed below.
 
-   ====================================  ===========================
-   Type                                  Notes
-   ====================================  ===========================
-   Fuel Use: Electricity: Total (MBtu)   Total electricity consumption
-   Fuel Use: Electricity: Net (MBtu)     Subtracts any power produced by PV or generators
-   Fuel Use: Natural Gas: Total (MBtu)
-   Fuel Use: Fuel Oil: Total (MBtu)
-   Fuel Use: Propane: Total (MBtu)
-   Fuel Use: Wood Cord: Total (MBtu)         
-   Fuel Use: Wood Pellets: Total (MBtu)
-   Fuel Use: Coal: Total (MBtu)          Not used by OS-ERI
-   ====================================  ===========================
+  ====================================  ===========================
+  Type                                  Notes
+  ====================================  ===========================
+  Fuel Use: Electricity: Total (MBtu)   Total electricity consumption
+  Fuel Use: Electricity: Net (MBtu)     Subtracts any power produced by PV or generators
+  Fuel Use: Natural Gas: Total (MBtu)
+  Fuel Use: Fuel Oil: Total (MBtu)
+  Fuel Use: Propane: Total (MBtu)
+  Fuel Use: Wood Cord: Total (MBtu)         
+  Fuel Use: Wood Pellets: Total (MBtu)
+  Fuel Use: Coal: Total (MBtu)          Not used by OS-ERI
+  ====================================  ===========================
 
 .. _annualenduses:
 
@@ -232,107 +232,107 @@ End uses are listed below.
 Note that all end uses are mutually exclusive -- the "Electricity: Heating" end use, for example, excludes energy reported in the "Electricity: Heating Fans/Pumps" end use.
 So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural Gas: \*") equal the above reported fuel use (e.g., "Fuel Use: Natural Gas: Total").
 
-   ================================================================  ====================================================
-   Type                                                                 Notes
-   ================================================================  ====================================================
-   End Use: Electricity: Heating (MBtu)                              Excludes heat pump backup and fans/pumps
-   End Use: Electricity: Heating Fans/Pumps (MBtu)                   Includes supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
-   End Use: Electricity: Heating Heat Pump Backup (MBtu)             Excludes heat pump backup fans/pumps
-   End Use: Electricity: Heating Heat Pump Backup Fans/Pumps (MBtu)  Includes supply fan (air distribution) or circulating pump (hydronic distribution) during heat pump backup
-   End Use: Electricity: Cooling (MBtu)                              Excludes fans/pumps
-   End Use: Electricity: Cooling Fans/Pumps (MBtu)                   Includes supply fan (air distribution) and circulating pump (geothermal loop)
-   End Use: Electricity: Hot Water (MBtu)                            Excludes recirc pump and solar thermal pump
-   End Use: Electricity: Hot Water Recirc Pump (MBtu)
-   End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)         Non-zero only when using detailed (not simple) solar thermal inputs
-   End Use: Electricity: Lighting Interior (MBtu)
-   End Use: Electricity: Lighting Garage (MBtu)
-   End Use: Electricity: Lighting Exterior (MBtu)
-   End Use: Electricity: Mech Vent (MBtu)                            Excludes preheating/precooling
-   End Use: Electricity: Mech Vent Preheating (MBtu)                 Shared ventilation preconditioning system
-   End Use: Electricity: Mech Vent Precooling (MBtu)                 Shared ventilation preconditioning system
-   End Use: Electricity: Whole House Fan (MBtu)
-   End Use: Electricity: Refrigerator (MBtu)
-   End Use: Electricity: Freezer (MBtu)                              Not used by OS-ERI
-   End Use: Electricity: Dehumidifier (MBtu)
-   End Use: Electricity: Dishwasher (MBtu)
-   End Use: Electricity: Clothes Washer (MBtu)
-   End Use: Electricity: Clothes Dryer (MBtu)
-   End Use: Electricity: Range/Oven (MBtu)
-   End Use: Electricity: Ceiling Fan (MBtu)
-   End Use: Electricity: Television (MBtu)
-   End Use: Electricity: Plug Loads (MBtu)                           Excludes independently reported plug loads (e.g., well pump)
-   End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
-   End Use: Electricity: Well Pump (MBtu)                            Not used by OS-ERI
-   End Use: Electricity: Pool Heater (MBtu)                          Not used by OS-ERI
-   End Use: Electricity: Pool Pump (MBtu)                            Not used by OS-ERI
-   End Use: Electricity: Hot Tub Heater (MBtu)                       Not used by OS-ERI
-   End Use: Electricity: Hot Tub Pump (MBtu)                         Not used by OS-ERI
-   End Use: Electricity: PV (MBtu)                                   Negative value for any power produced
-   End Use: Electricity: Generator (MBtu)                            Negative value for any power produced
-   End Use: Electricity: Battery (MBtu)                              Not used by OS-ERI
-   End Use: Natural Gas: Heating (MBtu)                              Excludes heat pump backup
-   End Use: Natural Gas: Heating Heat Pump Backup (MBtu)
-   End Use: Natural Gas: Hot Water (MBtu)
-   End Use: Natural Gas: Clothes Dryer (MBtu)
-   End Use: Natural Gas: Range/Oven (MBtu)
-   End Use: Natural Gas: Mech Vent Preheating (MBtu)                 Shared ventilation preconditioning system
-   End Use: Natural Gas: Pool Heater (MBtu)                          Not used by OS-ERI
-   End Use: Natural Gas: Hot Tub Heater (MBtu)                       Not used by OS-ERI
-   End Use: Natural Gas: Grill (MBtu)                                Not used by OS-ERI
-   End Use: Natural Gas: Lighting (MBtu)                             Not used by OS-ERI
-   End Use: Natural Gas: Fireplace (MBtu)                            Not used by OS-ERI
-   End Use: Natural Gas: Generator (MBtu)                            Positive value for any fuel consumed
-   End Use: Fuel Oil: Heating (MBtu)                                 Excludes heat pump backup
-   End Use: Fuel Oil: Heating Heat Pump Backup (MBtu)
-   End Use: Fuel Oil: Hot Water (MBtu)
-   End Use: Fuel Oil: Clothes Dryer (MBtu)
-   End Use: Fuel Oil: Range/Oven (MBtu)
-   End Use: Fuel Oil: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
-   End Use: Fuel Oil: Grill (MBtu)                                   Not used by OS-ERI
-   End Use: Fuel Oil: Lighting (MBtu)                                Not used by OS-ERI
-   End Use: Fuel Oil: Fireplace (MBtu)                               Not used by OS-ERI
-   End Use: Fuel Oil: Generator (MBtu)                               Positive value for any fuel consumed
-   End Use: Propane: Heating (MBtu)                                  Excludes heat pump backup
-   End Use: Propane: Heating Heat Pump Backup (MBtu)
-   End Use: Propane: Hot Water (MBtu)
-   End Use: Propane: Clothes Dryer (MBtu)
-   End Use: Propane: Range/Oven (MBtu)
-   End Use: Propane: Mech Vent Preheating (MBtu)                     Shared ventilation preconditioning system
-   End Use: Propane: Grill (MBtu)                                    Not used by OS-ERI
-   End Use: Propane: Lighting (MBtu)                                 Not used by OS-ERI
-   End Use: Propane: Fireplace (MBtu)                                Not used by OS-ERI
-   End Use: Propane: Generator (MBtu)                                Positive value for any fuel consumed
-   End Use: Wood Cord: Heating (MBtu)                                Excludes heat pump backup
-   End Use: Wood Cord: Heating Heat Pump Backup (MBtu)
-   End Use: Wood Cord: Hot Water (MBtu)
-   End Use: Wood Cord: Clothes Dryer (MBtu)
-   End Use: Wood Cord: Range/Oven (MBtu)
-   End Use: Wood Cord: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
-   End Use: Wood Cord: Grill (MBtu)                                  Not used by OS-ERI
-   End Use: Wood Cord: Lighting (MBtu)                               Not used by OS-ERI
-   End Use: Wood Cord: Fireplace (MBtu)                              Not used by OS-ERI
-   End Use: Wood Cord: Generator (MBtu)                              Positive value for any fuel consumed
-   End Use: Wood Pellets: Heating (MBtu)                             Excludes heat pump backup
-   End Use: Wood Pellets: Heating Heat Pump Backup (MBtu)
-   End Use: Wood Pellets: Hot Water (MBtu)
-   End Use: Wood Pellets: Clothes Dryer (MBtu)
-   End Use: Wood Pellets: Range/Oven (MBtu)
-   End Use: Wood Pellets: Mech Vent Preheating (MBtu)                Shared ventilation preconditioning system
-   End Use: Wood Pellets: Grill (MBtu)                               Not used by OS-ERI
-   End Use: Wood Pellets: Lighting (MBtu)                            Not used by OS-ERI
-   End Use: Wood Pellets: Fireplace (MBtu)                           Not used by OS-ERI
-   End Use: Wood Pellets: Generator (MBtu)                           Positive value for any fuel consumed
-   End Use: Coal: Heating (MBtu)                                     Excludes heat pump backup
-   End Use: Coal: Heating Heat Pump Backup (MBtu)
-   End Use: Coal: Hot Water (MBtu)                                   Not used by OS-ERI
-   End Use: Coal: Clothes Dryer (MBtu)                               Not used by OS-ERI
-   End Use: Coal: Range/Oven (MBtu)                                  Not used by OS-ERI
-   End Use: Coal: Mech Vent Preheating (MBtu)                        Not used by OS-ERI
-   End Use: Coal: Grill (MBtu)                                       Not used by OS-ERI
-   End Use: Coal: Lighting (MBtu)                                    Not used by OS-ERI
-   End Use: Coal: Fireplace (MBtu)                                   Not used by OS-ERI
-   End Use: Coal: Generator (MBtu)                                   Not used by OS-ERI
-   ================================================================  ====================================================
+  ================================================================  ====================================================
+  Type                                                                 Notes
+  ================================================================  ====================================================
+  End Use: Electricity: Heating (MBtu)                              Excludes heat pump backup and fans/pumps
+  End Use: Electricity: Heating Fans/Pumps (MBtu)                   Includes supply fan (air distribution) or circulating pump (hydronic distribution or geothermal loop)
+  End Use: Electricity: Heating Heat Pump Backup (MBtu)             Excludes heat pump backup fans/pumps
+  End Use: Electricity: Heating Heat Pump Backup Fans/Pumps (MBtu)  Includes supply fan (air distribution) or circulating pump (hydronic distribution) during heat pump backup
+  End Use: Electricity: Cooling (MBtu)                              Excludes fans/pumps
+  End Use: Electricity: Cooling Fans/Pumps (MBtu)                   Includes supply fan (air distribution) and circulating pump (geothermal loop)
+  End Use: Electricity: Hot Water (MBtu)                            Excludes recirc pump and solar thermal pump
+  End Use: Electricity: Hot Water Recirc Pump (MBtu)
+  End Use: Electricity: Hot Water Solar Thermal Pump (MBtu)         Non-zero only when using detailed (not simple) solar thermal inputs
+  End Use: Electricity: Lighting Interior (MBtu)
+  End Use: Electricity: Lighting Garage (MBtu)
+  End Use: Electricity: Lighting Exterior (MBtu)
+  End Use: Electricity: Mech Vent (MBtu)                            Excludes preheating/precooling
+  End Use: Electricity: Mech Vent Preheating (MBtu)                 Shared ventilation preconditioning system
+  End Use: Electricity: Mech Vent Precooling (MBtu)                 Shared ventilation preconditioning system
+  End Use: Electricity: Whole House Fan (MBtu)
+  End Use: Electricity: Refrigerator (MBtu)
+  End Use: Electricity: Freezer (MBtu)                              Not used by OS-ERI
+  End Use: Electricity: Dehumidifier (MBtu)
+  End Use: Electricity: Dishwasher (MBtu)
+  End Use: Electricity: Clothes Washer (MBtu)
+  End Use: Electricity: Clothes Dryer (MBtu)
+  End Use: Electricity: Range/Oven (MBtu)
+  End Use: Electricity: Ceiling Fan (MBtu)
+  End Use: Electricity: Television (MBtu)
+  End Use: Electricity: Plug Loads (MBtu)                           Excludes independently reported plug loads (e.g., well pump)
+  End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
+  End Use: Electricity: Well Pump (MBtu)                            Not used by OS-ERI
+  End Use: Electricity: Pool Heater (MBtu)                          Not used by OS-ERI
+  End Use: Electricity: Pool Pump (MBtu)                            Not used by OS-ERI
+  End Use: Electricity: Hot Tub Heater (MBtu)                       Not used by OS-ERI
+  End Use: Electricity: Hot Tub Pump (MBtu)                         Not used by OS-ERI
+  End Use: Electricity: PV (MBtu)                                   Negative value for any power produced
+  End Use: Electricity: Generator (MBtu)                            Negative value for any power produced
+  End Use: Electricity: Battery (MBtu)                              Not used by OS-ERI
+  End Use: Natural Gas: Heating (MBtu)                              Excludes heat pump backup
+  End Use: Natural Gas: Heating Heat Pump Backup (MBtu)
+  End Use: Natural Gas: Hot Water (MBtu)
+  End Use: Natural Gas: Clothes Dryer (MBtu)
+  End Use: Natural Gas: Range/Oven (MBtu)
+  End Use: Natural Gas: Mech Vent Preheating (MBtu)                 Shared ventilation preconditioning system
+  End Use: Natural Gas: Pool Heater (MBtu)                          Not used by OS-ERI
+  End Use: Natural Gas: Hot Tub Heater (MBtu)                       Not used by OS-ERI
+  End Use: Natural Gas: Grill (MBtu)                                Not used by OS-ERI
+  End Use: Natural Gas: Lighting (MBtu)                             Not used by OS-ERI
+  End Use: Natural Gas: Fireplace (MBtu)                            Not used by OS-ERI
+  End Use: Natural Gas: Generator (MBtu)                            Positive value for any fuel consumed
+  End Use: Fuel Oil: Heating (MBtu)                                 Excludes heat pump backup
+  End Use: Fuel Oil: Heating Heat Pump Backup (MBtu)
+  End Use: Fuel Oil: Hot Water (MBtu)
+  End Use: Fuel Oil: Clothes Dryer (MBtu)
+  End Use: Fuel Oil: Range/Oven (MBtu)
+  End Use: Fuel Oil: Mech Vent Preheating (MBtu)                    Shared ventilation preconditioning system
+  End Use: Fuel Oil: Grill (MBtu)                                   Not used by OS-ERI
+  End Use: Fuel Oil: Lighting (MBtu)                                Not used by OS-ERI
+  End Use: Fuel Oil: Fireplace (MBtu)                               Not used by OS-ERI
+  End Use: Fuel Oil: Generator (MBtu)                               Positive value for any fuel consumed
+  End Use: Propane: Heating (MBtu)                                  Excludes heat pump backup
+  End Use: Propane: Heating Heat Pump Backup (MBtu)
+  End Use: Propane: Hot Water (MBtu)
+  End Use: Propane: Clothes Dryer (MBtu)
+  End Use: Propane: Range/Oven (MBtu)
+  End Use: Propane: Mech Vent Preheating (MBtu)                     Shared ventilation preconditioning system
+  End Use: Propane: Grill (MBtu)                                    Not used by OS-ERI
+  End Use: Propane: Lighting (MBtu)                                 Not used by OS-ERI
+  End Use: Propane: Fireplace (MBtu)                                Not used by OS-ERI
+  End Use: Propane: Generator (MBtu)                                Positive value for any fuel consumed
+  End Use: Wood Cord: Heating (MBtu)                                Excludes heat pump backup
+  End Use: Wood Cord: Heating Heat Pump Backup (MBtu)
+  End Use: Wood Cord: Hot Water (MBtu)
+  End Use: Wood Cord: Clothes Dryer (MBtu)
+  End Use: Wood Cord: Range/Oven (MBtu)
+  End Use: Wood Cord: Mech Vent Preheating (MBtu)                   Shared ventilation preconditioning system
+  End Use: Wood Cord: Grill (MBtu)                                  Not used by OS-ERI
+  End Use: Wood Cord: Lighting (MBtu)                               Not used by OS-ERI
+  End Use: Wood Cord: Fireplace (MBtu)                              Not used by OS-ERI
+  End Use: Wood Cord: Generator (MBtu)                              Positive value for any fuel consumed
+  End Use: Wood Pellets: Heating (MBtu)                             Excludes heat pump backup
+  End Use: Wood Pellets: Heating Heat Pump Backup (MBtu)
+  End Use: Wood Pellets: Hot Water (MBtu)
+  End Use: Wood Pellets: Clothes Dryer (MBtu)
+  End Use: Wood Pellets: Range/Oven (MBtu)
+  End Use: Wood Pellets: Mech Vent Preheating (MBtu)                Shared ventilation preconditioning system
+  End Use: Wood Pellets: Grill (MBtu)                               Not used by OS-ERI
+  End Use: Wood Pellets: Lighting (MBtu)                            Not used by OS-ERI
+  End Use: Wood Pellets: Fireplace (MBtu)                           Not used by OS-ERI
+  End Use: Wood Pellets: Generator (MBtu)                           Positive value for any fuel consumed
+  End Use: Coal: Heating (MBtu)                                     Excludes heat pump backup
+  End Use: Coal: Heating Heat Pump Backup (MBtu)
+  End Use: Coal: Hot Water (MBtu)                                   Not used by OS-ERI
+  End Use: Coal: Clothes Dryer (MBtu)                               Not used by OS-ERI
+  End Use: Coal: Range/Oven (MBtu)                                  Not used by OS-ERI
+  End Use: Coal: Mech Vent Preheating (MBtu)                        Not used by OS-ERI
+  End Use: Coal: Grill (MBtu)                                       Not used by OS-ERI
+  End Use: Coal: Lighting (MBtu)                                    Not used by OS-ERI
+  End Use: Coal: Fireplace (MBtu)                                   Not used by OS-ERI
+  End Use: Coal: Generator (MBtu)                                   Not used by OS-ERI
+  ================================================================  ====================================================
 
 Annual Energy By System Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -340,15 +340,15 @@ Annual Energy By System Use
 Results for each end use of each heating, cooling, and water heating system defined in the HPXML file are listed as shown below.
 Non-zero end uses from :ref:`annualenduses` will be included.
 
-   ===============================================================  =============================================
-   Type                                                             Notes
-   ===============================================================  =============================================
-   System Use: <HeatingSystemID>: <FuelType>: <EndUse> (MBtu)       End use energy for the heating system
-   System Use: <CoolingSystemID>: <FuelType>: <EndUse> (MBtu)       End use energy for the cooling system
-   System Use: <HeatPumpID>: <FuelType>: <EndUse> (MBtu)            End use energy for the heat pump system
-   System Use: <WaterHeatingSystemID>: <FuelType>: <EndUse> (MBtu)  End use energy for the water heating system
-   System Use: <VentilationFanID>: <FuelType>: <EndUse> (MBtu)      End use energy for the ventilation fan system (preheating/precooling only)
-   ===============================================================  =============================================
+  ===============================================================  =============================================
+  Type                                                             Notes
+  ===============================================================  =============================================
+  System Use: <HeatingSystemID>: <FuelType>: <EndUse> (MBtu)       End use energy for the heating system
+  System Use: <CoolingSystemID>: <FuelType>: <EndUse> (MBtu)       End use energy for the cooling system
+  System Use: <HeatPumpID>: <FuelType>: <EndUse> (MBtu)            End use energy for the heat pump system
+  System Use: <WaterHeatingSystemID>: <FuelType>: <EndUse> (MBtu)  End use energy for the water heating system
+  System Use: <VentilationFanID>: <FuelType>: <EndUse> (MBtu)      End use energy for the ventilation fan system (preheating/precooling only)
+  ===============================================================  =============================================
 
 Annual Emissions
 ~~~~~~~~~~~~~~~~
@@ -357,12 +357,12 @@ Annual emissions are listed below.
 
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 
-   ===============================================================  ===============================================================
-   Type                                                             Notes
-   ===============================================================  ===============================================================
-   Emissions: <EmissionsType>: RESNET: Total (lb)                   Total emissions
-   Emissions: <EmissionsType>: RESNET: Net (lb)                     Subtracts any power produced by PV or generators
-   ===============================================================  ===============================================================
+  ================================================================  ===============================================================
+  Type                                                              Notes
+  ================================================================  ===============================================================
+  Emissions: <EmissionsType>: ANSI301: Total (lb)                   Total emissions
+  Emissions: <EmissionsType>: ANSI301: Net (lb)                     Subtracts any power produced by PV or generators
+  ================================================================  ===============================================================
 
 Annual Emissions by Fuel Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -371,18 +371,18 @@ Annual emissions by fuel use are listed below.
 
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 
-   ===============================================================  ===============================================================
-   Type                                                             Notes
-   ===============================================================  ===============================================================
-   Emissions: <EmissionsType>: RESNET: Electricity: Total (lb)      Emissions for Electricity only
-   Emissions: <EmissionsType>: RESNET: Electricity: Net (lb)        Subtracts any power produced by PV or generators
-   Emissions: <EmissionsType>: RESNET: Natural Gas: Total (lb)      Emissions for Natural Gas only
-   Emissions: <EmissionsType>: RESNET: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
-   Emissions: <EmissionsType>: RESNET: Propane: Total (lb)          Emissions for Propane only
-   Emissions: <EmissionsType>: RESNET: Wood Cord: Total (lb)        Emissions for Wood Cord only
-   Emissions: <EmissionsType>: RESNET: Wood Pellets: Total (lb)     Emissions for Wood Pellets only
-   Emissions: <EmissionsType>: RESNET: Coal: Total (lb)             Not used by OS-ERI
-   ===============================================================  ===============================================================
+  ================================================================  ===============================================================
+  Type                                                              Notes
+  ================================================================  ===============================================================
+  Emissions: <EmissionsType>: ANSI301: Electricity: Total (lb)      Emissions for Electricity only
+  Emissions: <EmissionsType>: ANSI301: Electricity: Net (lb)        Subtracts any power produced by PV or generators
+  Emissions: <EmissionsType>: ANSI301: Natural Gas: Total (lb)      Emissions for Natural Gas only
+  Emissions: <EmissionsType>: ANSI301: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
+  Emissions: <EmissionsType>: ANSI301: Propane: Total (lb)          Emissions for Propane only
+  Emissions: <EmissionsType>: ANSI301: Wood Cord: Total (lb)        Emissions for Wood Cord only
+  Emissions: <EmissionsType>: ANSI301: Wood Pellets: Total (lb)     Emissions for Wood Pellets only
+  Emissions: <EmissionsType>: ANSI301: Coal: Total (lb)             Not used by OS-ERI
+  ================================================================  ===============================================================
 
 Annual Emissions by End Use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -392,34 +392,34 @@ Annual emissions by end use are listed below.
 Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
 Every end use from :ref:`annualenduses` will be included.
 
-   ===============================================================  ===============================================================
-   Type                                                             Notes
-   ===============================================================  ===============================================================
-   Emissions: <EmissionsType>: RESNET: Electricity: <EndUse> (lb)   Emissions for this Electricity end use only (one row per end use)
-   Emissions: <EmissionsType>: RESNET: Natural Gas: <EndUse> (lb)   Emissions for this Natural Gas end use only (one row per end use)
-   Emissions: <EmissionsType>: RESNET: Fuel Oil: <EndUse> (lb)      Emissions for this Fuel Oil end use only (one row per end use)
-   Emissions: <EmissionsType>: RESNET: Propane: <EndUse> (lb)       Emissions for this Propane end use only (one row per end use)
-   Emissions: <EmissionsType>: RESNET: Wood Cord: <EndUse> (lb)     Emissions for this Wood Cord end use only (one row per end use)
-   Emissions: <EmissionsType>: RESNET: Wood Pellets: <EndUse> (lb)  Emissions for this Wood Pellets end use only (one row per end use)
-   Emissions: <EmissionsType>: RESNET: Coal: <EndUse> (lb)          Not used by OS-ERI
-   ===============================================================  ===============================================================
+  ================================================================  ===============================================================
+  Type                                                              Notes
+  ================================================================  ===============================================================
+  Emissions: <EmissionsType>: ANSI301: Electricity: <EndUse> (lb)   Emissions for this Electricity end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Natural Gas: <EndUse> (lb)   Emissions for this Natural Gas end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Fuel Oil: <EndUse> (lb)      Emissions for this Fuel Oil end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Propane: <EndUse> (lb)       Emissions for this Propane end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Wood Cord: <EndUse> (lb)     Emissions for this Wood Cord end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Wood Pellets: <EndUse> (lb)  Emissions for this Wood Pellets end use only (one row per end use)
+  Emissions: <EmissionsType>: ANSI301: Coal: <EndUse> (lb)          Not used by OS-ERI
+  ================================================================  ===============================================================
 
 Annual Building Loads
 ~~~~~~~~~~~~~~~~~~~~~
 
 Annual building loads are listed below.
 
-   ======================================  ==================================================================
-   Type                                    Notes
-   ======================================  ==================================================================
-   Load: Heating: Delivered (MBtu)         Total heating load delivered, including distribution losses.
-   Load: Heating: Heat Pump Backup (MBtu)  Heating load delivered by the heat pump backup only, including distribution losses.
-   Load: Cooling: Delivered (MBtu)         Total cooling load delivered, including distribution losses.
-   Load: Hot Water: Delivered (MBtu)       Total hot water load delivered, including contributions by desuperheaters or solar thermal systems.
-   Load: Hot Water: Tank Losses (MBtu)
-   Load: Hot Water: Desuperheater (MBtu)   Hot water load delivered by the desuperheater.
-   Load: Hot Water: Solar Thermal (MBtu)   Hot water load delivered by the solar thermal system.
-   ======================================  ==================================================================
+  ======================================  ==================================================================
+  Type                                    Notes
+  ======================================  ==================================================================
+  Load: Heating: Delivered (MBtu)         Total heating load delivered, including distribution losses.
+  Load: Heating: Heat Pump Backup (MBtu)  Heating load delivered by the heat pump backup only, including distribution losses.
+  Load: Cooling: Delivered (MBtu)         Total cooling load delivered, including distribution losses.
+  Load: Hot Water: Delivered (MBtu)       Total hot water load delivered, including contributions by desuperheaters or solar thermal systems.
+  Load: Hot Water: Tank Losses (MBtu)
+  Load: Hot Water: Desuperheater (MBtu)   Hot water load delivered by the desuperheater.
+  Load: Hot Water: Solar Thermal (MBtu)   Hot water load delivered by the solar thermal system.
+  ======================================  ==================================================================
 
 Note that the "Delivered" loads represent the energy delivered by the HVAC/DHW system; if a system is significantly undersized, there will be unmet load not reflected by these values.
 
@@ -428,12 +428,12 @@ Annual Unmet Hours
 
 Annual unmet hours are listed below.
 
-   =========================  =====
-   Type                       Notes
-   =========================  =====
-   Unmet Hours: Heating (hr)  Number of hours where the heating setpoint is not maintained.
-   Unmet Hours: Cooling (hr)  Number of hours where the cooling setpoint is not maintained.
-   =========================  =====
+  =========================  =====
+  Type                       Notes
+  =========================  =====
+  Unmet Hours: Heating (hr)  Number of hours where the heating setpoint is not maintained.
+  Unmet Hours: Cooling (hr)  Number of hours where the cooling setpoint is not maintained.
+  =========================  =====
 
 These numbers reflect the number of hours during the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
 
@@ -442,25 +442,25 @@ Peak Building Electricity
 
 Peak building electricity outputs are listed below.
 
-   ==================================  =============================================================
-   Type                                Notes
-   ==================================  =============================================================
-   Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
-   Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
-   Peak Electricity: Annual Total (W)  Maximum value in any month
-   ==================================  =============================================================
+  ==================================  =============================================================
+  Type                                Notes
+  ==================================  =============================================================
+  Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
+  Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
+  Peak Electricity: Annual Total (W)  Maximum value in any month
+  ==================================  =============================================================
 
 Peak Building Loads
 ~~~~~~~~~~~~~~~~~~~
 
 Peak building loads are listed below.
 
-   =======================================  ==================================
-   Type                                     Notes
-   =======================================  ==================================
-   Peak Load: Heating: Delivered (kBtu/hr)  Includes HVAC distribution losses.
-   Peak Load: Cooling: Delivered (kBtu/hr)  Includes HVAC distribution losses.
-   =======================================  ==================================
+  =======================================  ==================================
+  Type                                     Notes
+  =======================================  ==================================
+  Peak Load: Heating: Delivered (kBtu/hr)  Includes HVAC distribution losses.
+  Peak Load: Cooling: Delivered (kBtu/hr)  Includes HVAC distribution losses.
+  =======================================  ==================================
 
 Note that the "Delivered" peak loads represent the energy delivered by the HVAC system; if a system is significantly undersized, there will be unmet peak load not reflected by these values.
 
@@ -475,55 +475,59 @@ The sum of component loads for heating (or cooling) will roughly equal the annua
 
 Component loads disaggregated by Heating/Cooling are listed below.
    
-   =================================================  =========================================================================================================
-   Type                                               Notes
-   =================================================  =========================================================================================================
-   Component Load: \*: Roofs (MBtu)                   Heat gain/loss through HPXML ``Roof`` elements adjacent to conditioned space
-   Component Load: \*: Ceilings (MBtu)                Heat gain/loss through HPXML ``Floor`` elements (inferred to be ceilings) adjacent to conditioned space
-   Component Load: \*: Walls (MBtu)                   Heat gain/loss through HPXML ``Wall`` elements adjacent to conditioned space
-   Component Load: \*: Rim Joists (MBtu)              Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
-   Component Load: \*: Foundation Walls (MBtu)        Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
-   Component Load: \*: Doors (MBtu)                   Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
-   Component Load: \*: Windows Conduction (MBtu)      Heat gain/loss attributed to conduction through HPXML ``Window`` elements adjacent to conditioned space
-   Component Load: \*: Windows Solar (MBtu)           Heat gain/loss attributed to solar gains through HPXML ``Window`` elements adjacent to conditioned space
-   Component Load: \*: Skylights Conduction (MBtu)    Heat gain/loss attributed to conduction through HPXML ``Skylight`` elements adjacent to conditioned space
-   Component Load: \*: Skylights Solar (MBtu)         Heat gain/loss attributed to solar gains through HPXML ``Skylight`` elements adjacent to conditioned space
-   Component Load: \*: Floors (MBtu)                  Heat gain/loss through HPXML ``Floor`` elements (inferred to be floors) adjacent to conditioned space
-   Component Load: \*: Slabs (MBtu)                   Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
-   Component Load: \*: Internal Mass (MBtu)           Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
-   Component Load: \*: Infiltration (MBtu)            Heat gain/loss from airflow induced by stack and wind effects
-   Component Load: \*: Natural Ventilation (MBtu)     Heat gain/loss from airflow through operable windows
-   Component Load: \*: Mechanical Ventilation (MBtu)  Heat gain/loss from airflow/fan energy from mechanical ventilation systems
-   Component Load: \*: Whole House Fan (MBtu)         Heat gain/loss from airflow due to a whole house fan
-   Component Load: \*: Ducts (MBtu)                   Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
-   Component Load: \*: Internal Gains (MBtu)          Heat gain/loss from appliances, plug loads, water heater tank losses, etc. in the conditioned space
-   Component Load: \*: Lighting (MBtu)                Heat gain/loss from lighting in the conditioned space
-   =================================================  =========================================================================================================
+  =================================================  =========================================================================================================
+  Type                                               Notes
+  =================================================  =========================================================================================================
+  Component Load: \*: Roofs (MBtu)                   Heat gain/loss through HPXML ``Roof`` elements adjacent to conditioned space
+  Component Load: \*: Ceilings (MBtu)                Heat gain/loss through HPXML ``Floor`` elements (inferred to be ceilings) adjacent to conditioned space
+  Component Load: \*: Walls (MBtu)                   Heat gain/loss through HPXML ``Wall`` elements adjacent to conditioned space
+  Component Load: \*: Rim Joists (MBtu)              Heat gain/loss through HPXML ``RimJoist`` elements adjacent to conditioned space
+  Component Load: \*: Foundation Walls (MBtu)        Heat gain/loss through HPXML ``FoundationWall`` elements adjacent to conditioned space
+  Component Load: \*: Doors (MBtu)                   Heat gain/loss through HPXML ``Door`` elements adjacent to conditioned space
+  Component Load: \*: Windows Conduction (MBtu)      Heat gain/loss attributed to conduction through HPXML ``Window`` elements adjacent to conditioned space
+  Component Load: \*: Windows Solar (MBtu)           Heat gain/loss attributed to solar gains through HPXML ``Window`` elements adjacent to conditioned space
+  Component Load: \*: Skylights Conduction (MBtu)    Heat gain/loss attributed to conduction through HPXML ``Skylight`` elements adjacent to conditioned space
+  Component Load: \*: Skylights Solar (MBtu)         Heat gain/loss attributed to solar gains through HPXML ``Skylight`` elements adjacent to conditioned space
+  Component Load: \*: Floors (MBtu)                  Heat gain/loss through HPXML ``Floor`` elements (inferred to be floors) adjacent to conditioned space
+  Component Load: \*: Slabs (MBtu)                   Heat gain/loss through HPXML ``Slab`` elements adjacent to conditioned space
+  Component Load: \*: Internal Mass (MBtu)           Heat gain/loss from internal mass (e.g., furniture, interior walls/floors) in conditioned space
+  Component Load: \*: Infiltration (MBtu)            Heat gain/loss from airflow induced by stack and wind effects
+  Component Load: \*: Natural Ventilation (MBtu)     Heat gain/loss from airflow through operable windows
+  Component Load: \*: Mechanical Ventilation (MBtu)  Heat gain/loss from airflow/fan energy from mechanical ventilation systems
+  Component Load: \*: Whole House Fan (MBtu)         Heat gain/loss from airflow due to a whole house fan
+  Component Load: \*: Ducts (MBtu)                   Heat gain/loss from conduction and leakage losses through supply/return ducts outside conditioned space
+  Component Load: \*: Internal Gains (MBtu)          Heat gain/loss from appliances, plug loads, water heater tank losses, etc. in the conditioned space
+  Component Load: \*: Lighting (MBtu)                Heat gain/loss from lighting in the conditioned space
+  =================================================  =========================================================================================================
 
 Annual Hot Water Uses
 ~~~~~~~~~~~~~~~~~~~~~
 
 Annual hot water uses are listed below.
 
-   ===================================  ====================
-   Type                                 Notes
-   ===================================  ====================
-   Hot Water: Clothes Washer (gal)
-   Hot Water: Dishwasher (gal)
-   Hot Water: Fixtures (gal)            Showers and faucets.
-   Hot Water: Distribution Waste (gal) 
-   ===================================  ====================
+  ===================================  ====================
+  Type                                 Notes
+  ===================================  ====================
+  Hot Water: Clothes Washer (gal)
+  Hot Water: Dishwasher (gal)
+  Hot Water: Fixtures (gal)            Showers and faucets.
+  Hot Water: Distribution Waste (gal) 
+  ===================================  ====================
+
+.. note::
+
+  All values are gallons of *hot* water (e.g., at water heater setpoint), not *total* water (e.g., at the fixture temperature).
 
 Resilience
 ~~~~~~~~~~
 
 Resilience outputs are listed below.
 
-   ===================================  ====================
-   Type                                 Notes
-   ===================================  ====================
-   Resilience: Battery (hr)             Not used by OS-ERI
-   ===================================  ====================
+  ===================================  ====================
+  Type                                 Notes
+  ===================================  ====================
+  Resilience: Battery (hr)             Not used by OS-ERI
+  ===================================  ====================
 
 HVAC Capacities
 ~~~~~~~~~~~~~~~
@@ -532,13 +536,13 @@ System outputs are listed below.
 Autosized HVAC systems are based on HVAC design temperatures/loads described below.
 Capacities for individual HVAC systems can be found in the, e.g., ERIReferenceHome.xml file.
 
-   ====================================================  ====================
-   Type                                                  Notes
-   ====================================================  ====================
-   HVAC Capacity: Cooling (Btu/h)                        Total HVAC cooling capacity
-   HVAC Capacity: Heating (Btu/h)                        Total HVAC heating capacity
-   HVAC Capacity: Heat Pump Backup (Btu/h)               Total HVAC heat pump backup capacity
-   ====================================================  ====================
+  ====================================================  ====================
+  Type                                                  Notes
+  ====================================================  ====================
+  HVAC Capacity: Cooling (Btu/h)                        Total HVAC cooling capacity
+  HVAC Capacity: Heating (Btu/h)                        Total HVAC heating capacity
+  HVAC Capacity: Heat Pump Backup (Btu/h)               Total HVAC heat pump backup capacity
+  ====================================================  ====================
 
 HVAC Design Temperatures
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -548,12 +552,12 @@ Design temperatures are used in the design load calculations for autosizing of H
 If they are not available in the EPW header, the design temperatures are calculated from the 8760 hourly temperatures in the EPW.
 Design temperatures can also be found in the, e.g., ERIReferenceHome.xml file.
 
-   =====================================================================  ====================
-   Type                                                                   Notes
-   =====================================================================  ====================
-   HVAC Design Temperature: Heating (F)                                   99% heating drybulb temperature
-   HVAC Design Temperature: Cooling (F)                                   1% cooling drybulb temperature
-   =====================================================================  ====================
+  =====================================================================  ====================
+  Type                                                                   Notes
+  =====================================================================  ====================
+  HVAC Design Temperature: Heating (F)                                   99% heating drybulb temperature
+  HVAC Design Temperature: Cooling (F)                                   1% cooling drybulb temperature
+  =====================================================================  ====================
 
 HVAC Design Loads
 ~~~~~~~~~~~~~~~~~
@@ -562,43 +566,43 @@ Design load outputs, used for autosizing of HVAC equipment, are listed below.
 Design loads are based on block load ACCA Manual J calculations using 1%/99% design temperatures.
 Design loads can also be found in the, e.g., ERIReferenceHome.xml file.
 
-   =====================================================================  ====================
-   Type                                                                   Notes
-   =====================================================================  ====================
-   HVAC Design Load: Heating: Total (Btu/h)                               Total heating design load
-   HVAC Design Load: Heating: Ducts (Btu/h)                               Heating design load for ducts
-   HVAC Design Load: Heating: Windows (Btu/h)                             Heating design load for windows
-   HVAC Design Load: Heating: Skylights (Btu/h)                           Heating design load for skylights
-   HVAC Design Load: Heating: Doors (Btu/h)                               Heating design load for doors
-   HVAC Design Load: Heating: Walls (Btu/h)                               Heating design load for walls
-   HVAC Design Load: Heating: Roofs (Btu/h)                               Heating design load for roofs
-   HVAC Design Load: Heating: Floors (Btu/h)                              Heating design load for floors
-   HVAC Design Load: Heating: Slabs (Btu/h)                               Heating design load for slabs
-   HVAC Design Load: Heating: Ceilings (Btu/h)                            Heating design load for ceilings
-   HVAC Design Load: Heating: Infiltration (Btu/h)                        Heating design load for infiltration
-   HVAC Design Load: Heating: Ventilation (Btu/h)                         Heating design load for ventilation
-   HVAC Design Load: Heating: Piping (Btu/h)                              Heating design load for hydronic piping (not used by OS-ERI)
-   HVAC Design Load: Cooling Sensible: Total (Btu/h)                      Total sensible cooling design load
-   HVAC Design Load: Cooling Sensible: Ducts (Btu/h)                      Sensible cooling design load for ducts
-   HVAC Design Load: Cooling Sensible: Windows (Btu/h)                    Sensible cooling design load for windows
-   HVAC Design Load: Cooling Sensible: Skylights (Btu/h)                  Sensible cooling design load for skylights
-   HVAC Design Load: Cooling Sensible: Doors (Btu/h)                      Sensible cooling design load for doors
-   HVAC Design Load: Cooling Sensible: Walls (Btu/h)                      Sensible cooling design load for walls
-   HVAC Design Load: Cooling Sensible: Roofs (Btu/h)                      Sensible cooling design load for roofs
-   HVAC Design Load: Cooling Sensible: Floors (Btu/h)                     Sensible cooling design load for floors
-   HVAC Design Load: Cooling Sensible: Slabs (Btu/h)                      Sensible cooling design load for slabs
-   HVAC Design Load: Cooling Sensible: Ceilings (Btu/h)                   Sensible cooling design load for ceilings
-   HVAC Design Load: Cooling Sensible: Infiltration (Btu/h)               Sensible cooling design load for infiltration
-   HVAC Design Load: Cooling Sensible: Ventilation (Btu/h)                Sensible cooling design load for ventilation
-   HVAC Design Load: Cooling Sensible: Internal Gains (Btu/h)             Sensible cooling design load for internal gains
-   HVAC Design Load: Cooling Sensible: Blower Heat (Btu/h)                Sensible cooling design load for blower fan heat (not used by OS-ERI)
-   HVAC Design Load: Cooling Sensible: AED Excursion (Btu/h)              Sensible cooling design load for Adequate Exposure Diversity (AED) excursion
-   HVAC Design Load: Cooling Latent: Total (Btu/h)                        Total latent cooling design load
-   HVAC Design Load: Cooling Latent: Ducts (Btu/h)                        Latent cooling design load for ducts
-   HVAC Design Load: Cooling Latent: Infiltration (Btu/h)                 Latent cooling design load for infiltration
-   HVAC Design Load: Cooling Latent: Ventilation (Btu/h)                  Latent cooling design load for ventilation
-   HVAC Design Load: Cooling Latent: Internal Gains (Btu/h)               Latent cooling design load for internal gains
-   =====================================================================  ====================
+  =====================================================================  ====================
+  Type                                                                   Notes
+  =====================================================================  ====================
+  HVAC Design Load: Heating: Total (Btu/h)                               Total heating design load
+  HVAC Design Load: Heating: Ducts (Btu/h)                               Heating design load for ducts
+  HVAC Design Load: Heating: Windows (Btu/h)                             Heating design load for windows
+  HVAC Design Load: Heating: Skylights (Btu/h)                           Heating design load for skylights
+  HVAC Design Load: Heating: Doors (Btu/h)                               Heating design load for doors
+  HVAC Design Load: Heating: Walls (Btu/h)                               Heating design load for walls
+  HVAC Design Load: Heating: Roofs (Btu/h)                               Heating design load for roofs
+  HVAC Design Load: Heating: Floors (Btu/h)                              Heating design load for floors
+  HVAC Design Load: Heating: Slabs (Btu/h)                               Heating design load for slabs
+  HVAC Design Load: Heating: Ceilings (Btu/h)                            Heating design load for ceilings
+  HVAC Design Load: Heating: Infiltration (Btu/h)                        Heating design load for infiltration
+  HVAC Design Load: Heating: Ventilation (Btu/h)                         Heating design load for ventilation
+  HVAC Design Load: Heating: Piping (Btu/h)                              Heating design load for hydronic piping (not used by OS-ERI)
+  HVAC Design Load: Cooling Sensible: Total (Btu/h)                      Total sensible cooling design load
+  HVAC Design Load: Cooling Sensible: Ducts (Btu/h)                      Sensible cooling design load for ducts
+  HVAC Design Load: Cooling Sensible: Windows (Btu/h)                    Sensible cooling design load for windows
+  HVAC Design Load: Cooling Sensible: Skylights (Btu/h)                  Sensible cooling design load for skylights
+  HVAC Design Load: Cooling Sensible: Doors (Btu/h)                      Sensible cooling design load for doors
+  HVAC Design Load: Cooling Sensible: Walls (Btu/h)                      Sensible cooling design load for walls
+  HVAC Design Load: Cooling Sensible: Roofs (Btu/h)                      Sensible cooling design load for roofs
+  HVAC Design Load: Cooling Sensible: Floors (Btu/h)                     Sensible cooling design load for floors
+  HVAC Design Load: Cooling Sensible: Slabs (Btu/h)                      Sensible cooling design load for slabs
+  HVAC Design Load: Cooling Sensible: Ceilings (Btu/h)                   Sensible cooling design load for ceilings
+  HVAC Design Load: Cooling Sensible: Infiltration (Btu/h)               Sensible cooling design load for infiltration
+  HVAC Design Load: Cooling Sensible: Ventilation (Btu/h)                Sensible cooling design load for ventilation
+  HVAC Design Load: Cooling Sensible: Internal Gains (Btu/h)             Sensible cooling design load for internal gains
+  HVAC Design Load: Cooling Sensible: Blower Heat (Btu/h)                Sensible cooling design load for blower fan heat (not used by OS-ERI)
+  HVAC Design Load: Cooling Sensible: AED Excursion (Btu/h)              Sensible cooling design load for Adequate Exposure Diversity (AED) excursion
+  HVAC Design Load: Cooling Latent: Total (Btu/h)                        Total latent cooling design load
+  HVAC Design Load: Cooling Latent: Ducts (Btu/h)                        Latent cooling design load for ducts
+  HVAC Design Load: Cooling Latent: Infiltration (Btu/h)                 Latent cooling design load for infiltration
+  HVAC Design Load: Cooling Latent: Ventilation (Btu/h)                  Latent cooling design load for ventilation
+  HVAC Design Load: Cooling Latent: Internal Gains (Btu/h)               Latent cooling design load for internal gains
+  =====================================================================  ====================
 
 .. _home_timeseries_outputs_csv:
 
@@ -610,23 +614,26 @@ When requested, a CSV file of timeseries outputs is written for the Reference/Ra
 
 Depending on the outputs requested, CSV files may include:
 
-   ===================================  =====
-   Type                                 Notes
-   ===================================  =====
-   Total Consumptions                   Energy use for building total and net (i.e., subtracts any power produced by PV or generators).
-   Fuel Consumptions                    Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
-   End Use Consumptions                 Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
-   System Use Consumptions              Energy use for each HVAC and water heating system (in kBtu).
-   Emissions                            Emissions (CO2e, NOx, SO2).
-   Emission Fuels                       Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
-   Emission End Uses                    Emissions (CO2e, NOx, SO2) disaggregated by end use.
-   Hot Water Uses                       Water use for each end use type (in gallons).
-   Total Loads                          Heating, cooling, and hot water loads (in kBtu).
-   Component Loads                      Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
-   Zone Temperatures                    Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
-   Airflows                             Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
-   Weather                              Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
-   ===================================  =====
+  =======================  ===================  ================================================================================================================================================
+  Type                     Argument [#]_        Notes
+  =======================  ===================  ================================================================================================================================================
+  Total Consumptions       ``total``            Energy use for building total and net (i.e., subtracts any power produced by PV or generators).
+  Fuel Consumptions        ``fuels``            Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
+  End Use Consumptions     ``enduses``          Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
+  System Use Consumptions  ``systemuses``       Energy use for each HVAC and water heating system (in kBtu).
+  Emissions                ``emissions``        Emissions (CO2e, NOx, SO2).
+  Emission Fuels           ``emissionfuels``    Emissions (CO2e, NOx, SO2) disaggregated by fuel type.
+  Emission End Uses        ``emissionenduses``  Emissions (CO2e, NOx, SO2) disaggregated by end use.
+  Hot Water Uses           ``hotwater``         Water use for each end use type (in gallons).
+  Total Loads              ``loads``            Heating, cooling, and hot water loads (in kBtu).
+  Component Loads          ``componentloads``   Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
+  Unmet Hours              ``unmethours``       Heating and cooling unmet hours.
+  Zone Temperatures        ``temperatures``     Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+  Airflows                 ``airflows``         Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
+  Weather                  ``weather``          Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
+  =======================  ===================  ================================================================================================================================================
+
+  .. [#] This is the argument provided to ``energy_rating_index.rb`` as described in the :ref:`running` usage instructions.
 
 Timeseries outputs can be one of the following frequencies: hourly, daily, or monthly.
 

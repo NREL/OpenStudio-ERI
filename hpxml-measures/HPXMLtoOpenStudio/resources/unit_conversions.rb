@@ -47,6 +47,7 @@ module UnitConversions
     ['ton', 'kbtu/hr'] => 12.0,
     ['ton', 'w'] => 3516.85284207,
     ['w', 'btu/hr'] => 3.412141633127942,
+    ['kw', 'btu/hr'] => 3412.141633127942,
     ['kbtu/hr', 'kw'] => 0.2930710701722222,
 
     # Power Flux
@@ -65,6 +66,7 @@ module UnitConversions
     ['ft', 'm'] => 0.3048,
     ['in', 'm'] => 0.0254,
     ['m', 'mm'] => 1000.0,
+    ['in', 'mm'] => 25.4,
 
     # Area
     ['cm^2', 'ft^2'] => 1.0 / 929.0304,

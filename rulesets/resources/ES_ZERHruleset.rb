@@ -1,33 +1,33 @@
 # frozen_string_literal: true
 
-class ES_ZERH_Ruleset
+module ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
     # Use latest version of ANSI 301
-    @eri_version = Constants.ERIVersions[-1]
+    @eri_version = Constants::ERIVersions[-1]
     hpxml.header.eri_calculation_version = @eri_version
 
-    if calc_type == ESConstants.CalcTypeEnergyStarReference
+    if calc_type == ESConstants::CalcTypeEnergyStarReference
       @program_version = hpxml.header.energystar_calculation_version
-    elsif calc_type == ZERHConstants.CalcTypeZERHReference
+    elsif calc_type == ZERHConstants::CalcTypeZERHReference
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants.SFNationalVer3_2, ESConstants.MFNationalVer1_2, ZERHConstants.SFVer2, ZERHConstants.MFVer2].include? @program_version
+    if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
-      iecc_year = 2021
-    elsif @program_version == ZERHConstants.Ver1
+      iecc_climate_zone_year = 2021
+    elsif @program_version == ZERHConstants::Ver1
       # Use Year=2015 for Reference Home configuration
-      iecc_year = 2015
+      iecc_climate_zone_year = 2015
     else
       # Use Year=2006 for Reference Home configuration
-      iecc_year = 2006
+      iecc_climate_zone_year = 2006
     end
-    @iecc_zone = hpxml.buildings[0].climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == iecc_year }[0].zone
+    @iecc_zone, _year = get_climate_zone_of_year(hpxml.buildings[0], iecc_climate_zone_year)
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
-    if [ESConstants.CalcTypeEnergyStarReference,
-        ZERHConstants.CalcTypeZERHReference].include? calc_type
+    if [ESConstants::CalcTypeEnergyStarReference,
+        ZERHConstants::CalcTypeZERHReference].include? calc_type
       hpxml = apply_ruleset_reference(hpxml)
     end
 
@@ -109,14 +109,14 @@ class ES_ZERH_Ruleset
     new_bldg.zip_code = orig_bldg.zip_code
 
     bldg_type = orig_bldg.building_construction.residential_facility_type
-    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants.MFVersions.include?(@program_version)
+    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
       begin
         # ESRD configured as SF National v3.X
         ref_design_config_mapping = {
-          ESConstants.MFNationalVer1_2 => ESConstants.SFNationalVer3_2,
-          ESConstants.MFNationalVer1_1 => ESConstants.SFNationalVer3_1,
-          ESConstants.MFNationalVer1_0 => ESConstants.SFNationalVer3_0,
-          ESConstants.MFOregonWashingtonVer1_2 => ESConstants.SFOregonWashingtonVer3_2
+          ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
+          ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
+          ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
+          ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
         }
         @program_version = ref_design_config_mapping.fetch(@program_version)
       rescue KeyError
@@ -142,7 +142,7 @@ class ES_ZERH_Ruleset
     @has_uncond_bsmnt = orig_bldg.has_location(HPXML::LocationBasementUnconditioned)
     @has_auto_generated_attic = false
 
-    new_bldg.site.fuels = orig_bldg.site.fuels
+    new_bldg.site.available_fuels = orig_bldg.site.available_fuels
 
     new_bldg.building_construction.residential_facility_type = orig_bldg.building_construction.residential_facility_type
     new_bldg.building_construction.number_of_conditioned_floors = orig_bldg.building_construction.number_of_conditioned_floors
@@ -154,9 +154,9 @@ class ES_ZERH_Ruleset
 
   def self.set_climate(orig_bldg, new_bldg)
     # Set 2006 IECC zone for downstream ERI calculation
-    climate_zone_iecc = orig_bldg.climate_and_risk_zones.climate_zone_ieccs.select { |z| z.year == 2006 }[0]
-    new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: climate_zone_iecc.year,
-                                                           zone: climate_zone_iecc.zone)
+    iecc_climate_zone, year = get_climate_zone_of_year(orig_bldg, 2006)
+    new_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: year,
+                                                           zone: iecc_climate_zone)
     new_bldg.climate_and_risk_zones.weather_station_id = orig_bldg.climate_and_risk_zones.weather_station_id
     new_bldg.climate_and_risk_zones.weather_station_name = orig_bldg.climate_and_risk_zones.weather_station_name
     new_bldg.climate_and_risk_zones.weather_station_wmo = orig_bldg.climate_and_risk_zones.weather_station_wmo
@@ -584,7 +584,7 @@ class ES_ZERH_Ruleset
     window_to_cfa_ratio = orig_total_win_area / @cfa
 
     # Default natural ventilation
-    fraction_operable = Airflow.get_default_fraction_of_windows_operable()
+    fraction_operable = Defaults.get_fraction_of_windows_operable()
 
     window_area = lookup_reference_value('window_area')
 
@@ -682,6 +682,10 @@ class ES_ZERH_Ruleset
           heating_fuel = cooling_system.integrated_heating_system_fuel
           fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
           heating_system_type = cooling_system.cooling_system_type
+        elsif heating_system.is_a? HPXML::HeatPump
+          heating_fuel = heating_system.heat_pump_fuel
+          fraction_heat_load_served = heating_system.fraction_heat_load_served
+          heating_system_type = heating_system.heat_pump_type
         end
 
         if heating_system_type == HPXML::HVACTypeBoiler && heating_fuel != HPXML::FuelTypeElectricity
@@ -702,7 +706,7 @@ class ES_ZERH_Ruleset
       if not cooling_system.nil?
         if created_hp
           # Already created HP above
-        elsif cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower
+        elsif cooling_system.is_a?(HPXML::CoolingSystem) && (cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower)
           add_reference_chiller_or_cooling_tower(new_bldg, cooling_system)
         else
           add_reference_air_conditioner(orig_bldg, new_bldg, cooling_system.fraction_cool_load_served, cooling_system)
@@ -784,7 +788,7 @@ class ES_ZERH_Ruleset
                                                     duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
         # ASHRAE 152 duct area calculation based on conditioned floor area served
-        primary_duct_area, secondary_duct_area = HVAC.get_default_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
+        primary_duct_area, secondary_duct_area = Defaults.get_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
         total_duct_area = primary_duct_area + secondary_duct_area
 
         duct_location_areas = get_duct_location_areas(orig_bldg, total_duct_area)
@@ -850,7 +854,7 @@ class ES_ZERH_Ruleset
     return if orig_bldg.water_heating_systems.size == 0
 
     # Exhibit 2 - Service Water Heating Systems: Use the same Gallons per Day as Table 4.2.2(1) - Service water heating systems
-    standard_piping_length = HotWaterAndAppliances.get_default_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
+    standard_piping_length = Defaults.get_std_pipe_length(@has_uncond_bsmnt, @has_cond_bsmnt, @cfa, @ncfl).round(3)
 
     if orig_bldg.hot_water_distributions.size == 0
       sys_id = 'HotWaterDistribution'
@@ -1035,7 +1039,7 @@ class ES_ZERH_Ruleset
 
   def self.set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
     orig_bldg.dehumidifiers.each do |dehumidifier|
-      reference_values = HVAC.get_dehumidifier_default_values(dehumidifier.capacity)
+      reference_values = Defaults.get_dehumidifier_values(dehumidifier.capacity)
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
                                  type: dehumidifier.type, # Per RESNET 55i
                                  capacity: dehumidifier.capacity,
@@ -1115,7 +1119,7 @@ class ES_ZERH_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'TargetCeilingFan',
                               efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
-                              count: HVAC.get_default_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
   end
 
   def self.set_misc_loads_reference(orig_bldg, new_bldg)
@@ -1139,28 +1143,6 @@ class ES_ZERH_Ruleset
       return air_infiltration_measurement.infiltration_height
     end
     return
-  end
-
-  def self.get_hvac_configurations(orig_bldg)
-    hvac_configurations = []
-    orig_bldg.heating_systems.each do |orig_heating_system|
-      hvac_configurations << { heating_system: orig_heating_system, cooling_system: orig_heating_system.attached_cooling_system }
-    end
-    orig_bldg.cooling_systems.each do |orig_cooling_system|
-      # Exclude cooling systems already added to hvac_configurations
-      next if hvac_configurations.any? { |config| config[:cooling_system].id == orig_cooling_system.id if not config[:cooling_system].nil? }
-
-      if orig_cooling_system.has_integrated_heating # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
-        hvac_configurations << { cooling_system: orig_cooling_system, heating_system: orig_cooling_system }
-      else
-        hvac_configurations << { cooling_system: orig_cooling_system }
-      end
-    end
-    orig_bldg.heat_pumps.each do |orig_heat_pump|
-      hvac_configurations << { heat_pump: orig_heat_pump }
-    end
-
-    return hvac_configurations
   end
 
   def self.get_radiant_barrier_bool(orig_bldg)
@@ -1580,7 +1562,7 @@ class ES_ZERH_Ruleset
       heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
       heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
-      pump_watts_per_ton = HVAC.get_default_gshp_pump_power()
+      pump_watts_per_ton = Defaults.get_gshp_pump_power()
     end
 
     if (not orig_htg_system.nil?) && orig_htg_system.respond_to?(:cooling_shr)

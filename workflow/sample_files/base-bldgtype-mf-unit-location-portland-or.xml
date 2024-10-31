@@ -18,7 +18,7 @@
         <Version>MF_OregonWashington_1.2</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
-        <Version>2021</Version>
+        <Version>2024</Version>
       </IECCERICalculation>
       <ZERHCalculation>
         <Version>MF_2.0</Version>
@@ -57,10 +57,6 @@
         <ClimateZoneIECC>
           <Year>2006</Year>
           <ClimateZone>4C</ClimateZone>
-        </ClimateZoneIECC>
-        <ClimateZoneIECC>
-          <Year>2021</Year>
-          <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
         <WeatherStation>
           <SystemIdentifier id='WeatherStation'/>

@@ -1,10 +1,26 @@
 ## OpenStudio-ERI v1.9.0
 
 __New Features__
+- Updates to OpenStudio 3.9/EnergyPlus 24.2/HPXML v4.0 final release.
+- Adds 2024 IECC ERI pathway calculation.
+- **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
+- Implements ANSI/RESNET/ICC Standard 301-2022 Addendum E for CFIS systems.
+  - `ERICalculation/Version` and `CO2IndexCalculation/Version` can now be "2022CE".
+  - **Breaking change**: Removes `FanPower`/`FanPowerDefaulted` and `VentilationOnlyModeAirflowFraction` inputs for CFIS systems.
+  - **Breaking change**: Adds `CFISControls/HasOutdoorAirControl` and `CFISControls/extension/ControlType` inputs for CFIS systems.
+  - Adds choice of "none" for `CFISControls/AdditionalRuntimeOperatingMode` input for CFIS systems.
+  - Adds optional `CFISControls/extension/SupplementalFanRunsWithAirHandlerFan` input for CFIS systems.
 - Adds inputs for modeling skylight curbs and/or shafts.
+- Relaxes IECC climate zone requirements.
+  - IECC climate zone years other than 2006 are now always optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+  - See [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-climate-zones) for more information.
+- Updates HERS Diagnostic Output to v0.3.0.
 
 __Bugfixes__
 - Adds error-checking for `NumberofConditionedFloorsAboveGrade`=0, which is not allowed per the documentation.
+- Fixes error if a heating system and a heat pump (that only provides cooling) are attached to the same distribution system.
+- Fixes double counting of battery storage losses in ERI calculation; CO2e Index is unaffected.
+- Misc Manual J design load calculation improvements.
 
 ## OpenStudio-ERI v1.8.0
 
