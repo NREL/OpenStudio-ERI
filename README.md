@@ -19,6 +19,16 @@ The project supports:
 
 For more information on running simulations, generating HPXML files, etc., please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
 
+## Users
+
+OpenStudio-ERI is used by a number of software products or organizations, including:
+
+- [APEX](https://pivotalenergysolutions.com)
+- [HouseRater](https://www.houserater.com)
+- [REM/Rate™](https://www.remrate.com)
+
+Are you using OpenStudio-ERI and want to be mentioned here? [Email us](mailto:scott.horowitz@nrel.gov) or [open a Pull Request](https://github.com/NREL/OpenStudio-ERI/edit/master/README.md).
+
 ## License
 
 This workflow is available under a BSD-3-like license, which is a free, open-source, and permissive license.
