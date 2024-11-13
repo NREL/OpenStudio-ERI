@@ -1,4 +1,4 @@
-OpenStudio-ERI
+OpenStudio®-ERI
 ==============
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/NREL/OpenStudio-ERI?include_prereleases)](https://github.com/NREL/OpenStudio-ERI/releases)
@@ -6,7 +6,7 @@ OpenStudio-ERI
 [![Documentation Status](https://readthedocs.org/projects/openstudio-eri/badge/?version=latest)](https://openstudio-eri.readthedocs.io/en/latest/?badge=latest)
 
 
-The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using the Department of Energy's open-source [OpenStudio](https://www.openstudio.net/)/[EnergyPlus](https://energyplus.net/) simulation platform.
+The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using the Department of Energy's [EnergyPlus™](https://energyplus.net/) simulation platform.
 The building description is provided in an [HPXML file](https://hpxml.nrel.gov/) format.
 OpenStudio-ERI is intended to be used by user interfaces or other automated software workflows that automatically produce the HPXML file.
 
