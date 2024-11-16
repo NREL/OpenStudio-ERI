@@ -21,6 +21,7 @@ __Bugfixes__
 - Fixes error if a heating system and a heat pump (that only provides cooling) are attached to the same distribution system.
 - Fixes double counting of battery storage losses in ERI calculation; CO2e Index is unaffected.
 - Misc Manual J design load calculation improvements.
+- Fixes GSHP rated fan/pump powers in net to gross calculations.
 
 ## OpenStudio-ERI v1.8.0
 
