@@ -2598,9 +2598,8 @@ def create_sample_hpxmls
   hpxml_bldg = hpxml.buildings[0]
   hpxml.header.energystar_calculation_version = ESConstants::MFOregonWashingtonVer1_2
   hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
-  hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Portland, OR'
-  hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'USA_OR_Portland.Intl.AP.726980_TMY3.epw'
   hpxml_bldg.state_code = 'OR'
+  hpxml_bldg.zip_code = '97214'
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-bldgtype-mf-unit-location-portland-or.xml')
 
   # Reformat real_homes HPXMLs
