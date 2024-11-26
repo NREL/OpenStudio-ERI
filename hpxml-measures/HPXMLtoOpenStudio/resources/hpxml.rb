@@ -2699,11 +2699,9 @@ class HPXML < Object
     # @param building [Oga::XML::Element] The current Building XML element
     # @return [nil]
     def to_doc(building)
-      return if nil?
-
       climate_and_risk_zones = XMLHelper.create_elements_as_needed(building, ['BuildingDetails', 'ClimateandRiskZones'])
-
       @climate_zone_ieccs.to_doc(climate_and_risk_zones)
+      return if nil?
 
       if not @weather_station_id.nil?
         weather_station = XMLHelper.add_element(climate_and_risk_zones, 'WeatherStation')

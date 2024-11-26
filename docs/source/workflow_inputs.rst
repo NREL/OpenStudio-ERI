@@ -105,7 +105,8 @@ Site information is entered in ``/HPXML/Building/Site``.
          \- **OregonWashington**: OR, WA
          
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
-  .. [#] ZipCode is only currently used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
+  .. [#] ZipCode is used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
+         It may also be used to choose a default TMY3 weather station when not provided in :ref:`weather_station`.
 
 HPXML Building Summary
 ----------------------
@@ -149,19 +150,23 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
          For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
 
+.. _weather_station:
+
 HPXML Weather Station
 ---------------------
 
 Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation``.
 
-  =========================  ======  =======  ===========  ========  =======  ==============================================
-  Element                    Type    Units    Constraints  Required  Default  Notes
-  =========================  ======  =======  ===========  ========  =======  ==============================================
-  ``SystemIdentifier``       id                            Yes                Unique identifier
-  ``Name``                   string                        Yes                Name of weather station
-  ``extension/EPWFilePath``  string                        Yes                Path to the EnergyPlus weather file (EPW) [#]_
-  =========================  ======  =======  ===========  ========  =======  ==============================================
+  =========================  ======  =======  ===========  ========  ========  ==============================================
+  Element                    Type    Units    Constraints  Required  Default   Notes
+  =========================  ======  =======  ===========  ========  ========  ==============================================
+  ``SystemIdentifier``       id                            Yes                 Unique identifier
+  ``Name``                   string                        Yes                 Name of weather station
+  ``extension/EPWFilePath``  string                        No        See [#]_  Path to the EnergyPlus weather file (EPW) [#]_
+  =========================  ======  =======  ===========  ========  ========  ==============================================
 
+  .. [#] If EPWFilePath not provided, defaults based on the U.S. TMY3 weather station closest to the zip code centroid.
+         The mapping can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/data/zipcode_weather_stations.csv``.
   .. [#] A full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
 
 HPXML Climate Zones

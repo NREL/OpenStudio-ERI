@@ -2491,7 +2491,11 @@ def create_sample_hpxmls
       fail "#{hpxml_path}: EPW location (#{hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath}) not handled. Need to update zip_map."
     end
 
-    if hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath == 'ZAF_Cape.Town.688160_IWEC.epw'
+    hpxml_bldg.climate_and_risk_zones.weather_station_id = nil
+    hpxml_bldg.climate_and_risk_zones.weather_station_name = nil
+    hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = nil
+
+    if hpxml_path.include? 'base-location-capetown-zaf'
       if hpxml_bldg.state_code.nil?
         hpxml_bldg.state_code = 'NA'
       end

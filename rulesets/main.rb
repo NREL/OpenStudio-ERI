@@ -45,6 +45,10 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
     # Weather file
     epw_path = orig_hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath
+    if epw_path.nil?
+      weather_data = Defaults.lookup_weather_data_from_zipcode(orig_hpxml_bldg.zip_code)
+      epw_path = weather_data[:station_filename]
+    end
     if not File.exist? epw_path
       test_epw_path = File.join(File.dirname(hpxml_input_path), epw_path)
       epw_path = test_epw_path if File.exist? test_epw_path
