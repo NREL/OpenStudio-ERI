@@ -19,7 +19,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
-        <ZipCode>80206</ZipCode>
+        <ZipCode>80019</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -46,13 +46,6 @@
           <Year>2006</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>USA_CO_Denver.Intl.AP.725650_TMY3</Name>
-          <extension>
-            <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>

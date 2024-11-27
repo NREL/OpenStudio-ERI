@@ -1045,7 +1045,12 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   in_bldg = in_hpxml.buildings[0]
 
   # Gather weather info
-  epw_path = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
+  if not in_bldg.climate_and_risk_zones.weather_station_epw_filepath.nil?
+    epw_path = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
+  else
+    weather_data = Defaults.lookup_weather_data_from_zipcode(in_bldg.zip_code)
+    epw_path = weather_data[:station_filename]
+  end
   if not File.exist? epw_path
     test_epw_path = File.join(File.dirname(hpxml_path), epw_path)
     epw_path = test_epw_path if File.exist? test_epw_path

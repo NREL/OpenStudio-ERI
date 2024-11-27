@@ -31,7 +31,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>OR</StateCode>
-        <ZipCode>80206</ZipCode>
+        <ZipCode>97214</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -58,13 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>4C</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>Portland, OR</Name>
-          <extension>
-            <EPWFilePath>USA_OR_Portland.Intl.AP.726980_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>

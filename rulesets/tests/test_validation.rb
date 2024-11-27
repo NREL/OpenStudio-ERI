@@ -143,14 +143,21 @@ class ERI301ValidationTest < Minitest::Test
 
   def test_ruleset_error_messages
     # Test case => Error message
-    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."] }
+    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."],
+                            'invalid-zip-code' => ["Zip code '00000' could not be found in zipcode_weather_stations.csv"] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
       # Create HPXML object
-      if ['invalid-epw-filepath'].include? error_case
+      case error_case
+      when 'invalid-epw-filepath'
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
+        hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+        hpxml_bldg.climate_and_risk_zones.weather_station_name = 'foo'
         hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
+      when 'invalid-zip-code'
+        hpxml, hpxml_bldg = _create_hpxml('base.xml')
+        hpxml_bldg.zip_code = '00000'
       else
         fail "Unhandled case: #{error_case}."
       end

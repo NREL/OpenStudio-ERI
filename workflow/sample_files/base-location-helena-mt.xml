@@ -58,13 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>6B</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>USA_MT_Helena.Rgnl.AP.727720_TMY3</Name>
-          <extension>
-            <EPWFilePath>USA_MT_Helena.Rgnl.AP.727720_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>
