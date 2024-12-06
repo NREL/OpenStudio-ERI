@@ -91,12 +91,11 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       _convert_to_es_zerh('base-appliances-none.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
-        _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
       else
-        _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
       end
+      _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
       _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationConditionedSpace)
       _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 270.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.23, label_usage: 4, location: HPXML::LocationConditionedSpace)
       _check_cooking_range(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationConditionedSpace)
