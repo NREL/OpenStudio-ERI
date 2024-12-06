@@ -3,6 +3,9 @@
 __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
 
+__Bugfixes__
+- Fixes clothes washer configurations for ENERGY STAR and ZERH programs.
+
 ## OpenStudio-ERI v1.9.0
 
 __New Features__
