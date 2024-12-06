@@ -950,24 +950,40 @@ module ES_ZERH_Ruleset
     # Default values
     id = 'ClothesWasher'
     location = HPXML::LocationConditionedSpace
+    reference_values = Defaults.get_clothes_washer_values(@eri_version)
+    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor]
+    rated_annual_kwh = reference_values[:rated_annual_kwh]
+    label_electric_rate = reference_values[:label_electric_rate]
+    label_gas_rate = reference_values[:label_gas_rate]
+    label_annual_gas_cost = reference_values[:label_annual_gas_cost]
+    label_usage = reference_values[:label_usage]
+    capacity = reference_values[:capacity]
 
     # Override values?
-    if not orig_bldg.clothes_washers.empty?
+    if (not orig_bldg.clothes_washers.empty?) && ([ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version)
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
+
+      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
+      rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
+      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
+      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
+      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
+      label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
+      capacity = lookup_reference_value('clothes_washer_capacity')
     end
 
     new_bldg.clothes_washers.add(id: id,
                                  location: location,
                                  is_shared_appliance: false,
-                                 integrated_modified_energy_factor: lookup_reference_value('clothes_washer_imef'),
-                                 rated_annual_kwh: lookup_reference_value('clothes_washer_ler'),
-                                 label_electric_rate: lookup_reference_value('clothes_washer_elec_rate'),
-                                 label_gas_rate: lookup_reference_value('clothes_washer_gas_rate'),
-                                 label_annual_gas_cost: lookup_reference_value('clothes_washer_ghwc'),
-                                 label_usage: lookup_reference_value('clothes_washer_lcy') / 52.0,
-                                 capacity: lookup_reference_value('clothes_washer_capacity'))
+                                 integrated_modified_energy_factor: integrated_modified_energy_factor,
+                                 rated_annual_kwh: rated_annual_kwh,
+                                 label_electric_rate: label_electric_rate,
+                                 label_gas_rate: label_gas_rate,
+                                 label_annual_gas_cost: label_annual_gas_cost,
+                                 label_usage: label_usage,
+                                 capacity: capacity)
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_bldg, new_bldg)
