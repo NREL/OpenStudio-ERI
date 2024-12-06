@@ -960,18 +960,20 @@ module ES_ZERH_Ruleset
     capacity = reference_values[:capacity]
 
     # Override values?
-    if (not orig_bldg.clothes_washers.empty?) && ([ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version)
+    if not orig_bldg.clothes_washers.empty?
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
-      rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
-      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
-      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
-      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
-      label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
-      capacity = lookup_reference_value('clothes_washer_capacity')
+      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+        integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
+        rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
+        label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
+        label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
+        label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
+        label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
+        capacity = lookup_reference_value('clothes_washer_capacity')
+      end
     end
 
     new_bldg.clothes_washers.add(id: id,
