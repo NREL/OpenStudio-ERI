@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.9.1
+
+__Bugfixes__
+- Fixes clothes washer configurations for ZERH v2 and ENERGY STAR SFNH 3.2/MFNC 1.2 programs when the rated home does not include a clothes washer.
+
 ## OpenStudio-ERI v1.9.0
 
 __New Features__
