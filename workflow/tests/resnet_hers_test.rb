@@ -49,13 +49,15 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_reference_home_auto_generation
+    version = '2022C'
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_4.2_HERS_AutoGen_Reference_Home',
-                                                                   'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home')
+                                                                   'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home',
+                                                                   version)
 
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml)[0, 2].to_i
-      _check_reference_home_components(results, test_num, '2022C')
+      _check_reference_home_components(results, test_num, version)
     end
   end
 
