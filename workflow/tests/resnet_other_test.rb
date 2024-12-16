@@ -19,29 +19,25 @@ class RESNETOtherTest < Minitest::Test
   end
 
   def test_resnet_hers_reference_home_auto_generation_301_2019_pre_addendum_a
-    version = '2019'
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA',
-                                                                   'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA',
-                                                                   version)
+                                                                   'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA')
 
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml)[0, 2].to_i
-      _check_reference_home_components(results, test_num, version)
+      _check_reference_home_components(results, test_num, '2019')
     end
   end
 
   def test_resnet_hers_reference_home_auto_generation_301_2014
     # Older test w/ 301-2014 mechanical ventilation acceptance criteria
-    version = '2014'
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_Other_HERS_AutoGen_Reference_Home_301_2014',
-                                                                   'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014',
-                                                                   version)
+                                                                   'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
 
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml)[0, 2].to_i
-      _check_reference_home_components(results, test_num, version)
+      _check_reference_home_components(results, test_num, '2014')
     end
   end
 
