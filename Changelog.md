@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.9.2
+
+__New Features__
+- Updates HERS test outputs to match the latest RESNET accreditation forms.
+
 ## OpenStudio-ERI v1.9.1
 
 __Bugfixes__
