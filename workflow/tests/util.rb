@@ -457,8 +457,8 @@ def _get_reference_home_components(hpxml, test_num, version)
     results['Window SHGCo'] = win_shgc_htg.round(2)
     assert_equal(win_shgc_htg, win_shgc_clg)
   else
-    results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
-    results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
+  results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
+  results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
   end
 
   # Infiltration
@@ -466,7 +466,7 @@ def _get_reference_home_components(hpxml, test_num, version)
   results['SLAo (ft2/ft2)'] = sla.round(5)
 
   # Internal gains
-  xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_bldg, hpxml.header.eri_calculation_version)
+  xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_bldg, eri_version)
   results['Sensible Internal gains (Btu/day)'] = xml_it_sens.round(0)
   results['Latent Internal gains (Btu/day)'] = xml_it_lat.round(0)
 
