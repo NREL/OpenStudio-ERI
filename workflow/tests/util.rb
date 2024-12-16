@@ -274,7 +274,7 @@ def _rm_path(path)
   end
 end
 
-def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
+def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, version)
   test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
   File.delete(test_results_csv) if File.exist? test_results_csv
 
@@ -285,7 +285,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name)
     out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
     _run_ruleset(Constants::CalcTypeERIReferenceHome, xml, out_xml)
     test_num = File.basename(xml)[0, 2].to_i
-    all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num)
+    all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num, version)
 
     # Update HPXML to override mech vent fan power for eRatio test
     new_hpxml = HPXML.new(hpxml_path: out_xml)
@@ -374,7 +374,7 @@ def _test_resnet_hers_method(test_name, dir_name)
   return all_results
 end
 
-def _get_reference_home_components(hpxml, test_num)
+def _get_reference_home_components(hpxml, test_num, version)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
@@ -453,8 +453,13 @@ def _get_reference_home_components(hpxml, test_num)
   results['East window area (ft2)'] = win_areas[90].round(2)
   results['West window area (ft2)'] = win_areas[270].round(2)
   results['Window U-Factor'] = win_u.round(2)
+  if version == '2022C'
+    results['Window SHGCo'] = win_shgc_htg.round(2)
+    assert_equal(win_shgc_htg, win_shgc_clg)
+  else
   results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
   results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
+  end
 
   # Infiltration
   sla, _ach50 = _get_infiltration(hpxml_bldg)
@@ -665,8 +670,7 @@ def _check_reference_home_components(results, test_num, version)
   end
   if version == '2022C'
     # Pub 002-2024
-    assert_equal(0.33, results['Window SHGCo (heating)'])
-    assert_equal(0.33, results['Window SHGCo (cooling)'])
+    assert_equal(0.33, results['Window SHGCo'])
   else
     assert_equal(0.34, results['Window SHGCo (heating)'])
     assert_equal(0.28, results['Window SHGCo (cooling)'])
