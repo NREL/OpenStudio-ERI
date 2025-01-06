@@ -1231,31 +1231,6 @@ def _get_hot_water(results_csv)
   return dhw_energy.round(2), recirc_energy.round(2)
 end
 
-def _test_resnet_hot_water(test_name, dir_name)
-  test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
-  File.delete(test_results_csv) if File.exist? test_results_csv
-
-  # Run simulations
-  all_results = {}
-  xmldir = File.join(File.dirname(__FILE__), dir_name)
-  Dir["#{xmldir}/*.xml"].sort.each do |xml|
-    out_xml = File.join(@test_files_dir, File.basename(xml))
-    _run_ruleset(Constants::CalcTypeERIRatedHome, xml, out_xml)
-
-    csv_path = _run_simulation(out_xml, test_name)
-
-    all_results[File.basename(xml)] = _get_hot_water(csv_path)
-    assert_operator(all_results[File.basename(xml)][0], :>, 0)
-
-    File.delete(out_xml)
-  end
-  assert(all_results.size > 0)
-
-  dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
-
-  return dhw_energy
-end
-
 def _check_hot_water_301_2019_pre_addendum_a(energy)
   # Acceptance Criteria for Hot Water Tests
 

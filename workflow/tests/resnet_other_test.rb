@@ -107,8 +107,23 @@ class RESNETOtherTest < Minitest::Test
 
   def test_resnet_hot_water_301_2019_pre_addendum_a
     # Tests w/o 301-2019 Addendum A
-    dhw_energy = _test_resnet_hot_water('RESNET_Test_Other_Hot_Water_301_2019_PreAddendumA',
-                                        'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
+    test_name = 'RESNET_Test_Other_Hot_Water_301_2019_PreAddendumA'
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
+    File.delete(test_results_csv) if File.exist? test_results_csv
+
+    # Run simulations
+    all_results = {}
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      csv_path = _run_simulation(xml, test_name)
+
+      results = _get_csv_results([csv_path])
+      all_results[File.basename(xml)] = _get_simulation_hot_water_results(results)
+      assert_operator(all_results[File.basename(xml)][0], :>, 0)
+    end
+    assert(all_results.size > 0)
+
+    dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
 
     # Check results
     _check_hot_water_301_2019_pre_addendum_a(dhw_energy)
@@ -116,8 +131,23 @@ class RESNETOtherTest < Minitest::Test
 
   def test_resnet_hot_water_301_2014_pre_addendum_a
     # Tests w/o 301-2014 Addendum A
-    dhw_energy = _test_resnet_hot_water('RESNET_Test_Other_Hot_Water_301_2014_PreAddendumA',
-                                        'RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
+    test_name = 'RESNET_Test_Other_Hot_Water_301_2014_PreAddendumA'
+    test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
+    File.delete(test_results_csv) if File.exist? test_results_csv
+
+    # Run simulations
+    all_results = {}
+    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
+    Dir["#{xmldir}/*.xml"].sort.each do |xml|
+      csv_path = _run_simulation(xml, test_name)
+
+      results = _get_csv_results([csv_path])
+      all_results[File.basename(xml)] = _get_simulation_hot_water_results(results)
+      assert_operator(all_results[File.basename(xml)][0], :>, 0)
+    end
+    assert(all_results.size > 0)
+
+    dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
 
     # Check results
     _check_hot_water_301_2014_pre_addendum_a(dhw_energy)
