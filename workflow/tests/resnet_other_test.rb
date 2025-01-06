@@ -3,6 +3,7 @@
 # Other RESNET tests (mostly tests for older versions of 301)
 
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
+require_relative '../../hpxml-measures/workflow/tests/util.rb'
 require 'openstudio'
 require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
@@ -102,5 +103,23 @@ class RESNETOtherTest < Minitest::Test
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
       _check_method_results(results, test_num, test_num == 2, '2014')
     end
+  end
+
+  def test_resnet_hot_water_301_2019_pre_addendum_a
+    # Tests w/o 301-2019 Addendum A
+    dhw_energy = _test_resnet_hot_water('RESNET_Test_Other_Hot_Water_301_2019_PreAddendumA',
+                                        'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
+
+    # Check results
+    _check_hot_water_301_2019_pre_addendum_a(dhw_energy)
+  end
+
+  def test_resnet_hot_water_301_2014_pre_addendum_a
+    # Tests w/o 301-2014 Addendum A
+    dhw_energy = _test_resnet_hot_water('RESNET_Test_Other_Hot_Water_301_2014_PreAddendumA',
+                                        'RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
+
+    # Check results
+    _check_hot_water_301_2014_pre_addendum_a(dhw_energy)
   end
 end
