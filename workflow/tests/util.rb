@@ -457,8 +457,8 @@ def _get_reference_home_components(hpxml, test_num, version)
     results['Window SHGCo'] = win_shgc_htg.round(2)
     assert_equal(win_shgc_htg, win_shgc_clg)
   else
-  results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
-  results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
+    results['Window SHGCo (heating)'] = win_shgc_htg.round(2)
+    results['Window SHGCo (cooling)'] = win_shgc_clg.round(2)
   end
 
   # Infiltration
@@ -1213,4 +1213,130 @@ def _check_method_results(results, test_num, has_tankless_water_heater, version)
   end
 
   assert_operator((results['ERI'] - eri).abs / results['ERI'], :<, 0.005)
+end
+
+def _get_hot_water(results_csv)
+  dhw_energy = 0
+  recirc_energy = 0
+  CSV.foreach(results_csv) do |row|
+    next if row.nil? || row[0].nil?
+
+    if ["End Use: #{FT::Gas}: #{EUT::HotWater} (MBtu)",
+        "End Use: #{FT::Elec}: #{EUT::HotWater} (MBtu)"].include? row[0]
+      dhw_energy += Float(row[1])
+    elsif ["End Use: #{FT::Elec}: #{EUT::HotWaterRecircPump} (MBtu)"].include? row[0]
+      recirc_energy += Float(row[1])
+    end
+  end
+  return dhw_energy.round(2), recirc_energy.round(2)
+end
+
+def _check_hot_water_301_2019_pre_addendum_a(energy)
+  # Acceptance Criteria for Hot Water Tests
+
+  # Duluth MN cases
+  assert_operator(energy['L100AD-HW-01'], :>, 19.11)
+  assert_operator(energy['L100AD-HW-01'], :<, 19.73)
+  assert_operator(energy['L100AD-HW-02'], :>, 25.54)
+  assert_operator(energy['L100AD-HW-02'], :<, 26.36)
+  assert_operator(energy['L100AD-HW-03'], :>, 17.03)
+  assert_operator(energy['L100AD-HW-03'], :<, 17.50)
+  assert_operator(energy['L100AD-HW-04'], :>, 24.75)
+  assert_operator(energy['L100AD-HW-04'], :<, 25.52)
+  assert_operator(energy['L100AD-HW-05'], :>, 55.43)
+  assert_operator(energy['L100AD-HW-05'], :<, 57.15)
+  assert_operator(energy['L100AD-HW-06'], :>, 22.39)
+  assert_operator(energy['L100AD-HW-06'], :<, 23.09)
+  assert_operator(energy['L100AD-HW-07'], :>, 20.29)
+  assert_operator(energy['L100AD-HW-07'], :<, 20.94)
+
+  # Miami FL cases
+  assert_operator(energy['L100AM-HW-01'], :>, 10.59)
+  assert_operator(energy['L100AM-HW-01'], :<, 11.03)
+  assert_operator(energy['L100AM-HW-02'], :>, 13.17)
+  assert_operator(energy['L100AM-HW-02'], :<, 13.68)
+  assert_operator(energy['L100AM-HW-03'], :>, 8.81)
+  assert_operator(energy['L100AM-HW-03'], :<, 9.13)
+  assert_operator(energy['L100AM-HW-04'], :>, 12.87)
+  assert_operator(energy['L100AM-HW-04'], :<, 13.36)
+  assert_operator(energy['L100AM-HW-05'], :>, 30.19)
+  assert_operator(energy['L100AM-HW-05'], :<, 31.31)
+  assert_operator(energy['L100AM-HW-06'], :>, 11.90)
+  assert_operator(energy['L100AM-HW-06'], :<, 12.38)
+  assert_operator(energy['L100AM-HW-07'], :>, 11.68)
+  assert_operator(energy['L100AM-HW-07'], :<, 12.14)
+
+  # MN Delta cases
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-02']) / energy['L100AD-HW-01'] * 100, :>, -34.01)
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-02']) / energy['L100AD-HW-01'] * 100, :<, -32.49)
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-03']) / energy['L100AD-HW-01'] * 100, :>, 10.74)
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AD-HW-03']) / energy['L100AD-HW-01'] * 100, :<, 11.57)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-04']) / energy['L100AD-HW-02'] * 100, :>, 3.06)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-04']) / energy['L100AD-HW-02'] * 100, :<, 3.22)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-05']) / energy['L100AD-HW-02'] * 100, :>, -118.52)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-05']) / energy['L100AD-HW-02'] * 100, :<, -115.63)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-06']) / energy['L100AD-HW-02'] * 100, :>, 12.17)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-06']) / energy['L100AD-HW-02'] * 100, :<, 12.51)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-07']) / energy['L100AD-HW-02'] * 100, :>, 20.15)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-07']) / energy['L100AD-HW-02'] * 100, :<, 20.78)
+
+  # FL Delta cases
+  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :>, -24.54)
+  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-02']) / energy['L100AM-HW-01'] * 100, :<, -23.42)
+  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :>, 16.65)
+  assert_operator((energy['L100AM-HW-01'] - energy['L100AM-HW-03']) / energy['L100AM-HW-01'] * 100, :<, 18.12)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :>, 2.20)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-04']) / energy['L100AM-HW-02'] * 100, :<, 2.38)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-05']) / energy['L100AM-HW-02'] * 100, :>, -130.88)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-05']) / energy['L100AM-HW-02'] * 100, :<, -127.52)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-06']) / energy['L100AM-HW-02'] * 100, :>, 9.38)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-06']) / energy['L100AM-HW-02'] * 100, :<, 9.74)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-07']) / energy['L100AM-HW-02'] * 100, :>, 11.00)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-07']) / energy['L100AM-HW-02'] * 100, :<, 11.40)
+
+  # MN-FL Delta cases
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 43.35)
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 45.00)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AM-HW-02']) / energy['L100AD-HW-02'] * 100, :>, 47.26)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AM-HW-02']) / energy['L100AD-HW-02'] * 100, :<, 48.93)
+  assert_operator((energy['L100AD-HW-03'] - energy['L100AM-HW-03']) / energy['L100AD-HW-03'] * 100, :>, 47.38)
+  assert_operator((energy['L100AD-HW-03'] - energy['L100AM-HW-03']) / energy['L100AD-HW-03'] * 100, :<, 48.74)
+  assert_operator((energy['L100AD-HW-04'] - energy['L100AM-HW-04']) / energy['L100AD-HW-04'] * 100, :>, 46.81)
+  assert_operator((energy['L100AD-HW-04'] - energy['L100AM-HW-04']) / energy['L100AD-HW-04'] * 100, :<, 48.48)
+  assert_operator((energy['L100AD-HW-05'] - energy['L100AM-HW-05']) / energy['L100AD-HW-05'] * 100, :>, 44.41)
+  assert_operator((energy['L100AD-HW-05'] - energy['L100AM-HW-05']) / energy['L100AD-HW-05'] * 100, :<, 45.99)
+  assert_operator((energy['L100AD-HW-06'] - energy['L100AM-HW-06']) / energy['L100AD-HW-06'] * 100, :>, 45.60)
+  assert_operator((energy['L100AD-HW-06'] - energy['L100AM-HW-06']) / energy['L100AD-HW-06'] * 100, :<, 47.33)
+  assert_operator((energy['L100AD-HW-07'] - energy['L100AM-HW-07']) / energy['L100AD-HW-07'] * 100, :>, 41.32)
+  assert_operator((energy['L100AD-HW-07'] - energy['L100AM-HW-07']) / energy['L100AD-HW-07'] * 100, :<, 42.86)
+end
+
+def _check_hot_water_301_2014_pre_addendum_a(energy)
+  # Acceptance Criteria for Hot Water Tests
+
+  # Duluth MN cases
+  assert_operator(energy['L100AD-HW-01'], :>, 18.2)
+  assert_operator(energy['L100AD-HW-01'], :<, 22.0)
+
+  # Miami FL cases
+  assert_operator(energy['L100AM-HW-01'], :>, 10.9)
+  assert_operator(energy['L100AM-HW-01'], :<, 14.4)
+
+  # MN Delta cases
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 26.5)
+  assert_operator((energy['L100AD-HW-02'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 32.2)
+  assert_operator((energy['L100AD-HW-03'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :>, -11.8)
+  assert_operator((energy['L100AD-HW-03'] - energy['L100AD-HW-01']) / energy['L100AD-HW-01'] * 100, :<, -6.8)
+
+  # FL Delta cases
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :>, 19.1)
+  assert_operator((energy['L100AM-HW-02'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :<, 29.1)
+  assert_operator((energy['L100AM-HW-03'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :>, -19.5)
+  assert_operator((energy['L100AM-HW-03'] - energy['L100AM-HW-01']) / energy['L100AM-HW-01'] * 100, :<, -7.7)
+
+  # MN-FL Delta cases
+  assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :>, 5.5)
+  assert_operator(energy['L100AD-HW-01'] - energy['L100AM-HW-01'], :<, 9.4)
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :>, 28.9)
+  assert_operator((energy['L100AD-HW-01'] - energy['L100AM-HW-01']) / energy['L100AD-HW-01'] * 100, :<, 45.1)
 end
