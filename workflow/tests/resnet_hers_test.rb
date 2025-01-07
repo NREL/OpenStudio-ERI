@@ -45,7 +45,7 @@ class RESNETTest < Minitest::Test
     htg_loads, clg_loads = _write_ashrae_140_results(all_results, test_results_csv)
 
     # Check results if we have them all
-    if all_results.size == 26
+    if all_results.size > 1
       _check_ashrae_140_results(htg_loads, clg_loads)
     end
   end
@@ -101,7 +101,7 @@ class RESNETTest < Minitest::Test
     hvac_energy = _write_hers_hvac_results(all_results, test_results_csv)
 
     # Check result if we have them all
-    if all_results.size == 7
+    if all_results.size > 1
       _check_hvac_test_results(hvac_energy)
     end
   end
@@ -130,7 +130,7 @@ class RESNETTest < Minitest::Test
     dse_energy = _write_hers_dse_results(all_results, test_results_csv)
 
     # Check results if we have them all
-    if all_results.size == 8
+    if all_results.size > 1
       _check_dse_test_results(dse_energy)
     end
   end
@@ -155,7 +155,7 @@ class RESNETTest < Minitest::Test
     dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
 
     # Check results if we have them all
-    if all_results.size == 14
+    if all_results.size > 1
       _check_hot_water(dhw_energy)
     end
   end
