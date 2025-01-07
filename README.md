@@ -2,7 +2,7 @@ OpenStudio®-ERI
 ==============
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/NREL/OpenStudio-ERI?include_prereleases)](https://github.com/NREL/OpenStudio-ERI/releases)
-[![ci](https://github.com/NREL/OpenStudio-ERI/workflows/ci/badge.svg)](https://github.com/NREL/OpenStudio-ERI/actions)
+[![ci](https://github.com/NREL/OpenStudio-ERI/actions/workflows/config.yml/badge.svg?branch=master)](https://github.com/NREL/OpenStudio-ERI/actions/workflows/config.yml)
 [![Documentation Status](https://readthedocs.org/projects/openstudio-eri/badge/?version=latest)](https://openstudio-eri.readthedocs.io/en/latest/?badge=latest)
 
 
