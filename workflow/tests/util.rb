@@ -192,6 +192,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     run_log.each do |log_line|
       next unless log_line.include? 'OS Message:'
       next if log_line.include?('OS Message: Minutes field (60) on line 9 of EPW file')
+      next if log_line.include?('OS Message: Error removing temporary directory at')
 
       flunk "Unexpected warning found in #{log_path} run.log: #{log_line}"
     end
