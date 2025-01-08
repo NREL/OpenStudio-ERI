@@ -61,15 +61,20 @@ class RESNETOtherTest < Minitest::Test
     end
     assert(all_results.size > 0)
 
-    # Write results to csv
+    # Write results to CSV
     CSV.open(test_results_csv, 'w') do |csv|
-      csv << ['Component', 'Test 1 Results', 'Test 2 Results', 'Test 3 Results', 'Test 4 Results']
-      all_results['01-L100.xml'].keys.each do |component|
-        csv << [component,
-                all_results['01-L100.xml'][component],
-                all_results['02-L100.xml'][component],
-                all_results['03-L304.xml'][component],
-                all_results['04-L324.xml'][component]]
+      # Write the header row with filenames
+      header = ['Component'] + all_results.keys
+      csv << header
+
+      # Dynamically get the first file's components
+      first_file = all_results.keys.first
+
+      # Iterate over the components in the first file
+      all_results[first_file].keys.each do |component|
+        # Gather results from all files for the current component
+        row = [component] + all_results.keys.map { |file| all_results[file][component] }
+        csv << row
       end
     end
     puts "Wrote results to #{test_results_csv}."
