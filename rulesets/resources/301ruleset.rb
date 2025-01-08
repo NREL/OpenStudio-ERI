@@ -350,7 +350,7 @@ module ERI_301_Ruleset
   def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
     infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @weather)
     sla = 0.00036
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, infil_values[:volume])
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, infil_values[:volume] / @cfa)
     new_bldg.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
@@ -1661,7 +1661,7 @@ module ERI_301_Ruleset
 
     # Calculate fan cfm
     infil_values = Airflow.get_values_from_air_infiltration_measurements(new_bldg, @weather)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], 0.65, @cfa, infil_values[:volume])
+    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], infil_values[:volume] / @cfa)
     q_fan = calc_mech_vent_qfan(q_tot, sla, true, 0.0, infil_values[:height])
     fan_power_w = 0.70 * q_fan
 
@@ -2542,7 +2542,7 @@ module ERI_301_Ruleset
     if not min_nach.nil?
       avg_ceiling_height = orig_bldg.building_construction.average_ceiling_height
       min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_values[:height], avg_ceiling_height, @weather)
-      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, infil_values[:volume])
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, infil_values[:volume] / @cfa)
       if ach50 < min_ach50
         ach50 = min_ach50
       end
@@ -2619,7 +2619,7 @@ module ERI_301_Ruleset
   def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
     infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @weather)
     ach50, _ = calc_rated_home_infiltration_ach50(orig_bldg)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_values[:volume])
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_values[:volume] / @cfa)
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan = calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_values[:height])
     return q_fan
@@ -2627,7 +2627,7 @@ module ERI_301_Ruleset
 
   def self.calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_height)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, infil_height)
-    q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
+    q_inf = Airflow.get_mech_vent_qinf_cfm(nl, @weather, @cfa)
     a_ext = 1.0 # Use Aext=1.0 because sla reflects 'unit exterior' infiltration so it already incorporates Aext
     q_fan = Airflow.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, a_ext, @bldg_type, @eri_version, nil)
     return q_fan
