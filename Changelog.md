@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.9.3
+
+__Bugfixes__
+- Fixes possibility of ERI Rated Home having extra balanced supplemental ventilation due to floating point comparison.
+
 ## OpenStudio-ERI v1.9.2
 
 __New Features__
