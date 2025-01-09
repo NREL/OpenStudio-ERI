@@ -958,7 +958,7 @@ def _get_infiltration(hpxml_bldg)
   ach50 = air_infil.air_leakage
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   infil_volume = air_infil.infiltration_volume
-  sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
+  sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_volume / cfa)
   return sla, ach50
 end
 
@@ -986,7 +986,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   cooking_range = hpxml_bldg.cooking_ranges[0]
   cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
   oven = hpxml_bldg.ovens[0]
-  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, nbeds, cooking_range, oven)
+  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, nbeds, nil, nil, cooking_range, oven)
   btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cr_frac_sens * btu)
   xml_appl_lat += (cr_frac_lat * btu)
@@ -1002,7 +1002,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Dishwasher
   dishwasher = hpxml_bldg.dishwashers[0]
   dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
-  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, nbeds, dishwasher)
+  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, nbeds, nil, dishwasher)
   btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (dw_frac_sens * btu)
   xml_appl_lat += (dw_frac_lat * btu)
@@ -1010,7 +1010,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesWasher
   clothes_washer = hpxml_bldg.clothes_washers[0]
   clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
-  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, nbeds, clothes_washer)
+  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, nbeds, nil, clothes_washer)
   btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (cw_frac_sens * btu)
   xml_appl_lat += (cw_frac_lat * btu)
@@ -1018,7 +1018,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesDryer
   clothes_dryer = hpxml_bldg.clothes_dryers[0]
   clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
-  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, nbeds, clothes_dryer, clothes_washer)
+  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, nbeds, nil, clothes_dryer, clothes_washer)
   btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cd_frac_sens * btu)
   xml_appl_lat += (cd_frac_lat * btu)
@@ -1026,7 +1026,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
   # Water Use
-  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds)
+  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds, nil, nil)
   s += "#{xml_water_sens} #{xml_water_lat}\n"
 
   # Occupants
