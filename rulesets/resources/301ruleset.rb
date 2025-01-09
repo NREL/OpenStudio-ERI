@@ -2483,7 +2483,7 @@ module ERI_301_Ruleset
       # Check if supplemental balanced ventilation is needed
       # This should only happen when the home has no mechanical ventilation, because
       # otherwise the existing ventilation fans would have been increased instead.
-      if min_q_fan > q_fans.values.sum
+      if min_q_fan - q_fans.values.sum > 0.1
         q_fan_bal_remain = calc_rated_home_qfan(orig_bldg, true, 0.0)
       end
     end
