@@ -59,10 +59,10 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version to perform DOE ZERH ERI calculation
   =================================  ========  =======  ===========  ========  =======  ==================================
   
-  .. [#] ERICalculation/Version choices are "latest", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
+  .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
-  .. [#] CO2IndexCalculation/Version choices are "latest", "2022C", "2022", or "2019ABCD".
+  .. [#] CO2IndexCalculation/Version choices are "latest", "2022CE", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
          If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
@@ -105,7 +105,8 @@ Site information is entered in ``/HPXML/Building/Site``.
          \- **OregonWashington**: OR, WA
          
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
-  .. [#] ZipCode is only currently used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
+  .. [#] ZipCode is used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
+         It may also be used to choose a default TMY3 weather station when not provided in :ref:`weather_station`.
 
 HPXML Building Summary
 ----------------------
@@ -149,19 +150,23 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
          For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
 
+.. _weather_station:
+
 HPXML Weather Station
 ---------------------
 
 Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRiskZones/WeatherStation``.
 
-  =========================  ======  =======  ===========  ========  =======  ==============================================
-  Element                    Type    Units    Constraints  Required  Default  Notes
-  =========================  ======  =======  ===========  ========  =======  ==============================================
-  ``SystemIdentifier``       id                            Yes                Unique identifier
-  ``Name``                   string                        Yes                Name of weather station
-  ``extension/EPWFilePath``  string                        Yes                Path to the EnergyPlus weather file (EPW) [#]_
-  =========================  ======  =======  ===========  ========  =======  ==============================================
+  =========================  ======  =======  ===========  ========  ========  ==============================================
+  Element                    Type    Units    Constraints  Required  Default   Notes
+  =========================  ======  =======  ===========  ========  ========  ==============================================
+  ``SystemIdentifier``       id                            Yes                 Unique identifier
+  ``Name``                   string                        Yes                 Name of weather station
+  ``extension/EPWFilePath``  string                        No        See [#]_  Path to the EnergyPlus weather file (EPW) [#]_
+  =========================  ======  =======  ===========  ========  ========  ==============================================
 
+  .. [#] If EPWFilePath not provided, defaults based on the U.S. TMY3 weather station closest to the zip code centroid.
+         The mapping can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/data/zipcode_weather_stations.csv``.
   .. [#] A full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
 
 HPXML Climate Zones
@@ -373,8 +378,8 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   ``InteriorAdjacentTo``                  string                   See [#]_      Yes                  Interior adjacent space type
   ``Area``                                double     ft2           > 0           Yes                  Gross area (including skylights)
   ``Azimuth``                             integer    deg           >= 0, <= 359  No         See [#]_  Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance
-  ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance
+  ``SolarAbsorptance``                    double                   >= 0, <= 1    Yes                  Solar absorptance of outermost material
+  ``Emittance``                           double                   >= 0, <= 1    Yes                  Emittance of outermost material
   ``Pitch``                               double     ?/12          >= 0          Yes                  Pitch [#]_
   ``RadiantBarrier``                      boolean                                No         false     Presence of radiant barrier
   ``RadiantBarrierGrade``                 integer                  >= 1, <= 3    See [#]_             Radiant barrier installation grade
@@ -406,8 +411,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
   ``InteriorAdjacentTo``                  string                 See [#]_      Yes                    Interior adjacent space type
   ``Area``                                double   ft2           > 0           Yes                    Gross area
   ``Azimuth``                             integer  deg           >= 0, <= 359  No        See [#]_     Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance
-  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance
+  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance of outermost material
+  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance of outermost material
   ``Insulation/SystemIdentifier``         id                                   Yes                    Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double   F-ft2-hr/Btu  > 0           Yes                    Assembly R-value [#]_
   ======================================  =======  ============  ============  ========  ===========  ==============================
@@ -437,8 +442,8 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
   ``WallType``                            element                See [#]_      Yes                    Wall type (for thermal mass)
   ``Area``                                double   ft2           > 0           Yes                    Gross area (including doors/windows)
   ``Azimuth``                             integer  deg           >= 0, <= 359  No        See [#]_     Azimuth (clockwise from North)
-  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance
-  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance
+  ``SolarAbsorptance``                    double                 >= 0, <= 1    See [#]_               Solar absorptance of outermost material
+  ``Emittance``                           double                 >= 0, <= 1    See [#]_               Emittance of outermost material
   ``Insulation/SystemIdentifier``         id                                   Yes                    Unique identifier
   ``Insulation/AssemblyEffectiveRValue``  double   F-ft2-hr/Btu  > 0           Yes                    Assembly R-value [#]_
   ======================================  =======  ============  ============  ========  ===========  ====================================
@@ -767,13 +772,13 @@ Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/H
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
   
 .. warning::
 
-  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM`` and ``AirflowDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 .. _hvac_heating_wall_furnace:
@@ -998,16 +1003,16 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
-  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM``, ``AirflowDefectRatio``, and ``ChargeDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 .. _hvac_cooling_room_ac:
@@ -1140,16 +1145,16 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
-  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM``, ``AirflowDefectRatio``, and ``ChargeDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 .. _hvac_cooling_shared_chiller:
@@ -1275,16 +1280,16 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
-  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM``, ``AirflowDefectRatio``, and ``ChargeDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 .. _hvac_hp_mini_split:
@@ -1334,16 +1339,16 @@ Each ``HeatPump`` is expected to represent a single outdoor unit, whether connec
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
-  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM``, ``AirflowDefectRatio``, and ``ChargeDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 .. _hvac_hp_pthp:
@@ -1461,16 +1466,16 @@ Each ground-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/S
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] ChargeDefectRatio is defined as (InstalledCharge - DesignCharge) / DesignCharge; a value of zero means no refrigerant charge defect.
          A non-zero charge defect should typically only be applied for systems that are charged on site, not for systems that have pre-charged line sets.
-         See ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems for more information.
+         See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the charge is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
 
 .. warning::
 
-  HVAC installation quality should be provided per the conditions specified in ANSI/RESNET/ACCA 310.
+  HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM``, ``AirflowDefectRatio``, and ``ChargeDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
   OS-ERI does not check that, for example, the total duct leakage requirement has been met or that a Grade I/II input is appropriate per the ANSI 310 process flow; that is currently the responsibility of the software developer.
 
 .. _hvac_hp_water_loop:
@@ -1706,18 +1711,18 @@ Each exhaust only fan is entered as a ``/HPXML/Building/BuildingDetails/Systems/
   Element                                                     Type               Units    Constraints   Required  Default    Notes
   ==========================================================  =================  =======  ============  ========  =========  =========================================
   ``SystemIdentifier``                                        id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                 string                      exhaust only  Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true  See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``        double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ==========================================================  =================  =======  ============  ========  =========  =========================================
 
+  .. [#] Flow rate input required only if IsSharedSystem=false.
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour to maintain the hourly target ventilation rate.
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
-  .. [#] Flow rate input required only if IsSharedSystem=false.
-  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
 
 .. _vent_fan_supply_only:
 
@@ -1730,18 +1735,18 @@ Each supply only fan is entered as a ``/HPXML/Building/BuildingDetails/Systems/M
   Element                                                     Type               Units    Constraints   Required  Default    Notes
   ==========================================================  =================  =======  ============  ========  =========  =========================================
   ``SystemIdentifier``                                        id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                 string                      supply only   Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true  See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``        double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ==========================================================  =================  =======  ============  ========  =========  =========================================
 
+  .. [#] Flow rate input required only if IsSharedSystem=false.
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour to maintain the hourly target ventilation rate.
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
-  .. [#] Flow rate input required only if IsSharedSystem=false.
-  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
 
 .. _vent_fan_balanced:
 
@@ -1754,18 +1759,18 @@ Each balanced (supply and exhaust) fan is entered as a ``/HPXML/Building/Buildin
   Element                                                     Type               Units    Constraints   Required  Default    Notes
   ==========================================================  =================  =======  ============  ========  =========  =========================================
   ``SystemIdentifier``                                        id                                        Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                 string                      balanced      Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true  See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24   See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                         boolean                     true          Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                          boolean                                   Yes                  Whether it serves multiple dwelling units [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``        double or boolean  W        >= 0 or true  Yes                  Fan power or whether fan power is unknown
   ==========================================================  =================  =======  ============  ========  =========  =========================================
 
+  .. [#] Flow rate input required only if IsSharedSystem=false.
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour to maintain the hourly target ventilation rate.
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
-  .. [#] Flow rate input required only if IsSharedSystem=false.
-  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
 
 .. _vent_fan_hrv:
 
@@ -1778,19 +1783,19 @@ Each heat recovery ventilator (HRV) is entered as a ``/HPXML/Building/BuildingDe
   Element                                                                   Type               Units    Constraints               Required  Default    Notes
   ========================================================================  =================  =======  ========================  ========  =========  =========================================
   ``SystemIdentifier``                                                      id                                                    Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                                       boolean                     true                      Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                                        boolean                                               Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                               string                      heat recovery ventilator  Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm      >= 0 or true              See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                                      double             hrs/day  >= 0, <= 24               See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                                       boolean                     true                      Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                                        boolean                                               Yes                  Whether it serves multiple dwelling units [#]_
   ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac     > 0, <= 1                 Yes                  (Adjusted) Sensible recovery efficiency [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``                      double or boolean  W        >= 0 or true              Yes                  Fan power or whether fan power is unknown
   ========================================================================  =================  =======  ========================  ========  =========  =========================================
 
+  .. [#] Flow rate input required only if IsSharedSystem=false.
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour to maintain the hourly target ventilation rate.
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
-  .. [#] Flow rate input required only if IsSharedSystem=false.
-  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
   .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
          Since OpenStudio-ERI separately models fan electric consumption, ASRE is a preferable input to SRE because it can be directly used in the energy model.
 
@@ -1805,20 +1810,20 @@ Each energy recovery ventilator (ERV) is entered as a ``/HPXML/Building/Building
   Element                                                                   Type               Units    Constraints                 Required  Default    Notes
   ========================================================================  =================  =======  ==========================  ========  =========  =========================================
   ``SystemIdentifier``                                                      id                                                      Yes                  Unique identifier
-  ``UsedForWholeBuildingVentilation``                                       boolean                     true                        Yes                  Ventilation fan use case [#]_
-  ``IsSharedSystem``                                                        boolean                                                 Yes                  Whether it serves multiple dwelling units [#]_
   ``FanType``                                                               string                      energy recovery ventilator  Yes                  Type of ventilation system
   ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``                double or boolean  cfm      >= 0 or true                See [#]_             Flow rate or whether flow rate unmeasured
   ``HoursInOperation``                                                      double             hrs/day  >= 0, <= 24                 See [#]_             Hours per day of operation
+  ``UsedForWholeBuildingVentilation``                                       boolean                     true                        Yes                  Ventilation fan use case [#]_
+  ``IsSharedSystem``                                                        boolean                                                 Yes                  Whether it serves multiple dwelling units [#]_
   ``TotalRecoveryEfficiency`` or ``AdjustedTotalRecoveryEfficiency``        double             frac     > 0, <= 1                   Yes                  (Adjusted) Total recovery efficiency [#]_
   ``SensibleRecoveryEfficiency`` or ``AdjustedSensibleRecoveryEfficiency``  double             frac     > 0, <= 1                   Yes                  (Adjusted) Sensible recovery efficiency [#]_
   ``FanPower`` or ``extension/FanPowerDefaulted=true``                      double or boolean  W        >= 0 or true                Yes                  Fan power or whether fan power is unknown
   ========================================================================  =================  =======  ==========================  ========  =========  =========================================
 
+  .. [#] Flow rate input required only if IsSharedSystem=false.
+  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed because the runtime is automatically calculated for each hour to maintain the hourly target ventilation rate.
   .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] Additional shared inputs are described in :ref:`vent_fan_shared`.
-  .. [#] Flow rate input required only if IsSharedSystem=false.
-  .. [#] HoursInOperation required unless the VentilationFan refers to the supplemental fan of a :ref:`vent_fan_cfis` system, in which case it is not allowed.
   .. [#] AdjustedTotalRecoveryEfficiency (ATRE) is similar to TotalRecoveryEfficiency (TRE), in that it reflects cooling season performance, but excludes fan electric consumption.
          Since OpenStudio-ERI separately models fan electric consumption, ATRE is a preferable input to TRE because it can be directly used in the energy model.
   .. [#] AdjustedSensibleRecoveryEfficiency (ASRE) is similar to SensibleRecoveryEfficiency (SRE), in that it reflects heating season performance, but excludes fan electric consumption.
@@ -1830,37 +1835,39 @@ Central Fan Integrated Supply (CFIS)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each central fan integrated supply (CFIS) system is entered as a ``/HPXML/Building/BuildingDetails/Systems/MechanicalVentilation/VentilationFans/VentilationFan``.
+A CFIS system is a supply ventilation system with an outdoor air inlet duct on the return side of a forced-air HVAC system.
 
-  ==========================================================  =================  =======  =============================  ========  =======  =======================================
-  Element                                                     Type               Units    Constraints                    Required  Default  Notes
-  ==========================================================  =================  =======  =============================  ========  =======  =======================================
-  ``SystemIdentifier``                                        id                                                         Yes                Unique identifier
-  ``UsedForWholeBuildingVentilation``                         boolean                     true                           Yes                Ventilation fan use case [#]_
-  ``FanType``                                                 string                      central fan integrated supply  Yes                Type of ventilation system
-  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``  double or boolean  cfm      >= 0 or true                   Yes                Flow rate [#]_ or whether flow rate unmeasured
-  ``HoursInOperation``                                        double             hrs/day  >= 0, <= 24                    Yes                Hours per day of operation [#]_
-  ``CFISControls/AdditionalRuntimeOperatingMode``             string                      See [#]_                       Yes                How additional ventilation is provided (beyond when the HVAC system is running)
-  ``CFISControls/SupplementalFan``                            idref                       See [#]_                       See [#]_           The supplemental fan providing additional ventilation
-  ``AttachedToHVACDistributionSystem``                        idref                       See [#]_                       Yes                ID of attached distribution system
-  ``extension/VentilationOnlyModeAirflowFraction``            double                      >= 0, <= 1                     Yes                Blower airflow rate fraction during ventilation only mode [#]_
-  ==========================================================  =================  =======  =============================  ========  =======  =======================================
+  ===============================================================  =================  =======  =============================  ========  =======  =======================================
+  Element                                                          Type               Units    Constraints                    Required  Default  Notes
+  ===============================================================  =================  =======  =============================  ========  =======  =======================================
+  ``SystemIdentifier``                                             id                                                         Yes                Unique identifier
+  ``FanType``                                                      string                      central fan integrated supply  Yes                Type of ventilation system
+  ``CFISControls/HasOutdoorAirControl``                            boolean                                                    Yes                Presence of controls to block outdoor air when not ventilating [#]_
+  ``CFISControls/AdditionalRuntimeOperatingMode``                  string                      See [#]_                       Yes                How additional ventilation is provided (beyond when the HVAC system is running)
+  ``CFISControls/SupplementalFan``                                 idref                       See [#]_                       See [#]_           The supplemental fan providing additional ventilation
+  ``CFISControls/extension/ControlType``                           string                      See [#]_                       Yes                Primary air handler fan control strategy [#]_
+  ``CFISControls/extension/SupplementalFanRunsWithAirHandlerFan``  boolean                                                    No [#]_   false    Whether the supplemental fan also runs with the air handler fan [#]_
+  ``TestedFlowRate`` or ``extension/FlowRateNotTested=true``       double or boolean  cfm      >= 0 or true                   Yes                Flow rate [#]_ or whether flow rate unmeasured
+  ``HoursInOperation``                                             double             hrs/day  >= 0, <= 24                    Yes                Hours per day of operation [#]_
+  ``UsedForWholeBuildingVentilation``                              boolean                     true                           Yes                Ventilation fan use case [#]_
+  ``AttachedToHVACDistributionSystem``                             idref                       See [#]_                       Yes                ID of attached distribution system
+  ===============================================================  =================  =======  =============================  ========  =======  =======================================
 
-  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
-  .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan" or "supplemental fan".
+  .. [#] For example, an electronically-controlled mechanical damper, or an in-line fan that substantially blocks the flow when not running.
+  .. [#] AdditionalRuntimeOperatingMode choices are "air handler fan", "supplemental fan", or "none".
   .. [#] SupplementalFan must reference another ``VentilationFan`` where UsedForWholeBuildingVentilation=true, IsSharedSystem=false, and FanType="exhaust only" or "supply only".
   .. [#] SupplementalFan only required if AdditionalRuntimeOperatingMode is "supplemental fan".
+  .. [#] ControlType choices are "optimized" or "timer; "timer" is only allowed if AdditionalRuntimeOperatingMode="air handler fan".
+  .. [#] If ControlType="optimized", ventilation operation is assumed to take advantage of normal HVAC operation as much as possible, resulting in the lowest possible air handler fan energy use.
+         If ControlType="timer", ventilation operation occurs at a fixed interval and may fully, partially, or not coincide with HVAC operation for a given hour, resulting in higher air handler fan energy use.
+  .. [#] SupplementalFanRunsWithAirHandlerFan only applies when AdditionalRuntimeOperatingMode="supplemental fan".
+  .. [#] If SupplementalFanRunsWithAirHandlerFan is true, in addition to its normal operation, the supplemental fan will also run simultaneously with the air handler fan when outdoor air is being brought in.
+         This is typically used with a supplemental exhaust fan to provide balanced (supply + exhaust) airflow, though any additional runtime where the supplemental fan runs by itself will still be imbalanced.
   .. [#] The flow rate should equal the amount of outdoor air provided to the distribution system, not the total airflow through the distribution system.
-  .. [#] The HoursInOperation and the flow rate are combined to form the hourly target ventilation rate (e.g., inputs of 90 cfm and 8 hrs/day produce an hourly target ventilation rate of 30 cfm).
+  .. [#] HoursInOperation is combined with the flow rate to form the hourly target ventilation rate (e.g., inputs of 90 cfm and 8 hrs/day produce an hourly target ventilation rate of 30 cfm).
+         In addition, if AdditionalRuntimeOperatingMode="air handler fan", it defines the minutes per hour that the air handler must provide ventilation (e.g., 8 hrs/day is treated as 20 mins/hr).
+  .. [#] All other UsedFor... elements (i.e., ``UsedForLocalVentilation``, ``UsedForSeasonalCoolingLoadReduction``, ``UsedForGarageVentilation``) must be omitted or false.
   .. [#] HVACDistribution type cannot be :ref:`hvac_distribution_hydronic`.
-  .. [#] Blower airflow rate when operating in ventilation only mode (i.e., not heating or cooling mode), as a fraction of the maximum blower airflow rate.
-         This value will depend on whether the blower fan can operate at reduced airflow rates during ventilation only operation.
-         It is used to determine how much conditioned air is recirculated through ducts during ventilation only operation, resulting in additional duct losses.
-         A value of zero will result in no conditioned air recirculation, and thus no additional duct losses.
-
-.. note::
-
-  CFIS systems are automated controllers that use the HVAC system's air handler fan to draw in outdoor air to meet an hourly ventilation target.
-  CFIS systems are modeled as assuming they A) maximize the use of normal heating/cooling runtime operation to meet the hourly ventilation target, B) block the flow of outdoor air when the hourly ventilation target has been met, and C) provide additional runtime operation (via air handler fan or supplemental fan) to meet the remainder of the hourly ventilation target when space heating/cooling runtime alone is not sufficient.
 
 .. _vent_fan_shared:
 

@@ -5,6 +5,7 @@ require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
+require_relative '../../workflow/design'
 
 class ERIEnclosureTest < Minitest::Test
   def setup
@@ -19,6 +20,7 @@ class ERIEnclosureTest < Minitest::Test
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    puts
   end
 
   def test_ground_conductivity
@@ -38,7 +40,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants::CalcTypeERIRatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0)
+        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -162,6 +164,39 @@ class ERIEnclosureTest < Minitest::Test
         _check_infiltration(hpxml_bldg, ach50: 10.1, height: 8.0, volume: 7200.0)
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 8.0, volume: 7200.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
+      end
+    end
+
+    # Test CFIS mechanical ventilation that does not quality as a
+    # Dwelling Unit Mechanical Ventilation System
+    hpxml_name = 'base-mechvent-cfis-no-additional-runtime.xml'
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
+      elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 6.67, height: 17.0, volume: 20400.0)
+      end
+    end
+
+    # Same as above but prior to 301-2022 Addendum E
+    hpxml_name = _change_eri_version(hpxml_name, '2022C')
+
+    _all_calc_types.each do |calc_type|
+      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+      if [Constants::CalcTypeERIRatedHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 3.0, height: 9.75, volume: 21600.0) # not 0.3 nACH
+      elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
+        _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 3.0, height: 17.0, volume: 20400.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? calc_type
@@ -330,6 +365,7 @@ class ERIEnclosureTest < Minitest::Test
         _check_walls(hpxml_bldg, area: 2355.52, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       end
     end
+
     hpxml_name = _change_eri_version(hpxml_name, '2022')
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
@@ -1194,7 +1230,7 @@ class ERIEnclosureTest < Minitest::Test
   end
 
   def _test_ruleset(hpxml_name, calc_type)
-    require_relative '../../workflow/design'
+    print '.'
     designs = [Design.new(calc_type: calc_type,
                           output_dir: @sample_files_path)]
 

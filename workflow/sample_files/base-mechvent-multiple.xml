@@ -31,7 +31,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
-        <ZipCode>80206</ZipCode>
+        <ZipCode>80019</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -58,13 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>USA_CO_Denver.Intl.AP.725650_TMY3</Name>
-          <extension>
-            <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>
@@ -557,34 +550,34 @@
               <SystemIdentifier id='VentilationFan17'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
+                <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
+                <extension>
+                  <ControlType>optimized</ControlType>
+                </extension>
               </CFISControls>
               <TestedFlowRate>40.0</TestedFlowRate>
               <HoursInOperation>8.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>37.5</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
             </VentilationFan>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan18'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
+                <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>supplemental fan</AdditionalRuntimeOperatingMode>
                 <SupplementalFan idref='VentilationFan5'/>
+                <extension>
+                  <ControlType>optimized</ControlType>
+                </extension>
               </CFISControls>
               <TestedFlowRate>42.5</TestedFlowRate>
               <HoursInOperation>8.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>37.5</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution2'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
             </VentilationFan>
             <VentilationFan>
               <SystemIdentifier id='VentilationFan19'/>

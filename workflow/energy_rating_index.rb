@@ -304,9 +304,9 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   # Other #
   # ===== #
 
-  results[:teu] = calculate_teu(rated_output)
-  results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
   results[:bsl] = get_end_use(rated_output, EUT::Battery, FT::Elec)
+  results[:teu] = calculate_teu(rated_output, results[:bsl])
+  results[:opp], opp_energy = calculate_opp(rated_output, renewable_energy_limit)
   results[:pefrac] = calculate_pefrac(results[:teu], results[:opp], results[:bsl])
 
   results[:eul_dh] = calculate_dh(rated_output)
@@ -721,12 +721,13 @@ def calculate_ec(output, sys_id, fuel_types, type, is_dfhp_primary = nil, load_f
   return ec
 end
 
-def calculate_teu(output)
+def calculate_teu(output, bsl)
   # Total Energy Use
   # Fossil fuel site energy uses should be converted to equivalent electric energy use
   # in accordance with Equation 4.1-3. Note: Generator fuel consumption is included here.
   teu = get_fuel_use(output, FT::Elec) +
-        0.4 * get_fuel_use(output, non_elec_fuels)
+        0.4 * get_fuel_use(output, non_elec_fuels) -
+        bsl # Battery storage losses are added to TEU later
   return teu
 end
 
@@ -1044,7 +1045,12 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   in_bldg = in_hpxml.buildings[0]
 
   # Gather weather info
-  epw_path = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
+  if not in_bldg.climate_and_risk_zones.weather_station_epw_filepath.nil?
+    epw_path = File.basename(in_bldg.climate_and_risk_zones.weather_station_epw_filepath)
+  else
+    weather_data = Defaults.lookup_weather_data_from_zipcode(in_bldg.zip_code)
+    epw_path = weather_data[:station_filename]
+  end
   if not File.exist? epw_path
     test_epw_path = File.join(File.dirname(hpxml_path), epw_path)
     epw_path = test_epw_path if File.exist? test_epw_path
@@ -1085,7 +1091,6 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     design_type = design.calc_type
     diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
     diag_data.delete('Time')
-    File.delete(design.diag_output_path)
 
     hourly_data = Array.new(8760) { Hash.new }
     diag_data.keys.each do |group|
@@ -1103,6 +1108,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
 
     design_hpxmls[design_type] = all_outputs[design_type]['HPXML']
   end
+  FileUtils.rm(Dir[File.join(resultsdir, "*#{Design::DiagnosticFilenameSuffix}")])
 
   # Initial JSON output
   json_output = {
@@ -1184,6 +1190,9 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
       fuel_conv = UnitConversions.convert(1.0, 'kBtu', 'kWh')
       values = data_hashes.map { |h| calculate_opp(h, nil, fuel_conv)[0].round(3) }
       json_output[:on_site_power_production] = values
+
+      values = data_hashes.map { |h| get_end_use(h, EUT::Battery, FT::Elec) }
+      json_output[:battery_storage] = values
     end
 
     json_output[json_element_name] = {}

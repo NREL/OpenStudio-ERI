@@ -31,7 +31,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>AZ</StateCode>
-        <ZipCode>85023</ZipCode>
+        <ZipCode>85001</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -58,13 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>2B</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3</Name>
-          <extension>
-            <EPWFilePath>USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>

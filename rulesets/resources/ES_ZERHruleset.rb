@@ -682,6 +682,10 @@ module ES_ZERH_Ruleset
           heating_fuel = cooling_system.integrated_heating_system_fuel
           fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
           heating_system_type = cooling_system.cooling_system_type
+        elsif heating_system.is_a? HPXML::HeatPump
+          heating_fuel = heating_system.heat_pump_fuel
+          fraction_heat_load_served = heating_system.fraction_heat_load_served
+          heating_system_type = heating_system.heat_pump_type
         end
 
         if heating_system_type == HPXML::HVACTypeBoiler && heating_fuel != HPXML::FuelTypeElectricity
@@ -702,7 +706,7 @@ module ES_ZERH_Ruleset
       if not cooling_system.nil?
         if created_hp
           # Already created HP above
-        elsif cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower
+        elsif cooling_system.is_a?(HPXML::CoolingSystem) && (cooling_system.cooling_system_type == HPXML::HVACTypeChiller || cooling_system.cooling_system_type == HPXML::HVACTypeCoolingTower)
           add_reference_chiller_or_cooling_tower(new_bldg, cooling_system)
         else
           add_reference_air_conditioner(orig_bldg, new_bldg, cooling_system.fraction_cool_load_served, cooling_system)
@@ -946,24 +950,42 @@ module ES_ZERH_Ruleset
     # Default values
     id = 'ClothesWasher'
     location = HPXML::LocationConditionedSpace
+    reference_values = Defaults.get_clothes_washer_values(@eri_version)
+    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor]
+    rated_annual_kwh = reference_values[:rated_annual_kwh]
+    label_electric_rate = reference_values[:label_electric_rate]
+    label_gas_rate = reference_values[:label_gas_rate]
+    label_annual_gas_cost = reference_values[:label_annual_gas_cost]
+    label_usage = reference_values[:label_usage]
+    capacity = reference_values[:capacity]
 
     # Override values?
     if not orig_bldg.clothes_washers.empty?
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
+
+      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+        integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
+        rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
+        label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
+        label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
+        label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
+        label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
+        capacity = lookup_reference_value('clothes_washer_capacity')
+      end
     end
 
     new_bldg.clothes_washers.add(id: id,
                                  location: location,
                                  is_shared_appliance: false,
-                                 integrated_modified_energy_factor: lookup_reference_value('clothes_washer_imef'),
-                                 rated_annual_kwh: lookup_reference_value('clothes_washer_ler'),
-                                 label_electric_rate: lookup_reference_value('clothes_washer_elec_rate'),
-                                 label_gas_rate: lookup_reference_value('clothes_washer_gas_rate'),
-                                 label_annual_gas_cost: lookup_reference_value('clothes_washer_ghwc'),
-                                 label_usage: lookup_reference_value('clothes_washer_lcy') / 52.0,
-                                 capacity: lookup_reference_value('clothes_washer_capacity'))
+                                 integrated_modified_energy_factor: integrated_modified_energy_factor,
+                                 rated_annual_kwh: rated_annual_kwh,
+                                 label_electric_rate: label_electric_rate,
+                                 label_gas_rate: label_gas_rate,
+                                 label_annual_gas_cost: label_annual_gas_cost,
+                                 label_usage: label_usage,
+                                 capacity: capacity)
   end
 
   def self.set_appliances_clothes_dryer_reference(orig_bldg, new_bldg)
@@ -1139,28 +1161,6 @@ module ES_ZERH_Ruleset
       return air_infiltration_measurement.infiltration_height
     end
     return
-  end
-
-  def self.get_hvac_configurations(orig_bldg)
-    hvac_configurations = []
-    orig_bldg.heating_systems.each do |orig_heating_system|
-      hvac_configurations << { heating_system: orig_heating_system, cooling_system: orig_heating_system.attached_cooling_system }
-    end
-    orig_bldg.cooling_systems.each do |orig_cooling_system|
-      # Exclude cooling systems already added to hvac_configurations
-      next if hvac_configurations.any? { |config| config[:cooling_system].id == orig_cooling_system.id if not config[:cooling_system].nil? }
-
-      if orig_cooling_system.has_integrated_heating # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
-        hvac_configurations << { cooling_system: orig_cooling_system, heating_system: orig_cooling_system }
-      else
-        hvac_configurations << { cooling_system: orig_cooling_system }
-      end
-    end
-    orig_bldg.heat_pumps.each do |orig_heat_pump|
-      hvac_configurations << { heat_pump: orig_heat_pump }
-    end
-
-    return hvac_configurations
   end
 
   def self.get_radiant_barrier_bool(orig_bldg)

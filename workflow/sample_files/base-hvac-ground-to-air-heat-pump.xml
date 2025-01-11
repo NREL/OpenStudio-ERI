@@ -31,7 +31,7 @@
       <SiteID id='SiteID'/>
       <Address>
         <StateCode>CO</StateCode>
-        <ZipCode>80206</ZipCode>
+        <ZipCode>80019</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>
@@ -58,13 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>5B</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>USA_CO_Denver.Intl.AP.725650_TMY3</Name>
-          <extension>
-            <EPWFilePath>USA_CO_Denver.Intl.AP.725650_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>
@@ -293,13 +286,6 @@
               <HeatingCapacity>36000.0</HeatingCapacity>
               <CoolingCapacity>36000.0</CoolingCapacity>
               <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
-              <BackupType>integrated</BackupType>
-              <BackupSystemFuel>electricity</BackupSystemFuel>
-              <BackupAnnualHeatingEfficiency>
-                <Units>Percent</Units>
-                <Value>1.0</Value>
-              </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>36000.0</BackupHeatingCapacity>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -314,7 +300,7 @@
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
                 <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
-                <PumpPowerWattsPerTon>30.0</PumpPowerWattsPerTon>
+                <PumpPowerWattsPerTon>100.0</PumpPowerWattsPerTon>
               </extension>
             </HeatPump>
           </HVACPlant>

@@ -623,17 +623,17 @@
               <SystemIdentifier id='VentilationFan1'/>
               <FanType>central fan integrated supply</FanType>
               <CFISControls>
+                <HasOutdoorAirControl>true</HasOutdoorAirControl>
                 <AdditionalRuntimeOperatingMode>air handler fan</AdditionalRuntimeOperatingMode>
+                <extension>
+                  <ControlType>optimized</ControlType>
+                </extension>
               </CFISControls>
               <TestedFlowRate>58.0</TestedFlowRate>
               <HoursInOperation>24.0</HoursInOperation>
               <UsedForWholeBuildingVentilation>true</UsedForWholeBuildingVentilation>
               <IsSharedSystem>false</IsSharedSystem>
-              <FanPower>178.0</FanPower>
               <AttachedToHVACDistributionSystem idref='HVACDistribution1'/>
-              <extension>
-                <VentilationOnlyModeAirflowFraction>1.0</VentilationOnlyModeAirflowFraction>
-              </extension>
             </VentilationFan>
           </VentilationFans>
         </MechanicalVentilation>

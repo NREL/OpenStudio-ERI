@@ -5,6 +5,7 @@ require 'openstudio'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
+require_relative '../../workflow/design'
 
 class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   def setup
@@ -19,6 +20,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    puts
   end
 
   def get_es_zerh_duct_leakage(program_version, value)
@@ -389,7 +391,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       if [ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       else
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 30, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 80, **hvac_iq_values }])
       end
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ESConstants::SFNationalVer3_0, ESConstants::SFPacificVer3_0, ESConstants::SFOregonWashingtonVer3_2].include? program_version
@@ -451,7 +453,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
         if [ESConstants::SFNationalVer3_0, ESConstants::MFNationalVer1_0, ZERHConstants::Ver1].include? program_version
-          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
+          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 80, **hvac_iq_values }])
         else
           _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
         end
@@ -537,7 +539,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [*ESConstants::MFVersions, ZERHConstants::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz5(program_version), eer: get_es_zerh_gshp_eer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz5(program_version), eer: get_es_zerh_gshp_eer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 80, **hvac_iq_values }])
       else
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       end
@@ -573,7 +575,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if ESConstants::MFVersions.include?(program_version) || [ESConstants::SFNationalVer3_0, ZERHConstants::Ver1, ZERHConstants::MFVer2].include?(program_version)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 30, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 80, **hvac_iq_values }])
       else
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       end
@@ -1049,7 +1051,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
                                       { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
                                       { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
                                       { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz5(program_version), eer: get_es_zerh_gshp_eer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, pump_w_per_ton: 30, is_shared_system: false, shr: 0.73, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz5(program_version), eer: get_es_zerh_gshp_eer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, pump_w_per_ton: 80, is_shared_system: false, shr: 0.73, **hvac_iq_values },
                                       { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       else
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
@@ -1454,7 +1456,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def test_shared_ground_loop_ground_source
+  def test_shared_ground_loop_ground_source_heat_pump
     hpxml_name = 'base-bldgtype-mf-unit-shared-ground-loop-ground-to-air-heat-pump.xml'
     [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
       _convert_to_es_zerh(hpxml_name, program_version)
@@ -1463,7 +1465,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [*ESConstants::MFVersions, ZERHConstants::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_zerh_gshp_eer_cz5(program_version), cop: get_es_zerh_gshp_cop_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 30, is_shared_system: true, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_zerh_gshp_eer_cz5(program_version), cop: get_es_zerh_gshp_cop_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
       else
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       end
@@ -1494,7 +1496,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if ESConstants::MFVersions.include?(program_version) || [ESConstants::SFNationalVer3_0, ZERHConstants::Ver1, ZERHConstants::MFVer2].include?(program_version)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_zerh_gshp_eer_cz7(program_version), cop: get_es_zerh_gshp_cop_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 30, is_shared_system: true, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_zerh_gshp_eer_cz7(program_version), cop: get_es_zerh_gshp_cop_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
       else
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
       end
@@ -1527,7 +1529,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   end
 
   def _test_ruleset(program_version)
-    require_relative '../../workflow/design'
+    print '.'
     if ESConstants::AllVersions.include? program_version
       designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
                             output_dir: @sample_files_path)]

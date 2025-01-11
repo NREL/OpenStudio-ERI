@@ -6,6 +6,7 @@ require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator.rb'
+require_relative '../../workflow/design'
 
 class ERI301ValidationTest < Minitest::Test
   def setup
@@ -23,6 +24,7 @@ class ERI301ValidationTest < Minitest::Test
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
     FileUtils.rm_rf(@tmp_output_path)
+    puts
   end
 
   def test_validation_of_schematron_doc
@@ -141,14 +143,21 @@ class ERI301ValidationTest < Minitest::Test
 
   def test_ruleset_error_messages
     # Test case => Error message
-    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."] }
+    all_expected_errors = { 'invalid-epw-filepath' => ["foo.epw' could not be found."],
+                            'invalid-zip-code' => ["Zip code '00000' could not be found in zipcode_weather_stations.csv"] }
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|
       puts "[#{i + 1}/#{all_expected_errors.size}] Testing #{error_case}..."
       # Create HPXML object
-      if ['invalid-epw-filepath'].include? error_case
+      case error_case
+      when 'invalid-epw-filepath'
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
+        hpxml_bldg.climate_and_risk_zones.weather_station_id = 'WeatherStation'
+        hpxml_bldg.climate_and_risk_zones.weather_station_name = 'foo'
         hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath = 'foo.epw'
+      when 'invalid-zip-code'
+        hpxml, hpxml_bldg = _create_hpxml('base.xml')
+        hpxml_bldg.zip_code = '00000'
       else
         fail "Unhandled case: #{error_case}."
       end
@@ -181,7 +190,7 @@ class ERI301ValidationTest < Minitest::Test
   end
 
   def _test_ruleset(expected_errors)
-    require_relative '../../workflow/design'
+    print '.'
     designs = [Design.new(calc_type: Constants::CalcTypeERIRatedHome)]
     designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 

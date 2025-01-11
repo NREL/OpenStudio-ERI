@@ -1,4 +1,4 @@
-Component,Test 1 Results,Test 2 Results,Test 3 Results,Test 4 Results
+Component,01-L100.xml,02-L100.xml,03-L304.xml,04-L324.xml
 Above-grade walls (Uo),0.082,0.082,0.082,0.06
 Above-grade wall solar absorptance (α),0.75,0.75,0.75,0.75
 Above-grade wall infrared emittance (ε),0.9,0.9,0.9,0.9
@@ -33,4 +33,4 @@ Cooling thermostat settings,78,78,78,78
 Mechanical ventilation (kWh/y),0.0,223.88,288.07,763.41
 DHW pipe length refPipeL,88.5,88.5,88.5,98.5
 DHW loop length refLoopL,156.9,156.9,156.9,176.9
-e-Ratio,0.9999831,0.9999853,1.0000194,0.9999931
+e-Ratio,0.9999831,0.9999853,1.0000194,0.999985

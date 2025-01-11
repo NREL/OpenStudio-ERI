@@ -1,12 +1,12 @@
-OpenStudio-ERI
+OpenStudio®-ERI
 ==============
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/NREL/OpenStudio-ERI?include_prereleases)](https://github.com/NREL/OpenStudio-ERI/releases)
-[![ci](https://github.com/NREL/OpenStudio-ERI/workflows/ci/badge.svg)](https://github.com/NREL/OpenStudio-ERI/actions)
+[![ci](https://github.com/NREL/OpenStudio-ERI/actions/workflows/config.yml/badge.svg?branch=master)](https://github.com/NREL/OpenStudio-ERI/actions/workflows/config.yml)
 [![Documentation Status](https://readthedocs.org/projects/openstudio-eri/badge/?version=latest)](https://openstudio-eri.readthedocs.io/en/latest/?badge=latest)
 
 
-The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using the Department of Energy's open-source [OpenStudio](https://www.openstudio.net/)/[EnergyPlus](https://energyplus.net/) simulation platform.
+The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using the Department of Energy's [EnergyPlus™](https://energyplus.net/) simulation platform.
 The building description is provided in an [HPXML file](https://hpxml.nrel.gov/) format.
 OpenStudio-ERI is intended to be used by user interfaces or other automated software workflows that automatically produce the HPXML file.
 
@@ -18,6 +18,16 @@ The project supports:
 
 
 For more information on running simulations, generating HPXML files, etc., please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
+
+## Users
+
+OpenStudio-ERI is used by a number of software products or organizations, including:
+
+- [APEX](https://pivotalenergysolutions.com)
+- [HouseRater](https://www.houserater.com)
+- [REM/Rate™](https://www.remrate.com)
+
+Are you using OpenStudio-ERI and want to be mentioned here? [Email us](mailto:scott.horowitz@nrel.gov) or [open a Pull Request](https://github.com/NREL/OpenStudio-ERI/edit/master/README.md).
 
 ## License
 

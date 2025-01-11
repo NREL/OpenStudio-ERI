@@ -1194,6 +1194,10 @@ module ERI_301_Ruleset
           heating_fuel = cooling_system.integrated_heating_system_fuel
           fraction_heat_load_served = cooling_system.integrated_heating_system_fraction_heat_load_served
           heating_system_type = cooling_system.cooling_system_type
+        elsif heating_system.is_a? HPXML::HeatPump
+          heating_fuel = heating_system.heat_pump_fuel
+          fraction_heat_load_served = heating_system.fraction_heat_load_served
+          heating_system_type = heating_system.heat_pump_type
         end
         if (heating_fuel == HPXML::FuelTypeElectricity) || is_all_electric
           if not cooling_system.nil?
@@ -1258,28 +1262,6 @@ module ERI_301_Ruleset
 
     # Distribution system
     add_reference_distribution_system(new_bldg)
-  end
-
-  def self.get_hvac_configurations(orig_bldg)
-    hvac_configurations = []
-    orig_bldg.heating_systems.each do |orig_heating_system|
-      hvac_configurations << { heating_system: orig_heating_system, cooling_system: orig_heating_system.attached_cooling_system }
-    end
-    orig_bldg.cooling_systems.each do |orig_cooling_system|
-      # Exclude cooling systems already added to hvac_configurations
-      next if hvac_configurations.any? { |config| config[:cooling_system].id == orig_cooling_system.id if not config[:cooling_system].nil? }
-
-      if orig_cooling_system.has_integrated_heating # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
-        hvac_configurations << { cooling_system: orig_cooling_system, heating_system: orig_cooling_system }
-      else
-        hvac_configurations << { cooling_system: orig_cooling_system }
-      end
-    end
-    orig_bldg.heat_pumps.each do |orig_heat_pump|
-      hvac_configurations << { heat_pump: orig_heat_pump }
-    end
-
-    return hvac_configurations
   end
 
   def self.set_systems_hvac_rated(orig_bldg, new_bldg)
@@ -1619,14 +1601,8 @@ module ERI_301_Ruleset
         end
       else
         # Fan power defaulted
-        fan_w_per_cfm = Defaults.get_mech_vent_fan_efficiency(orig_vent_fan, @eri_version)
-        if orig_vent_fan.flow_rate_not_tested && orig_vent_fan.fan_type == HPXML::MechVentTypeCFIS
-          # For in-unit CFIS systems, the cfm used to determine fan watts shall be the larger of
-          # 400 cfm per 12 kBtu/h cooling capacity or 240 cfm per 12 kBtu/h heating capacity
-          htg_cap, clg_cap = get_hvac_capacities_for_distribution_system(orig_vent_fan.distribution_system)
-          q_fan = [400.0 * clg_cap / 12000.0, 240.0 * htg_cap / 12000.0].max
-          unit_fan_power = fan_w_per_cfm * q_fan
-        else
+        if orig_vent_fan.fan_type != HPXML::MechVentTypeCFIS
+          fan_w_per_cfm = Defaults.get_mech_vent_fan_efficiency(orig_vent_fan)
           if not orig_vent_fan.is_shared_system
             unit_fan_power = fan_w_per_cfm * unit_flow_rate
           else
@@ -1645,13 +1621,15 @@ module ERI_301_Ruleset
                                     sensible_recovery_efficiency_adjusted: orig_vent_fan.sensible_recovery_efficiency_adjusted,
                                     distribution_system_idref: orig_vent_fan.distribution_system_idref,
                                     used_for_whole_building_ventilation: orig_vent_fan.used_for_whole_building_ventilation,
-                                    cfis_vent_mode_airflow_fraction: orig_vent_fan.cfis_vent_mode_airflow_fraction,
                                     cfis_addtl_runtime_operating_mode: orig_vent_fan.cfis_addtl_runtime_operating_mode,
-                                    cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref)
+                                    cfis_has_outdoor_air_control: orig_vent_fan.cfis_has_outdoor_air_control,
+                                    cfis_control_type: orig_vent_fan.cfis_control_type,
+                                    cfis_supplemental_fan_idref: orig_vent_fan.cfis_supplemental_fan_idref,
+                                    cfis_supplemental_fan_runs_with_air_handler_fan: orig_vent_fan.cfis_supplemental_fan_runs_with_air_handler_fan)
       new_vent_fan = new_bldg.ventilation_fans[-1]
       if not orig_vent_fan.is_shared_system
         new_vent_fan.tested_flow_rate = unit_flow_rate.round(2)
-        new_vent_fan.fan_power = unit_fan_power.round(3)
+        new_vent_fan.fan_power = unit_fan_power.round(3) unless unit_fan_power.nil?
       else
         new_vent_fan.rated_flow_rate = system_flow_rate.round(2)
         new_vent_fan.fan_power = system_fan_power.round(3)
@@ -2505,7 +2483,7 @@ module ERI_301_Ruleset
       # Check if supplemental balanced ventilation is needed
       # This should only happen when the home has no mechanical ventilation, because
       # otherwise the existing ventilation fans would have been increased instead.
-      if min_q_fan > q_fans.values.sum
+      if min_q_fan - q_fans.values.sum > 0.1
         q_fan_bal_remain = calc_rated_home_qfan(orig_bldg, true, 0.0)
       end
     end
@@ -2544,8 +2522,16 @@ module ERI_301_Ruleset
     mech_vent_fans = orig_bldg.ventilation_fans.select { |f| f.used_for_whole_building_ventilation }
     if mech_vent_fans.empty?
       min_nach = 0.30
-    elsif Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
-      has_non_exhaust_systems = (mech_vent_fans.select { |f| f.fan_type != HPXML::MechVentTypeExhaust }.size > 0)
+    end
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022CE')
+      if mech_vent_fans.any? { |f| f.fan_type == HPXML::MechVentTypeCFIS && f.cfis_addtl_runtime_operating_mode == HPXML::CFISModeNone }
+        # Does not quality as Dwelling Unit Mechanical Ventilation System because it has no
+        # strategy to meet remainder of ventilation target
+        min_nach = 0.30
+      end
+    end
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
+      has_non_exhaust_systems = mech_vent_fans.any? { |f| f.fan_type != HPXML::MechVentTypeExhaust }
       mech_vent_fans.each do |orig_vent_fan|
         if orig_vent_fan.flow_rate_not_tested || ((a_ext < 0.5) && !has_non_exhaust_systems)
           min_nach = 0.30
@@ -2604,6 +2590,14 @@ module ERI_301_Ruleset
       else
         return false, 1.0 # Some supply-only or exhaust-only systems, impossible to know, assume imbalanced
       end
+    end
+
+    if whole_fans.any? { |f| f.fan_type == HPXML::MechVentTypeCFIS }
+      # Not possible for a CFIS system to be completely balanced, so treat as imbalanced.
+      # (Though note that a CFIS system w/ a supplemental fan that runs simultaneously
+      # with the air handler fan could be balanced for part of the year, but not possible
+      # to know how much of the year up front.)
+      return false, 1.0
     end
 
     cfm_total_supply, cfm_total_exhaust = calc_mech_vent_supply_exhaust_cfms(mech_vent_fans, :total)
@@ -2799,7 +2793,7 @@ module ERI_301_Ruleset
   def self.add_reference_distribution_system(new_bldg)
     new_bldg.hvac_systems.each do |hvac|
       next if hvac.distribution_system_idref.nil?
-      next if new_bldg.hvac_distributions.select { |d| d.id == hvac.distribution_system_idref }.size > 0
+      next if new_bldg.hvac_distributions.any? { |d| d.id == hvac.distribution_system_idref }
 
       # Add new DSE distribution if distribution doesn't already exist
       new_bldg.hvac_distributions.add(id: hvac.distribution_system_idref,

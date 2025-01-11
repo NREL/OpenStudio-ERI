@@ -58,13 +58,6 @@
           <Year>2006</Year>
           <ClimateZone>7</ClimateZone>
         </ClimateZoneIECC>
-        <WeatherStation>
-          <SystemIdentifier id='WeatherStation'/>
-          <Name>USA_MN_Duluth.Intl.AP.727450_TMY3</Name>
-          <extension>
-            <EPWFilePath>USA_MN_Duluth.Intl.AP.727450_TMY3.epw</EPWFilePath>
-          </extension>
-        </WeatherStation>
       </ClimateandRiskZones>
       <Enclosure>
         <AirInfiltration>
