@@ -419,7 +419,7 @@ def set_hpxml_climate_and_risk_zones(hpxml_file, hpxml_bldg)
     hpxml_bldg.state_code = 'TX'
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA/L100AM-HW-01.xml'].include?(hpxml_file) ||
-    hpxml_file.include?('MiamiFL')
+        hpxml_file.include?('MiamiFL')
     # Miami
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.clear
     hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs.add(year: 2006,
@@ -2085,12 +2085,12 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
                                       fan_type: HPXML::MechVentTypeCFIS,
                                       tested_flow_rate: 155.4,
                                       hours_in_operation: 12,
-                                      fan_power: 487.2,
                                       used_for_whole_building_ventilation: true,
                                       cfis_addtl_runtime_operating_mode: HPXML::CFISModeAirHandler,
                                       distribution_system_idref: hpxml_bldg.hvac_distributions[0].id,
-                                      cfis_vent_mode_airflow_fraction: 1.0,
-                                      is_shared_system: false)
+                                      is_shared_system: false,
+                                      cfis_has_outdoor_air_control: true,
+                                      cfis_control_type: HPXML::CFISControlTypeOptimized)
     else
       if hpxml_file.include?('ConditionedBasement')
         if hpxml_file.include?('PhoenixAZ')
