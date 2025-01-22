@@ -281,7 +281,6 @@ module ERI_301_Ruleset
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
-    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
@@ -293,14 +292,12 @@ module ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
-    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
     new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_rated(orig_bldg, new_bldg)
     # Global variables
-    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
@@ -312,14 +309,12 @@ module ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
-    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
     new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_iad(orig_bldg, new_bldg)
     # Global variables
-    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = 2400.0
     @nbeds = 3
@@ -331,7 +326,6 @@ module ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = @nbeds
     new_bldg.building_construction.conditioned_floor_area = @cfa
     new_bldg.building_construction.residential_facility_type = @bldg_type
-    new_bldg.building_construction.average_ceiling_height = 8.5
     new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
@@ -350,7 +344,7 @@ module ERI_301_Ruleset
   def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
     infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @weather)
     sla = 0.00036
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, infil_values[:volume] / @cfa)
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, infil_values[:avg_ceil_height])
     new_bldg.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
@@ -1661,7 +1655,7 @@ module ERI_301_Ruleset
 
     # Calculate fan cfm
     infil_values = Airflow.get_values_from_air_infiltration_measurements(new_bldg, @weather)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], infil_values[:volume] / @cfa)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], infil_values[:avg_ceil_height])
     q_fan = calc_mech_vent_qfan(q_tot, sla, true, 0.0, infil_values[:height])
     fan_power_w = 0.70 * q_fan
 
@@ -2540,9 +2534,8 @@ module ERI_301_Ruleset
     end
 
     if not min_nach.nil?
-      avg_ceiling_height = orig_bldg.building_construction.average_ceiling_height
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_values[:height], avg_ceiling_height, @weather)
-      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, infil_values[:volume] / @cfa)
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_values[:height], infil_values[:avg_ceil_height], @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, infil_values[:avg_ceil_height])
       if ach50 < min_ach50
         ach50 = min_ach50
       end
@@ -2619,7 +2612,7 @@ module ERI_301_Ruleset
   def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
     infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @weather)
     ach50, _ = calc_rated_home_infiltration_ach50(orig_bldg)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_values[:volume] / @cfa)
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_values[:avg_ceil_height])
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan = calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_values[:height])
     return q_fan
@@ -3138,12 +3131,5 @@ module ERI_301_Ruleset
     end
 
     fail "Unable to calculate area-weighted avg for #{attribute}."
-  end
-
-  def self.apply_default_average_ceiling_height(orig_bldg)
-    if orig_bldg.building_construction.average_ceiling_height.nil?
-      # ASHRAE 62.2 default for average floor to ceiling height
-      orig_bldg.building_construction.average_ceiling_height = 8.2
-    end
   end
 end
