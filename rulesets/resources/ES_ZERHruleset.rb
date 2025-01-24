@@ -1048,7 +1048,11 @@ module ES_ZERH_Ruleset
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
-    rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
+    if [ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_3].include? @program_version
+      rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)
+    else
+      rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
+    end
 
     new_bldg.refrigerators.add(id: id,
                                location: location,
