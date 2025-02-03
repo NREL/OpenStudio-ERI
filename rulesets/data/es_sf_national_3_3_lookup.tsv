@@ -51,8 +51,8 @@ hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	na
 hvac_heating_fuel	fuel oil	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 hvac_boiler_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_boiler_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
-hvac_central_boiler_et		
-hvac_central_boiler_wlhp_et		
+hvac_central_boiler_et		0.8	0.8	0.8	0.8	0.8	0.8	0.86	0.86	0.86	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
+hvac_central_boiler_wlhp_et		0.8	0.8	0.8	0.8	0.8	0.8	0.89	0.89	0.89	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 hvac_furnace_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air
