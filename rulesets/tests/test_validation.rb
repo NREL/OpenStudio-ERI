@@ -105,21 +105,21 @@ class ERI301ValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml_bldg.building_construction.conditioned_floor_area = 1348.8
       elsif error_case.include? 'energy-star'
-        props = { 'energy-star-SF_Florida_3.1' => [ESConstants::SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_National_3.0' => [ESConstants::SFNationalVer3_0, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_National_3.1' => [ESConstants::SFNationalVer3_1, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_National_3.2' => [ESConstants::SFNationalVer3_2, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_OregonWashington_3.2' => [ESConstants::SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
-                  'energy-star-SF_Pacific_3.0' => [ESConstants::SFPacificVer3_0, HPXML::ResidentialTypeApartment],
-                  'energy-star-MF_National_1.0' => [ESConstants::MFNationalVer1_0, HPXML::ResidentialTypeSFD],
-                  'energy-star-MF_National_1.1' => [ESConstants::MFNationalVer1_1, HPXML::ResidentialTypeSFD],
-                  'energy-star-MF_National_1.2' => [ESConstants::MFNationalVer1_2, HPXML::ResidentialTypeSFD],
-                  'energy-star-MF_OregonWashington_1.2' => [ESConstants::MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
+        props = { 'energy-star-SF_Florida_3.1' => [ES::SFFloridaVer3_1, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.0' => [ES::SFNationalVer3_0, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.1' => [ES::SFNationalVer3_1, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_National_3.2' => [ES::SFNationalVer3_2, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_OregonWashington_3.2' => [ES::SFOregonWashingtonVer3_2, HPXML::ResidentialTypeApartment],
+                  'energy-star-SF_Pacific_3.0' => [ES::SFPacificVer3_0, HPXML::ResidentialTypeApartment],
+                  'energy-star-MF_National_1.0' => [ES::MFNationalVer1_0, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_National_1.1' => [ES::MFNationalVer1_1, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_National_1.2' => [ES::MFNationalVer1_2, HPXML::ResidentialTypeSFD],
+                  'energy-star-MF_OregonWashington_1.2' => [ES::MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
         version, bldg_type = props[error_case]
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
-        hpxml.header.energystar_calculation_version = version
-        hpxml.header.iecc_eri_calculation_version = nil
-        hpxml.header.zerh_calculation_version = nil
+        hpxml.header.energystar_calculation_versions = [version]
+        hpxml.header.iecc_eri_calculation_versions = nil
+        hpxml.header.zerh_calculation_versions = nil
         hpxml_bldg.building_construction.residential_facility_type = bldg_type
         if bldg_type == HPXML::ResidentialTypeApartment
           hpxml_bldg.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
@@ -191,7 +191,8 @@ class ERI301ValidationTest < Minitest::Test
 
   def _test_ruleset(expected_errors)
     print '.'
-    designs = [Design.new(calc_type: Constants::CalcTypeERIRatedHome)]
+    designs = [Design.new(run_type: RunType::ERI,
+                          calc_type: CalcType::RatedHome)]
     designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 
     success, errors, _, _, _ = run_rulesets(File.absolute_path(@tmp_hpxml_path), designs)

@@ -24,32 +24,34 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
   end
 
   def test_pv
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-pv.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_pv(hpxml_bldg)
     end
   end
 
   def test_pv_batteries
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-pv-battery.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_battery(hpxml_bldg)
     end
   end
 
   def _test_ruleset(program_version)
     print '.'
-    if ESConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
-                            output_dir: @sample_files_path)]
-    elsif ZERHConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
-                            output_dir: @sample_files_path)]
-    end
 
-    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
+    if ES::AllVersions.include? program_version
+      run_type = RunType::ES
+    elsif ZERH::AllVersions.include? program_version
+      run_type = RunType::ZERH
+    end
+    designs = [Design.new(run_type: run_type,
+                          init_calc_type: InitCalcType::TargetHome,
+                          output_dir: @sample_files_path)]
+
+    success, errors, _, _, hpxml_bldgs = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -62,7 +64,8 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
     assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
     @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
-    return hpxml, hpxml.buildings[0]
+    hpxml_bldg = hpxml_bldgs[hpxml_bldgs.keys[0]]
+    return hpxml_bldg
   end
 
   def _check_pv(hpxml_bldg)
@@ -71,9 +74,5 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
 
   def _check_battery(hpxml_bldg)
     assert_equal(0, hpxml_bldg.batteries.size)
-  end
-
-  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
-    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

@@ -24,10 +24,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_electric
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
       else
@@ -41,10 +41,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_modified
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-modified.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
       else
@@ -58,10 +58,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_gas
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-gas.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
       else
@@ -75,9 +75,9 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_basement
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       assert_equal(HPXML::LocationBasementUnconditioned, hpxml_bldg.clothes_washers[0].location)
       assert_equal(HPXML::LocationBasementUnconditioned, hpxml_bldg.clothes_dryers[0].location)
       assert_equal(HPXML::LocationBasementUnconditioned, hpxml_bldg.dishwashers[0].location)
@@ -87,10 +87,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_none
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-appliances-none.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
       else
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
@@ -103,23 +103,23 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_dehumidifier
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_dehumidifiers(hpxml_bldg)
 
       _convert_to_es_zerh('base-appliances-dehumidifier-multiple.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_dehumidifiers(hpxml_bldg, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationConditionedSpace },
                                         { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationConditionedSpace }])
     end
   end
 
   def test_shared_clothes_washers_dryers
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit-shared-laundry-room.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
       else
@@ -134,15 +134,17 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
 
   def _test_ruleset(program_version)
     print '.'
-    if ESConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
-                            output_dir: @sample_files_path)]
-    elsif ZERHConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
-                            output_dir: @sample_files_path)]
-    end
 
-    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
+    if ES::AllVersions.include? program_version
+      run_type = RunType::ES
+    elsif ZERH::AllVersions.include? program_version
+      run_type = RunType::ZERH
+    end
+    designs = [Design.new(run_type: run_type,
+                          init_calc_type: InitCalcType::TargetHome,
+                          output_dir: @sample_files_path)]
+
+    success, errors, _, _, hpxml_bldgs = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -155,7 +157,8 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
     assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
     @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
-    return hpxml, hpxml.buildings[0]
+    hpxml_bldg = hpxml_bldgs[hpxml_bldgs.keys[0]]
+    return hpxml_bldg
   end
 
   def _check_clothes_washer(hpxml_bldg, mef:, imef:, annual_kwh:, elec_rate:, gas_rate:, agc:, cap:, label_usage:, location:)
@@ -252,9 +255,5 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       assert_equal(expected_values[:rh_setpoint], dehumidifier.rh_setpoint)
       assert_equal(expected_values[:frac_load], dehumidifier.fraction_served)
     end
-  end
-
-  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
-    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

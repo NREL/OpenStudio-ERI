@@ -24,14 +24,14 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_lighting
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ESConstants::SFNationalVer3_0, ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1, ZERHConstants::Ver1].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, ZERH::Ver1].include? program_version
         _check_lighting(hpxml_bldg, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-      elsif [ESConstants::SFNationalVer3_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      elsif [ES::SFNationalVer3_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_lighting(hpxml_bldg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-      elsif [ESConstants::MFNationalVer1_2].include? program_version
+      elsif [ES::MFNationalVer1_2].include? program_version
         _check_lighting(hpxml_bldg, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       else
         _check_lighting(hpxml_bldg, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -40,44 +40,46 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_ceiling_fans_none
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg)
     end
   end
 
   def test_ceiling_fans
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg, cfm_per_w: 122.0, count: 4)
     end
   end
 
   def test_ceiling_fans_nbeds_5
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.building_construction.number_of_bedrooms = 5
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg, cfm_per_w: 122.0, count: 6)
     end
   end
 
   def _test_ruleset(program_version)
     print '.'
-    if ESConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
-                            output_dir: @sample_files_path)]
-    elsif ZERHConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
-                            output_dir: @sample_files_path)]
-    end
 
-    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
+    if ES::AllVersions.include? program_version
+      run_type = RunType::ES
+    elsif ZERH::AllVersions.include? program_version
+      run_type = RunType::ZERH
+    end
+    designs = [Design.new(run_type: run_type,
+                          init_calc_type: InitCalcType::TargetHome,
+                          output_dir: @sample_files_path)]
+
+    success, errors, _, _, hpxml_bldgs = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -90,7 +92,8 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
     assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
     @results_path = File.dirname(designs[0].init_hpxml_output_path)
 
-    return hpxml, hpxml.buildings[0]
+    hpxml_bldg = hpxml_bldgs[hpxml_bldgs.keys[0]]
+    return hpxml_bldg
   end
 
   def _check_lighting(hpxml_bldg, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)
@@ -138,9 +141,5 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
         assert_equal(count, ceiling_fan.count)
       end
     end
-  end
-
-  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
-    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

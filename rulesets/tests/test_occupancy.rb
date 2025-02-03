@@ -26,20 +26,24 @@ class ERIOccupancyTest < Minitest::Test
   def test_building
     hpxml_name = 'base.xml'
 
-    _all_calc_types.each do |calc_type|
-      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
       _check_occupancy(hpxml_bldg)
       _check_general_water_use(hpxml_bldg)
     end
   end
 
-  def _test_ruleset(hpxml_name, calc_type)
+  def _test_ruleset(hpxml_name)
     print '.'
-    designs = [Design.new(calc_type: calc_type,
-                          output_dir: @sample_files_path)]
+
+    designs = []
+    _all_run_calc_types.each do |run_type, calc_type|
+      designs << Design.new(run_type: run_type,
+                            calc_type: calc_type,
+                            output_dir: @sample_files_path)
+    end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)
-    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
+    success, errors, _, _, hpxml_bldgs = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -52,7 +56,7 @@ class ERIOccupancyTest < Minitest::Test
     assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
     @results_path = File.dirname(designs[0].hpxml_output_path)
 
-    return hpxml, hpxml.buildings[0]
+    return hpxml_bldgs
   end
 
   def _check_occupancy(hpxml_bldg)
