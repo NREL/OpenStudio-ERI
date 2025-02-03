@@ -1141,7 +1141,7 @@ class ERIMechVentTest < Minitest::Test
         iecc_hpxml, iecc_hpxml_bldg = _test_ruleset(hpxml_name, calc_type, iecc_version)
 
         # Run non-IECC calculation (using same ERI version as above)
-        hpxml_name = _change_eri_version(hpxml_name, iecc_hpxml.header.eri_calculation_version)
+        hpxml_name = _change_eri_version(hpxml_name, iecc_hpxml.header.eri_calculation_versions[0])
         _base_hpxml, base_hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
 
         if ['2018', '2021'].include?(iecc_version) && calc_type == Constants::CalcTypeERIReferenceHome

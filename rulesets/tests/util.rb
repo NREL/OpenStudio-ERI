@@ -6,11 +6,11 @@ def _change_eri_version(hpxml_name, version)
   # Create derivative file w/ changed ERI version
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
   hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.eri_calculation_version = version
+  hpxml.header.eri_calculation_versions = [version]
   if Constants::ERIVersions.index(version) >= Constants::ERIVersions.index('2019ABCD')
-    hpxml.header.co2index_calculation_version = version
+    hpxml.header.co2index_calculation_versions = [version]
   else
-    hpxml.header.co2index_calculation_version = nil # CO2 Index can't be calculated
+    hpxml.header.co2index_calculation_versions = nil # CO2 Index can't be calculated
   end
 
   if Constants::ERIVersions.index(version) < Constants::ERIVersions.index('2019A')
@@ -26,7 +26,7 @@ end
 def _change_iecc_version(hpxml_name, version)
   # Create derivative file w/ changed ERI version
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-  hpxml.header.iecc_eri_calculation_version = version
+  hpxml.header.iecc_eri_calculation_versions = [version]
 
   hpxml_name = File.basename(@tmp_hpxml_path)
   XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
@@ -76,12 +76,12 @@ def convert_to_es_zerh(hpxml_name, program_version, root_path, tmp_hpxml_path, s
   end
 
   # Change program version to ENERGY STAR or Zero Energy Ready Home
-  hpxml.header.energystar_calculation_version = nil
-  hpxml.header.zerh_calculation_version = nil
+  hpxml.header.energystar_calculation_versions = nil
+  hpxml.header.zerh_calculation_versions = nil
   if ESConstants::AllVersions.include? program_version
-    hpxml.header.energystar_calculation_version = program_version
+    hpxml.header.energystar_calculation_versions = [program_version]
   elsif ZERHConstants::AllVersions.include? program_version
-    hpxml.header.zerh_calculation_version = program_version
+    hpxml.header.zerh_calculation_versions = [program_version]
   end
   if [*ESConstants::SFVersions, *ZERHConstants::SFVersions].include? program_version
     if hpxml_bldg.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment

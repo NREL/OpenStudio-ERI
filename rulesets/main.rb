@@ -65,8 +65,8 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     # Obtain weather object
     weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
-    eri_version = orig_hpxml.header.eri_calculation_version
-    eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
+    eri_version = orig_hpxml.header.eri_calculation_versions[0]
+    eri_version = orig_hpxml.header.co2index_calculation_versions[0] if eri_version.nil?
     eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
     zip_code = orig_hpxml_bldg.zip_code
     if not eri_version.nil?
@@ -99,9 +99,9 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
           ZERHConstants::CalcTypeZERHReference,
           ZERHConstants::CalcTypeZERHRated].include? design.init_calc_type
         if design.init_calc_type == ESConstants::CalcTypeEnergyStarReference
-          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_version.gsub('.', '_').downcase
+          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_versions[0].gsub('.', '_').downcase
         elsif design.init_calc_type == ZERHConstants::CalcTypeZERHReference
-          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
+          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_versions[0].gsub('.', '_').downcase
         end
         if (not lookup_program.nil?) && lookup_program_data[lookup_program].nil?
           lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")

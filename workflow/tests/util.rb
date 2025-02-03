@@ -30,12 +30,11 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
 
-  eri_version = hpxml.header.eri_calculation_version
-  eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
-  co2_version = hpxml.header.co2index_calculation_version
-  iecc_eri_version = hpxml.header.iecc_eri_calculation_version
-  es_version = hpxml.header.energystar_calculation_version
-  zerh_version = hpxml.header.zerh_calculation_version
+  eri_version = hpxml.header.eri_calculation_versions.map { |v| v == 'latest' ? Constants::ERIVersions[-1] : v }[0]
+  co2_version = hpxml.header.co2index_calculation_versions.map { |v| v == 'latest' ? Constants::ERIVersions[-1] : v }[0]
+  iecc_eri_version = hpxml.header.iecc_eri_calculation_versions[0]
+  es_version = hpxml.header.energystar_calculation_versions[0]
+  zerh_version = hpxml.header.zerh_calculation_versions[0]
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
@@ -384,7 +383,7 @@ def _get_reference_home_components(hpxml, test_num, version)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
-  eri_version = hpxml.header.eri_calculation_version
+  eri_version = hpxml.header.eri_calculation_versions[0]
 
   # Above-grade walls
   wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml_bldg)
@@ -508,7 +507,7 @@ def _get_iad_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
-  eri_version = hpxml.header.eri_calculation_version
+  eri_version = hpxml.header.eri_calculation_versions[0]
 
   # Geometry
   results['Number of Stories'] = hpxml_bldg.building_construction.number_of_conditioned_floors

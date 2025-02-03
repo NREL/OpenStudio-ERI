@@ -22,8 +22,8 @@ module ERI_301_Ruleset
         fail "Unhandled IECC version: #{iecc_version}."
       end
     else
-      @eri_version = hpxml.header.eri_calculation_version
-      @eri_version = hpxml.header.co2index_calculation_version if @eri_version.nil?
+      @eri_version = hpxml.header.eri_calculation_versions[0]
+      @eri_version = hpxml.header.co2index_calculation_versions[0] if @eri_version.nil?
     end
     @eri_version = Constants::ERIVersions[-1] if @eri_version == 'latest'
 
@@ -230,7 +230,7 @@ module ERI_301_Ruleset
     new_hpxml.header.transaction = orig_hpxml.header.transaction
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
-    new_hpxml.header.eri_calculation_version = @eri_version
+    new_hpxml.header.eri_calculation_versions = [@eri_version]
 
     orig_bldg = orig_hpxml.buildings[0]
     new_hpxml.buildings.add(building_id: orig_bldg.building_id)
