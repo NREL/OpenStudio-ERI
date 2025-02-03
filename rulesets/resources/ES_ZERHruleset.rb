@@ -947,7 +947,7 @@ module ES_ZERH_Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_bldg, new_bldg)
-    # Default values
+    # Default values same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
     id = 'ClothesWasher'
     location = HPXML::LocationConditionedSpace
     reference_values = Defaults.get_clothes_washer_values(@eri_version)
@@ -959,13 +959,13 @@ module ES_ZERH_Ruleset
     label_usage = reference_values[:label_usage]
     capacity = reference_values[:capacity]
 
-    # Override values?
+    # Override efficiency values equal to "Std 2018=Present" Standard if clothes washer present in the Rated Home
     if not orig_bldg.clothes_washers.empty?
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+      if [ESConstants::SFNationalVer3_2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_2, ESConstants::MFNationalVer1_3, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
         integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
         rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
         label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
@@ -1048,8 +1048,8 @@ module ES_ZERH_Ruleset
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
-    if [ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_3].include? @program_version
-      rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)
+    if @program_version == ESConstants::SFNationalVer3_3
+      rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh]
     else
       rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
     end
