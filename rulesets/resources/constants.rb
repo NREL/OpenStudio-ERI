@@ -24,9 +24,9 @@ module ESConstants
   MFNationalVer1_2 = 'MF_National_1.2'
   MFNationalVer1_3 = 'MF_National_1.3'
   MFOregonWashingtonVer1_2 = 'MF_OregonWashington_1.2'
-  SFVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, SFPacificVer3_0, SFFloridaVer3_1, SFOregonWashingtonVer3_2]
-  MFVersions = [MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2, MFOregonWashingtonVer1_2]
-  NationalVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2]
+  SFVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, SFNationalVer3_3, SFPacificVer3_0, SFFloridaVer3_1, SFOregonWashingtonVer3_2]
+  MFVersions = [MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2, MFNationalVer1_3, MFOregonWashingtonVer1_2]
+  NationalVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, SFNationalVer3_3, MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2, MFNationalVer1_3]
   AllVersions = SFVersions + MFVersions
 end
 
