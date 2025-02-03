@@ -15,11 +15,15 @@ class ERIWaterHeatingTest < Minitest::Test
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
     @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @results_paths = []
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    @results_paths.each do |results_path|
+      FileUtils.rm_rf(results_path) if Dir.exist? results_path
+    end
+    @results_paths.clear
     puts
   end
 
@@ -330,10 +334,10 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if calc_type == CalcType::ReferenceHome
-        assert_equal(HPXML::FuelTypeNaturalGas, hpxml_bldg.water_heating_systems[0].fuel_type)
-      end
+    _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      next unless run_type == RunType::ERI && calc_type == CalcType::ReferenceHome
+
+      assert_equal(HPXML::FuelTypeNaturalGas, hpxml_bldg.water_heating_systems[0].fuel_type)
     end
   end
 
@@ -529,7 +533,7 @@ class ERIWaterHeatingTest < Minitest::Test
 
     # validate against OS-HPXML schematron
     assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
-    @results_path = File.dirname(designs[0].hpxml_output_path)
+    @results_paths += designs.map { |d| File.absolute_path(File.join(File.dirname(d.hpxml_output_path), '..')) }
 
     return hpxml_bldgs
   end

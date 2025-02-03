@@ -15,11 +15,15 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
     @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @results_paths = []
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    @results_paths.each do |results_path|
+      FileUtils.rm_rf(results_path) if Dir.exist? results_path
+    end
+    @results_paths.clear
     puts
   end
 
@@ -90,10 +94,9 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
 
     # validate against 301 schematron
     assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
-    @results_path = File.dirname(designs[0].init_hpxml_output_path)
+    @results_paths += designs.map { |d| File.absolute_path(File.join(File.dirname(d.init_hpxml_output_path), '..')) }
 
-    hpxml_bldg = hpxml_bldgs[hpxml_bldgs.keys[0]]
-    return hpxml_bldg
+    return hpxml_bldgs.values[0]
   end
 
   def _check_lighting(hpxml_bldg, f_int_cfl, f_ext_cfl, f_grg_cfl, f_int_lfl, f_ext_lfl, f_grg_lfl, f_int_led, f_ext_led, f_grg_led)

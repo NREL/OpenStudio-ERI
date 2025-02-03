@@ -15,11 +15,15 @@ class ERIMechVentTest < Minitest::Test
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
     @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @results_paths = []
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    @results_paths.each do |results_path|
+      FileUtils.rm_rf(results_path) if Dir.exist? results_path
+    end
+    @results_paths.clear
     puts
   end
 
@@ -1077,13 +1081,14 @@ class ERIMechVentTest < Minitest::Test
 
   def test_mech_vent_iecc_eri_exception
     IECC::AllVersions.each do |iecc_version|
-      puts iecc_version
-      # Run non-IECC calculation (using same ERI version as above)
-      base_hpxml_bldgs = _test_ruleset('base-mechvent-exhaust.xml')
-
       # Run IECC calculation
       hpxml_name = _change_iecc_version('base-mechvent-exhaust.xml', iecc_version)
       iecc_hpxml_bldgs = _test_ruleset(hpxml_name, iecc_version)
+
+      # Run non-IECC calculation (using same ERI version as above)
+      eri_version = iecc_hpxml_bldgs.values[0].parent_object.header.eri_calculation_versions[0]
+      hpxml_name = _change_eri_version(hpxml_name, eri_version)
+      base_hpxml_bldgs = _test_ruleset(hpxml_name)
 
       iecc_hpxml_bldgs.keys.each do |bldg_key|
         run_type, calc_type = bldg_key
@@ -1120,7 +1125,7 @@ class ERIMechVentTest < Minitest::Test
 
     designs = []
     _all_run_calc_types.each do |run_type, calc_type|
-      run_type = RunType::IECC if not iecc_version.nil?
+      run_type = RunType::IECC unless iecc_version.nil?
       designs << Design.new(run_type: run_type,
                             calc_type: calc_type,
                             output_dir: @sample_files_path,
@@ -1139,7 +1144,7 @@ class ERIMechVentTest < Minitest::Test
 
     # validate against OS-HPXML schematron
     assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
-    @results_path = File.dirname(designs[0].hpxml_output_path)
+    @results_paths += designs.map { |d| File.absolute_path(File.join(File.dirname(d.hpxml_output_path), '..')) }
 
     return hpxml_bldgs
   end
