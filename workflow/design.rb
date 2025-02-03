@@ -14,7 +14,6 @@ class Design
     if not output_dir.nil?
       @output_dir = output_dir
       output_dir = File.join(output_dir, "#{run_type}_#{version}")
-      FileUtils.rm_rf(output_dir) if Dir.exist?(output_dir)
       if not init_calc_type.nil?
         @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
         output_dir = File.join(output_dir, init_calc_type.gsub(' ', ''))
@@ -26,7 +25,6 @@ class Design
         @diag_output_path = File.join(output_dir, 'results', "#{name}_Diagnostic.msgpack")
       end
       @design_dir = File.join(output_dir, name)
-      FileUtils.rm_rd(@design_dir) if Dir.exist?(@design_dir)
     end
     @version = version
     @output_format = output_format
@@ -95,7 +93,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
 end
 
 if ARGV.size == 11
-  run_type == ARGV[0]
+  run_type = ARGV[0]
   calc_type = ARGV[1]
   init_calc_type = (ARGV[2].empty? ? nil : ARGV[2])
   version = (ARGV[3].empty? ? nil : ARGV[3])

@@ -1337,6 +1337,12 @@ def main(options)
     designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
   end
 
+  # Clean up existing dirs
+  designs.each do |design|
+    FileUtils.rm_rf(design.output_dir) if Dir.exist?(design.output_dir)
+    FileUtils.rm_rf(design.design_dir) if Dir.exist?(design.design_dir)
+  end
+
   if designs.size == 0
     puts 'No calculations requested.'
     exit!
