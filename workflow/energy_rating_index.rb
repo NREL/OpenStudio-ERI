@@ -1339,7 +1339,10 @@ def main(options)
 
   # Clean up existing dirs
   designs.each do |design|
-    FileUtils.rm_rf(design.output_dir) if Dir.exist?(design.output_dir)
+    if not design.init_hpxml_output_path.nil?
+      FileUtils.rm_rf(File.dirname(design.init_hpxml_output_path)) if Dir.exist?(File.dirname(design.init_hpxml_output_path))
+    end
+    FileUtils.rm_rf(File.dirname(design.hpxml_output_path)) if Dir.exist?(File.dirname(design.hpxml_output_path))
     FileUtils.rm_rf(design.design_dir) if Dir.exist?(design.design_dir)
   end
 
