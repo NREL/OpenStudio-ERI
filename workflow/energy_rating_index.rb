@@ -996,7 +996,7 @@ def write_es_zerh_results(rd_eri_results, rated_eri_results, rated_eri_results_w
   end
 end
 
-def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, is_dfhp_primary = nil)
+def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map, is_dfhp_primary = nil)
   primary_hpxml_fuel = get_system_fuel(sys, type, is_dfhp_primary)
   json_system_output << {
     primary_fuel_type: json_fuel_map[primary_hpxml_fuel],
@@ -1016,13 +1016,13 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_fr
   end
   return unless [CalcType::ReferenceHome,
                  CalcType::IndexAdjReferenceHome,
-                 CalcType::ReferenceHome].include? design_type
+                 CalcType::ReferenceHome].include? calc_type
 
   values = data_hashes.map { |h| calculate_reul(h, load_frac, type, is_dfhp_primary).round(2) }
   json_system_output[-1][:load] = values
 end
 
-def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, design_type, json_units_map, json_fuel_map)
+def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, calc_type, json_units_map, json_fuel_map)
   rated_systems = get_rated_systems(rated_bldg_systems, type)
   rated_systems.each do |rated_sys, load_frac|
     if bldg_systems == rated_bldg_systems
@@ -1034,10 +1034,10 @@ def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_
 
     if type == 'Heating' && sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
       # Dual fuel heat pump; calculate values using two different HVAC systems
-      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, true)
-      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, false)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map, true)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map, false)
     else
-      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map)
     end
   end
 end
@@ -1088,28 +1088,30 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   require 'msgpack'
   design_data_hashes = {} # Array of hashes, where each hash represents an hour of the year
   design_hpxmls = {}
-  all_outputs = eri_outputs.merge(co2_outputs)
-  (eri_designs + co2_designs).uniq.each do |design|
-    design_type = design.calc_type
-    diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
-    diag_data.delete('Time')
+  { RunType::ERI => [eri_designs, eri_outputs],
+    RunType::CO2e => [co2_designs, co2_outputs] }.each do |run_type, (designs, outputs)|
+    designs.each do |design|
+      key = [run_type, design.calc_type]
+      diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
+      diag_data.delete('Time')
 
-    hourly_data = Array.new(8760) { Hash.new }
-    diag_data.keys.each do |group|
-      diag_data[group].keys.each do |var|
-        next if group == 'Temperature' && !var.start_with?('Conditioned Space')
-        next if group == 'Weather' && !var.start_with?(WT::DrybulbTemp)
+      hourly_data = Array.new(8760) { Hash.new }
+      diag_data.keys.each do |group|
+        diag_data[group].keys.each do |var|
+          next if group == 'Temperature' && !var.start_with?('Conditioned Space')
+          next if group == 'Weather' && !var.start_with?(WT::DrybulbTemp)
 
-        output_type = "#{group}: #{var}".split(' (')[0].strip # Remove units
-        diag_data[group][var].each_with_index do |val, i|
-          hourly_data[i][output_type] = Float(val)
+          output_type = "#{group}: #{var}".split(' (')[0].strip # Remove units
+          diag_data[group][var].each_with_index do |val, i|
+            hourly_data[i][output_type] = Float(val)
+          end
         end
       end
-    end
-    design_data_hashes[design_type] = hourly_data
+      design_data_hashes[key] = hourly_data
 
-    design_hpxmls[design_type] = all_outputs[design_type]['HPXML']
-    FileUtils.rm(design.diag_output_path)
+      design_hpxmls[key] = outputs[design.calc_type]['HPXML']
+      FileUtils.rm(design.diag_output_path)
+    end
   end
 
   # Initial JSON output
@@ -1152,26 +1154,27 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
                      HPXML::FuelTypeWoodPellets => UnitConversions.convert(1.0, 'kBtu', 'kBtu') }
 
   # Add outputs for each design
-  design_map = { CalcType::RatedHome => :rated_home_output,
-                 CalcType::ReferenceHome => :hers_reference_home_output,
-                 CalcType::IndexAdjHome => :iad_rated_home_output,
-                 CalcType::IndexAdjReferenceHome => :iad_hers_reference_home_output,
-                 CalcType::ReferenceHome => :co2_reference_home_output }
+  design_map = { [RunType::ERI, CalcType::RatedHome] => :rated_home_output,
+                 [RunType::ERI, CalcType::ReferenceHome] => :hers_reference_home_output,
+                 [RunType::ERI, CalcType::IndexAdjHome] => :iad_rated_home_output,
+                 [RunType::ERI, CalcType::IndexAdjReferenceHome] => :iad_hers_reference_home_output,
+                 [RunType::CO2e, CalcType::ReferenceHome] => :co2_reference_home_output }
 
-  design_map.each do |design_type, json_element_name|
-    data_hashes = design_data_hashes[design_type]
-    hpxml_bldg = design_hpxmls[design_type].buildings[0]
+  design_map.each do |key, json_element_name|
+    data_hashes = design_data_hashes[key]
+    hpxml_bldg = design_hpxmls[key].buildings[0]
+    run_type, calc_type = key
 
     # Use rated HPXML to ensure systems across different designs end up in the same order.
-    if [CalcType::RatedHome, CalcType::ReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[CalcType::RatedHome]
+    if [CalcType::RatedHome, CalcType::ReferenceHome].include? calc_type
+      rated_hpxml = design_hpxmls[[run_type, CalcType::RatedHome]]
       rated_bldg = rated_hpxml.buildings[0]
-    elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[CalcType::IndexAdjHome]
+    elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
+      rated_hpxml = design_hpxmls[[run_type, CalcType::IndexAdjHome]]
       rated_bldg = rated_hpxml.buildings[0]
     end
 
-    if design_type == CalcType::RatedHome
+    if calc_type == CalcType::RatedHome
       if has_co2_results
         scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
         if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
@@ -1203,19 +1206,19 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     type = 'Heating'
     json_output[json_element_name][:space_heating_system_output] = []
     _add_diagnostic_systems_outputs(json_output[json_element_name][:space_heating_system_output], data_hashes,
-                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, calc_type, json_units_map, json_fuel_map)
 
     # Space Cooling Energy
     type = 'Cooling'
     json_output[json_element_name][:space_cooling_system_output] = []
     _add_diagnostic_systems_outputs(json_output[json_element_name][:space_cooling_system_output], data_hashes,
-                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, calc_type, json_units_map, json_fuel_map)
 
     # Water Heating Energy
     type = 'Hot Water'
     json_output[json_element_name][:water_heating_system_output] = []
     _add_diagnostic_systems_outputs(json_output[json_element_name][:water_heating_system_output], data_hashes,
-                                    rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, design_type, json_units_map, json_fuel_map)
+                                    rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, calc_type, json_units_map, json_fuel_map)
 
     # Lighting & appliances
     primary_fuel_types = []
