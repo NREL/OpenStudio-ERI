@@ -66,7 +66,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          A value of "latest" can be used to always point to the latest version available.
          If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
-  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
+  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
 
 .. warning::
@@ -148,7 +148,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
+         For ENERGY STAR, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions. 
 
 .. _weather_station:
 
@@ -186,8 +186,12 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
          IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
          See below for the list of climate zone years used by different programs:
          
+         \- **ENERGY STAR SFNH National v3.3**: 2021
+
          \- **ENERGY STAR SFNH National v3.2**: 2021
 
+         \- **ENERGY STAR MFNC National v1.3**: 2021
+         
          \- **ENERGY STAR MFNC National v1.2**: 2021
 
          \- **ZERH 1.0**: 2015
