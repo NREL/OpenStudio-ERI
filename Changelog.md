@@ -2,6 +2,7 @@
 
 __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
+- Adds ENERGY STAR ERI calculation for SF National v3.3 and MF National v1.3.
 
 __Bugfixes__
 
