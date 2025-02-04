@@ -404,6 +404,21 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
     end
   end
 
+  def test_water_fixtures
+    [*ESConstants::NationalVersions, *ZERHConstants::AllVersions].each do |program_version|
+      # Test in climate zone 4C
+      _convert_to_es_zerh('base.xml', program_version)
+      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
+      hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Seattle, WA'
+      hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 727930
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
+    end
+  end
+
   def _test_ruleset(program_version)
     print '.'
     if ESConstants::AllVersions.include? program_version
