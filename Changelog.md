@@ -1,7 +1,8 @@
-## OpenStudio-ERI v1.10.0
+## OpenStudio-ERI v1.9.4
 
 __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
+- Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
 __Bugfixes__
 
