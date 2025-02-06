@@ -28,6 +28,7 @@ A high-level workflow diagram is shown below:
 OpenStudio-ERI is used by a number of software products or organizations, including:
 
 - [APEX](https://pivotalenergysolutions.com)
+- [Clarity Common Engine](https://psdconsulting.com/solutions/)
 - [HouseRater](https://www.houserater.com)
 - [REM/Rate™](https://www.remrate.com)
 
