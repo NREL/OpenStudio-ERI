@@ -21,7 +21,7 @@ For more information on running simulations, generating HPXML files, etc., pleas
 OpenStudio-ERI uses [OpenStudio-HPXML](https://github.com/NREL/OpenStudio-HPXML) to run the individual EnergyPlus simulations.
 A high-level workflow diagram is shown below:
 
-![Image](https://github.com/user-attachments/assets/fe82082b-e10f-4b30-a6a4-704bd490c9e0)
+![Image](https://github.com/user-attachments/assets/9212f9ff-a1a3-4c9b-8b2e-09296a1d1b0b)
 
 ## Users
 
