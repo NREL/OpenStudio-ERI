@@ -11,11 +11,11 @@ The following ERI Standards are supported:
 
 The following ENERGY STAR programs/versions are supported:
 
-- Single Family, National, v3.2, v3.1, v3.0
+- Single Family, National, v3.3, v3.2, v3.1, v3.0
 - Single Family, Pacific, v3.0
 - Single Family, Florida, v3.1
 - Single Family, Oregon and Washington, v3.2
-- Multifamily, National, v1.2, v1.1, v1.0
+- Multifamily, National, v1.3, v1.2, v1.1, v1.0
 - Multifamily, Oregon and Washington, v1.2
 
 The following IECC ERI versions are supported:
