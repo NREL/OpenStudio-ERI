@@ -29,22 +29,8 @@
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[EnergyStar=SFNational30]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.0"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-
-  <sch:pattern>
-    <sch:title>[EnergyStar=SFNational31]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.1"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-
-  <sch:pattern>
-    <sch:title>[EnergyStar=SFNational32]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.2"]'>
+    <sch:title>[EnergyStar=SFVers]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "SF")]'>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -52,7 +38,6 @@
   <sch:pattern>
     <sch:title>[EnergyStar=SFPacific30]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_Pacific_3.0"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="HI" or text()="GU" or text()="MP"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -60,7 +45,6 @@
   <sch:pattern>
     <sch:title>[EnergyStar=SFFlorida31]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_Florida_3.1"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="FL"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -68,36 +52,20 @@
   <sch:pattern>
     <sch:title>[EnergyStar=SFOregonWashington32]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_OregonWashington_3.2"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="OR" or text()="WA"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[EnergyStar=MFNational10]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_National_1.0"]'>
+    <sch:title>[EnergyStar=MFVers]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "MF")]'>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
-  
-  <sch:pattern>
-    <sch:title>[EnergyStar=MFNational11]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_National_1.1"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-  
-  <sch:pattern>
-    <sch:title>[EnergyStar=MFNational12]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_National_1.2"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-  
+
   <sch:pattern>
     <sch:title>[EnergyStar=MFOregonWashington12]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_OregonWashington_1.2"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="OR" or text()="WA"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]</sch:assert>
     </sch:rule>
   </sch:pattern>
