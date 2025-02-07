@@ -185,19 +185,15 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   .. [#] The IECC climate zone for 2006 is always required.
          IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
          See below for the list of climate zone years used by different programs:
-         
-         \- **ENERGY STAR SFNH National v3.3**: 2021
 
-         \- **ENERGY STAR SFNH National v3.2**: 2021
+         \- **ENERGY STAR SF_National_3.3, SF_National_3.2, MF_National_1.3, MF_National_1.2**: 2021
 
-         \- **ENERGY STAR MFNC National v1.3**: 2021
-         
-         \- **ENERGY STAR MFNC National v1.2**: 2021
+         \- **ENERGY STAR SF_National_3.1, MF_National_1.1, SF_OregonWashington_3.2, MF_OregonWashington_1.2**: 2012
 
+         \- **ZERH SF_2.0, MF_2.0**: 2021
+  
          \- **ZERH 1.0**: 2015
 
-         \- **ZERH SF/MF 2.0**: 2021
-  
          \- **IECC ERI 20XX**: 20XX
 
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".

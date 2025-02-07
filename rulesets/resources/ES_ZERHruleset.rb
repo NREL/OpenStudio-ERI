@@ -12,15 +12,31 @@ module ES_ZERH_Ruleset
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+    if [ESConstants::SFNationalVer3_3,
+        ESConstants::SFNationalVer3_2,
+        ESConstants::MFNationalVer1_3,
+        ESConstants::MFNationalVer1_2,
+        ZERHConstants::SFVer2,
+        ZERHConstants::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif @program_version == ZERHConstants::Ver1
+    elsif [ZERHConstants::Ver1].include? @program_version
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
-    else
+    elsif [ESConstants::SFNationalVer3_1,
+           ESConstants::MFNationalVer1_1,
+           ESConstants::SFOregonWashingtonVer3_2,
+           ESConstants::MFOregonWashingtonVer1_2].include? @program_version
+      # Use Year=2012 for Reference Home configuration
+      iecc_climate_zone_year = 2012
+    elsif [ESConstants::SFNationalVer3_0,
+           ESConstants::SFPacificVer3_0,
+           ESConstants::SFFloridaVer3_1,
+           ESConstants::MFNationalVer1_0].include? @program_version
       # Use Year=2006 for Reference Home configuration
       iecc_climate_zone_year = 2006
+    else
+      fail "Need to handle IECC climate zone mapping for program version '#{@program_version}'."
     end
     @iecc_zone, _year = get_climate_zone_of_year(hpxml.buildings[0], iecc_climate_zone_year)
     @lookup_program_data = lookup_program_data
@@ -110,17 +126,17 @@ module ES_ZERH_Ruleset
 
     bldg_type = orig_bldg.building_construction.residential_facility_type
     if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
-      begin
-        # ESRD configured as SF National v3.X
-        ref_design_config_mapping = {
-          ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
-          ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
-          ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
-          ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
-        }
-        @program_version = ref_design_config_mapping.fetch(@program_version)
-      rescue KeyError
-        fail "Need to handle program version '#{@program_version}'."
+      # ESRD configured as SF National v3.X
+      ref_design_config_mapping = {
+        ESConstants::MFNationalVer1_3 => ESConstants::SFNationalVer3_3, # FIXME: Checking with EPA on this
+        ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
+        ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
+        ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
+        ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
+      }
+      @program_version = ref_design_config_mapping[@program_version]
+      if @program_version.nil?
+        fail "Need to handle ENERGY STAR MFNC mapping for program version '#{@program_version}'."
       end
     end
     @state_code = orig_bldg.state_code
