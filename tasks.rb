@@ -2634,7 +2634,7 @@ def create_sample_hpxmls
       hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_3
     elsif hpxml_bldg.state_code == 'FL'
       hpxml.header.energystar_calculation_version = ESConstants::SFFloridaVer3_1
     elsif hpxml_bldg.state_code == 'HI'
@@ -2642,7 +2642,7 @@ def create_sample_hpxmls
     elsif hpxml_bldg.state_code == 'OR'
       hpxml.header.energystar_calculation_version = ESConstants::SFOregonWashingtonVer3_2
     else
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_3
     end
     hpxml_bldg.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
@@ -2731,10 +2731,10 @@ def create_sample_hpxmls
     hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
     if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
       hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
+      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_3
     else
       hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
+      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_3
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end
