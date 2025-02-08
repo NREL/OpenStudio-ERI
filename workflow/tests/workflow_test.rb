@@ -135,6 +135,11 @@ class WorkflowTest < Minitest::Test
       system(command)
       assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_Results.csv')
 
+      # Test RESNET HERS tests
+      command = "\"#{OpenStudio.getOpenStudioCLI}\" OpenStudio-ERI/workflow/tests/resnet_hers_test.rb --name=test_resnet_hers_method"
+      system(command)
+      assert(File.exist? 'OpenStudio-ERI/workflow/tests/test_results/RESNET_Test_4.3_HERS_Method.csv')
+
       File.delete(zip_path)
       rm_path('OpenStudio-ERI')
     end
