@@ -59,7 +59,7 @@
   <sch:pattern>
     <sch:title>[EnergyStar=MFVers]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "MF")]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType="apartment unit"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType"apartment unit"]</sch:assert>
+      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType="apartment unit"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType="apartment unit"]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
