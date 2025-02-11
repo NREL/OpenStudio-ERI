@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
 module ERI_301_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, weather, iecc_version, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(hpxml, run_type, calc_type, weather, version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
     @is_southern_hemisphere = (weather.header.Latitude < 0)
 
-    if not iecc_version.nil?
+    if run_type == RunType::IECC
+      iecc_version = version
       if ['2015', '2018'].include? iecc_version
         # Use 2014 w/ all addenda
         @eri_version = Constants::ERIVersions.select { |v| v.include? '2014' }[-1]
@@ -22,28 +23,24 @@ module ERI_301_Ruleset
         fail "Unhandled IECC version: #{iecc_version}."
       end
     else
-      @eri_version = hpxml.header.eri_calculation_version
-      @eri_version = hpxml.header.co2index_calculation_version if @eri_version.nil?
+      @eri_version = hpxml.header.eri_calculation_versions[0]
+      @eri_version = hpxml.header.co2index_calculation_versions[0] if @eri_version.nil?
     end
     @eri_version = Constants::ERIVersions[-1] if @eri_version == 'latest'
 
     # Update HPXML object based on calculation type
-    if calc_type == Constants::CalcTypeERIReferenceHome
-      hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version)
-    elsif calc_type == Constants::CalcTypeERIRatedHome
+    if calc_type == CalcType::ReferenceHome
+      hpxml = apply_reference_home_ruleset(hpxml, iecc_version: iecc_version, is_all_electric: (run_type == RunType::CO2e))
+    elsif calc_type == CalcType::RatedHome
       hpxml = apply_rated_home_ruleset(hpxml)
-    elsif calc_type == Constants::CalcTypeERIIndexAdjustmentDesign
+    elsif calc_type == CalcType::IndexAdjHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
-    elsif calc_type == Constants::CalcTypeERIIndexAdjustmentReferenceHome
+    elsif calc_type == CalcType::IndexAdjReferenceHome
       hpxml = apply_index_adjustment_design_ruleset(hpxml)
       hpxml = apply_reference_home_ruleset(hpxml)
-    elsif calc_type == Constants::CalcTypeCO2eRatedHome
-      hpxml = apply_rated_home_ruleset(hpxml)
-    elsif calc_type == Constants::CalcTypeCO2eReferenceHome
-      hpxml = apply_reference_home_ruleset(hpxml, is_all_electric: true)
     end
 
-    # Add HPXML defaults to, e.g., ERIRatedHome.xml
+    # Add HPXML defaults to, e.g., RatedHome.xml
     Defaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
@@ -230,7 +227,7 @@ module ERI_301_Ruleset
     new_hpxml.header.transaction = orig_hpxml.header.transaction
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
-    new_hpxml.header.eri_calculation_version = @eri_version
+    new_hpxml.header.eri_calculation_versions = [@eri_version]
 
     orig_bldg = orig_hpxml.buildings[0]
     new_hpxml.buildings.add(building_id: orig_bldg.building_id)

@@ -16,7 +16,7 @@ module Lighting
     lighting = hpxml_bldg.lighting
     unit_multiplier = hpxml_bldg.building_construction.number_of_units
     cfa = hpxml_bldg.building_construction.conditioned_floor_area
-    eri_version = hpxml_header.eri_calculation_version
+    eri_version = hpxml_header.eri_calculation_versions[0]
 
     ltg_locns = [HPXML::LocationInterior, HPXML::LocationExterior, HPXML::LocationGarage]
     ltg_types = [HPXML::LightingTypeCFL, HPXML::LightingTypeLFL, HPXML::LightingTypeLED]

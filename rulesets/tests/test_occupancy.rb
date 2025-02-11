@@ -15,31 +15,39 @@ class ERIOccupancyTest < Minitest::Test
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
     @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @results_paths = []
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    @results_paths.each do |results_path|
+      FileUtils.rm_rf(results_path) if Dir.exist? results_path
+    end
+    @results_paths.clear
     puts
   end
 
   def test_building
     hpxml_name = 'base.xml'
 
-    _all_calc_types.each do |calc_type|
-      _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
+    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
       _check_occupancy(hpxml_bldg)
       _check_general_water_use(hpxml_bldg)
     end
   end
 
-  def _test_ruleset(hpxml_name, calc_type)
+  def _test_ruleset(hpxml_name)
     print '.'
-    designs = [Design.new(calc_type: calc_type,
-                          output_dir: @sample_files_path)]
+
+    designs = []
+    _all_run_calc_types.each do |run_type, calc_type|
+      designs << Design.new(run_type: run_type,
+                            calc_type: calc_type,
+                            output_dir: @sample_files_path)
+    end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)
-    success, errors, _, _, hpxml = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
+    success, errors, _, _, hpxml_bldgs = run_rulesets(hpxml_input_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
@@ -50,9 +58,9 @@ class ERIOccupancyTest < Minitest::Test
 
     # validate against OS-HPXML schematron
     assert_equal(true, @epvalidator.validate(designs[0].hpxml_output_path))
-    @results_path = File.dirname(designs[0].hpxml_output_path)
+    @results_paths += designs.map { |d| File.absolute_path(File.join(File.dirname(d.hpxml_output_path), '..')) }
 
-    return hpxml, hpxml.buildings[0]
+    return hpxml_bldgs
   end
 
   def _check_occupancy(hpxml_bldg)

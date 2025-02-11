@@ -65,8 +65,8 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     # Obtain weather object
     weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
-    eri_version = orig_hpxml.header.eri_calculation_version
-    eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
+    eri_version = orig_hpxml.header.eri_calculation_versions[0]
+    eri_version = orig_hpxml.header.co2index_calculation_versions[0] if eri_version.nil?
     eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
     zip_code = orig_hpxml_bldg.zip_code
     if not eri_version.nil?
@@ -87,26 +87,23 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
-    last_hpxml = nil
+    new_hpxml_blgs = {}
     hpxml_strings = {}
     designs.each do |design|
       # Ensure we don't modify the original HPXML
       new_hpxml = Marshal.load(Marshal.dump(orig_hpxml))
 
       # Apply initial ruleset on HPXML object
-      if [ESConstants::CalcTypeEnergyStarReference,
-          ESConstants::CalcTypeEnergyStarRated,
-          ZERHConstants::CalcTypeZERHReference,
-          ZERHConstants::CalcTypeZERHRated].include? design.init_calc_type
-        if design.init_calc_type == ESConstants::CalcTypeEnergyStarReference
-          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_version.gsub('.', '_').downcase
-        elsif design.init_calc_type == ZERHConstants::CalcTypeZERHReference
-          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
+      if not design.init_calc_type.nil?
+        if design.run_type == RunType::ES
+          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_versions[0].gsub('.', '_').downcase
+        elsif design.run_type == RunType::ZERH
+          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_versions[0].gsub('.', '_').downcase
         end
         if (not lookup_program.nil?) && lookup_program_data[lookup_program].nil?
           lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
         end
-        new_hpxml = ES_ZERH_Ruleset.apply_ruleset(new_hpxml, design.init_calc_type, lookup_program_data[lookup_program])
+        new_hpxml = ES_ZERH_Ruleset.apply_ruleset(new_hpxml, design.run_type, design.init_calc_type, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file
@@ -118,9 +115,9 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
       # Apply 301 ruleset on HPXML object
       if not design.calc_type.nil?
-        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.calc_type, weather, design.iecc_version, egrid_subregion, cambium_gea, create_time)
+        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.run_type, design.calc_type, weather, design.version, egrid_subregion, cambium_gea, create_time)
       end
-      last_hpxml = new_hpxml
+      new_hpxml_blgs[[design.run_type, design.calc_type]] = new_hpxml.buildings[0]
 
       # Write final HPXML file
       if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
@@ -167,7 +164,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     warnings << 'Autosized HVAC equipment (e.g., Capacity=-1) found in the HPXML. This should only be used for research purposes or to run tests. It should *not* be used for a real home.'
   end
 
-  return true, errors, warnings, duplicates, last_hpxml
+  return true, errors, warnings, duplicates, new_hpxml_blgs
 end
 
 def get_epa_egrid_subregion(zip_code)

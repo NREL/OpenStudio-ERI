@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
 module ES_ZERH_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
+  def self.apply_ruleset(hpxml, run_type, calc_type, lookup_program_data)
     # Use latest version of ANSI 301
     @eri_version = Constants::ERIVersions[-1]
-    hpxml.header.eri_calculation_version = @eri_version
+    hpxml.header.eri_calculation_versions = [@eri_version]
 
-    if calc_type == ESConstants::CalcTypeEnergyStarReference
-      @program_version = hpxml.header.energystar_calculation_version
-    elsif calc_type == ZERHConstants::CalcTypeZERHReference
-      @program_version = hpxml.header.zerh_calculation_version
+    if run_type == RunType::ES
+      @program_version = hpxml.header.energystar_calculation_versions[0]
+    elsif run_type == RunType::ZERH
+      @program_version = hpxml.header.zerh_calculation_versions[0]
     end
 
-    if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+    if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif @program_version == ZERHConstants::Ver1
+    elsif @program_version == ZERH::Ver1
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
     else
@@ -26,8 +26,7 @@ module ES_ZERH_Ruleset
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
-    if [ESConstants::CalcTypeEnergyStarReference,
-        ZERHConstants::CalcTypeZERHReference].include? calc_type
+    if calc_type == InitCalcType::TargetHome
       hpxml = apply_ruleset_reference(hpxml)
     end
 
@@ -98,7 +97,7 @@ module ES_ZERH_Ruleset
     new_hpxml.header.transaction = orig_hpxml.header.transaction
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
-    new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
+    new_hpxml.header.eri_calculation_versions = orig_hpxml.header.eri_calculation_versions
 
     orig_bldg = orig_hpxml.buildings[0]
     new_hpxml.buildings.add(building_id: orig_bldg.building_id)
@@ -109,14 +108,14 @@ module ES_ZERH_Ruleset
     new_bldg.zip_code = orig_bldg.zip_code
 
     bldg_type = orig_bldg.building_construction.residential_facility_type
-    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
+    if (bldg_type == HPXML::ResidentialTypeSFA) && ES::MFVersions.include?(@program_version)
       begin
         # ESRD configured as SF National v3.X
         ref_design_config_mapping = {
-          ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
-          ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
-          ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
-          ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
+          ES::MFNationalVer1_2 => ES::SFNationalVer3_2,
+          ES::MFNationalVer1_1 => ES::SFNationalVer3_1,
+          ES::MFNationalVer1_0 => ES::SFNationalVer3_0,
+          ES::MFOregonWashingtonVer1_2 => ES::SFOregonWashingtonVer3_2
         }
         @program_version = ref_design_config_mapping.fetch(@program_version)
       rescue KeyError
@@ -965,7 +964,7 @@ module ES_ZERH_Ruleset
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+      if [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version
         integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
         rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
         label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
