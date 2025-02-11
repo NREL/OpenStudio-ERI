@@ -2629,20 +2629,20 @@ def create_sample_hpxmls
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
+      hpxml.header.zerh_calculation_version = ZERHConstants::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
+      hpxml.header.zerh_calculation_version = ZERHConstants::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_3
+      hpxml.header.energystar_calculation_version = ESConstants::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     elsif hpxml_bldg.state_code == 'FL'
-      hpxml.header.energystar_calculation_version = ESConstants::SFFloridaVer3_1
+      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_Florida') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     elsif hpxml_bldg.state_code == 'HI'
-      hpxml.header.energystar_calculation_version = ESConstants::SFPacificVer3_0
+      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_Pacific') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     elsif hpxml_bldg.state_code == 'OR'
-      hpxml.header.energystar_calculation_version = ESConstants::SFOregonWashingtonVer3_2
+      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     else
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_3
+      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     end
     hpxml_bldg.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
@@ -2716,7 +2716,7 @@ def create_sample_hpxmls
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
   hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.energystar_calculation_version = ESConstants::MFOregonWashingtonVer1_2
+  hpxml.header.energystar_calculation_version = ESConstants::MFVersions.select { |v| v.include?('MF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
   hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
   hpxml_bldg.state_code = 'OR'
   hpxml_bldg.zip_code = '97214'
@@ -2730,11 +2730,11 @@ def create_sample_hpxmls
     hpxml.header.co2index_calculation_version = 'latest'
     hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
     if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
-      hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_3
+      hpxml.header.zerh_calculation_version = ZERHConstants::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_version = ESConstants::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_3
+      hpxml.header.zerh_calculation_version = ZERHConstants::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end
