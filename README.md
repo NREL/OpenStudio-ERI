@@ -16,14 +16,19 @@ The project supports:
 - IECC ERI Compliance Alternative (Section R406)
 - DOE ZERH Certification Using an ERI Compliance Path
 
-
 For more information on running simulations, generating HPXML files, etc., please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
+
+OpenStudio-ERI uses [OpenStudio-HPXML](https://github.com/NREL/OpenStudio-HPXML) to run the individual EnergyPlus simulations.
+A high-level workflow diagram is shown below:
+
+![Image](https://github.com/user-attachments/assets/9212f9ff-a1a3-4c9b-8b2e-09296a1d1b0b)
 
 ## Users
 
 OpenStudio-ERI is used by a number of software products or organizations, including:
 
 - [APEX](https://pivotalenergysolutions.com)
+- [Clarity Common Engine](https://psdconsulting.com/solutions/)
 - [HouseRater](https://www.houserater.com)
 - [REM/Rate™](https://www.remrate.com)
 
