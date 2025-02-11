@@ -124,28 +124,12 @@ module ES_ZERH_Ruleset
     new_bldg.state_code = orig_bldg.state_code
     new_bldg.zip_code = orig_bldg.zip_code
 
-    bldg_type = orig_bldg.building_construction.residential_facility_type
-    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
-      # ESRD configured as SF National v3.X
-      ref_design_config_mapping = {
-        ESConstants::MFNationalVer1_3 => ESConstants::SFNationalVer3_3, # FIXME: Checking with EPA on this
-        ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
-        ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
-        ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
-        ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
-      }
-      @program_version = ref_design_config_mapping[@program_version]
-      if @program_version.nil?
-        fail "Need to handle ENERGY STAR MFNC mapping for program version '#{@program_version}'."
-      end
-    end
-    @state_code = orig_bldg.state_code
-
     return new_hpxml
   end
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
+    @state_code = orig_bldg.state_code
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
