@@ -967,7 +967,7 @@ def write_co2_results(results, output_format)
   end
 end
 
-def write_es_zerh_results(rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
+def write_es_zerh_results(program_name, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
   # Even though pass/fail is calculated based on rounded integer ERIs,
   # we provide two decimal places here so that there's less possibility
   # for user confusion when comparing the actual/target ERIs.
@@ -988,7 +988,7 @@ def write_es_zerh_results(rd_eri_results, rated_eri_results, rated_eri_results_w
   results_out << ['Rated Home ERI', rated_eri]
   results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
   results_out << [nil] if output_format == 'csv' # line break
-  results_out << ['Certification', "#{passes ? 'PASS' : 'FAIL'}"]
+  results_out << ["#{program_name} Certification", "#{passes ? 'PASS' : 'FAIL'}"]
   if output_format == 'csv'
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   elsif output_format == 'json'
@@ -1439,7 +1439,7 @@ def main(options)
       # Calculate ES Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results(esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_zerh_results("ENERGY STAR", esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "ENERGY STAR (#{es_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
@@ -1470,7 +1470,7 @@ def main(options)
       # Calculate ZERH Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results(zerhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_zerh_results("Zero Energy Ready Home", zerhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "ZERH (#{zerh_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
