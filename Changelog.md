@@ -4,6 +4,7 @@ __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
 
 __Bugfixes__
+- Fixes ZERH Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
 
 ## OpenStudio-ERI v1.9.3
 
