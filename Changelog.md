@@ -5,6 +5,7 @@ __New Features__
 - Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
 __Bugfixes__
+- Fixes ZERH Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
 
 ## OpenStudio-ERI v1.9.3
 
