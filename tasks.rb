@@ -2043,13 +2043,23 @@ end
 def set_hpxml_lighting(hpxml_file, hpxml_bldg)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('EPA_Tests')
 
-  if hpxml_file.include?('EPA_Tests/SF_National_3.2') || hpxml_file.include?('EPA_Tests/MF_National_1.2')
+  if hpxml_file.include?('EPA_Tests/SF_National_3.2')
     ltg_fracs = { [HPXML::LocationInterior, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationExterior, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationInterior, HPXML::LightingTypeCFL] => 0,
                   [HPXML::LocationExterior, HPXML::LightingTypeCFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeCFL] => 0,
+                  [HPXML::LocationInterior, HPXML::LightingTypeLFL] => 0,
+                  [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
+                  [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
+  elsif hpxml_file.include?('EPA_Tests/MF_National_1.2')
+    ltg_fracs = { [HPXML::LocationInterior, HPXML::LightingTypeLED] => 0,
+                  [HPXML::LocationExterior, HPXML::LightingTypeLED] => 0,
+                  [HPXML::LocationGarage, HPXML::LightingTypeLED] => 0,
+                  [HPXML::LocationInterior, HPXML::LightingTypeCFL] => 1.0,
+                  [HPXML::LocationExterior, HPXML::LightingTypeCFL] => 1.0,
+                  [HPXML::LocationGarage, HPXML::LightingTypeCFL] => 1.0,
                   [HPXML::LocationInterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
