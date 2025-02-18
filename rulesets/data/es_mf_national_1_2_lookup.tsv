@@ -22,12 +22,12 @@ radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FAL
 vented_attic		if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location
 roof_solar_abs		0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92
 roof_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
-lighting_tier1_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-lighting_tier1_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-lighting_tier1_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-lighting_tier2_int		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-lighting_tier2_ext		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-lighting_tier2_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+lighting_tier1_int		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+lighting_tier1_ext		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+lighting_tier1_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+lighting_tier2_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+lighting_tier2_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+lighting_tier2_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 refrigerator_rated_annual_kwh		450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
 clothes_washer_imef		1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
 clothes_washer_ler		284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284

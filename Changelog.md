@@ -2,6 +2,7 @@
 
 __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
+- Updates to ENERGY STAR SFNH Rev 14 and MFNC Rev 05. ENERGY STAR MFNC National 1.2 now requires all lighting to be 100% LED.
 - Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
 __Bugfixes__

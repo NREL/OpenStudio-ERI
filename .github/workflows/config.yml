@@ -28,9 +28,10 @@ jobs:
         shell: bash
         run: |
           echo "Regenerating HPXML files..."
-          openstudio tasks.rb update_measures
-          echo "Checking for HPXML differences..."
+          openstudio tasks.rb update_hpxmls
           git config --global --add safe.directory $(realpath .)
+          echo "Checking for HPXML differences..."
+          echo "If differences are found below, then HPXMLs need to be regenerated using: openstudio tasks.rb update_hpxmls"
           git diff --exit-code --ignore-cr-at-eol workflow/*.xml
 
       - name: Run ruleset tests
