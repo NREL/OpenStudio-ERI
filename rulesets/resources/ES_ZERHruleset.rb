@@ -583,8 +583,8 @@ module ES_ZERH_Ruleset
     orig_total_win_area = ext_thermal_bndry_windows.map { |window| window.area }.sum(0)
     window_to_cfa_ratio = orig_total_win_area / @cfa
 
-    # Default natural ventilation
-    fraction_operable = Defaults.get_fraction_of_windows_operable()
+    # Preserve operable window fraction for natural ventilation
+    fraction_operable = orig_bldg.fraction_of_windows_operable()
 
     window_area = lookup_reference_value('window_area')
 

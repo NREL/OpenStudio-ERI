@@ -1,11 +1,13 @@
-## OpenStudio-ERI v1.10.0
+## OpenStudio-ERI v1.9.4
 
 __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
 - Adds ENERGY STAR ERI calculation for SFNH National v3.3 and MFNC National v1.3.
 - **Breaking change**: With the release of ENERGY STAR SFNH Rev. 14 and MFNC Rev. 05, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
+- Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
 __Bugfixes__
+- Fixes ZERH Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
 
 ## OpenStudio-ERI v1.9.3
 
