@@ -2,6 +2,12 @@
 
 __New Features__
 - `AverageCeilingHeight` is no longer used (for infiltration calculations, Hf = InfiltrationVolume/CFA).
+- Output updates:
+  - **Breaking change**: Adds generator electricity produced to *total* fuel/energy use; previously it was only included in *net* values.
+  - Adds new outputs for *net* peak electricity (summer/winter/annual); same as *total* peak electricity outputs but subtracts power produced by PV.
+
+__Bugfixes__
+  - Fixes battery charging/discharging not being included in peak electricity outputs.
 
 ## OpenStudio-ERI v1.9.4
 
