@@ -114,7 +114,7 @@ Generates annual heating, cooling, and hot water loads.
 
 **Generate Annual Output: Unmet Hours**
 
-Generates annual unmet hours for heating and cooling.
+Generates annual unmet hours for heating, cooling, and EV driving.
 
 - **Name:** ``include_annual_unmet_hours``
 - **Type:** ``Boolean``
@@ -125,7 +125,7 @@ Generates annual unmet hours for heating and cooling.
 
 **Generate Annual Output: Peak Fuels**
 
-Generates annual electricity peaks for summer/winter.
+Generates annual/summer/winter electricity peaks.
 
 - **Name:** ``include_annual_peak_fuels``
 - **Type:** ``Boolean``
@@ -314,7 +314,7 @@ Generates timeseries heating and cooling loads disaggregated by component type.
 
 **Generate Timeseries Output: Unmet Hours**
 
-Generates timeseries unmet hours for heating and cooling.
+Generates timeseries unmet hours for heating, cooling, and EV driving.
 
 - **Name:** ``include_timeseries_unmet_hours``
 - **Type:** ``Boolean``
@@ -471,6 +471,8 @@ All possible measure outputs are listed below. Actual outputs depend on measure 
 
 - ``fuel_use_electricity_total_m_btu``
 
+- ``fuel_use_electricity_net_m_btu``
+
 - ``fuel_use_natural_gas_total_m_btu``
 
 - ``fuel_use_fuel_oil_total_m_btu``
@@ -535,8 +537,6 @@ All possible measure outputs are listed below. Actual outputs depend on measure 
 
 - ``end_use_electricity_plug_loads_m_btu``
 
-- ``end_use_electricity_electric_vehicle_charging_m_btu``
-
 - ``end_use_electricity_well_pump_m_btu``
 
 - ``end_use_electricity_pool_heater_m_btu``
@@ -552,6 +552,8 @@ All possible measure outputs are listed below. Actual outputs depend on measure 
 - ``end_use_electricity_generator_m_btu``
 
 - ``end_use_electricity_battery_m_btu``
+
+- ``end_use_electricity_electric_vehicle_charging_m_btu``
 
 - ``end_use_natural_gas_heating_m_btu``
 
@@ -695,11 +697,19 @@ All possible measure outputs are listed below. Actual outputs depend on measure 
 
 - ``unmet_hours_cooling_hr``
 
+- ``unmet_hours_ev_driving_hr``
+
 - ``peak_electricity_winter_total_w``
 
 - ``peak_electricity_summer_total_w``
 
 - ``peak_electricity_annual_total_w``
+
+- ``peak_electricity_winter_net_w``
+
+- ``peak_electricity_summer_net_w``
+
+- ``peak_electricity_annual_net_w``
 
 - ``peak_load_heating_delivered_k_btu_hr``
 
