@@ -251,6 +251,8 @@ def _get_csv_results(csvs)
         key = "ES #{key}"
       elsif csv.include? 'ZERH_'
         key = "ZERH #{key}"
+      elsif csv.include? 'CO2e_'
+        key = "CO2e #{key}"
       end
       if value.to_s.include? ',' # Sum values for visualization on CI
         results[key] = value.split(',').map(&:to_f).sum

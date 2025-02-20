@@ -572,7 +572,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      _check_windows(hpxml_bldg, frac_operable: 0.67,
+      _check_windows(hpxml_bldg, frac_operable: 0.57,
                                  values_by_azimuth: { 0 => { area: 107.17, ufactor: ufactor, shgc: shgc },
                                                       180 => { area: 107.17, ufactor: ufactor, shgc: shgc },
                                                       90 => { area: 107.17, ufactor: ufactor, shgc: shgc },
@@ -616,7 +616,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      _check_windows(hpxml_bldg, frac_operable: 0.67,
+      _check_windows(hpxml_bldg, frac_operable: 0.48,
                                  values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
                                                       180 => { area: 33.34, ufactor: ufactor, shgc: shgc },
                                                       270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
@@ -637,7 +637,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      _check_windows(hpxml_bldg, frac_operable: 0.67,
+      _check_windows(hpxml_bldg, frac_operable: 0.57,
                                  values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor2, shgc: shgc },
                                                       180 => { area: 33.34, ufactor: ufactor3, shgc: shgc },
                                                       270 => { area: 50.49, ufactor: ufactor, shgc: shgc } })
