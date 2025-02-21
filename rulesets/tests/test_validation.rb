@@ -117,9 +117,9 @@ class ERI301ValidationTest < Minitest::Test
                   'energy-star-MF_OregonWashington_1.2' => [ESConstants::MFOregonWashingtonVer1_2, HPXML::ResidentialTypeSFD] }
         version, bldg_type = props[error_case]
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
-        hpxml.header.energystar_calculation_version = version
-        hpxml.header.iecc_eri_calculation_version = nil
-        hpxml.header.zerh_calculation_version = nil
+        hpxml.header.energystar_calculation_versions = [version]
+        hpxml.header.iecc_eri_calculation_versions = nil
+        hpxml.header.zerh_calculation_versions = nil
         hpxml_bldg.building_construction.residential_facility_type = bldg_type
         if bldg_type == HPXML::ResidentialTypeApartment
           hpxml_bldg.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit
