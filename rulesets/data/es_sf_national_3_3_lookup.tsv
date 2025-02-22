@@ -93,7 +93,7 @@ duct_unconditioned_r_value	other
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_min		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
-infil_air_leakage_ach50		3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_ach50		3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	2.5	2.5	2.5	2.5	2.5
 infil_air_leakage_cfm50_per_sqft																					
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	exhaust only	exhaust only	exhaust only	exhaust only	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator
 mechanical_ventilation_fan_sre																	0.65	0.65	0.65	0.65	0.65
