@@ -2,6 +2,8 @@
 
 __New Features__
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
+- Adds ENERGY STAR ERI calculation for SFNH National v3.3 and MFNC National v1.3.
+- **Breaking change**: With the release of ENERGY STAR SFNH Rev. 14 and MFNC Rev. 05, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
 - Updates to ENERGY STAR SFNH Rev 14 and MFNC Rev 05. ENERGY STAR MFNC National 1.2 now requires all lighting to be 100% LED.
 - Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
