@@ -40,7 +40,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants::CalcTypeERIRatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        _check_infiltration(hpxml_bldg, ach50: 9.1, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -105,7 +105,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants::CalcTypeERIRatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        _check_infiltration(hpxml_bldg, ach50: 9.1, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -115,7 +115,7 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
+    # Test attached dwelling where air tightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
     # Create derivative file for testing
     hpxml_name = 'base-bldgtype-mf-unit.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
@@ -161,7 +161,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants::CalcTypeERIRatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 10.1, height: 8.0, volume: 7200.0)
+        _check_infiltration(hpxml_bldg, ach50: 9.9, height: 8.0, volume: 7200.0)
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 8.0, volume: 7200.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type
@@ -178,7 +178,7 @@ class ERIEnclosureTest < Minitest::Test
     _all_calc_types.each do |calc_type|
       _hpxml, hpxml_bldg = _test_ruleset(hpxml_name, calc_type)
       if [Constants::CalcTypeERIRatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        _check_infiltration(hpxml_bldg, ach50: 9.1, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [Constants::CalcTypeERIReferenceHome, Constants::CalcTypeCO2eReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [Constants::CalcTypeERIIndexAdjustmentDesign].include? calc_type

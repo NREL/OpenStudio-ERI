@@ -109,7 +109,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     end
 
     Version.check_openstudio_version()
-    Model.reset(model, runner)
+    Model.reset(runner, model)
 
     args = runner.getArgumentValues(arguments(model), user_arguments)
     set_file_paths(args)
@@ -150,6 +150,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
       Outputs.apply_ems_programs(model, hpxml_osm_map, hpxml.header, args[:add_component_loads])
       Outputs.apply_output_file_controls(model, args[:debug])
       Outputs.apply_additional_properties(model, hpxml, hpxml_osm_map, args[:hpxml_path], args[:building_id], args[:hpxml_defaults_path])
+      Outputs.create_custom_meters(model)
       # Outputs.apply_ems_debug_output(model) # Uncomment to debug EMS
 
       # Write output files
@@ -327,7 +328,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     # Conditioned space & setpoints
     spaces = {} # Map of HPXML locations => OpenStudio Space objects
     Geometry.create_or_get_space(model, spaces, HPXML::LocationConditionedSpace, hpxml_bldg)
-    hvac_days = HVAC.apply_setpoints(model, runner, weather, spaces, hpxml_bldg, hpxml.header, schedules_file)
+    hvac_days = HVAC.apply_setpoints(runner, model, weather, spaces, hpxml_bldg, hpxml.header, schedules_file)
 
     # Geometry & Enclosure
     Geometry.apply_roofs(runner, model, spaces, hpxml_bldg, hpxml.header)
@@ -371,6 +372,7 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     PV.apply(model, hpxml_bldg)
     Generator.apply(model, hpxml_bldg)
     Battery.apply(runner, model, spaces, hpxml_bldg, schedules_file)
+    Vehicle.apply(runner, model, spaces, hpxml_bldg, hpxml.header, schedules_file)
   end
 
   # Miscellaneous logic that needs to occur upfront.
@@ -396,30 +398,20 @@ class HPXMLtoOpenStudio < OpenStudio::Measure::ModelMeasure
     hpxml_bldg.delete_adiabatic_subsurfaces() # EnergyPlus doesn't allow this
 
     # Hidden feature: Version of the ANSI/RESNET/ICC 301 Standard to use for equations/assumptions
-    if hpxml_header.eri_calculation_version.nil?
-      hpxml_header.eri_calculation_version = 'latest'
+    if hpxml_header.eri_calculation_versions.size > 1
+      fail 'Only a single ERI version is supported.'
     end
-    if hpxml_header.eri_calculation_version == 'latest'
-      hpxml_header.eri_calculation_version = Constants::ERIVersions[-1]
+
+    if hpxml_header.eri_calculation_versions.empty?
+      hpxml_header.eri_calculation_versions = ['latest']
+    end
+    if hpxml_header.eri_calculation_versions == ['latest']
+      hpxml_header.eri_calculation_versions = [Constants::ERIVersions[-1]]
     end
 
     # Hidden feature: Whether to override certain assumptions to better match the ASHRAE 140 specification
     if hpxml_header.apply_ashrae140_assumptions.nil?
       hpxml_header.apply_ashrae140_assumptions = false
-    end
-
-    if not hpxml_bldg.building_occupancy.number_of_residents.nil?
-      # If zero occupants, ensure end uses of interest are zeroed out
-      if (hpxml_bldg.building_occupancy.number_of_residents == 0) && (not hpxml_header.apply_ashrae140_assumptions)
-        hpxml_header.unavailable_periods.add(column_name: 'Vacancy',
-                                             begin_month: hpxml_header.sim_begin_month,
-                                             begin_day: hpxml_header.sim_begin_day,
-                                             begin_hour: 0,
-                                             end_month: hpxml_header.sim_end_month,
-                                             end_day: hpxml_header.sim_end_day,
-                                             end_hour: 24,
-                                             natvent_availability: HPXML::ScheduleUnavailable)
-      end
     end
   end
 end

@@ -4,12 +4,12 @@ module ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
     # Use latest version of ANSI 301
     @eri_version = Constants::ERIVersions[-1]
-    hpxml.header.eri_calculation_version = @eri_version
+    hpxml.header.eri_calculation_versions = [@eri_version]
 
     if calc_type == ESConstants::CalcTypeEnergyStarReference
-      @program_version = hpxml.header.energystar_calculation_version
+      @program_version = hpxml.header.energystar_calculation_versions[0]
     elsif calc_type == ZERHConstants::CalcTypeZERHReference
-      @program_version = hpxml.header.zerh_calculation_version
+      @program_version = hpxml.header.zerh_calculation_versions[0]
     end
 
     if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
@@ -98,7 +98,7 @@ module ES_ZERH_Ruleset
     new_hpxml.header.transaction = orig_hpxml.header.transaction
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
-    new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
+    new_hpxml.header.eri_calculation_versions = orig_hpxml.header.eri_calculation_versions
 
     orig_bldg = orig_hpxml.buildings[0]
     new_hpxml.buildings.add(building_id: orig_bldg.building_id)

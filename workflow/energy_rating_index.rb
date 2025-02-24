@@ -511,7 +511,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
 
         act_vol = Waterheater.calc_storage_tank_actual_vol(system.tank_volume, nil)
         a_side = Waterheater.calc_tank_areas(act_vol)[1]
-        ua = Waterheater.calc_indirect_ua_with_standbyloss(act_vol, system, a_side, 0.0)
+        ua = Waterheater.calc_combi_tank_losses(act_vol, system, a_side, 0.0)
 
         volume_drawn = 64.3 # gal/day
         density = 8.2938 # lb/gal
