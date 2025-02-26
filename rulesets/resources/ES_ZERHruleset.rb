@@ -947,34 +947,32 @@ module ES_ZERH_Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_bldg, new_bldg)
-    # Default values same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
-    id = 'ClothesWasher'
-    location = HPXML::LocationConditionedSpace
-    reference_values = Defaults.get_clothes_washer_values(@eri_version)
-    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor]
-    rated_annual_kwh = reference_values[:rated_annual_kwh]
-    label_electric_rate = reference_values[:label_electric_rate]
-    label_gas_rate = reference_values[:label_gas_rate]
-    label_annual_gas_cost = reference_values[:label_annual_gas_cost]
-    label_usage = reference_values[:label_usage]
-    capacity = reference_values[:capacity]
-
-    # Override efficiency values equal to "Std 2018=Present" Standard if clothes washer present in the Rated Home
+    # Override efficiency values equal to "Std 2018-Present" Standard if clothes washer present in the Rated Home
     if not orig_bldg.clothes_washers.empty?
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      if [ESConstants::SFNationalVer3_2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_2, ESConstants::MFNationalVer1_3, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
-        integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
-        rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
-        label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
-        label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
-        label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
-        label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
-        capacity = lookup_reference_value('clothes_washer_capacity')
-      end
+      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef', 'efficiency override')
+      rated_annual_kwh = lookup_reference_value('clothes_washer_ler', 'efficiency override')
+      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate', 'efficiency override')
+      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate', 'efficiency override')
+      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc', 'efficiency override')
+      label_usage = lookup_reference_value('clothes_washer_lcy', 'efficiency override')
+      capacity = lookup_reference_value('clothes_washer_capacity', 'efficiency override')
     end
+
+    # Default values same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
+    id = 'ClothesWasher' if id.nil?
+    location = HPXML::LocationConditionedSpace if location.nil?
+    reference_values = Defaults.get_clothes_washer_values(@eri_version)
+    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor] if integrated_modified_energy_factor.nil?
+    rated_annual_kwh = reference_values[:rated_annual_kwh] if rated_annual_kwh.nil?
+    label_electric_rate = reference_values[:label_electric_rate] if label_electric_rate.nil?
+    label_gas_rate = reference_values[:label_gas_rate] if label_gas_rate.nil?
+    label_annual_gas_cost = reference_values[:label_annual_gas_cost] if label_annual_gas_cost.nil?
+    label_usage = reference_values[:label_usage] * 52 if label_usage.nil?
+    capacity = reference_values[:capacity] if capacity.nil?
 
     new_bldg.clothes_washers.add(id: id,
                                  location: location,
@@ -984,7 +982,7 @@ module ES_ZERH_Ruleset
                                  label_electric_rate: label_electric_rate,
                                  label_gas_rate: label_gas_rate,
                                  label_annual_gas_cost: label_annual_gas_cost,
-                                 label_usage: label_usage,
+                                 label_usage: label_usage / 52,
                                  capacity: capacity)
   end
 
