@@ -278,22 +278,10 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml.header.transaction = 'create'
     hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     hpxml_bldg.event_type = 'proposed workscope'
-    if hpxml_file.include?('SF_National_3.3')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_3
-    elsif hpxml_file.include?('SF_National_3.2')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
-    elsif hpxml_file.include?('SF_National_3.1')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_1
-    elsif hpxml_file.include?('SF_National_3.0')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_0
-    elsif hpxml_file.include?('MF_National_1.3')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_3
-    elsif hpxml_file.include?('MF_National_1.2')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
-    elsif hpxml_file.include?('MF_National_1.1')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_1
-    elsif hpxml_file.include?('MF_National_1.0')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_0
+    ESConstants::AllVersions.each do |es_version|
+      if hpxml_file.include? es_version
+        hpxml.header.energystar_calculation_version = es_version
+      end
     end
     hpxml_bldg.state_code = File.basename(hpxml_file)[11..12]
   end
@@ -1714,7 +1702,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
         cfm_per_w = 1.2
       end
     elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
-       hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
+          hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
       cfm_per_w = 2.8
     elsif hpxml_file.include?('SF_National_3.0') || hpxml_file.include?('MF_National_1.0')
       cfm_per_w = 2.2
