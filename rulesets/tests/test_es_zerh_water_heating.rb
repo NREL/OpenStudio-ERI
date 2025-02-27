@@ -33,6 +33,8 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
       end
     elsif [*ESConstants::MFVersions, ZERHConstants::MFVer2].include? program_version
       return true
+    else
+      fail "Unhandled program version: #{program_version}"
     end
   end
 
@@ -41,8 +43,12 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
       return 3.0
     elsif program_version == ZERHConstants::MFVer2 && has_shared_water_heater
       return 3.0
-    else
+    elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFPacificVer3_0, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ESConstants::SFNationalVer3_3,
+           ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ESConstants::MFNationalVer1_3,
+           ZERHConstants::Ver1, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
       return 0.0
+    else
+      fail "Unhandled program version: #{program_version}"
     end
   end
 
@@ -69,8 +75,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 2.50, fhr: 63 }])
       elsif program_version == ZERHConstants::MFVer2
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 1.95, fhr: 63 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.93 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -101,8 +109,11 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 3.30, fhr: 63 }])
       elsif program_version == ZERHConstants::MFVer2
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 1.95, fhr: 63 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFOregonWashingtonVer3_2, ESConstants::SFPacificVer3_0, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1,
+             ESConstants::MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.93 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -124,8 +135,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95 }])
       elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 30, ef: 0.63 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -147,8 +160,11 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90 }])
       elsif [ZERHConstants::SFVer2, ZERHConstants::MFVer2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_3].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFOregonWashingtonVer3_2, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1,
+             ESConstants::MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeOil, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.51 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -179,8 +195,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 50, uef: 2.50, fhr: 56 }])
       elsif program_version == ZERHConstants::MFVer2
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, location: HPXML::LocationConditionedSpace, tank_vol: 50, uef: 1.95, fhr: 56 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.92 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -211,8 +229,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, uef: 2.50, fhr: 63 }])
       elsif program_version == ZERHConstants::MFVer2
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, uef: 1.95, fhr: 63 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 0.91 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -236,8 +256,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90 }])
       elsif [ZERHConstants::SFVer2, ZERHConstants::MFVer2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_3].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -320,13 +342,15 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
                                          { whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 60, uef: 1.95, fhr: 63 },
                                          { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, location: HPXML::LocationConditionedSpace, uef: 0.95 },
                                          { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, location: HPXML::LocationConditionedSpace, uef: 0.95 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.93 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 0.89 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 0.91 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -348,8 +372,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90 }])
       elsif [ZERHConstants::SFVer2, ZERHConstants::MFVer2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_3].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -373,8 +399,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90 }])
       elsif [ZERHConstants::SFVer2, ZERHConstants::MFVer2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_3].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -404,8 +432,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 2.50, fhr: 63 }])
       elsif program_version == ZERHConstants::MFVer2
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 1.95, fhr: 63 }])
-      else
+      elsif [ESConstants::SFFloridaVer3_1, ESConstants::SFNationalVer3_0, ESConstants::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.93 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, false), pipe_l: 93.5)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))
@@ -427,8 +457,10 @@ class EnergyStarZeroEnergyReadyHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95, n_bedrooms_served: 18 }])
       elsif [ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1, ZERHConstants::Ver1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 120.0, ef: 0.77, n_bedrooms_served: 18 }])
-      elsif [ESConstants::MFNationalVer1_2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90, n_bedrooms_served: 18 }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
       _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: pipe_r_value(program_version, true), pipe_l: 70.0, shared_recirc_power: 232.94, shared_recirc_num_bedrooms_served: 18, shared_recirc_control_type: HPXML::DHWRecircControlTypeTimer)
       _check_water_fixtures(hpxml_bldg, low_flow_shower: is_low_flow(program_version, hpxml_bldg), low_flow_faucet: is_low_flow(program_version, hpxml_bldg))

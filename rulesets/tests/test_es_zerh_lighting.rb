@@ -29,10 +29,15 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
       _hpxml, hpxml_bldg = _test_ruleset(program_version)
       if [ESConstants::SFNationalVer3_0, ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1, ZERHConstants::Ver1].include? program_version
         _check_lighting(hpxml_bldg, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-      elsif [ESConstants::SFNationalVer3_2, ESConstants::SFNationalVer3_3, ESConstants::MFNationalVer1_2, ESConstants::MFNationalVer1_3, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      elsif [ESConstants::SFNationalVer3_2, ESConstants::SFNationalVer3_3,
+             ESConstants::MFNationalVer1_2, ESConstants::MFNationalVer1_3,
+             ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
         _check_lighting(hpxml_bldg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-      else
+      elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::SFNationalVer3_1,
+             ESConstants::MFOregonWashingtonVer1_2, ESConstants::MFNationalVer1_0, ESConstants::MFNationalVer1_1].include? program_version
         _check_lighting(hpxml_bldg, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
