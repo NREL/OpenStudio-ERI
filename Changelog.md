@@ -9,6 +9,7 @@ __New Features__
 
 __Bugfixes__
 - Fixes ZERH Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
+- Fixes possible error if there's a surface w/ interior unconditioned space and exterior "other housing unit".
 
 ## OpenStudio-ERI v1.9.3
 
