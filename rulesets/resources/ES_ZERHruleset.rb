@@ -12,15 +12,31 @@ module ES_ZERH_Ruleset
       @program_version = hpxml.header.zerh_calculation_version
     end
 
-    if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+    if [ESConstants::SFNationalVer3_3,
+        ESConstants::SFNationalVer3_2,
+        ESConstants::MFNationalVer1_3,
+        ESConstants::MFNationalVer1_2,
+        ZERHConstants::SFVer2,
+        ZERHConstants::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif @program_version == ZERHConstants::Ver1
+    elsif [ZERHConstants::Ver1].include? @program_version
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
-    else
+    elsif [ESConstants::SFNationalVer3_1,
+           ESConstants::MFNationalVer1_1,
+           ESConstants::SFOregonWashingtonVer3_2,
+           ESConstants::MFOregonWashingtonVer1_2].include? @program_version
+      # Use Year=2012 for Reference Home configuration
+      iecc_climate_zone_year = 2012
+    elsif [ESConstants::SFNationalVer3_0,
+           ESConstants::SFPacificVer3_0,
+           ESConstants::SFFloridaVer3_1,
+           ESConstants::MFNationalVer1_0].include? @program_version
       # Use Year=2006 for Reference Home configuration
       iecc_climate_zone_year = 2006
+    else
+      fail "Need to handle IECC climate zone mapping for program version '#{@program_version}'."
     end
     @iecc_zone, _year = get_climate_zone_of_year(hpxml.buildings[0], iecc_climate_zone_year)
     @lookup_program_data = lookup_program_data
@@ -108,28 +124,12 @@ module ES_ZERH_Ruleset
     new_bldg.state_code = orig_bldg.state_code
     new_bldg.zip_code = orig_bldg.zip_code
 
-    bldg_type = orig_bldg.building_construction.residential_facility_type
-    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
-      begin
-        # ESRD configured as SF National v3.X
-        ref_design_config_mapping = {
-          ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
-          ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
-          ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
-          ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
-        }
-        @program_version = ref_design_config_mapping.fetch(@program_version)
-      rescue KeyError
-        fail "Need to handle program version '#{@program_version}'."
-      end
-    end
-    @state_code = orig_bldg.state_code
-
     return new_hpxml
   end
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
+    @state_code = orig_bldg.state_code
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
@@ -947,34 +947,32 @@ module ES_ZERH_Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_bldg, new_bldg)
-    # Default values
-    id = 'ClothesWasher'
-    location = HPXML::LocationConditionedSpace
-    reference_values = Defaults.get_clothes_washer_values(@eri_version)
-    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor]
-    rated_annual_kwh = reference_values[:rated_annual_kwh]
-    label_electric_rate = reference_values[:label_electric_rate]
-    label_gas_rate = reference_values[:label_gas_rate]
-    label_annual_gas_cost = reference_values[:label_annual_gas_cost]
-    label_usage = reference_values[:label_usage]
-    capacity = reference_values[:capacity]
-
-    # Override values?
+    # Override efficiency values equal to "Std 2018-Present" Standard if clothes washer present in the Rated Home
     if not orig_bldg.clothes_washers.empty?
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
-        integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
-        rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
-        label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
-        label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
-        label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
-        label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
-        capacity = lookup_reference_value('clothes_washer_capacity')
-      end
+      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef', 'clothes washer present')
+      rated_annual_kwh = lookup_reference_value('clothes_washer_ler', 'clothes washer present')
+      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate', 'clothes washer present')
+      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate', 'clothes washer present')
+      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc', 'clothes washer present')
+      label_usage = lookup_reference_value('clothes_washer_lcy', 'clothes washer present')
+      capacity = lookup_reference_value('clothes_washer_capacity', 'clothes washer present')
     end
+
+    # Default values same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
+    id = 'ClothesWasher' if id.nil?
+    location = HPXML::LocationConditionedSpace if location.nil?
+    reference_values = Defaults.get_clothes_washer_values(@eri_version)
+    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor] if integrated_modified_energy_factor.nil?
+    rated_annual_kwh = reference_values[:rated_annual_kwh] if rated_annual_kwh.nil?
+    label_electric_rate = reference_values[:label_electric_rate] if label_electric_rate.nil?
+    label_gas_rate = reference_values[:label_gas_rate] if label_gas_rate.nil?
+    label_annual_gas_cost = reference_values[:label_annual_gas_cost] if label_annual_gas_cost.nil?
+    label_usage = reference_values[:label_usage] * 52 if label_usage.nil?
+    capacity = reference_values[:capacity] if capacity.nil?
 
     new_bldg.clothes_washers.add(id: id,
                                  location: location,
@@ -984,7 +982,7 @@ module ES_ZERH_Ruleset
                                  label_electric_rate: label_electric_rate,
                                  label_gas_rate: label_gas_rate,
                                  label_annual_gas_cost: label_annual_gas_cost,
-                                 label_usage: label_usage,
+                                 label_usage: label_usage / 52,
                                  capacity: capacity)
   end
 
@@ -1049,6 +1047,7 @@ module ES_ZERH_Ruleset
     end
 
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
+    rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh] if rated_annual_kwh.nil?
 
     new_bldg.refrigerators.add(id: id,
                                location: location,
