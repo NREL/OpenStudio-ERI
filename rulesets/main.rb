@@ -179,23 +179,34 @@ def get_cambium_gea_region(zip_code)
   return cambium_gea
 end
 
-def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
-  return if zip_code.nil?
+def lookup_region_from_zip(zipcode, zip_filepath, zip_column_index, output_column_index)
+  return if zipcode.nil?
 
-  if zip_code.include? '-'
-    zip_code = zip_code.split('-')[0]
+  # Gets the region for the specified zipcode. If the exact zipcode is not found, we
+  # find the closest zipcode that shares the first 3 digits.
+  begin
+    zipcode3 = zipcode[0, 3]
+    zipcode_int = Integer(Float(zipcode[0, 5])) # Convert to 5-digit integer
+  rescue
+    fail "Unexpected zip code: #{zipcode}."
   end
-  zip_code = zip_code.rjust(5, '0')
-
-  fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
 
   # Note: We don't use the CSV library here because it's slow for large files
+  zip_distance = 99999 # init
+  region = nil
   File.foreach(zip_filepath) do |row|
     row = row.strip.split(',')
-    next unless row[zip_column_index] == zip_code
+    next unless row[zip_column_index].start_with?(zipcode3) # Only allow match if first 3 digits are the same
 
-    return row[output_column_index]
+    distance = (Integer(Float(row[0])) - zipcode_int).abs() # Find closest zip code
+    if distance < zip_distance
+      zip_distance = distance
+      region = row[output_column_index]
+    end
+    if distance == 0
+      return region # Exact match
+    end
   end
 
-  return
+  return region
 end

@@ -52,11 +52,11 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   =================================  ========  =======  ===========  ========  =======  ==================================
   Element                            Type      Units    Constraints  Required  Default  Description
   =================================  ========  =======  ===========  ========  =======  ==================================
-  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version to perform ERI calculation
-  ``CO2IndexCalculation/Version``    string             See [#]_     No        <none>   Version to perform CO2e Index calculation
-  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version to perform IECC ERI calculation
-  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version to perform ENERGY STAR ERI calculation
-  ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version to perform DOE ZERH ERI calculation
+  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version(s) to perform ERI calculation; multiple allowed
+  ``CO2IndexCalculation/Version``    string             See [#]_     No        <none>   Version(s) to perform CO2e Index calculation; multiple allowed
+  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version(s) to perform IECC ERI calculation; multiple allowed
+  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version(s) to perform ENERGY STAR ERI calculation; multiple allowed
+  ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE ZERH ERI calculation; multiple allowed
   =================================  ========  =======  ===========  ========  =======  ==================================
   
   .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
@@ -64,9 +64,9 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          A value of "latest" can be used to always point to the latest version available.
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022CE", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
-         If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
+         FIXME: If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
-  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
+  .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
 
 .. warning::
@@ -148,7 +148,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR, "single-family detached" may only be used for SF versions and "apartment unit" may only be used for MF versions; "single-family attached" may be used for all versions.
+         For ENERGY STAR and ZERH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions. 
 
 .. _weather_station:
 
@@ -185,15 +185,15 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   .. [#] The IECC climate zone for 2006 is always required.
          IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
          See below for the list of climate zone years used by different programs:
-         
-         \- **ENERGY STAR SFNH National v3.2**: 2021
 
-         \- **ENERGY STAR MFNC National v1.2**: 2021
+         \- **ENERGY STAR SF_National_3.3, SF_National_3.2, MF_National_1.3, MF_National_1.2**: 2021
 
+         \- **ENERGY STAR SF_National_3.1, MF_National_1.1, SF_OregonWashington_3.2, MF_OregonWashington_1.2**: 2012
+
+         \- **ZERH SF_2.0, MF_2.0**: 2021
+  
          \- **ZERH 1.0**: 2015
 
-         \- **ZERH SF/MF 2.0**: 2021
-  
          \- **IECC ERI 20XX**: 20XX
 
   .. [#] ClimateZone choices are "1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "4C", "5A", "5B", "5C", "6A", "6B", "6C", "7", or "8".

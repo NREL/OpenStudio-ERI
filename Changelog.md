@@ -1,9 +1,22 @@
 ## OpenStudio-ERI v1.10.0
 
 __New Features__
+- Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
+  - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
+
+## OpenStudio-ERI v1.9.4
+
+__New Features__
+- Adds ENERGY STAR ERI calculation for SFNH National v3.3 and MFNC National v1.3.
+- Updates to ENERGY STAR SFNH Rev 14 and MFNC Rev 05.
+  - **Breaking change**: Building types "single-family detached" and "single-family attached" may only be used for SFNC versions and "apartment unit" may only be used for MFNC versions.
+  - ENERGY STAR MFNC National 1.2 now uses 100% LED lighting.
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
+- Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
 __Bugfixes__
+- Fixes ZERH Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
+- Fixes possible error if there's a surface w/ interior unconditioned space and exterior "other housing unit".
 
 ## OpenStudio-ERI v1.9.3
 

@@ -1439,7 +1439,7 @@ def main(options)
       # Calculate ES Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results("ENERGY STAR", esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_zerh_results('ENERGY STAR', esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "ENERGY STAR (#{es_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
@@ -1470,12 +1470,11 @@ def main(options)
       # Calculate ZERH Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results("Zero Energy Ready Home", zerhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_zerh_results('Zero Energy Ready Home', zerhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "ZERH (#{zerh_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
 
-    # FIXME: Need to limit to a single ERI/CRI version
     if options[:diagnostic_output]
       # Write HERS diagnostic output?
       puts 'Generating HERS diagnostic output...'

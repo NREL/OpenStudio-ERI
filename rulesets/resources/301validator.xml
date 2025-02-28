@@ -34,27 +34,13 @@
   <sch:pattern>
     <sch:title>[ESVersion]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version'>
-      <sch:assert role='ERROR' test='text()="SF_National_3.0" or text()="SF_National_3.1" or text()="SF_National_3.2" or text()="SF_Pacific_3.0" or text()="SF_Florida_3.1" or text()="SF_OregonWashington_3.2" or text()="MF_National_1.0" or text()="MF_National_1.1" or text()="MF_National_1.2" or text()="MF_OregonWashington_1.2"'>Expected SoftwareInfo/extension/EnergyStarCalculation/Version to be 'SF_National_3.0' or 'SF_National_3.1' or 'SF_National_3.2' or 'SF_Pacific_3.0' or 'SF_Florida_3.1' or 'SF_OregonWashington_3.2' or 'MF_National_1.0' or 'MF_National_1.1' or 'MF_National_1.2' or 'MF_OregonWashington_1.2'</sch:assert> <!-- See [ESVersion=SFNational30] or [ESVersion=SFNational31] or [ESVersion=SFNational32] or [ESVersion=SFPacific30] or [ESVersion=SFFlorida31] or [ESVersion=SFOregonWashington32] or [ESVersion=MFNational10] or [ESVersion=MFNational11] or [ESVersion=MFNational12] or [ESVersion=MFOregonWashington12] -->
+      <sch:assert role='ERROR' test='text()="SF_National_3.0" or text()="SF_National_3.1" or text()="SF_National_3.2" or text()="SF_National_3.3" or text()="SF_Pacific_3.0" or text()="SF_Florida_3.1" or text()="SF_OregonWashington_3.2" or text()="MF_National_1.0" or text()="MF_National_1.1" or text()="MF_National_1.2" or text()="MF_National_1.3" or text()="MF_OregonWashington_1.2"'>Expected SoftwareInfo/extension/EnergyStarCalculation/Version to be 'SF_National_3.0' or 'SF_National_3.1' or 'SF_National_3.2' or 'SF_National_3.3' or 'SF_Pacific_3.0' or 'SF_Florida_3.1' or 'SF_OregonWashington_3.2' or 'MF_National_1.0' or 'MF_National_1.1' or 'MF_National_1.2' or 'MF_National_1.3' or 'MF_OregonWashington_1.2'</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ESVersion=SFNational30]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.0"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-
-  <sch:pattern>
-    <sch:title>[ESVersion=SFNational31]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.1"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-
-  <sch:pattern>
-    <sch:title>[ESVersion=SFNational32]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_National_3.2"]'>
+    <sch:title>[ESVersion=SF]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "SF")]'>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -62,7 +48,6 @@
   <sch:pattern>
     <sch:title>[ESVersion=SFPacific30]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_Pacific_3.0"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="HI" or text()="GU" or text()="MP"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -70,7 +55,6 @@
   <sch:pattern>
     <sch:title>[ESVersion=SFFlorida31]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_Florida_3.1"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="FL"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -78,36 +62,20 @@
   <sch:pattern>
     <sch:title>[ESVersion=SFOregonWashington32]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="SF_OregonWashington_3.2"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="OR" or text()="WA"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ESVersion=MFNational10]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_National_1.0"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-  
-  <sch:pattern>
-    <sch:title>[ESVersion=MFNational11]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_National_1.1"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
-    </sch:rule>
-  </sch:pattern>
-  
-  <sch:pattern>
-    <sch:title>[ESVersion=MFNational12]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_National_1.2"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
+    <sch:title>[ESVersion=MF]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[contains(text(), "MF")]'>
+      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType="apartment unit"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType="apartment unit"]</sch:assert>
     </sch:rule>
   </sch:pattern>
   
   <sch:pattern>
     <sch:title>[ESVersion=MFOregonWashington12]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:EnergyStarCalculation/h:Version[text()="MF_OregonWashington_1.2"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:Site/h:Address/h:StateCode[text()="OR" or text()="WA"]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -120,16 +88,16 @@
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ZERHVersion=SF_2.0]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version[text()="SF_2.0"]'>
+    <sch:title>[ZERHVersion=SF]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version[contains(text(), "SF")]'>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ZERHVersion=MF_2.0]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version[text()="MF_2.0"]'>
-      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family attached" or text()="apartment unit"]]</sch:assert>
+    <sch:title>[ZERHVersion=MF]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version[contains(text(), "MF")]'>
+      <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
