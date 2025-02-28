@@ -62,6 +62,9 @@ def create_test_hpxmls
     'RESNET_Tests/4.1_Standard_140/L324XC.xml' => nil,
 
     # These are generated on the fly
+    'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml' => nil,
+    'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml' => nil,
+    'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml' => nil,
     'EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml' => nil,
     'EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml' => nil,
     'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml' => nil,
@@ -71,6 +74,9 @@ def create_test_hpxmls
     'EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml' => nil,
     'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml' => nil,
     'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml' => nil,
+    'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml' => nil,
+    'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml' => nil,
+    'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml' => nil,
     'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml' => nil,
     'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml' => nil,
     'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml' => nil,
@@ -272,18 +278,10 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml.header.transaction = 'create'
     hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     hpxml_bldg.event_type = 'proposed workscope'
-    if hpxml_file.include?('SF_National_3.2')
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFNationalVer3_2]
-    elsif hpxml_file.include?('SF_National_3.1')
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFNationalVer3_1]
-    elsif hpxml_file.include?('SF_National_3.0')
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFNationalVer3_0]
-    elsif hpxml_file.include?('MF_National_1.2')
-      hpxml.header.energystar_calculation_versions = [ESConstants::MFNationalVer1_2]
-    elsif hpxml_file.include?('MF_National_1.1')
-      hpxml.header.energystar_calculation_versions = [ESConstants::MFNationalVer1_1]
-    elsif hpxml_file.include?('MF_National_1.0')
-      hpxml.header.energystar_calculation_versions = [ESConstants::MFNationalVer1_0]
+    ESConstants::AllVersions.each do |es_version|
+      if hpxml_file.include? es_version
+        hpxml.header.energystar_calculation_versions = [es_version]
+      end
     end
     hpxml_bldg.state_code = File.basename(hpxml_file)[11..12]
   end
@@ -459,8 +457,12 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
            'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
            'EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
            'EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',].include? hpxml_file
+           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
       ach50 = 3
+    elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
+      ach50 = 2.5
     end
     hpxml_bldg.air_infiltration_measurements.clear
     hpxml_bldg.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml_bldg.air_infiltration_measurements.size + 1}",
@@ -470,11 +472,16 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
     tot_cb_area, _ext_cb_area = hpxml_bldg.compartmentalization_boundary_areas()
+    if hpxml_file.include?('MF_National_1.3')
+      air_leakage = 0.27
+    else
+      air_leakage = 0.3
+    end
     hpxml_bldg.air_infiltration_measurements.clear
     hpxml_bldg.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml_bldg.air_infiltration_measurements.size + 1}",
                                                  unit_of_measure: HPXML::UnitsCFM,
                                                  house_pressure: 50,
-                                                 air_leakage: (0.3 * tot_cb_area).round(3),
+                                                 air_leakage: (air_leakage * tot_cb_area).round(3),
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   end
 end
@@ -544,10 +551,13 @@ def set_hpxml_rim_joists(hpxml_file, hpxml_bldg)
       assembly_r = (1.0 / 0.057).round(3)
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.048).round(3)
-    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
+           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     hpxml_bldg.rim_joists.clear
@@ -585,10 +595,13 @@ def set_hpxml_rim_joists(hpxml_file, hpxml_bldg)
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.051).round(3)
-    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
-           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
@@ -651,10 +664,13 @@ def set_hpxml_walls(hpxml_file, hpxml_bldg)
       assembly_r = (1.0 / 0.057).round(3)
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.048).round(3)
-    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
+           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     hpxml_bldg.walls.clear
@@ -676,10 +692,13 @@ def set_hpxml_walls(hpxml_file, hpxml_bldg)
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.051).round(3)
-    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
-           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
@@ -892,17 +911,22 @@ def set_hpxml_floors(hpxml_file, hpxml_bldg)
       exterior_adjacent_to = HPXML::LocationAtticVented
       if ['EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.035).round(3)
-      elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
-             'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
+      elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml',
+             'EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
+             'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml',
+             'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.030).round(3)
       elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ2_FL_elec_top_corner.xml',
              'EPA_Tests/MF_National_1.0/MFNCv1_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.027).round(3)
-      elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
+      elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+             'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml',
+             'EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
              'EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
              'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
              'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml',
-             'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+             'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml',
+             'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.026).round(3)
       elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
              'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
@@ -1032,16 +1056,23 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
            'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
       ufactor = 0.30
       shgc = 0.30
-    elsif [
-      'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
-
-      'EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml'
-    ].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
+           'EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml'].include? hpxml_file
       ufactor = 0.27
       shgc = 0.40
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       ufactor = 0.27
+      shgc = 0.30
+    elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+      ufactor = 0.32
+      shgc = 0.23
+    elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+      ufactor = 0.25
       shgc = 0.30
     end
 
@@ -1086,7 +1117,7 @@ end
 
 def set_hpxml_doors(hpxml_file, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests/SF')
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1')
       r_value = (1.0 / 0.17).round(3)
     elsif hpxml_file.include?('SF_National_3.0')
       r_value = (1.0 / 0.21).round(3)
@@ -1105,7 +1136,7 @@ def set_hpxml_doors(hpxml_file, hpxml_bldg)
   elsif hpxml_file.include?('EPA_Tests/MF')
     if hpxml_file.include?('MF_National_1.0')
       r_value = (1.0 / 0.21).round(3)
-    elsif hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.2')
+    elsif hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
       r_value = (1.0 / 0.17).round(3)
     end
     doors = [[0, 21, 'Wall1']]
@@ -1197,12 +1228,19 @@ def set_hpxml_heating_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('CZ2')
       afue = 0.80
     elsif hpxml_file.include?('CZ4')
-      afue = 0.90
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+        afue = 0.95
+      else
+        afue = 0.90
+      end
     elsif hpxml_file.include?('CZ6')
       afue = 0.95
     end
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.075
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
       fan_watts_per_cfm = 0.52
       airflow_defect_ratio = -0.20
     else
@@ -1281,26 +1319,30 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
     if hpxml_file.include?('_elec_')
       return
     elsif hpxml_file.include?('CZ2')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
       else
         seer = 14.5
       end
     elsif hpxml_file.include?('CZ4')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
       else
         seer = 13
       end
     elsif hpxml_file.include?('CZ6')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 14
       else
         seer = 13
       end
     end
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.075
+      charge_defect_ratio = -0.25
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
       fan_watts_per_cfm = 0.52
       airflow_defect_ratio = -0.20
       charge_defect_ratio = -0.25
@@ -1376,7 +1418,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
     if hpxml_file.include?('_gas_')
       return
     elsif hpxml_file.include?('CZ2')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
       else
@@ -1384,7 +1426,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
         seer = 15
       end
     elsif hpxml_file.include?('CZ4')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
       else
@@ -1392,7 +1434,10 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
         seer = 15
       end
     elsif hpxml_file.include?('CZ6')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+        hspf = 9.5
+        seer = 16
+      elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
       else
@@ -1401,7 +1446,11 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
       end
     end
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.075
+      charge_defect_ratio = -0.25
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
       fan_watts_per_cfm = 0.52
       airflow_defect_ratio = -0.20
       charge_defect_ratio = -0.25
@@ -1468,8 +1517,10 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include?(hpxml_file) ||
      hpxml_file.include?('Hot_Water') ||
+     hpxml_file.include?('EPA_Tests/SF_National_3.3') ||
      hpxml_file.include?('EPA_Tests/SF_National_3.2') ||
      hpxml_file.include?('EPA_Tests/SF_National_3.1') ||
+     hpxml_file.include?('EPA_Tests/MF_National_1.3') ||
      hpxml_file.include?('EPA_Tests/MF_National_1.2') ||
      hpxml_file.include?('EPA_Tests/MF_National_1.1')
     # No leakage
@@ -1519,8 +1570,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
   elsif hpxml_file.include?('EPA_Tests')
     supply_area = 0.27 * hpxml_bldg.building_construction.conditioned_floor_area
     return_area = 0.05 * hpxml_bldg.building_construction.conditioned_floor_area
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
-       hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
+       hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
       if hpxml_file.include?('MF_National_1.0') && hpxml_file.include?('top_corner')
         location = HPXML::LocationAtticVented
         supply_r = 8
@@ -1632,14 +1683,30 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
                                     used_for_whole_building_ventilation: true,
                                     is_shared_system: false)
   elsif hpxml_file.include?('EPA_Tests')
-    if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
-      fan_type = HPXML::MechVentTypeSupply
-    elsif hpxml_file.include?('CZ6')
-      fan_type = HPXML::MechVentTypeExhaust
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
+        fan_type = HPXML::MechVentTypeSupply
+      elsif hpxml_file.include?('CZ6')
+        fan_type = HPXML::MechVentTypeHRV
+        sre = 0.65
+      end
+    else
+      if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
+        fan_type = HPXML::MechVentTypeSupply
+      elsif hpxml_file.include?('CZ6')
+        fan_type = HPXML::MechVentTypeExhaust
+      end
     end
+
     tested_flow_rate = (0.01 * hpxml_bldg.building_construction.conditioned_floor_area + 7.5 * (hpxml_bldg.building_construction.number_of_bedrooms + 1)).round(2)
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
-       hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
+        cfm_per_w = 3.8
+      elsif hpxml_file.include?('CZ6')
+        cfm_per_w = 1.2
+      end
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
+          hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
       cfm_per_w = 2.8
     elsif hpxml_file.include?('SF_National_3.0') || hpxml_file.include?('MF_National_1.0')
       cfm_per_w = 2.2
@@ -1650,6 +1717,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
                                     tested_flow_rate: tested_flow_rate,
                                     hours_in_operation: 24,
                                     fan_power: (tested_flow_rate / cfm_per_w).round(3),
+                                    sensible_recovery_efficiency: sre,
                                     used_for_whole_building_ventilation: true,
                                     is_shared_system: false)
   end
@@ -1718,7 +1786,10 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
     hpxml_bldg.water_heating_systems.clear
     if hpxml_file.include?('_gas_')
       if hpxml_file.include?('EPA_Tests/MF')
-        if hpxml_file.include?('MF_National_1.2')
+        if hpxml_file.include?('MF_National_1.3')
+          water_heater_type = HPXML::WaterHeaterTypeTankless
+          uniform_energy_factor = 0.95
+        elsif hpxml_file.include?('MF_National_1.2')
           water_heater_type = HPXML::WaterHeaterTypeTankless
           uniform_energy_factor = 0.9
         else
@@ -1727,7 +1798,10 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
           energy_factor = 0.67
         end
       else
-        if hpxml_file.include?('SF_National_3.2')
+        if hpxml_file.include?('SF_National_3.3')
+          water_heater_type = HPXML::WaterHeaterTypeTankless
+          uniform_energy_factor = 0.95
+        elsif hpxml_file.include?('SF_National_3.2')
           water_heater_type = HPXML::WaterHeaterTypeTankless
           uniform_energy_factor = 0.9
         else
@@ -1747,7 +1821,12 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
                                            uniform_energy_factor: uniform_energy_factor)
     elsif hpxml_file.include?('_elec_')
       if hpxml_file.include?('EPA_Tests/MF')
-        if hpxml_file.include?('MF_National_1.2')
+        if hpxml_file.include?('MF_National_1.3')
+          water_heater_type = HPXML::WaterHeaterTypeHeatPump
+          tank_volume = 60
+          uniform_energy_factor = 2.5
+          first_hour_rating = 40
+        elsif hpxml_file.include?('MF_National_1.2')
           water_heater_type = HPXML::WaterHeaterTypeHeatPump
           tank_volume = 60
           uniform_energy_factor = 1.49
@@ -1758,7 +1837,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
           energy_factor = 0.95
         end
       else
-        if hpxml_file.include?('SF_National_3.2')
+        if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2')
           water_heater_type = HPXML::WaterHeaterTypeHeatPump
           tank_volume = 60
           uniform_energy_factor = 2.2
@@ -1874,7 +1953,7 @@ end
 def set_hpxml_clothes_washer(hpxml_file, eri_version, hpxml_bldg)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('EPA_Tests')
 
-  if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+  if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
     default_values = { integrated_modified_energy_factor: 1.57, # ft3/(kWh/cyc)
                        rated_annual_kwh: 284.0, # kWh/yr
                        label_electric_rate: 0.12, # $/kWh
@@ -1947,15 +2026,26 @@ end
 
 def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      rated_annual_kwh = 240
+      label_electric_rate = 0.14
+      label_gas_rate = 1.21
+      label_annual_gas_cost = 24.00
+    else
+      rated_annual_kwh = 270
+      label_electric_rate = 0.12
+      label_gas_rate = 1.09
+      label_annual_gas_cost = 22.23
+    end
     hpxml_bldg.dishwashers.clear
     hpxml_bldg.dishwashers.add(id: "Dishwasher#{hpxml_bldg.dishwashers.size + 1}",
                                is_shared_appliance: false,
                                location: HPXML::LocationConditionedSpace,
                                place_setting_capacity: 12,
-                               rated_annual_kwh: 270,
-                               label_electric_rate: 0.12,
-                               label_gas_rate: 1.09,
-                               label_annual_gas_cost: 22.23,
+                               rated_annual_kwh: rated_annual_kwh,
+                               label_electric_rate: label_electric_rate,
+                               label_gas_rate: label_gas_rate,
+                               label_annual_gas_cost: label_annual_gas_cost,
                                label_usage: 208 / 52)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     default_values = Defaults.get_dishwasher_values(eri_version)
@@ -1976,7 +2066,10 @@ def set_hpxml_refrigerator(hpxml_file, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests')
     hpxml_bldg.refrigerators.clear
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3')
+      default_values = Defaults.get_refrigerator_values(hpxml_bldg.building_construction.number_of_bedrooms)
+      rated_annual_kwh = default_values[:rated_annual_kwh]
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
       rated_annual_kwh = 450.0
     else
       rated_annual_kwh = 423.0
@@ -2047,7 +2140,7 @@ end
 def set_hpxml_lighting(hpxml_file, hpxml_bldg)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('EPA_Tests')
 
-  if hpxml_file.include?('EPA_Tests/SF_National_3.2') || hpxml_file.include?('EPA_Tests/MF_National_1.2')
+  if hpxml_file.include?('EPA_Tests/SF_National_3.3') || hpxml_file.include?('EPA_Tests/SF_National_3.2') || hpxml_file.include?('EPA_Tests/MF_National_1.3') || hpxml_file.include?('EPA_Tests/MF_National_1.2')
     ltg_fracs = { [HPXML::LocationInterior, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationExterior, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLED] => 1.0,
@@ -2623,20 +2716,20 @@ def create_sample_hpxmls
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_versions = [ZERHConstants::MFVer2]
+      hpxml.header.zerh_calculation_versions = [ZERHConstants::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_versions = [ZERHConstants::SFVer2]
+      hpxml.header.zerh_calculation_versions = [ZERHConstants::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.energystar_calculation_versions = [ESConstants::MFNationalVer1_2]
+      hpxml.header.energystar_calculation_versions = [ESConstants::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'FL'
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFFloridaVer3_1]
+      hpxml.header.energystar_calculation_versions = [ESConstants::SFVersions.select { |v| v.include?('SF_Florida') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'HI'
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFPacificVer3_0]
+      hpxml.header.energystar_calculation_versions = [ESConstants::SFVersions.select { |v| v.include?('SF_Pacific') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'OR'
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFOregonWashingtonVer3_2]
+      hpxml.header.energystar_calculation_versions = [ESConstants::SFVersions.select { |v| v.include?('SF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFNationalVer3_2]
+      hpxml.header.energystar_calculation_versions = [ESConstants::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     hpxml_bldg.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
@@ -2710,7 +2803,7 @@ def create_sample_hpxmls
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
   hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.energystar_calculation_versions = [ESConstants::MFOregonWashingtonVer1_2]
+  hpxml.header.energystar_calculation_versions = [ESConstants::MFVersions.select { |v| v.include?('MF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
   hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
   hpxml_bldg.state_code = 'OR'
   hpxml_bldg.zip_code = '97214'
@@ -2724,11 +2817,11 @@ def create_sample_hpxmls
     hpxml.header.co2index_calculation_versions = ['latest']
     hpxml.header.iecc_eri_calculation_versions = [IECCConstants::AllVersions[-1]]
     if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
-      hpxml.header.zerh_calculation_versions = [ZERHConstants::MFVer2]
-      hpxml.header.energystar_calculation_versions = [ESConstants::MFNationalVer1_2]
+      hpxml.header.zerh_calculation_versions = [ZERHConstants::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.energystar_calculation_versions = [ESConstants::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_versions = [ZERHConstants::SFVer2]
-      hpxml.header.energystar_calculation_versions = [ESConstants::SFNationalVer3_2]
+      hpxml.header.zerh_calculation_versions = [ZERHConstants::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.energystar_calculation_versions = [ESConstants::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end
