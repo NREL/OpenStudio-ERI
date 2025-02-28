@@ -953,13 +953,13 @@ module ES_ZERH_Ruleset
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef', 'efficiency override')
-      rated_annual_kwh = lookup_reference_value('clothes_washer_ler', 'efficiency override')
-      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate', 'efficiency override')
-      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate', 'efficiency override')
-      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc', 'efficiency override')
-      label_usage = lookup_reference_value('clothes_washer_lcy', 'efficiency override')
-      capacity = lookup_reference_value('clothes_washer_capacity', 'efficiency override')
+      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef', 'clothes washer present')
+      rated_annual_kwh = lookup_reference_value('clothes_washer_ler', 'clothes washer present')
+      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate', 'clothes washer present')
+      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate', 'clothes washer present')
+      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc', 'clothes washer present')
+      label_usage = lookup_reference_value('clothes_washer_lcy', 'clothes washer present')
+      capacity = lookup_reference_value('clothes_washer_capacity', 'clothes washer present')
     end
 
     # Default values same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
