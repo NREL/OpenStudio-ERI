@@ -64,7 +64,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          A value of "latest" can be used to always point to the latest version available.
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022CE", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
-         FIXME: If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
+         If :ref:`hers_diagnostic_output` is requested, a single CO2IndexCalculation/Version and a single ERICalculation/Version must be provided and use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
