@@ -38,7 +38,8 @@ def get_program_versions(hpxml_doc, print_output: true)
     'IECCERICalculation/Version' => IECC::AllVersions,
     'ZERHCalculation/Version' => ZERH::AllVersions }.each do |xpath, all_versions|
     versions = []
-    XMLHelper.get_values(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string).each do |version|
+    xml_versions = XMLHelper.get_values(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string).uniq
+    xml_versions.each do |version|
       if version == 'latest'
         version = all_versions[-1]
       end
@@ -1273,11 +1274,13 @@ def main(options)
   eri_versions, co2_versions, es_versions, iecc_versions, zerh_versions = get_program_versions(hpxml_doc)
 
   if options[:diagnostic_output]
-    # FIXME: Make sure just a single ERI/CRI and they are the same version
-    if eri_versions.empty?
-      fail 'Diagnostic output generation requires an ERI calculation.'
-    elsif co2_versions.empty?
-      fail 'Diagnostic output generation requires a CO2 Index calculation.'
+    if eri_versions.size != 1
+      fail 'Diagnostic output generation requires a single ERI calculation.'
+    elsif co2_versions.size != 1
+      fail 'Diagnostic output generation requires a single CO2 Index calculation.'
+    end
+    if eri_versions[0] != co2_versions[0]
+      fail 'Diagnostic output generation requires the same version for the ERI calculation and the CO2 Index calculation.'
     end
   end
 
@@ -1384,7 +1387,6 @@ def main(options)
     # Calculate CO2e Index
     co2_designs, co2_outputs, co2_results = nil, nil, nil
     co2_versions.each do |co2_version|
-      # FIXME: Need to include RunType::ERI?
       co2_designs = designs.select { |d| d.run_type == RunType::CO2e && d.version == co2_version }
       co2_designs = co2_designs.select { |d|
         [CalcType::RatedHome,
