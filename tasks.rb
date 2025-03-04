@@ -260,27 +260,27 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml.header.apply_ashrae140_assumptions = nil
   end
   if hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
-    hpxml.header.eri_calculation_version = '2014'
+    hpxml.header.eri_calculation_versions = ['2014']
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE') ||
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
-    hpxml.header.eri_calculation_version = '2014A'
+    hpxml.header.eri_calculation_versions = ['2014A']
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA')
-    hpxml.header.eri_calculation_version = '2019'
+    hpxml.header.eri_calculation_versions = ['2019']
   elsif hpxml_file.include?('Other_HERS_AutoGen_IAD_Home')
-    hpxml.header.eri_calculation_version = '2019ABCD'
+    hpxml.header.eri_calculation_versions = ['2019ABCD']
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
-    hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.eri_calculation_versions = ['latest']
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.header.xml_type = 'HPXML'
     hpxml.header.xml_generated_by = 'tasks.rb'
     hpxml.header.transaction = 'create'
     hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     hpxml_bldg.event_type = 'proposed workscope'
-    ESConstants::AllVersions.each do |es_version|
+    ES::AllVersions.each do |es_version|
       if hpxml_file.include? es_version
-        hpxml.header.energystar_calculation_version = es_version
+        hpxml.header.energystar_calculation_versions = [es_version]
       end
     end
     hpxml_bldg.state_code = File.basename(hpxml_file)[11..12]
@@ -290,7 +290,7 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml_bldg.header.extension_properties['ParentHPXMLFile'] = File.basename(orig_parent)
   end
 
-  eri_version = hpxml.header.eri_calculation_version
+  eri_version = (hpxml.header.eri_calculation_versions.nil? ? nil : hpxml.header.eri_calculation_versions[0])
   eri_version = Constants::ERIVersions[-1] if (eri_version == 'latest' || eri_version.nil?)
   return eri_version
 end
@@ -2393,9 +2393,9 @@ def create_sample_hpxmls
 
     # Handle different inputs for ERI
 
-    hpxml.header.eri_calculation_version = 'latest'
-    hpxml.header.co2index_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
+    hpxml.header.eri_calculation_versions = ['latest']
+    hpxml.header.co2index_calculation_versions = ['latest']
+    hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil
     hpxml_bldg.site.site_type = nil
@@ -2712,20 +2712,20 @@ def create_sample_hpxmls
     # Handle different inputs for ENERGY STAR/ZERH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_version = ZERHConstants::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.zerh_calculation_versions = [ZERH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.zerh_calculation_versions = [ZERH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.energystar_calculation_version = ESConstants::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'FL'
-      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_Florida') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_Florida') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'HI'
-      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_Pacific') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_Pacific') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'OR'
-      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     hpxml_bldg.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
@@ -2757,49 +2757,35 @@ def create_sample_hpxmls
   hpxml_bldg.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
-  # Older ERI versions
-  Constants::ERIVersions.each do |eri_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml_bldg = hpxml.buildings[0]
-    hpxml.header.eri_calculation_version = eri_version
-    hpxml.header.co2index_calculation_version = nil
-    hpxml.header.iecc_eri_calculation_version = nil
-    hpxml.header.energystar_calculation_version = nil
-    hpxml.header.zerh_calculation_version = nil
-    if Constants::ERIVersions.index(eri_version) < Constants::ERIVersions.index('2019A')
-      # Need old input for clothes dryers
-      hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-    end
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
-  end
+  major_eri_versions = Constants::ERIVersions.select { |v| "#{v.to_i}" == v }
+  latest_major_eri_versions = major_eri_versions.map { |mv| Constants::ERIVersions.select { |v| v.include?(mv) }.last }
 
-  # Older CO2 Index versions
-  Constants::ERIVersions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }.each do |co2_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml.header.co2index_calculation_version = co2_version
-    hpxml.header.eri_calculation_version = nil
-    hpxml.header.iecc_eri_calculation_version = nil
-    hpxml.header.energystar_calculation_version = nil
-    hpxml.header.zerh_calculation_version = nil
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-co2-#{co2_version}.xml")
-  end
+  # All versions, single-family
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+  hpxml_bldg = hpxml.buildings[0]
+  hpxml.header.eri_calculation_versions = latest_major_eri_versions
+  hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
+  hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
+  hpxml.header.energystar_calculation_versions = ES::SFVersions.select { |v| ES::NationalVersions.include?(v) }
+  hpxml.header.zerh_calculation_versions = ZERH::SFVersions
+  hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
+  XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-sf.xml')
 
-  # All IECC versions
-  IECCConstants::AllVersions.each do |iecc_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml_bldg = hpxml.buildings[0]
-    hpxml.header.iecc_eri_calculation_version = iecc_version
-    hpxml.header.eri_calculation_version = nil
-    hpxml.header.co2index_calculation_version = nil
-    hpxml.header.energystar_calculation_version = nil
-    hpxml.header.zerh_calculation_version = nil
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
-  end
+  # All versions, multi-family
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
+  hpxml_bldg = hpxml.buildings[0]
+  hpxml.header.eri_calculation_versions = latest_major_eri_versions
+  hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
+  hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
+  hpxml.header.energystar_calculation_versions = ES::MFVersions.select { |v| ES::NationalVersions.include?(v) }
+  hpxml.header.zerh_calculation_versions = ZERH::MFVersions
+  hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
+  XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-mf.xml')
 
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
   hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.energystar_calculation_version = ESConstants::MFVersions.select { |v| v.include?('MF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+  hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
   hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
   hpxml_bldg.state_code = 'OR'
   hpxml_bldg.zip_code = '97214'
@@ -2809,15 +2795,15 @@ def create_sample_hpxmls
   puts 'Reformatting real_homes HPXMLs...'
   Dir['workflow/real_homes/*.xml'].each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
-    hpxml.header.eri_calculation_version = 'latest'
-    hpxml.header.co2index_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
+    hpxml.header.eri_calculation_versions = ['latest']
+    hpxml.header.co2index_calculation_versions = ['latest']
+    hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
     if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
-      hpxml.header.zerh_calculation_version = ZERHConstants::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
-      hpxml.header.energystar_calculation_version = ESConstants::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.zerh_calculation_versions = [ZERH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
-      hpxml.header.energystar_calculation_version = ESConstants::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }
+      hpxml.header.zerh_calculation_versions = [ZERH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end

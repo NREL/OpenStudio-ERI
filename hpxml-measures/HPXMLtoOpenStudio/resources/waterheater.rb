@@ -57,7 +57,7 @@ module Waterheater
     unit_multiplier = hpxml_bldg.building_construction.number_of_units
     solar_fraction = get_water_heater_solar_fraction(water_heating_system, hpxml_bldg)
     t_set_c = get_t_set_c(water_heating_system.temperature, water_heating_system.water_heater_type)
-    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_version, unit_multiplier)
+    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_versions[0], unit_multiplier)
 
     act_vol = calc_storage_tank_actual_vol(water_heating_system.tank_volume, water_heating_system.fuel_type)
     u, ua, eta_c = calc_tank_UA(act_vol, water_heating_system, solar_fraction, hpxml_bldg.building_construction.number_of_bedrooms)
@@ -101,7 +101,7 @@ module Waterheater
     water_heating_system.heating_capacity = 100000000000.0 * unit_multiplier
     solar_fraction = get_water_heater_solar_fraction(water_heating_system, hpxml_bldg)
     t_set_c = get_t_set_c(water_heating_system.temperature, water_heating_system.water_heater_type)
-    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_version, unit_multiplier)
+    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_versions[0], unit_multiplier)
 
     act_vol = 1.0 * unit_multiplier
     _u, ua, eta_c = calc_tank_UA(act_vol, water_heating_system, solar_fraction, hpxml_bldg.building_construction.number_of_bedrooms)
@@ -146,7 +146,7 @@ module Waterheater
     conditioned_zone = spaces[HPXML::LocationConditionedSpace].thermalZone.get
     solar_fraction = get_water_heater_solar_fraction(water_heating_system, hpxml_bldg)
     t_set_c = get_t_set_c(water_heating_system.temperature, water_heating_system.water_heater_type)
-    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_version, unit_multiplier)
+    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_versions[0], unit_multiplier)
 
     # Add in schedules for Tamb, RHamb, and the compressor
     hpwh_tamb = Model.add_schedule_constant(
@@ -284,7 +284,7 @@ module Waterheater
     end
 
     t_set_c = get_t_set_c(water_heating_system.temperature, water_heating_system.water_heater_type)
-    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_version, unit_multiplier)
+    loop = create_new_loop(model, t_set_c, hpxml_header.eri_calculation_versions[0], unit_multiplier)
 
     # Create water heater
     new_heater = create_new_heater(name: obj_name_combi,
