@@ -77,12 +77,12 @@ class ERI301ValidationTest < Minitest::Test
                             'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]'],
                             'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
 
-    ESConstants::SFVersions.each do |es_version|
+    ES::SFVersions.each do |es_version|
       key = "energy-star-#{es_version}"
       all_expected_errors[key] = [] if all_expected_errors[key].nil?
       all_expected_errors[key] << 'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'
     end
-    ESConstants::MFVersions.each do |es_version|
+    ES::MFVersions.each do |es_version|
       key = "energy-star-#{es_version}"
       all_expected_errors[key] = [] if all_expected_errors[key].nil?
       all_expected_errors[key] << 'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType="apartment unit"]'
@@ -107,9 +107,9 @@ class ERI301ValidationTest < Minitest::Test
         hpxml_bldg.building_construction.conditioned_floor_area = 1348.8
       elsif error_case.include? 'energy-star'
         version = error_case.gsub('energy-star-', '')
-        if ESConstants::SFVersions.include? version
+        if ES::SFVersions.include? version
           bldg_type = HPXML::ResidentialTypeApartment
-        elsif ESConstants::MFVersions.include? version
+        elsif ES::MFVersions.include? version
           bldg_type = HPXML::ResidentialTypeSFD
         end
 
@@ -188,15 +188,16 @@ class ERI301ValidationTest < Minitest::Test
 
   def _test_ruleset(expected_errors)
     print '.'
-    designs = [Design.new(calc_type: Constants::CalcTypeERIRatedHome)]
+    designs = [Design.new(run_type: RunType::ERI,
+                          calc_type: CalcType::RatedHome)]
     designs[0].hpxml_output_path = File.absolute_path(@tmp_output_path)
 
     success, errors, _, _, _ = run_rulesets(File.absolute_path(@tmp_hpxml_path), designs)
 
     if expected_errors.empty?
-      assert_equal(true, success)
+      assert(success)
     else
-      assert_equal(false, success)
+      refute(success)
     end
 
     _compare_errors_or_warnings('error', errors, expected_errors)

@@ -1,38 +1,30 @@
 # frozen_string_literal: true
 
 module ES_ZERH_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
+  def self.apply_ruleset(hpxml, calc_type, program_version, eri_version, lookup_program_data)
     # Use latest version of ANSI 301
-    @eri_version = Constants::ERIVersions[-1]
+    @eri_version = eri_version
     hpxml.header.eri_calculation_versions = [@eri_version]
+    hpxml.header.co2index_calculation_versions = nil
+    hpxml.header.iecc_eri_calculation_versions = nil
+    hpxml.header.energystar_calculation_versions = nil
+    hpxml.header.zerh_calculation_versions = nil
 
-    if calc_type == ESConstants::CalcTypeEnergyStarReference
-      @program_version = hpxml.header.energystar_calculation_versions[0]
-    elsif calc_type == ZERHConstants::CalcTypeZERHReference
-      @program_version = hpxml.header.zerh_calculation_versions[0]
-    end
+    @program_version = program_version
 
-    if [ESConstants::SFNationalVer3_3,
-        ESConstants::SFNationalVer3_2,
-        ESConstants::MFNationalVer1_3,
-        ESConstants::MFNationalVer1_2,
-        ZERHConstants::SFVer2,
-        ZERHConstants::MFVer2].include? @program_version
+    if [ES::SFNationalVer3_3, ES::SFNationalVer3_2, ES::MFNationalVer1_3,
+        ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif [ZERHConstants::Ver1].include? @program_version
+    elsif [ZERH::Ver1].include? @program_version
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
-    elsif [ESConstants::SFNationalVer3_1,
-           ESConstants::MFNationalVer1_1,
-           ESConstants::SFOregonWashingtonVer3_2,
-           ESConstants::MFOregonWashingtonVer1_2].include? @program_version
+    elsif [ES::SFNationalVer3_1, ES::MFNationalVer1_1, ES::SFOregonWashingtonVer3_2,
+           ES::MFOregonWashingtonVer1_2].include? @program_version
       # Use Year=2012 for Reference Home configuration
       iecc_climate_zone_year = 2012
-    elsif [ESConstants::SFNationalVer3_0,
-           ESConstants::SFPacificVer3_0,
-           ESConstants::SFFloridaVer3_1,
-           ESConstants::MFNationalVer1_0].include? @program_version
+    elsif [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1,
+           ES::MFNationalVer1_0].include? @program_version
       # Use Year=2006 for Reference Home configuration
       iecc_climate_zone_year = 2006
     else
@@ -42,8 +34,7 @@ module ES_ZERH_Ruleset
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
-    if [ESConstants::CalcTypeEnergyStarReference,
-        ZERHConstants::CalcTypeZERHReference].include? calc_type
+    if calc_type == InitCalcType::TargetHome
       hpxml = apply_ruleset_reference(hpxml)
     end
 
@@ -1528,7 +1519,7 @@ module ES_ZERH_Ruleset
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, heat_load_frac, cool_load_frac, orig_htg_system, orig_clg_system = nil)
     # Heat pump type and efficiency
-
+    is_shared_system = false
     if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir)
       heat_pump_type = HPXML::HVACTypeHeatPumpWaterLoopToAir
       cop = lookup_reference_value('hvac_wlhp_cop')

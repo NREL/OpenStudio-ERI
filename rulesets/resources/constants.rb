@@ -1,17 +1,30 @@
 # frozen_string_literal: true
 
-module Constants
-  CalcTypeCO2eRatedHome = 'CO2e Rated Home'
-  CalcTypeCO2eReferenceHome = 'CO2e Reference Home'
-  CalcTypeERIRatedHome = 'ERI Rated Home'
-  CalcTypeERIReferenceHome = 'ERI Reference Home'
-  CalcTypeERIIndexAdjustmentDesign = 'ERI Index Adjustment Design'
-  CalcTypeERIIndexAdjustmentReferenceHome = 'ERI Index Adjustment Reference Home'
+module RunType
+  ERI = 'ERI'
+  CO2e = 'CO2e'
+  IECC = 'IECC'
+  ES = 'ES'
+  ZERH = 'ZERH'
 end
 
-module ESConstants
-  CalcTypeEnergyStarRated = 'ES Rated'
-  CalcTypeEnergyStarReference = 'ES Reference'
+module CalcType
+  RatedHome = 'Rated Home'
+  ReferenceHome = 'Reference Home'
+  IndexAdjHome = 'Index Adjustment Home'
+  IndexAdjReferenceHome = 'Index Adjustment Reference Home'
+end
+
+module InitCalcType
+  RatedHome = 'Rated Home'
+  TargetHome = 'Target Home'
+end
+
+module IECC
+  AllVersions = ['2015', '2018', '2021', '2024']
+end
+
+module ES
   SFNationalVer3_0 = 'SF_National_3.0'
   SFNationalVer3_1 = 'SF_National_3.1'
   SFNationalVer3_2 = 'SF_National_3.2'
@@ -30,13 +43,7 @@ module ESConstants
   AllVersions = SFVersions + MFVersions
 end
 
-module IECCConstants
-  AllVersions = ['2015', '2018', '2021', '2024']
-end
-
-module ZERHConstants
-  CalcTypeZERHRated = 'ZERH Rated'
-  CalcTypeZERHReference = 'ZERH Reference'
+module ZERH
   Ver1 = '1.0'
   SFVer2 = 'SF_2.0'
   MFVer2 = 'MF_2.0'

@@ -37,8 +37,11 @@ This will generate output as shown below:
 | Or you can request all output files in JSON (instead of CSV) format:
 | ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
 
-| Finally, you can generate a HERS diagnostic output file using, e.g.:
+| Or you can generate a HERS diagnostic output file using, e.g.:
 | ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --diagnostic-output``
+
+| You can also specify the number of parallel processors to use when running simulations, e.g.:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --num-proc 2``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 

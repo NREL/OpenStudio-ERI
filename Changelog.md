@@ -1,6 +1,9 @@
 ## OpenStudio-ERI v1.10.0
 
 __New Features__
+- Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
+  - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
+- Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
 - `AverageCeilingHeight` is no longer used (for infiltration calculations, Hf = InfiltrationVolume/CFA).
 - Output updates:
   - **Breaking change**: Adds generator electricity produced to *total* fuel/energy use; previously it was only included in *net* values.

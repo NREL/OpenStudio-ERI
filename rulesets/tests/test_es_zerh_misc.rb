@@ -15,53 +15,60 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
     @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @results_paths = []
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    @results_paths.each do |results_path|
+      FileUtils.rm_rf(results_path) if Dir.exist? results_path
+    end
+    @results_paths.clear
     puts
   end
 
   def test_misc
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_misc(hpxml_bldg)
     end
   end
 
   def _test_ruleset(program_version)
     print '.'
-    if ESConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
-                            output_dir: @sample_files_path)]
-    elsif ZERHConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
-                            output_dir: @sample_files_path)]
-    end
 
-    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
+    if ES::AllVersions.include? program_version
+      run_type = RunType::ES
+    elsif ZERH::AllVersions.include? program_version
+      run_type = RunType::ZERH
+    end
+    designs = [Design.new(run_type: run_type,
+                          init_calc_type: InitCalcType::TargetHome,
+                          output_dir: @sample_files_path,
+                          version: program_version)]
+
+    success, errors, _, _, hpxml_bldgs = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
     end
 
     # assert that it ran correctly
-    assert_equal(true, success)
+    assert(success)
 
     # validate against 301 schematron
-    assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
-    @results_path = File.dirname(designs[0].init_hpxml_output_path)
+    designs.each do |design|
+      valid = @erivalidator.validate(design.init_hpxml_output_path)
+      puts @erivalidator.errors.map { |e| e.logMessage } unless valid
+      assert(valid)
+      @results_paths << File.absolute_path(File.join(File.dirname(design.init_hpxml_output_path), '..'))
+    end
 
-    return hpxml, hpxml.buildings[0]
+    return hpxml_bldgs.values[0]
   end
 
   def _check_misc(hpxml_bldg)
     assert_equal(0, hpxml_bldg.plug_loads.size)
-  end
-
-  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
-    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

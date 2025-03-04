@@ -52,11 +52,11 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   =================================  ========  =======  ===========  ========  =======  ==================================
   Element                            Type      Units    Constraints  Required  Default  Description
   =================================  ========  =======  ===========  ========  =======  ==================================
-  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version to perform ERI calculation
-  ``CO2IndexCalculation/Version``    string             See [#]_     No        <none>   Version to perform CO2e Index calculation
-  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version to perform IECC ERI calculation
-  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version to perform ENERGY STAR ERI calculation
-  ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version to perform DOE ZERH ERI calculation
+  ``ERICalculation/Version``         string             See [#]_     No        <none>   Version(s) to perform ERI calculation; multiple allowed
+  ``CO2IndexCalculation/Version``    string             See [#]_     No        <none>   Version(s) to perform CO2e Index calculation; multiple allowed
+  ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version(s) to perform IECC ERI calculation; multiple allowed
+  ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version(s) to perform ENERGY STAR ERI calculation; multiple allowed
+  ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE ZERH ERI calculation; multiple allowed
   =================================  ========  =======  ===========  ========  =======  ==================================
   
   .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
@@ -64,7 +64,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          A value of "latest" can be used to always point to the latest version available.
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022CE", "2022C", "2022", or "2019ABCD".
          A value of "latest" can be used to always point to the latest version available.
-         If both CO2IndexCalculation/Version and ERICalculation/Version are provided, they must use the same version.
+         If :ref:`hers_diagnostic_output` is requested, a single CO2IndexCalculation/Version and a single ERICalculation/Version must be provided and use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
@@ -147,7 +147,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions. 
+         For ENERGY STAR and ZERH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions. 
 
 .. _weather_station:
 

@@ -15,6 +15,18 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_energyplus_files`
 - :ref:`hers_diagnostic_output`
 
+Output directories will reflect the requested :ref:`hpxml_calculations`:
+
+  ================  ===============
+  Calculation       Output dir name
+  ================  ===============
+  CO2e Index        CO2e_<Version>
+  ERI               ERI_<Version>
+  IECC ERI          IECC_<Version>
+  ENERGY STAR       ES_<Version>
+  ZERH              ZERH_<Version>
+  ================  ===============
+
 All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
 
 .. note::
@@ -26,24 +38,24 @@ All CSV output files can be alternatively requested in JSON format; see :ref:`ru
 Summary Outputs (CSV)
 ---------------------
 
-Based on which :ref:`hpxml_calculations` were requested, summary output files will be found in the ``results`` directory.
+Based on which :ref:`hpxml_calculations` were requested, summary output files will be found at ``results/results.csv`` directory.
 
-  ================  ===============================================  =========
-  Calculation       File                                             Notes
-  ================  ===============================================  =========
-  ERI               CO2e_Results.csv                                 See :ref:`co2e_results_csv`.
-  ERI               ERI_Results.csv                                  See :ref:`eri_results_csv`.
-  IECC ERI Pathway  IECC_ERI_Results.csv                             See :ref:`eri_results_csv`.
-  ENERGY STAR       ES_Results.csv                                   See :ref:`es_results_csv`.
-  ZERH              ZERH_Results.csv                                 See :ref:`zerh_results_csv`.
-  ================  ===============================================  =========
+  ================  =======================
+  Calculation       File                   
+  ================  =======================
+  CO2e Index        :ref:`co2e_results_csv`
+  ERI               :ref:`eri_results_csv` 
+  IECC ERI          :ref:`eri_results_csv` 
+  ENERGY STAR       :ref:`es_results_csv`  
+  ZERH              :ref:`zerh_results_csv`
+  ================  =======================
 
 .. _co2e_results_csv:
 
-CO2e_Results.csv
+CO2e results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``CO2e_Results.csv`` file will be produced when requesting the CO2IndexCalculation; see :ref:`hpxml_calculations`.
+A ``CO2e_<Version>/results/results.csv`` file will be produced when requesting the CO2IndexCalculation; see :ref:`hpxml_calculations`.
 Refer to the ANSI 301 Standard for details on how the CO2e Rating Index is calculated.
 
   =====================  ===============================================
@@ -57,10 +69,10 @@ Refer to the ANSI 301 Standard for details on how the CO2e Rating Index is calcu
 
 .. _eri_results_csv:
 
-ERI_Results.csv
+ERI results.csv
 ~~~~~~~~~~~~~~~
 
-A ``ERI_Results.csv`` (and/or ``IECC_ERI_Results.csv``)  file will be produced when requesting the ERICalculation (and/or IECCERICalculation); see :ref:`hpxml_calculations`.
+A ``ERI_<Version>/results/results.csv`` (and/or ``IECC_<Version>/results/results.csv``)  file will be produced when requesting the ERICalculation (and/or IECCERICalculation); see :ref:`hpxml_calculations`.
 Refer to the ANSI 301 Standard for details on how the Energy Rating Index is calculated.
 
   =====================  ===============================================
@@ -126,10 +138,10 @@ Refer to the ANSI 301 Standard for details on how the Energy Rating Index is cal
 
 .. _es_results_csv:
 
-ES_Results.csv
+ES results.csv
 ~~~~~~~~~~~~~~
 
-A ``ES_Results.csv`` file will be produced when requesting the EnergyStarCalculation; see :ref:`hpxml_calculations`.
+A ``ES_<Version>/results/results.csv`` file will be produced when requesting the EnergyStarCalculation; see :ref:`hpxml_calculations`.
 
   ====================================  =====
   Output                                Notes
@@ -144,10 +156,10 @@ A ``ES_Results.csv`` file will be produced when requesting the EnergyStarCalcula
 
 .. _zerh_results_csv:
 
-ZERH_Results.csv
+ZERH results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``ZERH_Results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
+A ``ZERH_<Version>/results/results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
 
   ====================================  =====
   Output                                Notes
@@ -167,28 +179,38 @@ Home Annual Outputs (CSV)
 
 Based on which calculations were requested in the HPXML file, CSV annual output files will be found in the ``results`` directory for each simulated home.
 
-  ================  ===============================================  =========
-  Calculation       File                                             Notes
-  ================  ===============================================  =========
-  ERI               CO2eRatedHome.csv                                CO2e Rated Home. Only produced if 301-2019 Addendum D or newer.
-  ERI               CO2eReferenceHome.csv                            CO2e Reference Home. Only produced if 301-2019 Addendum D or newer.
-  ERI               ERIRatedHome.csv                                 ERI Rated Home.
-  ERI               ERIReferenceHome.csv                             ERI Reference Home.
-  ERI               ERIIndexAdjustmentDesign.csv                     ERI Index Adjustment Design. Only produced if 301-2014 Addendum E or newer.
-  ERI               ERIIndexAdjustmentReferenceHome.csv              ERI Index Adjustment Reference Home. Only produced if 301-2014 Addendum E or newer.
-  IECC ERI Pathway  IECC_ERIRatedHome.csv                            IECC ERI Rated Home.
-  IECC ERI Pathway  IECC_ERIReferenceHome.csv                        IECC ERI Reference Home.
-  IECC ERI Pathway  IECC_ERIIndexAdjustmentDesign.csv                IECC ERI Index Adjustment Design.
-  IECC ERI Pathway  IECC_ERIIndexAdjustmentReferenceHome.csv         IECC ERI Index Adjustment Reference Home.
-  ENERGY STAR       ESRated_ERIRatedHome.csv                         ERI Rated Home for the ENERGY STAR rated home.
-  ENERGY STAR       ESRated_ERIReferenceHome.csv                     ERI Reference Home for the ENERGY STAR rated home.
-  ENERGY STAR       ESRated_ERIIndexAdjustmentDesign.csv             ERI Index Adjustment Design for the ENERGY STAR rated home.
-  ENERGY STAR       ESRated_ERIIndexAdjustmentReferenceHome.csv      ERI Index Adjustment Reference Home for the ENERGY STAR rated home.
-  ENERGY STAR       ESReference_ERIRatedHome.csv                     ERI Rated Home for the ENERGY STAR Reference Design.
-  ENERGY STAR       ESReference_ERIReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
-  ENERGY STAR       ESReference_ERIIndexAdjustmentDesign.csv         ERI Index Adjustment Design for the ENERGY STAR Reference Design.
-  ENERGY STAR       ESReference_ERIIndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
-  ================  ===============================================  =========
+  ================  ===================================================  =========
+  Calculation       File                                                 Notes
+  ================  ===================================================  =========
+  CO2e Index        RatedHome.csv                                        CO2e Rated Home. Only produced if 301-2019 Addendum D or newer.
+  CO2e Index        ReferenceHome.csv                                    CO2e Reference Home. Only produced if 301-2019 Addendum D or newer.
+  CO2e Index        IndexAdjustmentHome.csv                              CO2e Index Adjustment Design. Only produced if 301-2019 Addendum D or newer.
+  CO2e Index        IndexAdjustmentReferenceHome.csv                     CO2e Index Adjustment Reference Home. Only produced if 301-2019 Addendum D or newer.
+  ERI               RatedHome.csv                                        ERI Rated Home.
+  ERI               ReferenceHome.csv                                    ERI Reference Home.
+  ERI               IndexAdjustmentHome.csv                              ERI Index Adjustment Design. Only produced if 301-2014 Addendum E or newer.
+  ERI               IndexAdjustmentReferenceHome.csv                     ERI Index Adjustment Reference Home. Only produced if 301-2014 Addendum E or newer.
+  IECC ERI          RatedHome.csv                                        IECC ERI Rated Home.
+  IECC ERI          ReferenceHome.csv                                    IECC ERI Reference Home.
+  IECC ERI          IndexAdjustmentHome.csv                              IECC ERI Index Adjustment Design.
+  IECC ERI          IndexAdjustmentReferenceHome.csv                     IECC ERI Index Adjustment Reference Home.
+  ENERGY STAR       RatedHome/results/RatedHome.csv                      ERI Rated Home for the ENERGY STAR rated home.
+  ENERGY STAR       RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the ENERGY STAR rated home.
+  ENERGY STAR       RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the ENERGY STAR rated home.
+  ENERGY STAR       RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the ENERGY STAR rated home.
+  ENERGY STAR       TargetHome/results/RatedHome.csv                     ERI Rated Home for the ENERGY STAR Reference Design.
+  ENERGY STAR       TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
+  ENERGY STAR       TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ENERGY STAR Reference Design.
+  ENERGY STAR       TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
+  ZERH              RatedHome/results/RatedHome.csv                      ERI Rated Home for the ZERH rated home.
+  ZERH              RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the ZERH rated home.
+  ZERH              RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the ZERH rated home.
+  ZERH              RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the ZERH rated home.
+  ZERH              TargetHome/results/RatedHome.csv                     ERI Rated Home for the ZERH Target Home.
+  ZERH              TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ZERH Target Home.
+  ZERH              TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ZERH Target Home.
+  ZERH              TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ZERH Target Home.
+  ================  ===================================================  =========
 
 Each CSV file includes the following sections of output.
 
@@ -617,7 +639,7 @@ Home Timeseries Outputs (CSV)
 -----------------------------
 
 See the :ref:`running` section for requesting timeseries outputs.
-When requested, a CSV file of timeseries outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv``, ``ERIReferenceHome_Daily.csv``, or ``ERIReferenceHome_Monthly.csv`` for the Reference home).
+When requested, a CSV file of timeseries outputs is written for the Reference/Rated Homes (e.g., ``ReferenceHome_Hourly.csv``, ``ReferenceHome_Daily.csv``, or ``ReferenceHome_Monthly.csv`` for the Reference home).
 
 Depending on the outputs requested, CSV files may include:
 
@@ -670,7 +692,7 @@ Any defaulted values will include the ``dataSource='software'`` attribute in the
 Home EnergyPlus Files
 ---------------------
 
-In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``ERIRatedHome``, ``ERIReferenceHome``, etc. directories).
+In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``RatedHome``, ``ReferenceHome``, etc. directories).
 
 .. warning:: 
 
@@ -683,5 +705,5 @@ In addition, raw EnergyPlus simulation input/output files are available for each
 HERS Diagnostic Output
 ----------------------
 
-A HERS diagnostic output file (``HERS_Diagnostic.json``) can be produced if the ``--output-diagnostic`` commandline argument is used; see the :ref:`running` section.
+A HERS diagnostic output file (``ERI_<Version>/results/HERS_Diagnostic.json``) can be produced if the ``--output-diagnostic`` commandline argument is used; see the :ref:`running` section.
 The output file includes hourly data and is formatted per the `HERS Diagnostic Output Schema <https://github.com/resnet-us/hers-diagnostic-schema>`_.
