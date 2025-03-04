@@ -1,32 +1,13 @@
 # frozen_string_literal: true
 
 module ERI_301_Ruleset
-  def self.apply_ruleset(hpxml, run_type, calc_type, weather, version, egrid_subregion, cambium_gea, create_time)
+  def self.apply_ruleset(hpxml, run_type, calc_type, weather, eri_version, iecc_version, egrid_subregion, cambium_gea, create_time)
     # Global variables
     @weather = weather
     @egrid_subregion = egrid_subregion
     @cambium_gea = cambium_gea
     @is_southern_hemisphere = (weather.header.Latitude < 0)
-
-    if run_type == RunType::IECC
-      iecc_version = version
-      if ['2015', '2018'].include? iecc_version
-        # Use 2014 w/ all addenda
-        @eri_version = Constants::ERIVersions.select { |v| v.include? '2014' }[-1]
-      elsif ['2021'].include? iecc_version
-        # Use 2019 w/ all addenda
-        @eri_version = Constants::ERIVersions.select { |v| v.include? '2019' }[-1]
-      elsif ['2024'].include? iecc_version
-        # Use 2022 w/ all addenda
-        @eri_version = Constants::ERIVersions.select { |v| v.include? '2022' }[-1]
-      else
-        fail "Unhandled IECC version: #{iecc_version}."
-      end
-    else
-      @eri_version = hpxml.header.eri_calculation_versions[0]
-      @eri_version = hpxml.header.co2index_calculation_versions[0] if @eri_version.nil?
-    end
-    @eri_version = Constants::ERIVersions[-1] if @eri_version == 'latest'
+    @eri_version = eri_version
 
     # Update HPXML object based on calculation type
     if calc_type == CalcType::ReferenceHome

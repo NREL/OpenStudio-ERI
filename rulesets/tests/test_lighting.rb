@@ -30,7 +30,7 @@ class ERILightingTest < Minitest::Test
   def test_lighting
     hpxml_name = 'base-enclosure-garage.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_lighting(hpxml_bldg, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       elsif [CalcType::RatedHome].include? calc_type
@@ -44,9 +44,9 @@ class ERILightingTest < Minitest::Test
   end
 
   def test_lighting_pre_addendum_g
-    hpxml_name = 'base-version-eri-2014AE.xml'
+    hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2014AE').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_lighting(hpxml_bldg, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       elsif [CalcType::RatedHome].include? calc_type
@@ -62,13 +62,9 @@ class ERILightingTest < Minitest::Test
   def test_ceiling_fans
     # Efficiency
 
-    # Test w/ 301-2019
     hpxml_name = 'base-lighting-ceiling-fans.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 30.0, count: 4)
       else
@@ -76,7 +72,7 @@ class ERILightingTest < Minitest::Test
       end
     end
 
-    # Test w/ 301-2019 and Nfans < Nbr + 1
+    # Test w/ Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
@@ -84,19 +80,19 @@ class ERILightingTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, _calc_type), hpxml_bldg|
       _check_ceiling_fans(hpxml_bldg)
     end
 
     # Test w/ 301-2014 and Nfans < Nbr + 1
-    hpxml_name = _change_eri_version('base-lighting-ceiling-fans.xml', '2014')
+    hpxml_name = 'base-lighting-ceiling-fans.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.ceiling_fans[0].count = 3
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2014').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 30.0, count: 4)
       else
@@ -113,7 +109,7 @@ class ERILightingTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 6)
       elsif [CalcType::RatedHome].include? calc_type
@@ -125,13 +121,9 @@ class ERILightingTest < Minitest::Test
 
     # Label energy use
 
-    # Test w/ 301-2019
     hpxml_name = 'base-lighting-ceiling-fans-label-energy-use.xml'
-    hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-    hpxml_name = File.basename(@tmp_hpxml_path)
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 39.0, count: 4)
       else
@@ -139,7 +131,7 @@ class ERILightingTest < Minitest::Test
       end
     end
 
-    # Test w/ 301-2019 and Nfans < Nbr + 1
+    # Test w/ Nfans < Nbr + 1
     hpxml_name = 'base-lighting-ceiling-fans-label-energy-use.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
@@ -147,19 +139,19 @@ class ERILightingTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, _calc_type), hpxml_bldg|
       _check_ceiling_fans(hpxml_bldg)
     end
 
     # Test w/ 301-2014 and Nfans < Nbr + 1
-    hpxml_name = _change_eri_version('base-lighting-ceiling-fans-label-energy-use.xml', '2014')
+    hpxml_name = 'base-lighting-ceiling-fans-label-energy-use.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.ceiling_fans[0].count = 3
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2014').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 39.0, count: 4)
       else
@@ -176,7 +168,7 @@ class ERILightingTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 6)
       elsif [CalcType::RatedHome].include? calc_type
@@ -187,14 +179,15 @@ class ERILightingTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name)
+  def _test_ruleset(hpxml_name, version)
     print '.'
 
     designs = []
     _all_run_calc_types.each do |run_type, calc_type|
       designs << Design.new(run_type: run_type,
                             calc_type: calc_type,
-                            output_dir: @sample_files_path)
+                            output_dir: @sample_files_path,
+                            version: version)
     end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)

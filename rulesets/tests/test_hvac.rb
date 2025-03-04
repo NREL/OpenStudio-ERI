@@ -57,8 +57,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-none.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         if run_type == RunType::CO2e # All-electric
           _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 0.0, dse: _dse(calc_type), shr: 0.73, compressor_temp: 0.0, heat_cap_retention_frac: 0.425, heat_cap_retention_temp: 5.0, backup_temp: 40.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
@@ -79,8 +78,7 @@ class ERIHVACtest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 0.0, dse: _dse(calc_type), shr: 0.73, compressor_temp: 0.0, heat_cap_retention_frac: 0.425, heat_cap_retention_temp: 5.0, backup_temp: 40.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: _dse(calc_type), shr: 0.73, **hvac_iq_values }])
@@ -92,8 +90,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-boiler-elec-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0, eae: 170 }])
@@ -108,8 +105,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-boiler-gas-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, eae: 170 }])
@@ -126,8 +122,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-furnace-elec-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0, **hvac_iq_values }])
@@ -143,8 +138,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-furnace-gas-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, **hvac_iq_values }])
@@ -163,8 +157,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-stove-wood-pellets-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeStove, fuel: HPXML::FuelTypeWoodPellets, frac_load: 1.0, eff: 0.8 }])
@@ -181,8 +174,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-wall-furnace-elec-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeWallFurnace, fuel: HPXML::FuelTypeElectricity, eff: 0.98, frac_load: 1.0 }])
         else
@@ -197,8 +189,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-elec-resistance-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeElectricResistance, fuel: HPXML::FuelTypeElectricity, eff: 1.0, frac_load: 1.0 }])
         else
@@ -224,11 +215,10 @@ class ERIHVACtest < Minitest::Test
         compressor_temp = 0.0
       end
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
-            if hpxml_name.include? 'install-quality'
+            if hpxml_name.include?('install-quality') && eri_version == 'latest'
               hvac_iq_values[:fan_watts_per_cfm] = 0.365
             end
             _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, compressor_temp: compressor_temp, heat_cap_retention_frac: 0.6, heat_cap_retention_temp: 17.0, backup_temp: backup_temp, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
@@ -247,11 +237,10 @@ class ERIHVACtest < Minitest::Test
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.18)
-            if hpxml_name.include? 'install-quality'
+            if hpxml_name.include?('install-quality') && eri_version == 'latest'
               hvac_iq_values[:fan_watts_per_cfm] = 0.365
             end
             _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpMiniSplit, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf: 10, seer: 19, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, compressor_temp: -20.0, heat_cap_retention_frac: 0.6, heat_cap_retention_temp: 17.0, backup_temp: 40.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
@@ -268,8 +257,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-mini-split-heat-pump-ductless.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.07)
           hvac_iq_values[:airflow_defect_ratio] = 0.0
@@ -288,11 +276,10 @@ class ERIHVACtest < Minitest::Test
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-            if hpxml_name.include? 'install-quality'
+            if hpxml_name.include?('install-quality') && eri_version == 'latest'
               hvac_iq_values[:fan_watts_per_cfm] = 0.365
             end
             _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 100, **hvac_iq_values }])
@@ -318,8 +305,7 @@ class ERIHVACtest < Minitest::Test
         compressor_temp = 30.0
       end
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
             _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 7.7, seer: 13, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, compressor_temp: compressor_temp, heat_cap_retention_frac: 0.6, heat_cap_retention_temp: 17.0, backup_temp: backup_temp, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: 0.95, **hvac_iq_values }])
@@ -342,8 +328,7 @@ class ERIHVACtest < Minitest::Test
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
             _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -373,8 +358,7 @@ class ERIHVACtest < Minitest::Test
         ceer = 8.4
       end
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             _check_cooling_system(hpxml_bldg, [{ systype: systype, fuel: HPXML::FuelTypeElectricity, eer: eer, ceer: ceer, frac_load: 1.0, shr: 0.65, comptype: HPXML::HVACCompressorTypeSingleStage }])
           else
@@ -399,8 +383,7 @@ class ERIHVACtest < Minitest::Test
         eer = 10.7
       end
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             _check_cooling_system(hpxml_bldg, [{ systype: systype, fuel: HPXML::FuelTypeElectricity, eer: eer, frac_load: 1.0, shr: 0.65, comptype: HPXML::HVACCompressorTypeSingleStage,
                                                  integrated_htg_fuel: HPXML::FuelTypeElectricity, integrated_htg_eff: 1.0, integrated_htg_frac_load: 1.0 }])
@@ -417,8 +400,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-ptac-with-heating-natural-gas.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypePTAC, fuel: HPXML::FuelTypeElectricity, eer: 10.7, frac_load: 1.0, shr: 0.65, comptype: HPXML::HVACCompressorTypeSingleStage,
                                                integrated_htg_fuel: HPXML::FuelTypeNaturalGas, integrated_htg_eff: 0.8, integrated_htg_frac_load: 1.0 }])
@@ -446,8 +428,7 @@ class ERIHVACtest < Minitest::Test
         systype = HPXML::HVACTypeHeatPumpPTHP
       end
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             _check_heat_pump(hpxml_bldg, [{ systype: systype, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, cop: 3.6, eer: 11.4, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.65, compressor_temp: 0.0, heat_cap_retention_frac: 0.6, heat_cap_retention_temp: 17.0, backup_temp: 40.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0 }])
           else
@@ -463,8 +444,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-evap-cooler-only.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeEvaporativeCooler, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0 }])
         else
@@ -481,11 +461,10 @@ class ERIHVACtest < Minitest::Test
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.18)
-            if hpxml_name.include? 'install-quality'
+            if hpxml_name.include?('install-quality') && eri_version == 'latest'
               hvac_iq_values[:fan_watts_per_cfm] = 0.365
             end
             _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeMiniSplitAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeVariableSpeed, seer: 19, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -502,8 +481,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-mini-split-air-conditioner-only-ductless.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.07)
           hvac_iq_values[:airflow_defect_ratio] = 0.0
@@ -522,11 +500,10 @@ class ERIHVACtest < Minitest::Test
 
     hpxml_names.each do |hpxml_name|
       _eri_versions.each do |eri_version|
-        hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-        _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+        _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
           if [CalcType::RatedHome].include? calc_type
             hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
-            if hpxml_name.include? 'install-quality'
+            if hpxml_name.include?('install-quality') && eri_version == 'latest'
               hvac_iq_values[:fan_watts_per_cfm] = 0.365
             end
             _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
@@ -549,8 +526,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-hvac-multiple.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           ac_furn_hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
@@ -616,8 +592,7 @@ class ERIHVACtest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.5)
           ac_furn_hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
@@ -646,8 +621,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-boiler-only-baseboard.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, eae: 208 }])
         else
@@ -666,8 +640,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-boiler-only-fan-coil.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, eae: 520 }])
         else
@@ -686,8 +659,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-boiler-only-fan-coil-ducted.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, eae: 520 }])
         else
@@ -706,8 +678,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-boiler-only-water-loop-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: 0.92, frac_load: 1.0, num_units_served: 6, eae: 208 }])
         else
@@ -726,8 +697,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-chiller-only-baseboard.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600 }])
         else
@@ -742,8 +712,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-chiller-only-fan-coil.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600, fan_coil_watts: 150 }])
         else
@@ -758,8 +727,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-chiller-only-fan-coil-ducted.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600, fan_coil_watts: 150 }])
         else
@@ -774,8 +742,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-chiller-only-water-loop-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ num_units_served: 6, systype: HPXML::HVACTypeChiller, fuel: HPXML::FuelTypeElectricity, kw_per_ton: 0.9, frac_load: 1.0, shared_loop_watts: 600 }])
         else
@@ -790,8 +757,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-cooling-tower-only-water-loop-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           _check_cooling_system(hpxml_bldg, [{ num_units_served: 6, systype: HPXML::HVACTypeCoolingTower, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, shared_loop_watts: 600 }])
         else
@@ -806,8 +772,7 @@ class ERIHVACtest < Minitest::Test
     hpxml_name = 'base-bldgtype-mf-unit-shared-ground-loop-ground-to-air-heat-pump.xml'
 
     _eri_versions.each do |eri_version|
-      hpxml_name = _change_eri_version(hpxml_name, eri_version) unless eri_version == 'latest'
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, eri_version).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
           hvac_iq_values = _get_default_hvac_iq_values(eri_version, 0.375)
           _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, eer: 16.6, cop: 3.6, frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, pump_w_per_ton: 0, num_units_served: 6, shared_loop_watts: 600, **hvac_iq_values }])
@@ -822,7 +787,7 @@ class ERIHVACtest < Minitest::Test
   def test_manual_thermostat
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, _calc_type), hpxml_bldg|
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual,
                                     htg_setpoints: '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68',
                                     clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78')
@@ -832,7 +797,7 @@ class ERIHVACtest < Minitest::Test
   def test_programmable_thermostat
     hpxml_name = 'base-hvac-programmable-thermostat.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable,
                                       htg_setpoints: '66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66',
@@ -844,9 +809,7 @@ class ERIHVACtest < Minitest::Test
       end
     end
 
-    hpxml_name = _change_eri_version(hpxml_name, '2019ABCD')
-
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2019ABCD').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable,
                                       htg_setpoints: '66, 66, 66, 66, 66, 66, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66',
@@ -862,7 +825,7 @@ class ERIHVACtest < Minitest::Test
   def test_ducts
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone }])
@@ -878,7 +841,7 @@ class ERIHVACtest < Minitest::Test
   def test_ducts_cfm50
     hpxml_name = 'base-hvac-ducts-leakage-cfm50.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone }])
@@ -894,7 +857,7 @@ class ERIHVACtest < Minitest::Test
   def test_ducts_buried
     hpxml_name = 'base-hvac-ducts-buried.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep }])
@@ -910,7 +873,7 @@ class ERIHVACtest < Minitest::Test
   def test_duct_fraction_area
     hpxml_name = 'base-hvac-ducts-area-fractions.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 820.1, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 455.6, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
@@ -925,7 +888,7 @@ class ERIHVACtest < Minitest::Test
   def test_dse
     hpxml_name = 'base-hvac-dse.xml'
 
-    _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         hvac_iq_values = _get_default_hvac_iq_values('latest', 0.5)
         _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer: 13, frac_load: 1.0, dse: 0.7, shr: 0.73, **hvac_iq_values }])
@@ -942,14 +905,15 @@ class ERIHVACtest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name)
+  def _test_ruleset(hpxml_name, version)
     print '.'
 
     designs = []
     _all_run_calc_types.each do |run_type, calc_type|
       designs << Design.new(run_type: run_type,
                             calc_type: calc_type,
-                            output_dir: @sample_files_path)
+                            output_dir: @sample_files_path,
+                            version: version)
     end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)

@@ -18,7 +18,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 
 def _run_ruleset(run_type, calc_type, xml, out_xml)
-  designs = [Design.new(run_type: run_type, calc_type: calc_type)]
+  designs = [Design.new(run_type: run_type, calc_type: calc_type, version: 'latest')]
   designs[0].hpxml_output_path = out_xml
   success, _, _, _, _ = run_rulesets(File.absolute_path(xml), designs)
 

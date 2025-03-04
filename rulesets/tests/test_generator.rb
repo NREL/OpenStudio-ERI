@@ -30,7 +30,7 @@ class ERIGeneratorTest < Minitest::Test
   def test_generator
     hpxml_name = 'base-misc-generators.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_generator(hpxml_bldg, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 1200, is_shared: false },
                                       { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 1200, is_shared: false }])
@@ -43,7 +43,7 @@ class ERIGeneratorTest < Minitest::Test
   def test_generator_shared
     hpxml_name = 'base-bldgtype-mf-unit-shared-generator.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_generator(hpxml_bldg, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 12000, is_shared: true, nbeds_served: 18 }])
       else
@@ -52,14 +52,15 @@ class ERIGeneratorTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name)
+  def _test_ruleset(hpxml_name, version)
     print '.'
 
     designs = []
     _all_run_calc_types.each do |run_type, calc_type|
       designs << Design.new(run_type: run_type,
                             calc_type: calc_type,
-                            output_dir: @sample_files_path)
+                            output_dir: @sample_files_path,
+                            version: version)
     end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)

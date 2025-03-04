@@ -9,8 +9,30 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2022</Version>
+        <Version>2014AEG</Version>
+        <Version>2019ABCD</Version>
+        <Version>2022CE</Version>
       </ERICalculation>
+      <CO2IndexCalculation>
+        <Version>2019ABCD</Version>
+        <Version>2022CE</Version>
+      </CO2IndexCalculation>
+      <EnergyStarCalculation>
+        <Version>SF_National_3.0</Version>
+        <Version>SF_National_3.1</Version>
+        <Version>SF_National_3.2</Version>
+        <Version>SF_National_3.3</Version>
+      </EnergyStarCalculation>
+      <IECCERICalculation>
+        <Version>2015</Version>
+        <Version>2018</Version>
+        <Version>2021</Version>
+        <Version>2024</Version>
+      </IECCERICalculation>
+      <ZERHCalculation>
+        <Version>1.0</Version>
+        <Version>SF_2.0</Version>
+      </ZERHCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -402,6 +424,7 @@
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
+          <ControlType>timer</ControlType>
           <Vented>true</Vented>
           <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module ES_ZERH_Ruleset
-  def self.apply_ruleset(hpxml, run_type, calc_type, lookup_program_data)
+  def self.apply_ruleset(hpxml, calc_type, program_version, eri_version, lookup_program_data)
     # Use latest version of ANSI 301
-    @eri_version = Constants::ERIVersions[-1]
+    @eri_version = eri_version
     hpxml.header.eri_calculation_versions = [@eri_version]
+    hpxml.header.co2index_calculation_versions = nil
+    hpxml.header.iecc_eri_calculation_versions = nil
+    hpxml.header.energystar_calculation_versions = nil
+    hpxml.header.zerh_calculation_versions = nil
 
-    if run_type == RunType::ES
-      @program_version = hpxml.header.energystar_calculation_versions[0]
-    elsif run_type == RunType::ZERH
-      @program_version = hpxml.header.zerh_calculation_versions[0]
-    end
+    @program_version = program_version
 
     if [ES::SFNationalVer3_3, ES::SFNationalVer3_2, ES::MFNationalVer1_3,
         ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version

@@ -30,7 +30,7 @@ class ERIMiscTest < Minitest::Test
   def test_misc
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
         _check_misc(hpxml_bldg, misc_kwh: 2184, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)
       else
@@ -39,14 +39,15 @@ class ERIMiscTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name)
+  def _test_ruleset(hpxml_name, version)
     print '.'
 
     designs = []
     _all_run_calc_types.each do |run_type, calc_type|
       designs << Design.new(run_type: run_type,
                             calc_type: calc_type,
-                            output_dir: @sample_files_path)
+                            output_dir: @sample_files_path,
+                            version: version)
     end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)

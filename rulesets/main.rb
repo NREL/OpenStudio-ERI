@@ -65,22 +65,15 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     # Obtain weather object
     weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
-    eri_version = orig_hpxml.header.eri_calculation_versions[0]
-    eri_version = orig_hpxml.header.co2index_calculation_versions[0] if eri_version.nil?
-    eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
+    # Obtain egrid subregion & cambium gea region
     zip_code = orig_hpxml_bldg.zip_code
-    if not eri_version.nil?
-      # Obtain egrid subregion & cambium gea region
-      egrid_subregion = get_epa_egrid_subregion(zip_code)
-      if egrid_subregion.nil?
-        warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
-      end
-      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019ABCD')
-        cambium_gea = get_cambium_gea_region(zip_code)
-        if cambium_gea.nil?
-          warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
-        end
-      end
+    egrid_subregion = get_epa_egrid_subregion(zip_code)
+    if egrid_subregion.nil?
+      warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
+    end
+    cambium_gea = get_cambium_gea_region(zip_code)
+    if cambium_gea.nil?
+      warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
     end
 
     lookup_program_data = {}
@@ -93,17 +86,53 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       # Ensure we don't modify the original HPXML
       new_hpxml = Marshal.load(Marshal.dump(orig_hpxml))
 
+      # Determine 301 version for ERI calculations
+      iecc_version = nil
+      if [RunType::IECC].include? design.run_type
+        iecc_version = design.version
+        if ['2015', '2018'].include? design.version
+          # Use 2014 w/ all addenda
+          eri_version = Constants::ERIVersions.select { |v| v.include? '2014' }[-1]
+        elsif ['2021'].include? design.version
+          # Use 2019 w/ all addenda
+          eri_version = Constants::ERIVersions.select { |v| v.include? '2019' }[-1]
+        elsif ['2024'].include? design.version
+          # Use 2022 w/ all addenda
+          eri_version = Constants::ERIVersions.select { |v| v.include? '2022' }[-1]
+        else
+          fail "Unhandled IECC version: #{design.version}."
+        end
+      elsif [RunType::ES, RunType::ZERH].include? design.run_type
+        eri_version = Constants::ERIVersions[-1]
+      elsif [RunType::ERI, RunType::CO2e].include? design.run_type
+        eri_version = design.version
+      else
+        fail 'Unexpected design run type.'
+      end
+      eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
+      if eri_version.nil?
+        fail 'Unexpected error; ERI version not set.'
+      end
+
+      # Set egrid subregion & cambium gea region
+      design_egrid_subregion = egrid_subregion
+      if (not eri_version.nil?) && (Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019ABCD'))
+        design_cambium_gea = cambium_gea
+      else
+        design_cambium_gea = nil
+      end
+
       # Apply initial ruleset on HPXML object
       if not design.init_calc_type.nil?
         if design.run_type == RunType::ES
-          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_versions[0].gsub('.', '_').downcase
+          lookup_program = 'es_' + design.version.gsub('.', '_').downcase
         elsif design.run_type == RunType::ZERH
-          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_versions[0].gsub('.', '_').downcase
+          lookup_program = 'zerh_' + design.version.gsub('.', '_').downcase
         end
         if (not lookup_program.nil?) && lookup_program_data[lookup_program].nil?
           lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
         end
-        new_hpxml = ES_ZERH_Ruleset.apply_ruleset(new_hpxml, design.run_type, design.init_calc_type, lookup_program_data[lookup_program])
+        new_hpxml = ES_ZERH_Ruleset.apply_ruleset(new_hpxml, design.init_calc_type, design.version, eri_version, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file
@@ -115,7 +144,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
       # Apply 301 ruleset on HPXML object
       if not design.calc_type.nil?
-        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.run_type, design.calc_type, weather, design.version, egrid_subregion, cambium_gea, create_time)
+        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.run_type, design.calc_type, weather, eri_version, iecc_version, design_egrid_subregion, design_cambium_gea, create_time)
       end
       new_hpxml_blgs[[design.run_type, design.calc_type]] = new_hpxml.buildings[0]
 

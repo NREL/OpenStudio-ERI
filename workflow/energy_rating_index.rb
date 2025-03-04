@@ -92,13 +92,19 @@ def run_simulations(designs, options, duplicates)
 
   puts "Running #{unique_designs.size} Simulations..."
 
+  if options[:num_proc].nil?
+    num_proc = unique_designs.size
+  else
+    num_proc = options[:num_proc]
+  end
+
   # Run simulations
   if Process.respond_to?(:fork) # e.g., most Unix systems
 
     # Code runs in forked child processes and makes direct calls. This is the fastest
     # approach but isn't available on, e.g., Windows.
 
-    Parallel.map(unique_designs, in_processes: unique_designs.size) do |design|
+    Parallel.map(unique_designs, in_processes: num_proc) do |design|
       designdir = run_design_direct(design, options)
       if not File.exist? File.join(designdir, 'eplusout.end')
         raise Parallel::Kill
@@ -111,7 +117,7 @@ def run_simulations(designs, options, duplicates)
     # multiple processors.
 
     stop_procs = false
-    Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
+    Parallel.map(unique_designs, in_threads: num_proc) do |design|
       next if stop_procs
 
       designdir = run_design_spawn(design, options)
@@ -1505,6 +1511,10 @@ OptionParser.new do |opts|
     options[:output_dir] = t
   end
 
+  opts.on('-n', '--num-proc <NUM>', 'Number of parallel processors to use') do |t|
+    options[:num_proc] = t
+  end
+
   options[:output_format] = 'csv'
   opts.on('--output-format TYPE', ['csv', 'json'], 'Output file format type (csv, json)') do |t|
     options[:output_format] = t
@@ -1613,6 +1623,15 @@ if options[:output_dir].nil?
   options[:output_dir] = basedir # default
 end
 options[:output_dir] = File.expand_path(options[:output_dir])
+
+if not options[:num_proc].nil?
+  begin
+    options[:num_proc] = Integer(options[:num_proc])
+  rescue
+    puts "Number of processors requested ('#{options[:num_proc]}') must be an integer."
+    exit!
+  end
+end
 
 main(options)
 

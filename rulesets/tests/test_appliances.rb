@@ -30,7 +30,7 @@ class ERIApplianceTest < Minitest::Test
   def test_appliances_electric
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, location: HPXML::LocationConditionedSpace)
@@ -47,9 +47,7 @@ class ERIApplianceTest < Minitest::Test
     end
 
     # Test w/ 301-2019 pre-Addendum A
-    hpxml_name = _change_eri_version(hpxml_name, '2019')
-
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2019').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.21, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.73, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationConditionedSpace)
@@ -69,7 +67,7 @@ class ERIApplianceTest < Minitest::Test
   def test_appliances_modified
     hpxml_name = 'base-appliances-modified.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_clothes_washer(hpxml_bldg, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, location: HPXML::LocationConditionedSpace)
@@ -86,9 +84,7 @@ class ERIApplianceTest < Minitest::Test
     end
 
     # Test w/ 301-2019 pre-Addendum A
-    hpxml_name = _change_eri_version(hpxml_name, '2019')
-
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2019').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_clothes_washer(hpxml_bldg, mef: 1.65, imef: nil, annual_kwh: 380, elec_rate: 0.12, gas_rate: 1.09, agc: 27.0, cap: 3.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
         _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, ef: 4.29, cef: nil, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationConditionedSpace)
@@ -108,7 +104,7 @@ class ERIApplianceTest < Minitest::Test
   def test_appliances_gas
     hpxml_name = 'base-appliances-gas.xml'
 
-    _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, location: HPXML::LocationConditionedSpace)
         _check_cooking_range(hpxml_bldg, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationConditionedSpace)
@@ -122,9 +118,7 @@ class ERIApplianceTest < Minitest::Test
     end
 
     # Test w/ 301-2019 pre-Addendum A
-    hpxml_name = _change_eri_version(hpxml_name, '2019')
-
-    _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2019').each do |(run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeNaturalGas, ef: nil, cef: 3.3, control: HPXML::ClothesDryerControlTypeTimer, location: HPXML::LocationConditionedSpace)
         _check_cooking_range(hpxml_bldg, fuel_type: HPXML::FuelTypeNaturalGas, cook_is_induction: false, oven_is_convection: false, location: HPXML::LocationConditionedSpace)
@@ -141,7 +135,7 @@ class ERIApplianceTest < Minitest::Test
   def test_appliances_basement
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::RatedHome, CalcType::ReferenceHome].include? calc_type
         location = HPXML::LocationBasementUnconditioned
       else
@@ -158,7 +152,7 @@ class ERIApplianceTest < Minitest::Test
   def test_appliances_none
     hpxml_name = 'base-appliances-none.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, _calc_type), hpxml_bldg|
       _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
       _check_clothes_dryer(hpxml_bldg, fuel_type: HPXML::FuelTypeElectricity, ef: nil, cef: 3.01, location: HPXML::LocationConditionedSpace)
       _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 467.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 33.12, label_usage: 4, location: HPXML::LocationConditionedSpace)
@@ -170,7 +164,7 @@ class ERIApplianceTest < Minitest::Test
   def test_appliances_dehumidifier
     hpxml_name = 'base-appliances-dehumidifier-multiple.xml'
 
-    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_dehumidifiers(hpxml_bldg, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationConditionedSpace },
                                           { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationConditionedSpace }])
@@ -184,9 +178,7 @@ class ERIApplianceTest < Minitest::Test
 
     # Test w/ 301-2019 pre-Addendum B
     # No credit/penalty for dehumidifiers
-    hpxml_name = _change_eri_version(hpxml_name, '2019A')
-
-    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name, '2019A').each do |(_run_type, _calc_type), hpxml_bldg|
       _check_dehumidifiers(hpxml_bldg)
     end
   end
@@ -201,7 +193,7 @@ class ERIApplianceTest < Minitest::Test
       hpxml_name = File.basename(@tmp_hpxml_path)
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
         if ratio_of_units_to_appliance > 14
           # Reference appliances
           _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
@@ -225,14 +217,15 @@ class ERIApplianceTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name)
+  def _test_ruleset(hpxml_name, version)
     print '.'
 
     designs = []
     _all_run_calc_types.each do |run_type, calc_type|
       designs << Design.new(run_type: run_type,
                             calc_type: calc_type,
-                            output_dir: @sample_files_path)
+                            output_dir: @sample_files_path,
+                            version: version)
     end
 
     hpxml_input_path = File.join(@sample_files_path, hpxml_name)

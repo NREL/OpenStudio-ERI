@@ -2757,44 +2757,30 @@ def create_sample_hpxmls
   hpxml_bldg.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
-  # Older ERI versions
-  Constants::ERIVersions.each do |eri_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml_bldg = hpxml.buildings[0]
-    hpxml.header.eri_calculation_versions = [eri_version]
-    hpxml.header.co2index_calculation_versions = nil
-    hpxml.header.iecc_eri_calculation_versions = nil
-    hpxml.header.energystar_calculation_versions = nil
-    hpxml.header.zerh_calculation_versions = nil
-    if Constants::ERIVersions.index(eri_version) < Constants::ERIVersions.index('2019A')
-      # Need old input for clothes dryers
-      hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-    end
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
-  end
+  major_eri_versions = Constants::ERIVersions.select { |v| "#{v.to_i}" == v }
+  latest_major_eri_versions = major_eri_versions.map { |mv| Constants::ERIVersions.select { |v| v.include?(mv) }.last }
 
-  # Older CO2 Index versions
-  Constants::ERIVersions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }.each do |co2_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml.header.co2index_calculation_versions = [co2_version]
-    hpxml.header.eri_calculation_versions = nil
-    hpxml.header.iecc_eri_calculation_versions = nil
-    hpxml.header.energystar_calculation_versions = nil
-    hpxml.header.zerh_calculation_versions = nil
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-co2-#{co2_version}.xml")
-  end
+  # All versions, single-family
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+  hpxml_bldg = hpxml.buildings[0]
+  hpxml.header.eri_calculation_versions = latest_major_eri_versions
+  hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
+  hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
+  hpxml.header.energystar_calculation_versions = ES::SFVersions.select { |v| ES::NationalVersions.include?(v) }
+  hpxml.header.zerh_calculation_versions = ZERH::SFVersions
+  hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
+  XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-sf.xml')
 
-  # All IECC versions
-  IECC::AllVersions.each do |iecc_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml_bldg = hpxml.buildings[0]
-    hpxml.header.iecc_eri_calculation_versions = [iecc_version]
-    hpxml.header.eri_calculation_versions = nil
-    hpxml.header.co2index_calculation_versions = nil
-    hpxml.header.energystar_calculation_versions = nil
-    hpxml.header.zerh_calculation_versions = nil
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
-  end
+  # All versions, multi-family
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
+  hpxml_bldg = hpxml.buildings[0]
+  hpxml.header.eri_calculation_versions = latest_major_eri_versions
+  hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
+  hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
+  hpxml.header.energystar_calculation_versions = ES::MFVersions.select { |v| ES::NationalVersions.include?(v) }
+  hpxml.header.zerh_calculation_versions = ZERH::MFVersions
+  hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
+  XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-mf.xml')
 
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')

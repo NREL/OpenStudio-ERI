@@ -2,37 +2,6 @@
 
 require 'fileutils'
 
-def _change_eri_version(hpxml_name, version)
-  # Create derivative file w/ changed ERI version
-  hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-  hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.eri_calculation_versions = [version]
-  if Constants::ERIVersions.index(version) >= Constants::ERIVersions.index('2019ABCD')
-    hpxml.header.co2index_calculation_versions = [version]
-  else
-    hpxml.header.co2index_calculation_versions = nil # CO2 Index can't be calculated
-  end
-
-  if Constants::ERIVersions.index(version) < Constants::ERIVersions.index('2019A')
-    # Need old input for clothes dryers
-    hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-  end
-
-  hpxml_name = File.basename(@tmp_hpxml_path)
-  XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-  return hpxml_name
-end
-
-def _change_iecc_version(hpxml_name, version)
-  # Create derivative file w/ changed ERI version
-  hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
-  hpxml.header.iecc_eri_calculation_versions = [version]
-
-  hpxml_name = File.basename(@tmp_hpxml_path)
-  XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-  return hpxml_name
-end
-
 def _all_run_calc_types()
   return [[RunType::ERI, CalcType::ReferenceHome],
           [RunType::ERI, CalcType::RatedHome],
