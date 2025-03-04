@@ -839,11 +839,15 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
 
     # assert that it ran correctly
-    assert_equal(true, success)
+    assert(success)
 
     # validate against 301 schematron
-    assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
-    @results_paths += designs.map { |d| File.absolute_path(File.join(File.dirname(d.init_hpxml_output_path), '..')) }
+    designs.each do |design|
+      valid = @erivalidator.validate(design.init_hpxml_output_path)
+      puts @erivalidator.errors.map { |e| e.logMessage } unless valid
+      assert(valid)
+      @results_paths << File.absolute_path(File.join(File.dirname(design.init_hpxml_output_path), '..'))
+    end
 
     return hpxml_bldgs.values[0]
   end

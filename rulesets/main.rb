@@ -77,6 +77,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     end
 
     lookup_program_data = {}
+    init_hpxmls_written = []
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
@@ -137,8 +138,9 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
 
       # Write initial HPXML file
       if not design.init_hpxml_output_path.nil?
-        if not File.exist? design.init_hpxml_output_path
+        if not init_hpxmls_written.include?(design.init_hpxml_output_path)
           XMLHelper.write_file(new_hpxml.to_doc, design.init_hpxml_output_path)
+          init_hpxmls_written << design.init_hpxml_output_path
         end
       end
 

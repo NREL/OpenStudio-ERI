@@ -195,9 +195,9 @@ class ERI301ValidationTest < Minitest::Test
     success, errors, _, _, _ = run_rulesets(File.absolute_path(@tmp_hpxml_path), designs)
 
     if expected_errors.empty?
-      assert_equal(true, success)
+      assert(success)
     else
-      assert_equal(false, success)
+      refute(success)
     end
 
     _compare_errors_or_warnings('error', errors, expected_errors)

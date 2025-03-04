@@ -17,15 +17,6 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversi
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 
-def _run_ruleset(run_type, calc_type, xml, out_xml)
-  designs = [Design.new(run_type: run_type, calc_type: calc_type, version: 'latest')]
-  designs[0].hpxml_output_path = out_xml
-  success, _, _, _, _ = run_rulesets(File.absolute_path(xml), designs)
-
-  assert(success)
-  assert(File.exist?(out_xml))
-end
-
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false, skip_simulation: false,
                   rated_home_only: false, output_format: 'csv', diagnostic_output: false)
   xml = File.absolute_path(xml)
@@ -77,9 +68,17 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       results_dir = File.join(rundir, "ERI_#{eri_version}", 'results')
       hpxmls[:ref] = File.join(results_dir, 'ReferenceHome.xml')
       hpxmls[:rated] = File.join(results_dir, 'RatedHome.xml')
+      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
+        hpxmls[:iad] = File.join(results_dir, 'IndexAdjustmentHome.xml')
+        hpxmls[:iadref] = File.join(results_dir, 'IndexAdjustmentReferenceHome.xml')
+      end
       outputs[:eri_results] = File.join(results_dir, "results.#{output_format}")
       outputs[:rated_results] = File.join(results_dir, "RatedHome.#{output_format}")
       outputs[:ref_results] = File.join(results_dir, "ReferenceHome.#{output_format}")
+      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
+        outputs[:iad] = File.join(results_dir, "IndexAdjustmentHome.#{output_format}")
+        outputs[:iadref] = File.join(results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
+      end
       if timeseries_frequency != 'none'
         outputs[:rated_timeseries_results] = File.join(results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
         outputs[:ref_timeseries_results] = File.join(results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
@@ -304,13 +303,13 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
-    out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-    _run_ruleset(RunType::ERI, CalcType::ReferenceHome, xml, out_xml)
+    _rundir, hpxmls, _csvs = _run_workflow(xml, test_name, skip_simulation: true)
+
     test_num = File.basename(xml)[0, 2].to_i
-    all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num, version)
+    all_results[File.basename(xml)] = _get_reference_home_components(hpxmls[:ref], test_num, version)
 
     # Update HPXML to override mech vent fan power for eRatio test
-    new_hpxml = HPXML.new(hpxml_path: out_xml)
+    new_hpxml = HPXML.new(hpxml_path: hpxmls[:ref])
     new_hpxml_bldg = new_hpxml.buildings[0]
     new_hpxml_bldg.ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
@@ -323,9 +322,9 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
       end
     end
-    XMLHelper.write_file(new_hpxml.to_doc, out_xml)
+    XMLHelper.write_file(new_hpxml.to_doc, hpxmls[:ref])
 
-    _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
+    _rundir, _hpxmls, csvs = _run_workflow(hpxmls[:ref], test_name)
     eri_results = _get_csv_results([csvs[:eri_results]])
     all_results[File.basename(xml)]['e-Ratio'] = (eri_results['Total Loads TnML'] / eri_results['Total Loads TRL']).round(7)
   end

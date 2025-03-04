@@ -1519,7 +1519,7 @@ module ES_ZERH_Ruleset
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, heat_load_frac, cool_load_frac, orig_htg_system, orig_clg_system = nil)
     # Heat pump type and efficiency
-
+    is_shared_system = false
     if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir)
       heat_pump_type = HPXML::HVACTypeHeatPumpWaterLoopToAir
       cop = lookup_reference_value('hvac_wlhp_cop')
