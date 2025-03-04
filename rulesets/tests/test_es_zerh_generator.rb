@@ -45,7 +45,8 @@ class EnergyStarZeroEnergyReadyHomeGeneratorTest < Minitest::Test
     end
     designs = [Design.new(run_type: run_type,
                           init_calc_type: InitCalcType::TargetHome,
-                          output_dir: @sample_files_path)]
+                          output_dir: @sample_files_path,
+                          version: program_version)]
 
     success, errors, _, _, hpxml_bldgs = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
 
