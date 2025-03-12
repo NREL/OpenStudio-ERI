@@ -1257,7 +1257,7 @@
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>60000.0</CoolingCapacity>
-              <CompressorType>single stage</CompressorType>
+              <CompressorType>two stage</CompressorType>
               <FractionCoolLoadServed>0.5</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER2</Units>
@@ -1275,7 +1275,7 @@
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>60000.0</CoolingCapacity>
-              <CompressorType>single stage</CompressorType>
+              <CompressorType>two stage</CompressorType>
               <FractionCoolLoadServed>0.5</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER2</Units>
