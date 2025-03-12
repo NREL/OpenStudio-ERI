@@ -1,6 +1,8 @@
 ## OpenStudio-ERI v1.10.0
 
 __New Features__
+- Updated DX heat pump and air conditioner models per RESNET MINHERS Addendum 82.
+  - **Breaking change**: `CompressorType` required for central and mini-split air conditioners and heat pumps.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
