@@ -565,6 +565,7 @@
               <HeatingCapacity>24000.0</HeatingCapacity>
               <HeatingCapacity17F>14600.0</HeatingCapacity17F>
               <CoolingCapacity>24000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
@@ -597,6 +598,7 @@
               <HeatingCapacity>36000.0</HeatingCapacity>
               <HeatingCapacity17F>21960.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>

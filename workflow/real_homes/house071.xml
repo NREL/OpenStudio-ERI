@@ -450,6 +450,7 @@
               <HeatingCapacity>23200.0</HeatingCapacity>
               <HeatingCapacity17F>13400.0</HeatingCapacity17F>
               <CoolingCapacity>23200.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
               <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
