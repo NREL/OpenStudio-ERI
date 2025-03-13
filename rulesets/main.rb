@@ -65,7 +65,6 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     # Obtain weather object
     weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
-    # Obtain egrid subregion & cambium gea region
     zip_code = orig_hpxml_bldg.zip_code
     egrid_subregion = get_epa_egrid_subregion(zip_code)
     if egrid_subregion.nil?

@@ -710,6 +710,7 @@
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>57000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <FractionCoolLoadServed>0.246</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -729,6 +730,7 @@
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>38000.0</HeatingCapacity>
               <CoolingCapacity>34000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -759,6 +761,7 @@
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>114000.0</HeatingCapacity>
               <CoolingCapacity>102000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -788,6 +791,7 @@
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>0.0</HeatingCapacity>
               <CoolingCapacity>3400.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionHeatLoadServed>0.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.015</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
