@@ -592,6 +592,8 @@ Slab insulation locations can be visualized in the figure below:
 .. image:: images/slab.png
    :align: center
 
+.. _windowinputs:
+
 HPXML Windows
 *************
 
