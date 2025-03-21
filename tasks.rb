@@ -1268,6 +1268,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 11,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1281,6 +1282,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 15,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1295,6 +1297,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 10,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1308,6 +1311,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 13,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1348,6 +1352,9 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
       charge_defect_ratio = -0.25
     end
 
+    # FIXME: Get guidance from EPA; currently preserving previous behavior.
+    compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
+
     hpxml_bldg.cooling_systems.clear
     hpxml_bldg.cooling_systems.add(id: "CoolingSystem#{hpxml_bldg.cooling_systems.size + 1}",
                                    distribution_system_idref: 'HVACDistribution1',
@@ -1356,6 +1363,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: seer,
+                                   compressor_type: compressor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    charge_defect_ratio: charge_defect_ratio)
@@ -1383,6 +1391,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: 7.5,
                               cooling_efficiency_seer: 12,
+                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
                               charge_defect_ratio: -0.25)
@@ -1404,6 +1413,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: 6.8,
                               cooling_efficiency_seer: 10,
+                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
                               charge_defect_ratio: -0.25)
@@ -1456,6 +1466,8 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
       charge_defect_ratio = -0.25
     end
 
+    compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
+
     hpxml_bldg.heat_pumps.clear
     hpxml_bldg.heat_pumps.add(id: "HeatPump#{hpxml_bldg.heat_pumps.size + 1}",
                               distribution_system_idref: 'HVACDistribution1',
@@ -1471,6 +1483,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: hspf,
                               cooling_efficiency_seer: seer,
+                              compressor_type: compressor_type,
                               fan_watts_per_cfm: fan_watts_per_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio)
@@ -2834,34 +2847,10 @@ if ARGV[0].to_sym == :update_measures
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
 
-  # Apply rubocop
-  cops = ['Layout',
-          'Lint/DeprecatedClassMethods',
-          'Lint/DuplicateElsifCondition',
-          'Lint/DuplicateHashKey',
-          'Lint/DuplicateMethods',
-          'Lint/InterpolationCheck',
-          'Lint/LiteralAsCondition',
-          'Lint/RedundantStringCoercion',
-          'Lint/SelfAssignment',
-          'Lint/UnderscorePrefixedVariableName',
-          'Lint/UnusedBlockArgument',
-          'Lint/UnusedMethodArgument',
-          'Lint/UselessAssignment',
-          'Style/AndOr',
-          'Style/FrozenStringLiteralComment',
-          'Style/HashSyntax',
-          'Style/Next',
-          'Style/NilComparison',
-          'Style/RedundantParentheses',
-          'Style/RedundantSelf',
-          'Style/ReturnNil',
-          'Style/SelfAssignment',
-          'Style/StringLiterals',
-          'Style/StringLiteralsInInterpolation']
+  # Apply rubocop (uses .rubocop.yml)
   commands = ["\"require 'rubocop/rake_task'\"",
               "\"require 'stringio' \"",
-              "\"RuboCop::RakeTask.new(:rubocop) do |t| t.options = ['--autocorrect', '--format', 'simple', '--only', '#{cops.join(',')}'] end\"",
+              "\"RuboCop::RakeTask.new(:rubocop) do |t| t.options = ['--autocorrect', '--format', 'simple'] end\"",
               '"Rake.application[:rubocop].invoke"']
   command = "#{OpenStudio.getOpenStudioCLI} -e #{commands.join(' -e ')}"
   puts 'Applying rubocop auto-correct to measures...'
