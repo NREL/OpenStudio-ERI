@@ -4,13 +4,14 @@ __New Features__
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
+- Updates to ENERGY STAR MFNC Rev 05.
+  - **Breaking change**: Update U-factor for floors over 'other multifamily buffer space'.
 
 ## OpenStudio-ERI v1.9.4
 
 __New Features__
 - Adds ENERGY STAR ERI calculation for SFNH National v3.3 and MFNC National v1.3.
 - Updates to ENERGY STAR SFNH Rev 14 and MFNC Rev 05.
-  - **Breaking change**: Update U-factor for floors over 'other multifamily buffer space'.
   - **Breaking change**: Building types "single-family detached" and "single-family attached" may only be used for SFNC versions and "apartment unit" may only be used for MFNC versions.
   - ENERGY STAR MFNC National 1.2 now uses 100% LED lighting.
 - `WeatherStation/extension/EPWFilePath` is now optional; if not provided, the closest TMY3 weather station will be automatically selected based on the zip code.
