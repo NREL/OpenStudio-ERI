@@ -5,6 +5,9 @@ __New Features__
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
 
+__Bugfixes__
+- Fixes that when Aext < 0.5 and the mechanical ventilation system is exhaust-only, the airtightness used for infiltration rate calculation is based on test results but not less than 0.3 ACHnatural.
+
 ## OpenStudio-ERI v1.9.4
 
 __New Features__

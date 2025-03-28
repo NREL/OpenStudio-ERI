@@ -2526,7 +2526,7 @@ module ERI_301_Ruleset
       end
     end
 
-    ach50 = ach50 * a_ext
+    ach50 *= a_ext
 
     return ach50, a_ext
   end
