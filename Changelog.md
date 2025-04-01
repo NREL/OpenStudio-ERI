@@ -4,8 +4,9 @@ __New Features__
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
-- Updates to ENERGY STAR MFNC Rev 05.
-  - **Breaking change**: Update U-factor for floors over 'other multifamily buffer space'.
+
+__Bugfixes__
+- Fixes U-factor for floors over 'other multifamily buffer space' per ENERGY STAR MFNC Rev 05.
 
 ## OpenStudio-ERI v1.9.4
 
