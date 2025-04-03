@@ -73,6 +73,39 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
+  def get_es_zerh_ashp_backup_eff_cz5(program_version, backup_fuel)
+    if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil].include? backup_fuel
+      if [ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2,
+          ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
+        if backup_fuel == HPXML::FuelTypeNaturalGas
+          return 0.95
+        elsif backup_fuel == HPXML::FuelTypeOil
+          return 0.85
+        end
+      elsif [ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
+        if backup_fuel == HPXML::FuelTypeNaturalGas
+          return 0.9
+        elsif backup_fuel == HPXML::FuelTypeOil
+          return 0.85
+        end
+      elsif [ES::SFFloridaVer3_1, ES::SFPacificVer3_0].include? program_version
+        return 0.80
+      elsif [ZERH::Ver1].include? program_version
+        return 0.94
+      elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+            ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+            ZERH::SFVer2, ZERH::MFVer2].include? program_version
+        return 0.95
+      else
+        fail "Unhandled program version: #{program_version}"
+      end
+    elsif backup_fuel == HPXML::FuelTypeElectricity
+      return 1.0
+    else
+      fail "Unhandled program version: #{program_version} or backup fuel type: #{backup_fuel}"
+    end
+  end
+
   def get_es_zerh_ashp_seer_cz7(program_version)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
         ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
@@ -695,10 +728,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      backup_heating_fuel = hpxml_bldg.heat_pumps[0].backup_heating_fuel
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: get_es_zerh_ashp_backup_eff_cz5(program_version, backup_heating_fuel), shr: 0.73, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
