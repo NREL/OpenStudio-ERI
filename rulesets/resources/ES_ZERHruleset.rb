@@ -1566,15 +1566,18 @@ module ES_ZERH_Ruleset
     backup_heating_capacity = -1 if backup_heating_capacity.nil? # Use auto-sizing
 
     if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
-      heat_pump_backup_fuel = orig_htg_system.backup_heating_fuel
-      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
-      unless heat_pump_backup_fuel.nil?
-        if heat_pump_backup_fuel == HPXML::FuelTypeElectricity
-          heat_pump_backup_eff = 1.0
-        else
-          heat_pump_backup_eff = get_default_furnace_afue(orig_htg_system.backup_heating_fuel)
+      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated
+      if orig_htg_system.is_a?(HPXML::HeatPump) # Handle a case where Rated Home has air-source or ground-source heat pump
+        heat_pump_backup_fuel = orig_htg_system.backup_heating_fuel
+        heat_pump_backup_fuel = HPXML::FuelTypeElectricity if heat_pump_backup_fuel.nil?
+      else # Handle a case where Rated Home has electric strip heat or electric baseboard heat
+        if orig_htg_system.is_a? HPXML::HeatingSystem
+          heat_pump_backup_fuel = orig_htg_system.heating_system_fuel
+        elsif orig_htg_system.is_a? HPXML::CoolingSystem # Cooling system w/ integrated heating (e.g., Room AC w/ electric resistance heating)
+          heat_pump_backup_fuel = orig_clg_system.integrated_heating_system_fuel
         end
       end
+      heat_pump_backup_eff = (heat_pump_backup_fuel == HPXML::FuelTypeElectricity) ? 1.0 : get_default_furnace_afue(heat_pump_backup_fuel)
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = Defaults.get_gshp_pump_power()
     end
