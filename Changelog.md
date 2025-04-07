@@ -4,7 +4,7 @@ __New Features__
 - Updated DX heat pump and air conditioner models per RESNET MINHERS Addendum 82.
   - **Breaking change**: `CompressorType` required for central and mini-split air conditioners and heat pumps.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
-  - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way). 
+  - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way).
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
 - `AverageCeilingHeight` is no longer used (for infiltration calculations, Hf = InfiltrationVolume/CFA).
 - Output updates:
@@ -13,6 +13,7 @@ __New Features__
 
 __Bugfixes__
   - Fixes battery charging/discharging not being included in peak electricity outputs.
+  - Fixes error if there's a vented attic with zero roof pitch.
 
 ## OpenStudio-ERI v1.9.4
 
@@ -287,7 +288,7 @@ __New Features__
   - **Breaking change**: New "End Use: \<Fuel\>: Heating Heat Pump Backup" output, disaggregated from "End Use: \<Fuel\>: Heating".
 - **Breaking change**: Deprecates duct leakage to outside exemptions; software tools must provide duct leakage to outside or DSE. `SoftwareInfo/extension/ERICalculation/Version` enumerations "2014ADEGL", "2014ADEG", "2014ADE" are replaced by "2014AEG" and "2014AE".
 - **Breaking change**: For CFIS systems, an `extension/VentilationOnlyModeAirflowFraction` input is now required to address duct losses during ventilation only mode.
-- Allows `AirInfiltrationMeasurement/InfiltrationHeight` as an optional input; if not provided, it is inferred from other inputs as before. 
+- Allows `AirInfiltrationMeasurement/InfiltrationHeight` as an optional input; if not provided, it is inferred from other inputs as before.
 - Allows duct leakage to be entered in units of CFM50 as an alternative to CFM25.
 - Adds a `--skip-simulation` flag that can be used to just generate the ERI Rated/Reference Home HPXMLs and then stop.
 - Adds a `--rated-home-only` flag to run only the ERI Rated Home simulation (ERI will not be calculated).
@@ -311,7 +312,7 @@ __New Features__
   - Moves `Slab/PerimeterInsulationDepth` to `Slab/PerimeterInsulation/Layer/InsulationDepth`.
   - Moves `Slab/UnderSlabInsulationWidth` to `Slab/UnderSlabInsulation/Layer/InsulationWidth`.
   - Moves `Slab/UnderSlabInsulationSpansEntireSlab` to `Slab/UnderSlabInsulation/Layer/InsulationSpansEntireSlab`.
-- Allows modeling PTAC and PTHP HVAC systems. 
+- Allows modeling PTAC and PTHP HVAC systems.
 - Allows additional fuel types for generators.
 - Allows non-zero refrigerant charge defect ratios for ground source heat pumps.
 - Allows CEER (Combined Energy Efficiency Ratio) efficiency unit for room AC.
@@ -597,7 +598,7 @@ __Known Issues__
 
 __Breaking changes__
 - A `Foundations/Foundation[FoundationType/Basement[Conditioned='false']]/ThermalBoundary` element is now required for all buildings with unconditioned basements.
-- Several reporting changes for results/ERI____Home.csv output files: 
+- Several reporting changes for results/ERI____Home.csv output files:
   - "Other Fuel" is now disaggregated into "Fuel Oil" and "Propane"
   - Peak load units are changed from W to kBtu
 
@@ -655,7 +656,7 @@ __Breaking changes__
 - `Slab/DepthBelowGrade` is now required when `Slab/InteriorAdjacentTo=’garage’`.
 - `FrameFloor/ExteriorAdjacentTo` must now be either 'other housing unit above' or 'other housing unit below' instead of 'other housing unit'.
 - `HeatPump/HeatingCapacity` is now a required element.
-- Several reporting changes for results/ERI____Home.csv output files: 
+- Several reporting changes for results/ERI____Home.csv output files:
   - Hot water recirculation pump energy is now disaggregated.
   - Lighting energy is disaggregated into interior vs exterior vs garage.
   - Hot water load related to tank losses are now reported.
