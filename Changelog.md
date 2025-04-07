@@ -15,6 +15,10 @@ __Bugfixes__
   - Fixes battery charging/discharging not being included in peak electricity outputs.
   - Fixes error if there's a vented attic with zero roof pitch.
 
+__Bugfixes__
+- Fixes U-factor for floors over 'other multifamily buffer space' per ENERGY STAR MFNC Rev 05.
+- Fixes modeling of 0.3 ACHnatural infiltration minimum for MF dwelling units where Aext < 0.5 and the mechanical ventilation system is solely exhaust-only.
+
 ## OpenStudio-ERI v1.9.4
 
 __New Features__

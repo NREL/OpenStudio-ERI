@@ -158,7 +158,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.9, height: 8.0, volume: 7200.0)
+        _check_infiltration(hpxml_bldg, ach50: 2.43, height: 8.0, volume: 7200.0)
       elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 8.0, volume: 7200.0)
       elsif [CalcType::IndexAdjHome].include? calc_type
