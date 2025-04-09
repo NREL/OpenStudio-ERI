@@ -1567,11 +1567,18 @@ module ES_ZERH_Ruleset
 
     if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
       heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated
-       heat_pump_backup_fuel = HPXML::FuelTypeElectricity
-       if orig_htg_system.is_a?(HPXML::HeatPump) && (not orig_htg_system.backup_heating_fuel.nil?)
-          heat_pump_backup_fuel = orig_htg_system.backup_heating_fuel
-       end
-      heat_pump_backup_eff = (heat_pump_backup_fuel == HPXML::FuelTypeElectricity) ? 1.0 : get_default_furnace_afue(heat_pump_backup_fuel)
+      heat_pump_backup_fuel = HPXML::FuelTypeElectricity
+      if orig_htg_system.is_a?(HPXML::HeatPump) && (not orig_htg_system.backup_heating_fuel.nil?)
+        heat_pump_backup_fuel = orig_htg_system.backup_heating_fuel
+      end
+      if heat_pump_backup_fuel == HPXML::FuelTypeElectricity
+        heat_pump_backup_eff = 1.0
+      else
+        heat_pump_backup_eff = get_default_furnace_afue(heat_pump_backup_fuel)
+        backup_heating_switchover_temp = orig_htg_system.backup_heating_switchover_temp if orig_htg_system.respond_to?(:backup_heating_switchover_temp)
+        backup_heating_lockout_temp = orig_htg_system.backup_heating_lockout_temp if orig_htg_system.respond_to(:backup_heating_lockout_temp)
+        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp if orig_htg_system.respond_to(:compressor_lockout_temp)
+      end
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = Defaults.get_gshp_pump_power()
     end
@@ -1596,10 +1603,13 @@ module ES_ZERH_Ruleset
                             heat_pump_fuel: HPXML::FuelTypeElectricity,
                             cooling_capacity: cooling_capacity,
                             heating_capacity: heating_capacity,
+                            compressor_lockout_temp: compressor_lockout_temp,
                             backup_type: heat_pump_backup_type,
                             backup_heating_fuel: heat_pump_backup_fuel,
                             backup_heating_capacity: backup_heating_capacity,
                             backup_heating_efficiency_percent: heat_pump_backup_eff,
+                            backup_heating_switchover_temp: backup_heating_switchover_temp,
+                            backup_heating_lockout_temp: backup_heating_lockout_temp,
                             fraction_heat_load_served: heat_load_frac,
                             fraction_cool_load_served: cool_load_frac,
                             cooling_efficiency_seer: seer,
