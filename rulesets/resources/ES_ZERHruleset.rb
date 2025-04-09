@@ -1575,9 +1575,9 @@ module ES_ZERH_Ruleset
         heat_pump_backup_eff = 1.0
       else
         heat_pump_backup_eff = get_default_furnace_afue(heat_pump_backup_fuel)
-        backup_heating_switchover_temp = orig_htg_system.backup_heating_switchover_temp if orig_htg_system.respond_to?(:backup_heating_switchover_temp)
-        backup_heating_lockout_temp = orig_htg_system.backup_heating_lockout_temp if orig_htg_system.respond_to(:backup_heating_lockout_temp)
-        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp if orig_htg_system.respond_to(:compressor_lockout_temp)
+        backup_heating_switchover_temp = orig_htg_system.backup_heating_switchover_temp unless orig_htg_system.backup_heating_switchover_temp.nil?
+        backup_heating_lockout_temp = orig_htg_system.backup_heating_lockout_temp unless orig_htg_system.backup_heating_lockout_temp.nil?
+        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp unless orig_htg_system.compressor_lockout_temp.nil?
       end
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = Defaults.get_gshp_pump_power()
