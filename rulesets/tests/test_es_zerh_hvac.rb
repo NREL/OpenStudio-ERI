@@ -73,39 +73,6 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_ashp_backup_eff_cz5(program_version, backup_fuel)
-    if [HPXML::FuelTypeNaturalGas, HPXML::FuelTypeOil].include? backup_fuel
-      if [ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2,
-          ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
-        if backup_fuel == HPXML::FuelTypeNaturalGas
-          return 0.95
-        elsif backup_fuel == HPXML::FuelTypeOil
-          return 0.85
-        end
-      elsif [ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
-        if backup_fuel == HPXML::FuelTypeNaturalGas
-          return 0.9
-        elsif backup_fuel == HPXML::FuelTypeOil
-          return 0.85
-        end
-      elsif [ES::SFFloridaVer3_1, ES::SFPacificVer3_0].include? program_version
-        return 0.80
-      elsif [ZERH::Ver1].include? program_version
-        return 0.94
-      elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
-            ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-            ZERH::SFVer2, ZERH::MFVer2].include? program_version
-        return 0.95
-      else
-        fail "Unhandled program version: #{program_version}"
-      end
-    elsif backup_fuel == HPXML::FuelTypeElectricity
-      return 1.0
-    else
-      fail "Unhandled program version: #{program_version} or backup fuel type: #{backup_fuel}"
-    end
-  end
-
   def get_es_zerh_ashp_seer_cz7(program_version)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
         ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
