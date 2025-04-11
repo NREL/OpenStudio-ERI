@@ -26,7 +26,7 @@ HPXML files submitted to OpenStudio-ERI undergo a two step validation process:
 2. Validation using `Schematron <http://schematron.com/>`_
 
   The Schematron document for the ERI use case can be found at ``rulesets/resources/301validator.xml``.
-  Schematron is a rule-based validation language, expressed in XML using XPath expressions, for validating the presence or absence of inputs in XML files. 
+  Schematron is a rule-based validation language, expressed in XML using XPath expressions, for validating the presence or absence of inputs in XML files.
   As opposed to an XSD Schema, a Schematron document validates constraints and requirements based on conditionals and other logical statements.
   For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
 
@@ -58,7 +58,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version(s) to perform ENERGY STAR ERI calculation; multiple allowed
   ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE ZERH ERI calculation; multiple allowed
   =================================  ========  =======  ===========  ========  =======  ==================================
-  
+
   .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC 301-2019 with both Addendum A and Addendum B included.
          A value of "latest" can be used to always point to the latest version available.
@@ -80,7 +80,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
 
   For the ENERGY STAR and Zero Energy Ready Home ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ENERGY STAR and Zero Energy Ready Home ERI Target.
   For example, it does not check that the home meets all ENERGY STAR and Zero Energy Ready Home Mandatory Requirements.
-  It is the software tool's responsibility to perform these additional steps. 
+  It is the software tool's responsibility to perform these additional steps.
 
 HPXML Building Site
 -------------------
@@ -95,15 +95,15 @@ Site information is entered in ``/HPXML/Building/Site``.
   =====================  ========  =======  ===========  ========  =======  ============================
 
   .. [#] For ENERGY STAR calculations, allowed StateCode choices depend on the ENERGY STAR version:
-         
+
          \- **National**: <anything>
-         
+
          \- **Pacific**: HI, GU, MP
-         
+
          \- **Florida**: FL
-         
+
          \- **OregonWashington**: OR, WA
-         
+
   .. [#] ZipCode can be defined as the standard 5 number postal code, or it can have the additional 4 number code separated by a hyphen.
   .. [#] ZipCode is used to look up the eGrid subregion (see ``rulesets/data/egrid/ZIP_mappings.csv``) and Cambium region (see ``rulesets/data/cambium/ZIP_mappings.csv``) for emissions calculations and the CO2e Index.
          It may also be used to choose a default TMY3 weather station when not provided in :ref:`weather_station`.
@@ -111,7 +111,7 @@ Site information is entered in ``/HPXML/Building/Site``.
 HPXML Building Summary
 ----------------------
 
-High-level building summary information is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary``. 
+High-level building summary information is entered in ``/HPXML/Building/BuildingDetails/BuildingSummary``.
 
 HPXML Building Fuels
 ********************
@@ -123,7 +123,7 @@ Each fuel type available to the building is entered in ``/HPXML/Building/Buildin
   ========  ========  =======  ===========  ========  =======  ============================
   ``Fuel``  string             See [#]_     Yes                Fuel name
   ========  ========  =======  ===========  ========  =======  ============================
-  
+
   .. [#] Fuel choices can be found at the `HPXML Toolbox website <https://hpxml.nrel.gov/datadictionary/3.0.0/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable/Fuel>`_.
 
 .. note::
@@ -148,7 +148,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR and ZERH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions. 
+         For ENERGY STAR and ZERH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
 
 .. _weather_station:
 
@@ -180,7 +180,7 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
   ``Year``                           integer          See [#]_     Yes [#]_            IECC year
   ``ClimateZone``                    string           See [#]_     Yes                 IECC zone
   =================================  ========  =====  ===========  ========  ========  ===============
-  
+
   .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, 2021, or 2024.
   .. [#] The IECC climate zone for 2006 is always required.
          IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
@@ -191,7 +191,7 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
          \- **ENERGY STAR SF_National_3.1, MF_National_1.1, SF_OregonWashington_3.2, MF_OregonWashington_1.2**: 2012
 
          \- **ZERH SF_2.0, MF_2.0**: 2021
-  
+
          \- **ZERH 1.0**: 2015
 
          \- **IECC ERI 20XX**: 20XX
@@ -214,11 +214,11 @@ For example, a foundation wall between the unit's vented crawlspace and the neig
 
 .. warning::
 
-  It is the software tool's responsibility to provide the appropriate building surfaces. 
+  It is the software tool's responsibility to provide the appropriate building surfaces.
   While some error-checking is in place, it is not possible to know whether some surfaces are incorrectly missing.
 
-Also note that wall and roof surfaces do not require an azimuth to be specified. 
-Rather, only the windows/skylights themselves require an azimuth. 
+Also note that wall and roof surfaces do not require an azimuth to be specified.
+Rather, only the windows/skylights themselves require an azimuth.
 Thus, software tools can choose to use a single wall (or roof) surface to represent multiple wall (or roof) surfaces for the entire building if all their other properties (construction type, interior/exterior adjacency, etc.) are identical.
 
 HPXML Air Infiltration
@@ -314,7 +314,7 @@ If the dwelling unit has an unvented attic, additional information is entered in
   ============================  =======  =====  ===========  ========  =======  ===============================================
   ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  
+
   .. [#] If there are multiple unvented attics, they must all have the same value.
 
 If the dwelling unit has a vented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]``.
@@ -339,7 +339,7 @@ If the dwelling unit has an unconditioned basement, additional information is en
   ============================  =======  =====  ===========  ========  =======  ===============================================
   ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  
+
   .. [#] If there are multiple unconditioned basements, they must all have the same value.
 
 If the dwelling unit has an unvented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]``.
@@ -349,7 +349,7 @@ If the dwelling unit has an unvented crawlspace, additional information is enter
   ============================  =======  =====  ===========  ========  =======  ===============================================
   ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  
+
   .. [#] If there are multiple unvented crawlspaces, they must all have the same value.
 
 If the dwelling unit has a vented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]``.
@@ -395,8 +395,10 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
          For example, 6.0 means a 6/12 roof, which has a 26.57-degree roof slope.
   .. [#] RadiantBarrierGrade only required if RadiantBarrier=true.
   .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
-         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
+.. warning::
+
+  It is currently the software developer's responsibility to ensure the AssemblyEffectiveRValue includes the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Rim Joists
 ****************
@@ -426,7 +428,10 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
   .. [#] SolarAbsorptance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
   .. [#] Emittance only required for exterior rim joists (i.e., ExteriorAdjacentTo=outside).
   .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
-         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
+
+.. warning::
+
+  It is currently the software developer's responsibility to ensure the AssemblyEffectiveRValue includes the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Walls
 ***********
@@ -458,7 +463,10 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
   .. [#] SolarAbsorptance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
   .. [#] Emittance only required for exterior walls (i.e., ExteriorAdjacentTo=outside).
   .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
-         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
+
+.. warning::
+
+  It is currently the software developer's responsibility to ensure the AssemblyEffectiveRValue includes the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Foundation Walls
 **********************
@@ -500,7 +508,10 @@ Any wall surface in contact with the ground is considered a foundation wall.
   .. [#] Layer[InstallationType="continuous - exterior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] AssemblyEffectiveRValue only required if Layer elements are not provided.
   .. [#] AssemblyEffectiveRValue includes all material layers and the interior air film; it should **not** include the exterior air film (for any above-grade exposure) or any soil thermal resistance.
-         It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
+
+.. warning::
+
+  It is currently the software developer's responsibility to ensure the AssemblyEffectiveRValue includes the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 If insulation layers are provided, additional information is entered in each ``FoundationWall/Insulation/Layer``.
 
@@ -540,7 +551,10 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   .. [#] FloorOrCeiling only required for floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
   .. [#] FloorType child element choices are ``WoodFrame``, ``StructuralInsulatedPanel``, ``SteelFrame``, or ``SolidConcrete``.
   .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
-         It should also include the effects of insulation gaps (installation grading), compressed insulation in cavities, and/or reduced attic floor insulation thickness at the eaves per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
+
+.. warning::
+
+  It is currently the software developer's responsibility to ensure the AssemblyEffectiveRValue includes the effects of insulation gaps (installation grading), compressed insulation in cavities, and/or reduced attic floor insulation thickness at the eaves per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
 
 HPXML Slabs
 ***********
@@ -775,7 +789,7 @@ Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/H
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
          If the airflow rate is not measured and the measurement is not exempted, a value of -0.25 should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
-  
+
 .. warning::
 
   HVAC installation grading inputs (i.e., ``FanPowerWattsPerCFM`` and ``AirflowDefectRatio``) should be provided per the conditions specified in `ANSI/RESNET/ACCA 310-2020 <https://codes.iccsafe.org/content/ICC3102020P1>`_.
@@ -1051,7 +1065,7 @@ Note that a room air conditioner with reverse cycle heating should be entered as
   ==================================================================  ======  ======  ===============  ========  =========  ============================================
 
   .. [#] IntegratedHeatingSystemCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
-  .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1. 
+  .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1.
 
 .. _hvac_cooling_ptac:
 
@@ -1089,7 +1103,7 @@ Note that a packaged terminal heat pump should be entered as a heat pump; see :r
   ==================================================================  ======  ======  ===============  ========  =========  ============================================
 
   .. [#] IntegratedHeatingSystemCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
-  .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1. 
+  .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1.
 
 .. _hvac_cooling_evap_cooler:
 
@@ -1141,7 +1155,7 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
   .. [#] CoolingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
   .. [#] CompressorType only choices is "variable speed" (i.e., they are assumed to be inverter driven).
   .. [#] The sum of all ``FractionCoolLoadServed`` (across all HVAC systems) must be less than or equal to 1.
-  .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 if ducted and SEER = SEER2 if ductless.  
+  .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 if ducted and SEER = SEER2 if ductless.
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
@@ -1211,7 +1225,7 @@ Each shared cooling tower (serving multiple dwelling units) is entered as a ``/H
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_hydronic` (type: "water loop").
          A :ref:`hvac_hp_water_loop` must also be specified.
   .. [#] The sum of all ``FractionCoolLoadServed`` (across all HVAC systems) must be less than or equal to 1.
-  
+
 .. _hvac_heatpump:
 
 HPXML Heat Pumps
@@ -1271,11 +1285,11 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   .. [#] If HSPF2 provided, converted to HSPF using ANSI/RESNET/ICC 301-2022 Addendum C, where HSPF = HSPF2 / 0.85 (assumed to be a split system).
          If not a split system, provide SEER using the appropriate conversion factor.
   .. [#] If neither extension/HeatingCapacityRetention nor HeatingCapacity17F provided, heating capacity retention defaults based on CompressorType:
-         
+
          \- **single/two stage**: 0.425 (at 5F)
-         
+
          \- **variable speed**: 0.0461 * HSPF + 0.1594 (at 5F)
-         
+
   .. [#] The extension/HeatingCapacityRetention input is a more flexible alternative to HeatingCapacity17F.
          Either input approach can be used, but not both.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
@@ -1564,7 +1578,7 @@ HPXML HVAC Distribution
 - :ref:`hvac_distribution_dse`
 
 .. note::
-  
+
   There can be at most one heating system and one cooling system attached to a distribution system.
   See :ref:`hvac_heating`, :ref:`hvac_cooling`, and :ref:`hvac_heatpump` for information on which distribution system type is allowed for which HVAC system.
   Also note that some HVAC systems (e.g., room air conditioners) are not allowed to be attached to a distribution system.
@@ -1588,7 +1602,7 @@ Each air distribution system is entered as a ``/HPXML/Building/BuildingDetails/S
   ``DistributionSystemType/AirDistribution/NumberofReturnRegisters``                    integer           >= 0         See [#]_             Number of return registers
   ``ConditionedFloorAreaServed``                                                        double   ft2      > 0          See [#]_             Conditioned floor area served
   ====================================================================================  =======  =======  ===========  ========  =========  ==========================
-  
+
   .. [#] AirDistributionType choices are "regular velocity", "gravity", or "fan coil" and are further restricted based on attached HVAC system type (e.g., only "regular velocity" or "gravity" for a furnace, only "fan coil" for a shared boiler, etc.).
   .. [#] Supply duct leakage required if AirDistributionType is "regular velocity" or "gravity" and optional if AirDistributionType is "fan coil".
   .. [#] Return duct leakage required if AirDistributionType is "regular velocity" or "gravity" and optional if AirDistributionType is "fan coil".
@@ -1597,7 +1611,7 @@ Each air distribution system is entered as a ``/HPXML/Building/BuildingDetails/S
   .. [#] ConditionedFloorAreaServed required only if ``AirDistribution/Ducts`` are present.
 
 Additional information is entered in each ``DuctLeakageMeasurement``.
-  
+
   ================================  =======  =======  ===========  ========  =========  =========================================================
   Element                           Type     Units    Constraints  Required  Default    Notes
   ================================  =======  =======  ===========  ========  =========  =========================================================
@@ -1605,7 +1619,7 @@ Additional information is entered in each ``DuctLeakageMeasurement``.
   ``DuctLeakage/Value``             double            >= 0         Yes                  Duct leakage value [#]_
   ``DuctLeakage/TotalOrToOutside``  string            to outside   Yes                  Type of duct leakage (outside conditioned space vs total)
   ================================  =======  =======  ===========  ========  =========  =========================================================
-  
+
   .. [#] Units choices are "CFM25" or "CFM50".
   .. [#] If the HVAC system has no return ducts (e.g., a ducted evaporative cooler), use zero for the Value.
 
@@ -1975,7 +1989,7 @@ Each conventional storage water heater is entered as a ``/HPXML/Building/Buildin
   ``UsesDesuperheater``                          boolean                                      No        false     Presence of desuperheater? [#]_
   ``extension/NumberofBedroomsServed``           integer                > NumberofBedrooms    See [#]_            Number of bedrooms served directly or indirectly
   =============================================  =======  ============  ====================  ========  ========  ==========================================
-  
+
   .. [#] FuelType choices are "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
@@ -1986,11 +2000,11 @@ Each conventional storage water heater is entered as a ``/HPXML/Building/Buildin
   .. [#] FirstHourRating only required if UniformEnergyFactor provided.
   .. [#] RecoveryEfficiency must also be greater than the EnergyFactor (or UniformEnergyFactor).
   .. [#] If RecoveryEfficiency not provided, defaults as follows based on a regression analysis of `AHRI certified water heaters <https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3>`_:
-         
+
          \- **Electric**: 0.98
-         
+
          \- **Non-electric, EnergyFactor < 0.75**: 0.252 * EnergyFactor + 0.608
-         
+
          \- **Non-electric, EnergyFactor >= 0.75**: 0.561 * EnergyFactor + 0.439
 
   .. [#] Additional desuperheater inputs are described in :ref:`water_heater_desuperheater`.
@@ -2018,7 +2032,7 @@ Each instantaneous tankless water heater is entered as a ``/HPXML/Building/Build
   ``UsesDesuperheater``                        boolean                                            No            false     Presence of desuperheater? [#]_
   ``extension/NumberofBedroomsServed``         integer                > NumberofBedrooms          See [#]_                Number of bedrooms served directly or indirectly
   ===========================================  =======  ============  ==========================  ============  ========  ==========================================================
-  
+
   .. [#] FuelType choices are "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
@@ -2195,17 +2209,17 @@ An in-unit recirculation hot water distribution system is entered as a ``/HPXML/
   ==========================================================  =======  ============  ===========  ========  ========  =====================================
 
   .. [#] ControlType choices are "manual demand control", "presence sensor demand control", "temperature", "timer", or "no control".
-         
+
          \- **manual demand control**: The pump only runs when a user presses a button indicating they are about to use hot water.
-         
+
          \- **presence sensor demand control**: The pump only runs when a sensor detects someone is present at the faucet.
-         
+
          \- **temperature**: The pump runs based on monitoring temperature at some point in the system.
-         
+
          \- **timer**: The pump is controlled by a timer.
-         
+
          \- **no control**: The pump runs continuously.
-         
+
   .. [#] RecirculationPipingLoopLength is the recirculation loop length including both supply and return sides, measured longitudinally from plans, assuming the hot water piping does not run diagonally, plus 20 feet of piping for each floor level greater than one plus 10 feet of piping for unconditioned basements.
   .. [#] BranchPipingLength is the length of the branch hot water piping from the recirculation loop to the farthest hot water fixture from the recirculation loop, measured longitudinally from plans, assuming the branch hot water piping does not run diagonally.
   .. [#] Additional drain water heat recovery inputs are described in :ref:`water_heater_dwhr`.
@@ -2306,7 +2320,7 @@ A simple solar hot water system is entered as a ``/HPXML/Building/BuildingDetail
   ``SolarFraction``     double   frac   > 0, <= 1    Yes                 Solar fraction [#]_
   ``ConnectedTo``       idref           See [#]_     No [#]_   <none>    Connected water heater
   ====================  =======  =====  ===========  ========  ========  ======================
-  
+
   .. [#] Portion of total conventional hot water heating load (delivered energy plus tank standby losses).
          Can be obtained from `Directory of SRCC OG-300 Solar Water Heating System Ratings <https://solar-rating.org/programs/og-300-program/>`_ or NREL's `System Advisor Model <https://sam.nrel.gov/>`_ or equivalent.
   .. [#] ConnectedTo must reference a ``WaterHeatingSystem``.
@@ -2339,7 +2353,7 @@ A detailed solar hot water system is entered as a ``/HPXML/Building/BuildingDeta
   ``StorageVolume``                    double   gal           > 0           Yes                 Hot water storage volume
   ``ConnectedTo``                      idref                  See [#]_      Yes                 Connected water heater
   ===================================  =======  ============  ============  ========  ========  ==============================
-  
+
   .. [#] CollectorLoopType choices are "liquid indirect", "liquid direct", or "passive thermosyphon".
   .. [#] CollectorType choices are "single glazing black", "double glazing black", "evacuated tube", or "integrated collector storage".
   .. [#] CollectorRatedOpticalEfficiency is FRTA (y-intercept) from the `Directory of SRCC OG-100 Certified Solar Collector Ratings <https://solar-rating.org/programs/og-100-program/>`_.
@@ -2368,34 +2382,34 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   ``AttachedToInverter``                idref           See [#]_            Yes                 ID of attached inverter
   ``extension/NumberofBedroomsServed``  integer         > NumberofBedrooms  See [#]_            Number of bedrooms served
   ====================================  =======  =====  ==================  ========  ========  ============================================
-  
+
   .. [#] Location choices are "ground" or "roof" mounted.
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
   .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
          Default from the `PVWatts documentation <https://www.nrel.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
          Note that the total loss (14%) is not the sum of the individual losses but is calculated by multiplying the reduction due to each loss.
-         
+
          \- **Soiling**: 2%
-         
+
          \- **Shading**: 3%
-         
+
          \- **Snow**: 0%
-         
+
          \- **Mismatch**: 2%
-         
+
          \- **Wiring**: 2%
-         
+
          \- **Connections**: 0.5%
-         
+
          \- **Light-induced degradation**: 1.5%
-         
+
          \- **Nameplate rating**: 1%
-         
+
          \- **Age**: 0%
-         
+
          \- **Availability**: 3%
-         
+
   .. [#] AttachedToInverter must reference an ``Inverter``.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
@@ -2442,7 +2456,7 @@ A single battery can be entered as a ``/HPXML/Building/BuildingDetails/Systems/B
   The battery will charge if PV production is greater than the building electrical load and the battery is below its maximum capacity.
   The battery will discharge if the building electrical load is greater than the PV production and the battery is above its minimum capacity.
   A battery in a home without PV is not modeled.
-  
+
   For ERI calculations, batteries will result in a small penalty because ERI is calculated using annual energy consumption and batteries increase annual electricity consumption (due to round trip efficiency).
   For CO2e Index calculations, batteries can result in a credit because CO2e Index is calculated using hourly electricity emissions factors and batteries shift when electricity consumption occurs.
 
@@ -2553,7 +2567,7 @@ If the clothes dryer is shared, additional information is entered in ``/HPXML/Bu
   ``Count``                integer                      Yes                Number of clothes dryers in the shared laundry room
   ``NumberofUnitsServed``  integer                      Yes                Number of dwelling units served by the shared laundry room
   =======================  =======  =====  ===========  ========  =======  ==========================================================
-  
+
 .. note::
 
   If no clothes dryer is located within the Rated Home, a clothes dryer in the nearest shared laundry room on the project site shall be used if available for daily use by the occupants of the Rated Home.
@@ -2595,10 +2609,10 @@ If the dishwasher is shared, additional information is entered in ``/HPXML/Build
   .. [#] AttachedToWaterHeatingSystem must reference a ``WaterHeatingSystem``; AttachedToHotWaterDistribution must reference a ``HotWaterDistribution``.
 
 .. note::
-  
+
   If no dishwasher is located within the Rated Home, a dishwasher in the nearest shared kitchen in the building shall be used only if available for daily use by the occupants of the Rated Home.
   If there are multiple dishwashers, the dishwasher with the lowest Energy Factor (highest kWh/yr) shall be used.
-  
+
 HPXML Refrigerators
 *******************
 
@@ -2616,7 +2630,7 @@ A single refrigerator can be entered as a ``/HPXML/Building/BuildingDetails/Appl
          See :ref:`hpxmllocations` for descriptions.
 
 .. note::
-  
+
   If there are multiple refrigerators, the total energy consumption of all refrigerators/freezers shall be used along with the location that represents the majority of power consumption.
 
 HPXML Dehumidifier
@@ -2634,7 +2648,7 @@ Each dehumidifier can be entered as a ``/HPXML/Building/BuildingDetails/Applianc
   ``IntegratedEnergyFactor`` or ``EnergyFactor``  double      liters/kWh  > 0            Yes                Rated efficiency
   ``FractionDehumidificationLoadServed``          double      frac        >= 0, <= [#]_  Yes                Fraction of dehumidification load served
   ==============================================  ==========  ==========  =============  ========  =======  ========================================
-  
+
   .. [#] Type choices are "portable" or "whole-home".
   .. [#] Location only choice is "conditioned space".
   .. [#] The sum of all ``FractionDehumidificationLoadServed`` (across all Dehumidifiers) must be less than or equal to 1.
