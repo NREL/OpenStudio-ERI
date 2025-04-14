@@ -425,6 +425,10 @@
                 <Units>SEER</Units>
                 <Value>24.2</Value>
               </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.0</Value>
+              </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>11.2</Value>

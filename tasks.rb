@@ -2666,7 +2666,7 @@ def create_sample_hpxmls
       end
 
       hvac_system.cooling_efficiency_eer2 = Defaults.get_hvac_eer2(hvac_system)
-      hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(2)
+      hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(1)
       hvac_system.cooling_efficiency_eer2 = nil
     end
     hpxml_bldg.pv_systems.each do |pv_system|
@@ -2834,7 +2834,8 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_versions = ['latest']
     hpxml.header.co2index_calculation_versions = ['latest']
     hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
-    if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
+    hpxml_bldg = hpxml.buildings[0]
+    if hpxml_bldg.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
       hpxml.header.zerh_calculation_versions = [ZERH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
       hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else

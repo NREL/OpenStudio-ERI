@@ -1367,6 +1367,10 @@
                 <Units>SEER</Units>
                 <Value>19.3</Value>
               </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.6</Value>
+              </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>9.5</Value>
@@ -1397,6 +1401,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>21.6</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>13.1</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -1430,6 +1438,10 @@
                 <Units>SEER</Units>
                 <Value>19.3</Value>
               </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.6</Value>
+              </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
                 <Value>9.5</Value>
@@ -1461,6 +1473,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>19.3</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.6</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>

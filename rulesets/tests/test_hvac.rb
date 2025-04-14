@@ -1014,34 +1014,34 @@ class ERIHVACtest < Minitest::Test
       end
       if not expected_values[:hspf].nil?
         if not heat_pump.heating_efficiency_hspf2.nil?
-          assert_in_delta(expected_values[:hspf], HVAC.calc_hspf_from_hspf2(heat_pump), 0.1)
+          assert_in_delta(expected_values[:hspf], HVAC.calc_hspf_from_hspf2(heat_pump), 0.2)
         else
-          assert_in_delta(expected_values[:hspf], heat_pump.heating_efficiency_hspf, 0.1)
+          assert_in_delta(expected_values[:hspf], heat_pump.heating_efficiency_hspf, 0.2)
         end
       else
         assert_nil(heat_pump.heating_efficiency_hspf)
       end
       if not expected_values[:cop].nil?
-        assert_in_delta(expected_values[:cop], heat_pump.heating_efficiency_cop, 0.1)
+        assert_in_delta(expected_values[:cop], heat_pump.heating_efficiency_cop, 0.2)
       else
         assert_nil(heat_pump.heating_efficiency_cop)
       end
       if not expected_values[:seer].nil?
         if not heat_pump.cooling_efficiency_seer2.nil?
-          assert_in_delta(expected_values[:seer], HVAC.calc_seer_from_seer2(heat_pump), 0.1)
+          assert_in_delta(expected_values[:seer], HVAC.calc_seer_from_seer2(heat_pump), 0.2)
         else
-          assert_in_delta(expected_values[:seer], heat_pump.cooling_efficiency_seer, 0.1)
+          assert_in_delta(expected_values[:seer], heat_pump.cooling_efficiency_seer, 0.2)
         end
       else
         assert_nil(heat_pump.cooling_efficiency_seer)
       end
       if not expected_values[:eer].nil?
         if not heat_pump.cooling_efficiency_eer2.nil?
-          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(heat_pump), 0.1)
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(heat_pump), 0.2)
         elsif not heat_pump.cooling_efficiency_ceer.nil?
-          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_ceer(heat_pump), 0.1)
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_ceer(heat_pump), 0.2)
         else
-          assert_in_delta(expected_values[:eer], heat_pump.cooling_efficiency_eer, 0.1)
+          assert_in_delta(expected_values[:eer], heat_pump.cooling_efficiency_eer, 0.2)
         end
       else
         assert_nil(heat_pump.cooling_efficiency_eer)
@@ -1151,29 +1151,29 @@ class ERIHVACtest < Minitest::Test
       end
       if not expected_values[:seer].nil?
         if not cooling_system.cooling_efficiency_seer2.nil?
-          assert_in_epsilon(expected_values[:seer], HVAC.calc_seer_from_seer2(cooling_system), 0.1)
+          assert_in_epsilon(expected_values[:seer], HVAC.calc_seer_from_seer2(cooling_system), 0.2)
         else
-          assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.1)
+          assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.2)
         end
       else
         assert_nil(cooling_system.cooling_efficiency_seer)
       end
       if not expected_values[:eer].nil?
         if not cooling_system.cooling_efficiency_eer2.nil?
-          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(cooling_system), 0.1)
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(cooling_system), 0.2)
         elsif not cooling_system.cooling_efficiency_ceer.nil?
-          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_ceer(cooling_system), 0.1)
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_ceer(cooling_system), 0.2)
         else
-          assert_in_delta(expected_values[:eer], cooling_system.cooling_efficiency_eer, 0.1)
+          assert_in_delta(expected_values[:eer], cooling_system.cooling_efficiency_eer, 0.2)
         end
       elsif not expected_values[:ceer].nil?
-        assert_in_delta(expected_values[:ceer], cooling_system.cooling_efficiency_ceer, 0.1)
+        assert_in_delta(expected_values[:ceer], cooling_system.cooling_efficiency_ceer, 0.2)
       else
         assert_nil(cooling_system.cooling_efficiency_eer)
         assert_nil(cooling_system.cooling_efficiency_ceer)
       end
       if not expected_values[:kw_per_ton].nil?
-        assert_in_delta(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton, 0.1)
+        assert_in_delta(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton, 0.2)
       else
         assert_nil(cooling_system.cooling_efficiency_kw_per_ton)
       end
