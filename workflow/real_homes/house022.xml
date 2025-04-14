@@ -545,6 +545,7 @@
               <HeatPumpType>mini-split</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>0.0</HeatingCapacity>
+              <HeatingCapacity17F>0.0</HeatingCapacity17F>
               <CoolingCapacity>16000.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
               <FractionHeatLoadServed>0.0</FractionHeatLoadServed>

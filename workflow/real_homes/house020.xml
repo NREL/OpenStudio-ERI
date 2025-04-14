@@ -732,6 +732,7 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>38000.0</HeatingCapacity>
+              <HeatingCapacity17F>22800.0</HeatingCapacity17F>
               <CoolingCapacity>34000.0</CoolingCapacity>
               <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
@@ -767,6 +768,7 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>114000.0</HeatingCapacity>
+              <HeatingCapacity17F>68400.0</HeatingCapacity17F>
               <CoolingCapacity>102000.0</CoolingCapacity>
               <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
@@ -801,6 +803,7 @@
               <HeatPumpType>mini-split</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>0.0</HeatingCapacity>
+              <HeatingCapacity17F>0.0</HeatingCapacity17F>
               <CoolingCapacity>3400.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
               <FractionHeatLoadServed>0.0</FractionHeatLoadServed>

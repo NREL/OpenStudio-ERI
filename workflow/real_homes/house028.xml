@@ -477,6 +477,7 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>56000.0</HeatingCapacity>
+              <HeatingCapacity17F>33600.0</HeatingCapacity17F>
               <CoolingCapacity>59000.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
               <BackupType>integrated</BackupType>

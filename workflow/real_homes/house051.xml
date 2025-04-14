@@ -445,6 +445,7 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>13600.0</HeatingCapacity>
+              <HeatingCapacity17F>8160.0</HeatingCapacity17F>
               <CoolingCapacity>13700.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
