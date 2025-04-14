@@ -1321,20 +1321,26 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('CZ2')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 14.5
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 13
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 14
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       else
         seer = 13
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
 
@@ -1351,9 +1357,6 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
       airflow_defect_ratio = -0.25
       charge_defect_ratio = -0.25
     end
-
-    # FIXME: Get guidance from EPA; currently preserving previous behavior.
-    compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
 
     hpxml_bldg.cooling_systems.clear
     hpxml_bldg.cooling_systems.add(id: "CoolingSystem#{hpxml_bldg.cooling_systems.size + 1}",
@@ -2621,6 +2624,13 @@ def create_sample_hpxmls
       end
     end
     hpxml_bldg.heat_pumps.each do |heat_pump|
+      if heat_pump.heating_capacity_17F.nil?
+        if not heat_pump.heating_capacity_fraction_17F.nil?
+          heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * heat_pump.heating_capacity_fraction_17F).round
+        end
+      end
+      heat_pump.heating_capacity_fraction_17F = nil
+
       next unless [HPXML::HVACTypeHeatPumpAirToAir,
                    HPXML::HVACTypeHeatPumpGroundToAir,
                    HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
@@ -2645,6 +2655,19 @@ def create_sample_hpxmls
       next unless heating_system.heating_capacity.nil?
 
       heating_system.heating_capacity = 300000
+    end
+    (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).each do |hvac_system|
+      next unless hvac_system.cooling_efficiency_eer.nil?
+
+      if hvac_system.is_a?(HPXML::HeatPump) && (not [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? hvac_system.heat_pump_type)
+        next
+      elsif hvac_system.is_a?(HPXML::CoolingSystem) && (not [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeMiniSplitAirConditioner].include? hvac_system.cooling_system_type)
+        next
+      end
+
+      hvac_system.cooling_efficiency_eer2 = Defaults.get_hvac_eer2(hvac_system)
+      hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(2)
+      hvac_system.cooling_efficiency_eer2 = nil
     end
     hpxml_bldg.pv_systems.each do |pv_system|
       pv_system.is_shared_system = false if pv_system.is_shared_system.nil?

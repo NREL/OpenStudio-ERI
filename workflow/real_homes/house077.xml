@@ -309,7 +309,6 @@
                 <Units>SEER</Units>
                 <Value>15.0</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>0.83</SensibleHeatFraction>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>

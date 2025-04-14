@@ -921,7 +921,6 @@
               <HeatingCapacity17F>42500.0</HeatingCapacity17F>
               <CoolingCapacity>46000.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
-              <CoolingSensibleHeatFraction>0.85</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -955,7 +954,6 @@
               <HeatingCapacity17F>24000.0</HeatingCapacity17F>
               <CoolingCapacity>23400.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
-              <CoolingSensibleHeatFraction>0.85</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>

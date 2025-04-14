@@ -1262,8 +1262,10 @@ module ERI_301_Ruleset
                                    fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                    shared_loop_watts: orig_heating_system.shared_loop_watts,
                                    fan_coil_watts: orig_heating_system.fan_coil_watts,
+                                   fan_motor_type: orig_heating_system.fan_motor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    fan_watts: orig_heating_system.fan_watts,
+                                   heating_airflow_cfm: orig_heating_system.heating_airflow_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    htg_seed_id: orig_heating_system.htg_seed_id.nil? ? orig_heating_system.id : orig_heating_system.htg_seed_id)
     end
@@ -1294,12 +1296,14 @@ module ERI_301_Ruleset
                                    cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                    cooling_efficiency_seer2: orig_cooling_system.cooling_efficiency_seer2,
                                    cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
+                                   cooling_efficiency_eer2: orig_cooling_system.cooling_efficiency_eer2,
                                    cooling_efficiency_ceer: orig_cooling_system.cooling_efficiency_ceer,
                                    cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
-                                   cooling_shr: orig_cooling_system.cooling_shr,
                                    shared_loop_watts: orig_cooling_system.shared_loop_watts,
                                    fan_coil_watts: orig_cooling_system.fan_coil_watts,
+                                   fan_motor_type: orig_cooling_system.fan_motor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
+                                   cooling_airflow_cfm: orig_cooling_system.cooling_airflow_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    charge_defect_ratio: charge_defect_ratio,
                                    clg_seed_id: orig_cooling_system.clg_seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.clg_seed_id,
@@ -1328,6 +1332,10 @@ module ERI_301_Ruleset
         orig_heat_pump.backup_heating_efficiency_percent = 1.0
         orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
       end
+      if [HPXML::HVACTypeHeatPumpAirToAir,
+          HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
+        pan_heater_control_type = HPXML::HVACPanHeaterControlTypeContinuous
+      end
       new_bldg.heat_pumps.add(id: orig_heat_pump.id,
                               is_shared_system: orig_heat_pump.is_shared_system,
                               number_of_units_served: orig_heat_pump.number_of_units_served,
@@ -1338,10 +1346,7 @@ module ERI_301_Ruleset
                               compressor_lockout_temp: orig_heat_pump.compressor_lockout_temp,
                               heating_capacity: orig_heat_pump.heating_capacity,
                               heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
-                              heating_capacity_retention_fraction: orig_heat_pump.heating_capacity_retention_fraction,
-                              heating_capacity_retention_temp: orig_heat_pump.heating_capacity_retention_temp,
                               cooling_capacity: orig_heat_pump.cooling_capacity,
-                              cooling_shr: orig_heat_pump.cooling_shr,
                               backup_type: orig_heat_pump.backup_type,
                               backup_heating_fuel: orig_heat_pump.backup_heating_fuel,
                               backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
@@ -1354,14 +1359,19 @@ module ERI_301_Ruleset
                               cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
                               cooling_efficiency_seer2: orig_heat_pump.cooling_efficiency_seer2,
                               cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
+                              cooling_efficiency_eer2: orig_heat_pump.cooling_efficiency_eer2,
                               heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                               heating_efficiency_hspf2: orig_heat_pump.heating_efficiency_hspf2,
                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
                               shared_loop_watts: orig_heat_pump.shared_loop_watts,
                               pump_watts_per_ton: orig_heat_pump.pump_watts_per_ton,
+                              fan_motor_type: orig_heat_pump.fan_motor_type,
                               fan_watts_per_cfm: fan_watts_per_cfm,
+                              heating_airflow_cfm: orig_heat_pump.heating_airflow_cfm,
+                              cooling_airflow_cfm: orig_heat_pump.cooling_airflow_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio,
+                              pan_heater_control_type: pan_heater_control_type,
                               htg_seed_id: orig_heat_pump.htg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.htg_seed_id,
                               clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id)
     end
@@ -2689,7 +2699,6 @@ module ERI_301_Ruleset
     end
     if not orig_clg_system.nil?
       clg_seed_id = orig_clg_system.clg_seed_id.nil? ? orig_clg_system.id : orig_clg_system.clg_seed_id
-      shr = orig_clg_system.cooling_shr
     end
     htg_seed_id = 'ResidualHeating' if htg_seed_id.nil?
     clg_seed_id = 'ResidualCooling' if clg_seed_id.nil?
@@ -2715,6 +2724,7 @@ module ERI_301_Ruleset
                             compressor_lockout_temp: compressor_lockout_temp,
                             cooling_capacity: -1, # Use auto-sizing
                             heating_capacity: -1, # Use auto-sizing
+                            heating_capacity_17F: -1, # Use auto-sizing
                             backup_type: backup_type,
                             backup_heating_fuel: backup_fuel,
                             backup_heating_capacity: backup_capacity,
@@ -2724,12 +2734,13 @@ module ERI_301_Ruleset
                             backup_heating_switchover_temp: backup_switchover_temp,
                             fraction_heat_load_served: htg_load_frac,
                             fraction_cool_load_served: clg_load_frac,
-                            cooling_shr: shr,
                             cooling_efficiency_seer: 13.0,
+                            cooling_efficiency_eer: 11.0, # FIXME: Placeholder until guidance from RESNET
                             heating_efficiency_hspf: 7.7,
                             airflow_defect_ratio: airflow_defect_ratio,
                             fan_watts_per_cfm: fan_watts_per_cfm,
                             charge_defect_ratio: charge_defect_ratio,
+                            pan_heater_control_type: HPXML::HVACPanHeaterControlTypeContinuous,
                             htg_seed_id: htg_seed_id,
                             clg_seed_id: clg_seed_id)
   end
@@ -2738,7 +2749,6 @@ module ERI_301_Ruleset
     # 13 SEER electric air conditioner
     if not orig_system.nil?
       seed_id = orig_system.clg_seed_id.nil? ? orig_system.id : orig_system.clg_seed_id
-      shr = orig_system.cooling_shr
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
     seed_id = 'ResidualCooling' if seed_id.nil?
@@ -2756,7 +2766,7 @@ module ERI_301_Ruleset
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
                                  cooling_efficiency_seer: 13.0,
-                                 cooling_shr: shr,
+                                 cooling_efficiency_eer: 11.0, # FIXME: Placeholder until guidance from RESNET
                                  airflow_defect_ratio: airflow_defect_ratio,
                                  fan_watts_per_cfm: fan_watts_per_cfm,
                                  charge_defect_ratio: charge_defect_ratio,
