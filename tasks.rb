@@ -1268,6 +1268,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 11,
+                                   cooling_efficiency_eer: 9.6,
                                    compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
@@ -1282,6 +1283,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 15,
+                                   cooling_efficiency_eer: 12.5,
                                    compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
@@ -1297,6 +1299,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 10,
+                                   cooling_efficiency_eer: 8.8,
                                    compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
@@ -1311,6 +1314,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 13,
+                                   cooling_efficiency_eer: 11,
                                    compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
@@ -1321,25 +1325,31 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('CZ2')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
+        eer = 12.5
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 14.5
+        eer = 12.1
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
+        eer = 12.5
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 13
+        eer = 11
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 14
+        eer = 11.8
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       else
         seer = 13
+        eer = 11
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
@@ -1366,6 +1376,7 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: seer,
+                                   cooling_efficiency_eer: eer,
                                    compressor_type: compressor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
@@ -1386,6 +1397,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               heating_capacity: -1,
+                              heating_capacity_17F: -1,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
@@ -1394,6 +1406,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: 7.5,
                               cooling_efficiency_seer: 12,
+                              cooling_efficiency_eer: 10.3,
                               compressor_type: HPXML::HVACCompressorTypeSingleStage,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
@@ -1408,6 +1421,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               heating_capacity: -1,
+                              heating_capacity_17F: -1,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
@@ -1416,6 +1430,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: 6.8,
                               cooling_efficiency_seer: 10,
+                              cooling_efficiency_eer: 8.8,
                               compressor_type: HPXML::HVACCompressorTypeSingleStage,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
@@ -1430,28 +1445,42 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
+        eer = 12.5
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 8.2
         seer = 15
+        eer = 12.5
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
+        eer = 12.5
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 8.5
         seer = 15
+        eer = 12.5
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
         hspf = 9.5
         seer = 16
+        eer = 12.5
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
+        eer = 12.5
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 9.5
         seer = 14.5
+        eer = 12.1
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
 
@@ -1469,8 +1498,6 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
       charge_defect_ratio = -0.25
     end
 
-    compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
-
     hpxml_bldg.heat_pumps.clear
     hpxml_bldg.heat_pumps.add(id: "HeatPump#{hpxml_bldg.heat_pumps.size + 1}",
                               distribution_system_idref: 'HVACDistribution1',
@@ -1478,6 +1505,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               heating_capacity: -1,
+                              heating_capacity_17F: -1,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
@@ -1486,6 +1514,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: hspf,
                               cooling_efficiency_seer: seer,
+                              cooling_efficiency_eer: eer,
                               compressor_type: compressor_type,
                               fan_watts_per_cfm: fan_watts_per_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,

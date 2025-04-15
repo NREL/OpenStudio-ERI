@@ -341,6 +341,7 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>-1.0</HeatingCapacity>
+              <HeatingCapacity17F>-1.0</HeatingCapacity17F>
               <CoolingCapacity>-1.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
               <BackupType>integrated</BackupType>
@@ -355,6 +356,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>10.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>8.8</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
