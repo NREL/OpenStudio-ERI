@@ -167,6 +167,7 @@
               <HeatingCapacity>11000.0</HeatingCapacity>
               <HeatingCapacity17F>6700.0</HeatingCapacity17F>
               <CoolingCapacity>9000.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>

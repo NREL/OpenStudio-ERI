@@ -800,6 +800,7 @@
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>35200.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionCoolLoadServed>0.444</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -818,6 +819,7 @@
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>22000.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionCoolLoadServed>0.278</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
@@ -836,6 +838,7 @@
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>22000.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionCoolLoadServed>0.278</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
