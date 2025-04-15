@@ -790,7 +790,7 @@ Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/H
   ``FractionHeatLoadServed``                       double   frac    >= 0, <= 1 [#]_  Yes                    Fraction of heating load served
   ``extension/FanMotorType``                       string           See [#]_         No        See [#]_     Blower fan model type
   ``extension/FanPowerWattsPerCFM``                double   W/cfm   >= 0 [#]_        Yes                    Blower fan efficiency at maximum fan speed [#]_
-  ``extension/HeatingAirflowCFM``                  double   cfm     >= 0             No        240 cfm/ton  Blower fan heating design airflow rate [#]_
+  ``extension/HeatingDesignAirflowCFM``            double   cfm     >= 0             No        240 cfm/ton  Blower fan heating design airflow rate [#]_
   ``extension/AirflowDefectRatio``                 double   frac    >= -0.9, <= 9    Yes                    Deviation between design/installed airflow rates [#]_
   ===============================================  =======  ======  ===============  ========  ===========  ================================================
 
@@ -803,7 +803,7 @@ Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/H
   .. [#] If FanMotorType is not provided and if there is a cooling system attached to the DistributionSystem, defaults to "PSC" if the attached cooling system CompressorType is "single stage", else "BPM"; If there's no cooling system attached, defaults to "PSC" if AFUE <= 0.9, else "BPM".
   .. [#] If there is a cooling system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the heating mode (HeatingAirflowCFM) or cooling mode (CoolingAirflowCFM of cooling system attached to the DistributionSystem).
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the heating mode (HeatingDesignAirflowCFM) or cooling mode (CoolingDesignAirflowCFM of cooling system attached to the DistributionSystem).
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
@@ -1021,7 +1021,7 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double  Btu/Wh  > 0 [#]_                 Yes                    Rated cooling efficiency [#]_
   ``extension/FanMotorType``                                        string          See [#]_                 No        See [#]_     Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0 [#]_                Yes                    Blower fan efficiency at maximum fan speed [#]_
-  ``extension/CoolingAirflowCFM``                                   double  cfm     >= 0                     No        360 cfm/ton  Blower fan cooling design airflow rate [#]_
+  ``extension/CoolingDesignAirflowCFM``                             double  cfm     >= 0                     No        360 cfm/ton  Blower fan cooling design airflow rate [#]_
   ``extension/AirflowDefectRatio``                                  double  frac    >= -0.9, <= 9            Yes                    Deviation between design/installed airflow rates [#]_
   ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25           Yes                    Deviation between design/installed refrigerant charges [#]_
   ================================================================  ======  ======  =======================  ========  ===========  ================================================
@@ -1039,7 +1039,7 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   .. [#] If FanMotorType is not provided, defaults to using attached furnace FanMotorType if available, else "PSC" if CompressorType is "single stage", else "BPM".
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the cooling mode (CoolingAirflowCFM) or heating mode (HeatingAirflowCFM of heating system attached to the DistributionSystem).
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the cooling mode (CoolingDesignAirflowCFM) or heating mode (HeatingDesignAirflowCFM of heating system attached to the DistributionSystem).
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
@@ -1171,7 +1171,7 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
   ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double  Btu/Wh  > 0 [#]_         Yes                       Rated cooling efficiency [#]_
   ``extension/FanMotorType``                                        string          See [#]_         No        BPM             Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0 [#]_        Yes                       Blower fan efficiency at maximum fan speed [#]_
-  ``extension/CoolingAirflowCFM``                                   double  cfm     >= 0             No        360 cfm/ton     Blower fan cooling design airflow rate [#]_
+  ``extension/CoolingDesignAirflowCFM``                             double  cfm     >= 0             No        360 cfm/ton     Blower fan cooling design airflow rate [#]_
   ``extension/AirflowDefectRatio``                                  double  frac    >= -0.9, <= 9    Yes                       Deviation between design/installed airflow rates [#]_
   ``extension/ChargeDefectRatio``                                   double  frac    -0.25, 0, 0.25   Yes                       Deviation between design/installed refrigerant charges [#]_
   ================================================================  ======  ======  ===============  ========  ==============  ================================================
@@ -1186,7 +1186,7 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
          If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanMotorType.
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the cooling mode (CoolingAirflowCFM) or heating mode (HeatingAirflowCFM of heating system attached to the DistributionSystem).
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the cooling mode (CoolingDesignAirflowCFM) or heating mode (HeatingDesignAirflowCFM of heating system attached to the DistributionSystem).
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
@@ -1296,8 +1296,8 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   ``AnnualHeatingEfficiency[Units="HSPF2" or Units="HSPF"]/Value``  double  Btu/Wh    > 0                       Yes                  Rated heating efficiency [#]_
   ``extension/FanMotorType``                                        string            See [#]_                  No        See [#]_   Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm     >= 0                      Yes                  Blower fan efficiency at maximum fan speed [#]_
-  ``extension/HeatingAirflowCFM``                                   double  cfm       >= 0                      No        See [#]_   Blower fan heating design airflow rate [#]_
-  ``extension/CoolingAirflowCFM``                                   double  cfm       >= 0                      No        See [#]_   Blower fan cooling design airflow rate [#]_
+  ``extension/HeatingDesignAirflowCFM``                             double  cfm       >= 0                      No        See [#]_   Blower fan heating design airflow rate [#]_
+  ``extension/CoolingDesignAirflowCFM``                             double  cfm       >= 0                      No        See [#]_   Blower fan cooling design airflow rate [#]_
   ``extension/AirflowDefectRatio``                                  double  frac      >= -0.9, <= 9             Yes                  Deviation between design/installed airflow rates [#]_
   ``extension/ChargeDefectRatio``                                   double  frac      -0.25, 0, 0.25            Yes                  Deviation between design/installed refrigerant charges [#]_
   ================================================================  ======  ========  ========================  ========  =========  ================================================
@@ -1318,10 +1318,10 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
          If not a split system, provide HSPF2 using the appropriate conversion factor.
   .. [#] FanMotorType choices are "PSC" (Permanent Split Capacitor) and "BPM" (Brushless Permanent Magnet).
   .. [#] If FanMotorType is not provided, defaults to "PSC" if CompressorType is "single stage", else "BPM".
-  .. [#] If HeatingAirflowCFM not provided, defaults to cfm/ton based on CoolingAirflowCFM if provided, else 360 cfm/ton.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the heating mode (HeatingAirflowCFM) or cooling mode (CoolingAirflowCFM).
-  .. [#] If CoolingAirflowCFM not provided, defaults to cfm/ton based on HeatingAirflowCFM if provided, else 360 cfm/ton.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the cooling mode (CoolingAirflowCFM) or heating mode (HeatingAirflowCFM).
+  .. [#] If HeatingDesignAirflowCFM not provided, defaults to cfm/ton based on CoolingDesignAirflowCFM if provided, else 360 cfm/ton.
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the heating mode (HeatingDesignAirflowCFM) or cooling mode (CoolingDesignAirflowCFM).
+  .. [#] If CoolingDesignAirflowCFM not provided, defaults to cfm/ton based on HeatingDesignAirflowCFM if provided, else 360 cfm/ton.
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the cooling mode (CoolingDesignAirflowCFM) or heating mode (HeatingDesignAirflowCFM).
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
@@ -1365,8 +1365,8 @@ Each ``HeatPump`` should represent a single outdoor unit, whether connected to o
   ``AnnualHeatingEfficiency[Units="HSPF2" or Units="HSPF"]/Value``  double  Btu/Wh    > 0                       Yes                       Rated heating efficiency [#]_
   ``extension/FanMotorType``                                        string            See [#]_                  No        BPM             Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm     >= 0                      Yes                       Blower fan efficiency at maximum fan speed [#]_
-  ``extension/HeatingAirflowCFM``                                   double  cfm       >= 0                      No        See [#]_        Blower fan heating design airflow rate [#]_
-  ``extension/CoolingAirflowCFM``                                   double  cfm       >= 0                      No        See [#]_        Blower fan cooling design airflow rate [#]_
+  ``extension/HeatingDesignAirflowCFM``                             double  cfm       >= 0                      No        See [#]_        Blower fan heating design airflow rate [#]_
+  ``extension/CoolingDesignAirflowCFM``                             double  cfm       >= 0                      No        See [#]_        Blower fan cooling design airflow rate [#]_
   ``extension/AirflowDefectRatio``                                  double  frac      >= -0.9, <= 9             Yes                       Deviation between design/installed airflow rates [#]_
   ``extension/ChargeDefectRatio``                                   double  frac      -0.25, 0, 0.25            Yes                       Deviation between design/installed refrigerant charges [#]_
   ================================================================  ======  ========  ========================  ========  ==============  ================================================
@@ -1383,10 +1383,10 @@ Each ``HeatPump`` should represent a single outdoor unit, whether connected to o
   .. [#] If HSPF provided, converted to HSPF2 using ANSI/RESNET/ICC 301-2022 Addendum C, where HSPF2 = HSPF * 0.85 if ducted and HSPF2 = HSPF * 0.90 if ductless.
   .. [#] FanMotorType choices are "PSC" (Permanent Split Capacitor) and "BPM" (Brushless Permanent Magnet).
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
-  .. [#] If HeatingAirflowCFM not provided, defaults to cfm/ton based on CoolingAirflowCFM if provided, else 360 cfm/ton.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the heating mode (HeatingAirflowCFM) or cooling mode (CoolingAirflowCFM).
-  .. [#] If CoolingAirflowCFM not provided, defaults to cfm/ton based on HeatingAirflowCFM if provided, else 360 cfm/ton.
-  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the *design* airflow rate should be provided for either the cooling mode (CoolingAirflowCFM) or heating mode (HeatingAirflowCFM).
+  .. [#] If HeatingDesignAirflowCFM not provided, defaults to cfm/ton based on CoolingDesignAirflowCFM if provided, else 360 cfm/ton.
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the heating mode (HeatingDesignAirflowCFM) or cooling mode (CoolingDesignAirflowCFM).
+  .. [#] If CoolingDesignAirflowCFM not provided, defaults to cfm/ton based on HeatingDesignAirflowCFM if provided, else 360 cfm/ton.
+  .. [#] When the home's blower fan airflow is measured according to `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_, the design airflow rate should be provided for either the cooling mode (CoolingDesignAirflowCFM) or heating mode (HeatingDesignAirflowCFM).
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.
@@ -1489,8 +1489,8 @@ Each ground-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/S
   ``extension/SharedLoopMotorEfficiency``         double   frac    > 0, < 1         No        0.85 [#]_  Shared loop motor efficiency
   ``extension/FanMotorType``                      string           See [#]_         No        See [#]_   Blower fan model type
   ``extension/FanPowerWattsPerCFM``               double   W/cfm   >= 0             Yes                  Blower fan efficiency at maximum fan speed [#]_
-  ``extension/HeatingAirflowCFM``                 double   cfm     >= 0             No        See [#]_   Blower fan heating design airflow rate
-  ``extension/CoolingAirflowCFM``                 double   cfm     >= 0             No        See [#]_   Blower fan cooling design airflow rate
+  ``extension/HeatingDesignAirflowCFM``           double   cfm     >= 0             No        See [#]_   Blower fan heating design airflow rate
+  ``extension/CoolingDesignAirflowCFM``           double   cfm     >= 0             No        See [#]_   Blower fan cooling design airflow rate
   ``extension/AirflowDefectRatio``                double   frac    >= -0.9, <= 9    Yes                  Deviation between design/installed airflow rates [#]_
   ``extension/ChargeDefectRatio``                 double   frac    -0.25, 0, 0.25   Yes                  Deviation between design/installed refrigerant charges [#]_
   ==============================================  =======  ======  ===============  ========  =========  ================================================
@@ -1510,8 +1510,8 @@ Each ground-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/S
   .. [#] FanMotorType choices are "PSC" (Permanent Split Capacitor) and "BPM" (Brushless Permanent Magnet).
   .. [#] If FanMotorType is not provided, defaults to "PSC" if COP <= 8.75/3.2, else "BPM".
   .. [#] If the fan power is not measured, a value of 0.58 W/cfm should be used according to `ANSI/RESNET/ICC 301-2019 Addendum B <https://www.resnet.us/wp-content/uploads/301-2019_Adndm_B-2020_final_rev11.5.22.pdf>`_.
-  .. [#] If HeatingAirflowCFM not provided, defaults to cfm/ton based on CoolingAirflowCFM if provided, else 360 cfm/ton.
-  .. [#] If CoolingAirflowCFM not provided, defaults to cfm/ton based on HeatingAirflowCFM if provided, else 360 cfm/ton.
+  .. [#] If HeatingDesignAirflowCFM not provided, defaults to cfm/ton based on CoolingDesignAirflowCFM if provided, else 360 cfm/ton.
+  .. [#] If CoolingDesignAirflowCFM not provided, defaults to cfm/ton based on HeatingDesignAirflowCFM if provided, else 360 cfm/ton.
   .. [#] AirflowDefectRatio is defined as (InstalledAirflow - DesignAirflow) / DesignAirflow; a value of zero means no airflow defect.
          A non-zero airflow defect can only be applied for systems attached to a distribution system.
          See `ANSI/RESNET/ACCA 310-2020 Standard for Grading the Installation of HVAC Systems <https://codes.iccsafe.org/content/ICC3102020P1>`_ for more information.

@@ -5,7 +5,7 @@ __New Features__
   - **Breaking change**: `CompressorType` required for central and mini-split air conditioners and heat pumps.
   - **Breaking change**: `HeatingCapacity17F` required for central and mini-split heat pumps; deprecates `HeatingCapacityRetention`.
   - **Breaking change**: EER2 or EER inputs (`AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value`) required for central and mini-split air conditioners and heat pumps.
-  - Adds design airflow rate inputs (`extension/HeatingAirflowCFM` and `extension/CoolingAirflowCFM`) to be used when the blower fan airflow is measured.
+  - Adds design airflow rate inputs (`extension/HeatingDesignAirflowCFM` and `extension/CoolingDesignAirflowCFM`) to be used when the blower fan airflow is measured.
   - Allows optional `extension/FanMotorType` input for central equipment.
   - Deprecates SHR inputs (e.g., `CoolingSensibleHeatFraction`); they are no longer used.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
