@@ -471,9 +471,7 @@ end
 
 def get_system_eec(system, type, is_dfhp_primary = nil)
   numerator = { 'HSPF' => 3.413,
-                'HSPF2' => 3.413,
                 'SEER' => 3.413,
-                'SEER2' => 3.413,
                 'EER' => 3.413,
                 'CEER' => 3.413,
                 'AFUE' => 1.0,
@@ -497,7 +495,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
       elsif system.respond_to?(:heating_efficiency_hspf) && (not system.heating_efficiency_hspf.nil?)
         return numerator['HSPF'] / system.heating_efficiency_hspf
       elsif system.respond_to?(:heating_efficiency_hspf2) && (not system.heating_efficiency_hspf2.nil?)
-        return numerator['HSPF2'] / system.heating_efficiency_hspf2
+        return numerator['HSPF'] / HVAC.calc_hspf_from_hspf2(system)
       elsif system.respond_to?(:heating_efficiency_cop) && (not system.heating_efficiency_cop.nil?)
         return numerator['COP'] / system.heating_efficiency_cop
       end
@@ -506,7 +504,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
     if system.respond_to?(:cooling_efficiency_seer) && (not system.cooling_efficiency_seer.nil?)
       return numerator['SEER'] / system.cooling_efficiency_seer
     elsif system.respond_to?(:cooling_efficiency_seer2) && (not system.cooling_efficiency_seer2.nil?)
-      return numerator['SEER2'] / system.cooling_efficiency_seer2
+      return numerator['SEER'] / HVAC.calc_seer_from_seer2(system)
     elsif system.respond_to?(:cooling_efficiency_eer) && (not system.cooling_efficiency_eer.nil?)
       return numerator['EER'] / system.cooling_efficiency_eer
     elsif system.respond_to?(:cooling_efficiency_ceer) && (not system.cooling_efficiency_ceer.nil?)
@@ -897,49 +895,49 @@ def write_eri_results(results, results_iad, output_format)
 
   # Reference Home
   results_out << [nil] if output_format == 'csv' # line break
-  results_out << ['REUL Heating (MBtu)', results[:eri_heat].map { |c| c.reul.round(2) }.join(',')]
-  results_out << ['REUL Cooling (MBtu)', results[:eri_cool].map { |c| c.reul.round(2) }.join(',')]
-  results_out << ['REUL Hot Water (MBtu)', results[:eri_dhw].map { |c| c.reul.round(2) }.join(',')]
-  results_out << ['EC_r Heating (MBtu)', results[:eri_heat].map { |c| c.ec_r.round(2) }.join(',')]
-  results_out << ['EC_r Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_r.round(2) }.join(',')]
-  results_out << ['EC_r Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_r.round(2) }.join(',')]
-  results_out << ['EC_r L&A (MBtu)', results[:reul_la].round(2)]
-  results_out << ['EC_r Vent (MBtu)', results[:reul_mv].round(2)]
-  results_out << ['EC_r Dehumid (MBtu)', results[:reul_dh].round(2)]
-  results_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(4) }.join(',')]
-  results_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(4) }.join(',')]
-  results_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(4) }.join(',')]
-  results_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(4) }.join(',')]
-  results_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(4) }.join(',')]
-  results_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(4) }.join(',')]
+  results_out << ['REUL Heating (MBtu)', results[:eri_heat].map { |c| c.reul.round(3) }.join(',')]
+  results_out << ['REUL Cooling (MBtu)', results[:eri_cool].map { |c| c.reul.round(3) }.join(',')]
+  results_out << ['REUL Hot Water (MBtu)', results[:eri_dhw].map { |c| c.reul.round(3) }.join(',')]
+  results_out << ['EC_r Heating (MBtu)', results[:eri_heat].map { |c| c.ec_r.round(3) }.join(',')]
+  results_out << ['EC_r Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_r.round(3) }.join(',')]
+  results_out << ['EC_r Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_r.round(3) }.join(',')]
+  results_out << ['EC_r L&A (MBtu)', results[:reul_la].round(3)]
+  results_out << ['EC_r Vent (MBtu)', results[:reul_mv].round(3)]
+  results_out << ['EC_r Dehumid (MBtu)', results[:reul_dh].round(3)]
+  results_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(3) }.join(',')]
+  results_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(3) }.join(',')]
+  results_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(3) }.join(',')]
+  results_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(3) }.join(',')]
+  results_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(3) }.join(',')]
+  results_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(3) }.join(',')]
 
   # Rated Home
   results_out << [nil] if output_format == 'csv' # line break
-  results_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(4) }.join(',')]
-  results_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(4) }.join(',')]
-  results_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(4) }.join(',')]
+  results_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(3) }.join(',')]
+  results_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(3) }.join(',')]
+  results_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(3) }.join(',')]
   if results[:eri_vent_preheat].empty?
     results_out << ['nMEUL Vent Preheat', 0.0]
   else
-    results_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(4) }.join(',')]
+    results_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(3) }.join(',')]
   end
   if results[:eri_vent_precool].empty?
     results_out << ['nMEUL Vent Precool', 0.0]
   else
-    results_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(4) }.join(',')]
+    results_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(3) }.join(',')]
   end
-  results_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(4) }.join(',')]
-  results_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(4) }.join(',')]
-  results_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(4) }.join(',')]
-  results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
-  results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(2)]
-  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
-  results_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(4) }.join(',')]
-  results_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(4) }.join(',')]
-  results_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(4) }.join(',')]
+  results_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(3) }.join(',')]
+  results_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(3) }.join(',')]
+  results_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(3) }.join(',')]
+  results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(3) }.join(',')]
+  results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(3) }.join(',')]
+  results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(3) }.join(',')]
+  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(3)]
+  results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(3)]
+  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(3)]
+  results_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(3) }.join(',')]
+  results_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(3) }.join(',')]
+  results_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(3) }.join(',')]
 
   # Coefficients
   results_out << [nil] if output_format == 'csv' # line break

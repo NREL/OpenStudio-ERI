@@ -1094,16 +1094,27 @@ def _get_hvac(hpxml_bldg)
     num_afue += 1
   end
   hpxml_bldg.cooling_systems.each do |cooling_system|
-    seer += cooling_system.cooling_efficiency_seer
-    num_seer += 1
+    if not cooling_system.cooling_efficiency_seer.nil?
+      seer += cooling_system.cooling_efficiency_seer
+      num_seer += 1
+    elsif not cooling_system.cooling_efficiency_seer2.nil?
+      seer += HVAC.calc_seer_from_seer2(cooling_system)
+      num_seer += 1
+    end
   end
   hpxml_bldg.heat_pumps.each do |heat_pump|
     if not heat_pump.heating_efficiency_hspf.nil?
       hspf += heat_pump.heating_efficiency_hspf
       num_hspf += 1
+    elsif not heat_pump.heating_efficiency_hspf2.nil?
+      hspf += HVAC.calc_hspf_from_hspf2(heat_pump)
+      num_hspf += 1
     end
     if not heat_pump.cooling_efficiency_seer.nil?
       seer += heat_pump.cooling_efficiency_seer
+      num_seer += 1
+    elsif not heat_pump.cooling_efficiency_seer2.nil?
+      seer += HVAC.calc_seer_from_seer2(heat_pump)
       num_seer += 1
     end
   end
@@ -1113,7 +1124,7 @@ def _get_hvac(hpxml_bldg)
     dse += hvac_distribution.annual_cooling_dse
     num_dse += 1
   end
-  return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
+  return (afue / num_afue).round(2), (hspf / num_hspf).round(1), (seer / num_seer).round(1), (dse / num_dse).round(2)
 end
 
 def _get_tstat(eri_version, hpxml_bldg)
