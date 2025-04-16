@@ -442,7 +442,7 @@
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>1.2</Value>
+                <Value>10.2</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
@@ -478,7 +478,7 @@
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>1.2</Value>
+                <Value>10.2</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
@@ -514,7 +514,7 @@
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
-                <Value>1.2</Value>
+                <Value>10.2</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
