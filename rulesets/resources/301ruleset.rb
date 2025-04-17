@@ -2677,7 +2677,7 @@ module ERI_301_Ruleset
   end
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, htg_load_frac, clg_load_frac, orig_htg_system: nil, orig_clg_system: nil, is_all_electric: false)
-    # 7.7 HSPF, SEER 13 air source heat pump
+    # 7.7 HSPF (6.55 HSPF2), SEER 13 (SEER2 12.35), EER 11.3 (EER2 10.7) air source heat pump
     if not orig_htg_system.nil?
       if orig_htg_system.is_a? HPXML::CoolingSystem # Cooling system w/ integrated heating
         htg_seed_id = orig_htg_system.clg_seed_id.nil? ? orig_htg_system.id : orig_htg_system.clg_seed_id
@@ -2734,9 +2734,9 @@ module ERI_301_Ruleset
                             backup_heating_switchover_temp: backup_switchover_temp,
                             fraction_heat_load_served: htg_load_frac,
                             fraction_cool_load_served: clg_load_frac,
-                            cooling_efficiency_seer: 13.0,
-                            cooling_efficiency_eer: 11.0, # FIXME: Placeholder until guidance from RESNET
-                            heating_efficiency_hspf: 7.7,
+                            cooling_efficiency_seer2: 12.35,
+                            cooling_efficiency_eer2: 10.7,
+                            heating_efficiency_hspf2: 6.55,
                             airflow_defect_ratio: airflow_defect_ratio,
                             fan_watts_per_cfm: fan_watts_per_cfm,
                             charge_defect_ratio: charge_defect_ratio,
@@ -2746,7 +2746,7 @@ module ERI_301_Ruleset
   end
 
   def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system: nil)
-    # 13 SEER electric air conditioner
+    # SEER 13 (SEER2 12.35), EER 11.3 (EER2 10.7) electric air conditioner
     if not orig_system.nil?
       seed_id = orig_system.clg_seed_id.nil? ? orig_system.id : orig_system.clg_seed_id
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
@@ -2765,8 +2765,8 @@ module ERI_301_Ruleset
                                  compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
-                                 cooling_efficiency_seer: 13.0,
-                                 cooling_efficiency_eer: 11.0, # FIXME: Placeholder until guidance from RESNET
+                                 cooling_efficiency_seer2: 12.35,
+                                 cooling_efficiency_eer2: 10.7,
                                  airflow_defect_ratio: airflow_defect_ratio,
                                  fan_watts_per_cfm: fan_watts_per_cfm,
                                  charge_defect_ratio: charge_defect_ratio,

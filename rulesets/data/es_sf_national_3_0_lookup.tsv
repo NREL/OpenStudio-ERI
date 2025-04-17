@@ -64,8 +64,8 @@ hvac_ac_compressor		single stage	single stage	single stage	single stage	single s
 hvac_ashp_compressor		single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage		
 hvac_ac_seer		14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	13	13	13	13	13	13	13	13	13	13	13
 hvac_ashp_seer		14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5	14.5		
-hvac_ac_eer		12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	11	11	11	11	11	11	11	11	11	11	11
-hvac_ashp_eer		12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1	12.1		
+hvac_ac_eer		12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3
+hvac_ashp_eer		12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2	12.2		
 hvac_gshp_eer																				16.1	16.1
 hvac_wlhp_eer		14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14
 hvac_chiller_kw_per_ton		0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78

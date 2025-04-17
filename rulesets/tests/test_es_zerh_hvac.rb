@@ -256,11 +256,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   end
 
   def get_eer_from_seer(seer)
-    return { 13.0 => 11.0,
-             14.0 => 11.8,
-             14.5 => 12.1,
-             15.0 => 12.5,
-             16.0 => 12.5,
+    return { 13.0 => 11.3,
+             14.0 => 11.9,
+             14.5 => 12.2,
+             15.0 => 12.4,
+             16.0 => 13.0,
              18.0 => 13.8 }[seer]
   end
 
