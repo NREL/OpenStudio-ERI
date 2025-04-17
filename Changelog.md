@@ -7,6 +7,7 @@ __New Features__
   - **Breaking change**: EER2 or EER inputs (`AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value`) required for central and mini-split air conditioners and heat pumps.
   - Adds design airflow rate inputs (`extension/HeatingDesignAirflowCFM` and `extension/CoolingDesignAirflowCFM`) to be used when the blower fan airflow is measured.
   - Allows optional `extension/FanMotorType` input for central equipment.
+  - Allows optional `extension/EquipmentType` inputs for central air conditioners and heat pumps; only used for SEER/SEER2, EER/EER2, and HSPF/HSPF2 conversions.
   - Deprecates SHR inputs (e.g., `CoolingSensibleHeatFraction`); they are no longer used.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way).

@@ -1311,6 +1311,7 @@ module ERI_301_Ruleset
                                    integrated_heating_system_capacity: orig_cooling_system.integrated_heating_system_capacity,
                                    integrated_heating_system_efficiency_percent: orig_cooling_system.integrated_heating_system_efficiency_percent,
                                    integrated_heating_system_fraction_heat_load_served: orig_cooling_system.integrated_heating_system_fraction_heat_load_served,
+                                   equipment_type: orig_cooling_system.equipment_type,
                                    htg_seed_id: htg_seed_id)
     end
     # Add reference cooling system for residual load
@@ -1372,6 +1373,7 @@ module ERI_301_Ruleset
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio,
                               pan_heater_control_type: pan_heater_control_type,
+                              equipment_type: orig_heat_pump.equipment_type,
                               htg_seed_id: orig_heat_pump.htg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.htg_seed_id,
                               clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id)
     end
@@ -2741,6 +2743,7 @@ module ERI_301_Ruleset
                             fan_watts_per_cfm: fan_watts_per_cfm,
                             charge_defect_ratio: charge_defect_ratio,
                             pan_heater_control_type: HPXML::HVACPanHeaterControlTypeContinuous,
+                            equipment_type: HPXML::HVACEquipmentTypeSplit,
                             htg_seed_id: htg_seed_id,
                             clg_seed_id: clg_seed_id)
   end
@@ -2770,6 +2773,7 @@ module ERI_301_Ruleset
                                  airflow_defect_ratio: airflow_defect_ratio,
                                  fan_watts_per_cfm: fan_watts_per_cfm,
                                  charge_defect_ratio: charge_defect_ratio,
+                                 equipment_type: HPXML::HVACEquipmentTypeSplit,
                                  clg_seed_id: seed_id)
   end
 

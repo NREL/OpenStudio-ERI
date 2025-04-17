@@ -696,6 +696,8 @@
       <sch:assert role='ERROR' test='number(h:extension/h:AirflowDefectRatio) &lt;= 9 or not(h:extension/h:AirflowDefectRatio)'>Expected extension/AirflowDefectRatio to be less than or equal to 9</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:ChargeDefectRatio) = 0 or number(h:extension/h:ChargeDefectRatio) = -0.25 or number(h:extension/h:ChargeDefectRatio) = 0.25 or not(h:extension/h:ChargeDefectRatio)'>Expected extension/ChargeDefectRatio to be 0, -0.25, or 0.25</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:EquipmentType) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/EquipmentType</sch:assert>
+      <sch:assert role='ERROR' test='h:extension/h:EquipmentType[text()="split system" or text()="packaged system" or text()="small duct high velocity system" or text()="space constrained system"] or not(h:extension/h:EquipmentType)'>Expected extension/EquipmentType to be 'split system', 'packaged system', 'small duct high velocity system', or 'space constrained system'</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -870,6 +872,8 @@
       <sch:assert role='ERROR' test='number(h:extension/h:AirflowDefectRatio) &lt;= 9 or not(h:extension/h:AirflowDefectRatio)'>Expected extension/AirflowDefectRatio to be less than or equal to 9</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:ChargeDefectRatio) = 1'>Expected 1 element(s) for xpath: extension/ChargeDefectRatio</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:ChargeDefectRatio) = 0 or number(h:extension/h:ChargeDefectRatio) = -0.25 or number(h:extension/h:ChargeDefectRatio) = 0.25 or not(h:extension/h:ChargeDefectRatio)'>Expected extension/ChargeDefectRatio to be 0, -0.25, or 0.25</sch:assert>
+      <sch:assert role='ERROR' test='count(h:extension/h:EquipmentType) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/EquipmentType</sch:assert>
+      <sch:assert role='ERROR' test='h:extension/h:EquipmentType[text()="split system" or text()="packaged system" or text()="small duct high velocity system" or text()="space constrained system"] or not(h:extension/h:EquipmentType)'>Expected extension/EquipmentType to be 'split system', 'packaged system', 'small duct high velocity system', or 'space constrained system'</sch:assert>
     </sch:rule>
   </sch:pattern>
 

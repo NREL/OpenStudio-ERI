@@ -2336,6 +2336,7 @@ def create_sample_hpxmls
                   'base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-space-constrained.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-boiler-elec-only.xml',
@@ -2344,6 +2345,7 @@ def create_sample_hpxmls
                   'base-hvac-boiler-propane-only.xml',
                   'base-hvac-central-ac-only-1-speed.xml',
                   'base-hvac-central-ac-only-1-speed-seer2.xml',
+                  'base-hvac-central-ac-only-1-speed-space-constrained.xml',
                   'base-hvac-central-ac-only-2-speed.xml',
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
@@ -2694,9 +2696,12 @@ def create_sample_hpxmls
         next
       end
 
+      orig_equipment_type = hvac_system.equipment_type
+      hvac_system.equipment_type = HPXML::HVACEquipmentTypeSplit
       hvac_system.cooling_efficiency_eer2 = Defaults.get_hvac_eer2(hvac_system)
       hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(1)
       hvac_system.cooling_efficiency_eer2 = nil
+      hvac_system.equipment_type = orig_equipment_type
     end
     hpxml_bldg.pv_systems.each do |pv_system|
       pv_system.is_shared_system = false if pv_system.is_shared_system.nil?
