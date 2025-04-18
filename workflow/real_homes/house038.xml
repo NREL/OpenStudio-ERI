@@ -595,7 +595,6 @@
                 <Value>0.8</Value>
               </BackupAnnualHeatingEfficiency>
               <BackupHeatingCapacity>78000.0</BackupHeatingCapacity>
-              <BackupHeatingSwitchoverTemperature>33.0</BackupHeatingSwitchoverTemperature>
               <FractionHeatLoadServed>0.535</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.548</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>

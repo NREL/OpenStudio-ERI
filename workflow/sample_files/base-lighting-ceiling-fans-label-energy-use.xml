@@ -321,9 +321,6 @@
           <HVACControl>
             <SystemIdentifier id='HVACControl1'/>
             <ControlType>manual thermostat</ControlType>
-            <extension>
-              <CeilingFanSetpointTempCoolingSeasonOffset>0.5</CeilingFanSetpointTempCoolingSeasonOffset>
-            </extension>
           </HVACControl>
           <HVACDistribution>
             <SystemIdentifier id='HVACDistribution1'/>

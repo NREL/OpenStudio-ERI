@@ -2354,7 +2354,6 @@ def create_sample_hpxmls
                   'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-ducts-buried.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
-                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
                   'base-hvac-elec-resistance-only.xml',
                   'base-hvac-evap-cooler-only.xml',
                   'base-hvac-evap-cooler-only-ducted.xml',
@@ -2655,6 +2654,8 @@ def create_sample_hpxmls
       end
     end
     hpxml_bldg.heat_pumps.each do |heat_pump|
+      heat_pump.backup_heating_lockout_temp = nil
+      heat_pump.backup_heating_switchover_temp = nil
       if heat_pump.heating_capacity_17F.nil?
         if not heat_pump.heating_capacity_fraction_17F.nil?
           heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * heat_pump.heating_capacity_fraction_17F).round
@@ -2807,12 +2808,15 @@ def create_sample_hpxmls
 
       dhw_dist.shared_recirculation_motor_efficiency = 0.9
     end
-    hpxml_bldg.hvac_controls.each do |hvac_control|
-      hvac_control.heating_setpoint_temp = nil
-      hvac_control.cooling_setpoint_temp = nil
-      next unless hvac_control.control_type.nil?
 
-      hvac_control.control_type = HPXML::HVACControlTypeManual
+    # Drop all thermostat setpoint info
+    if not hpxml_bldg.hvac_controls.empty?
+      control_type = hpxml_bldg.hvac_controls[0].control_type
+      control_type = HPXML::HVACControlTypeManual if control_type.nil?
+      control_id = hpxml_bldg.hvac_controls[0].id
+      hpxml_bldg.hvac_controls[0].delete
+      hpxml_bldg.hvac_controls.add(id: control_id,
+                                   control_type: control_type)
     end
 
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)

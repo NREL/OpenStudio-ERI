@@ -5,10 +5,12 @@ __New Features__
   - **Breaking change**: `CompressorType` required for central and mini-split air conditioners and heat pumps.
   - **Breaking change**: `HeatingCapacity17F` required for central and mini-split heat pumps; deprecates `HeatingCapacityRetention`.
   - **Breaking change**: EER2 or EER inputs (`AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value`) required for central and mini-split air conditioners and heat pumps.
+  - **Breaking change**: `BackupHeatingLockoutTemperature` and `BackupHeatingSwitchoverTemperature` inputs are no longer allowed.
+  - **Breaking change**: `CompressorLockoutTemperature` is no longer allowed for HPs w/ fossil fuel backup; it is only allowed for HPs with electric backup or no backup.
+  - **Breaking change**: SHR inputs (e.g., `CoolingSensibleHeatFraction`) are no longer allowed.
   - Adds design airflow rate inputs (`extension/HeatingDesignAirflowCFM` and `extension/CoolingDesignAirflowCFM`) to be used when the blower fan airflow is measured.
   - Allows optional `extension/FanMotorType` input for central equipment.
   - Allows optional `extension/EquipmentType` inputs for central air conditioners and heat pumps; only used for SEER/SEER2, EER/EER2, and HSPF/HSPF2 conversions.
-  - Deprecates SHR inputs (e.g., `CoolingSensibleHeatFraction`); they are no longer used.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way).
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.

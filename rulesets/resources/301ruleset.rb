@@ -1337,6 +1337,11 @@ module ERI_301_Ruleset
           HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
         pan_heater_control_type = HPXML::HVACPanHeaterControlTypeContinuous
       end
+      compressor_lockout_temp = get_hp_compressor_lockout_temp(orig_heat_pump.heat_pump_type,
+                                                               orig_heat_pump.backup_heating_fuel,
+                                                               orig_heat_pump.compressor_type,
+                                                               orig_heat_pump.compressor_lockout_temp)
+      backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(orig_heat_pump.heat_pump_type)
       new_bldg.heat_pumps.add(id: orig_heat_pump.id,
                               is_shared_system: orig_heat_pump.is_shared_system,
                               number_of_units_served: orig_heat_pump.number_of_units_served,
@@ -1344,17 +1349,16 @@ module ERI_301_Ruleset
                               heat_pump_type: orig_heat_pump.heat_pump_type,
                               heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
                               compressor_type: orig_heat_pump.compressor_type,
-                              compressor_lockout_temp: orig_heat_pump.compressor_lockout_temp,
+                              compressor_lockout_temp: compressor_lockout_temp,
                               heating_capacity: orig_heat_pump.heating_capacity,
                               heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
                               cooling_capacity: orig_heat_pump.cooling_capacity,
                               backup_type: orig_heat_pump.backup_type,
+                              backup_heating_lockout_temp: backup_heating_lockout_temp,
                               backup_heating_fuel: orig_heat_pump.backup_heating_fuel,
                               backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
                               backup_heating_efficiency_percent: orig_heat_pump.backup_heating_efficiency_percent,
                               backup_heating_efficiency_afue: orig_heat_pump.backup_heating_efficiency_afue,
-                              backup_heating_lockout_temp: orig_heat_pump.backup_heating_lockout_temp,
-                              backup_heating_switchover_temp: orig_heat_pump.backup_heating_switchover_temp,
                               fraction_heat_load_served: orig_heat_pump.fraction_heat_load_served,
                               fraction_cool_load_served: orig_heat_pump.fraction_cool_load_served,
                               cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
@@ -2690,13 +2694,10 @@ module ERI_301_Ruleset
       # Handle backup
       if orig_htg_system.is_a?(HPXML::HeatPump) && orig_htg_system.is_dual_fuel && !is_all_electric
         # Dual-fuel HP in both Rated and Reference homes
-        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_htg_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
-        backup_switchover_temp = orig_htg_system.backup_heating_switchover_temp
-        backup_lockout_temp = orig_htg_system.backup_heating_lockout_temp
       end
     end
     if not orig_clg_system.nil?
@@ -2718,22 +2719,29 @@ module ERI_301_Ruleset
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
     charge_defect_ratio = get_reference_hvac_charge_defect_ratio()
 
+    heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
+    compressor_type = HPXML::HVACCompressorTypeSingleStage
+
+    compressor_lockout_temp = get_hp_compressor_lockout_temp(heat_pump_type,
+                                                             backup_fuel,
+                                                             compressor_type)
+    backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(heat_pump_type)
+
     new_bldg.heat_pumps.add(id: "HeatPump#{new_bldg.heat_pumps.size + 1}",
                             distribution_system_idref: dist_id,
-                            heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
+                            heat_pump_type: heat_pump_type,
                             heat_pump_fuel: HPXML::FuelTypeElectricity,
-                            compressor_type: HPXML::HVACCompressorTypeSingleStage,
+                            compressor_type: compressor_type,
                             compressor_lockout_temp: compressor_lockout_temp,
                             cooling_capacity: -1, # Use auto-sizing
                             heating_capacity: -1, # Use auto-sizing
                             heating_capacity_17F: -1, # Use auto-sizing
                             backup_type: backup_type,
+                            backup_heating_lockout_temp: backup_heating_lockout_temp,
                             backup_heating_fuel: backup_fuel,
                             backup_heating_capacity: backup_capacity,
                             backup_heating_efficiency_percent: backup_efficiency_percent,
                             backup_heating_efficiency_afue: backup_efficiency_afue,
-                            backup_heating_lockout_temp: backup_lockout_temp,
-                            backup_heating_switchover_temp: backup_switchover_temp,
                             fraction_heat_load_served: htg_load_frac,
                             fraction_cool_load_served: clg_load_frac,
                             cooling_efficiency_seer2: 12.35,
@@ -3125,5 +3133,37 @@ module ERI_301_Ruleset
     end
 
     fail "Unable to calculate area-weighted avg for #{attribute}."
+  end
+
+  def self.get_hp_compressor_lockout_temp(heat_pump_type, backup_heating_fuel, compressor_type, compressor_lockout_temp = nil)
+    return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+    # Logic per RESNET MINHERS 82
+    if backup_heating_fuel == HPXML::FuelTypeElectricity
+      # Electric
+
+      # Use user input if provided
+      if not compressor_lockout_temp.nil?
+        return compressor_lockout_temp
+      end
+
+      # No user input, default
+      if compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+        return -20.0 # F
+      else
+        return 0.0 # F
+      end
+    else
+      # Fossil fuel
+
+      # Use RESNET prescribed value
+      return 30.0 # F
+    end
+  end
+
+  def self.get_hp_backup_heating_lockout_temp(heat_pump_type)
+    return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+    return 80.0 # F, effectively disables the lockout temp
   end
 end
