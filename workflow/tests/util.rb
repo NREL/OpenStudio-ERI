@@ -322,6 +322,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
       end
     end
+    new_hpxml_bldg.heat_pumps[0].backup_heating_lockout_temp = nil unless new_hpxml_bldg.heat_pumps.empty?
     XMLHelper.write_file(new_hpxml.to_doc, hpxmls[:ref])
 
     _rundir, _hpxmls, csvs = _run_workflow(hpxmls[:ref], test_name)
