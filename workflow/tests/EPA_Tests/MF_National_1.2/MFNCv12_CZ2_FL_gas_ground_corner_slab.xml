@@ -235,7 +235,7 @@
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
                 <Units>EER</Units>
-                <Value>12.5</Value>
+                <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.2</AirflowDefectRatio>

@@ -1265,7 +1265,7 @@ module ERI_301_Ruleset
                                    fan_motor_type: orig_heating_system.fan_motor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    fan_watts: orig_heating_system.fan_watts,
-                                   heating_airflow_cfm: orig_heating_system.heating_airflow_cfm,
+                                   heating_design_airflow_cfm: orig_heating_system.heating_design_airflow_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    htg_seed_id: orig_heating_system.htg_seed_id.nil? ? orig_heating_system.id : orig_heating_system.htg_seed_id)
     end
@@ -1303,7 +1303,7 @@ module ERI_301_Ruleset
                                    fan_coil_watts: orig_cooling_system.fan_coil_watts,
                                    fan_motor_type: orig_cooling_system.fan_motor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
-                                   cooling_airflow_cfm: orig_cooling_system.cooling_airflow_cfm,
+                                   cooling_design_airflow_cfm: orig_cooling_system.cooling_design_airflow_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    charge_defect_ratio: charge_defect_ratio,
                                    clg_seed_id: orig_cooling_system.clg_seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.clg_seed_id,
@@ -1368,8 +1368,8 @@ module ERI_301_Ruleset
                               pump_watts_per_ton: orig_heat_pump.pump_watts_per_ton,
                               fan_motor_type: orig_heat_pump.fan_motor_type,
                               fan_watts_per_cfm: fan_watts_per_cfm,
-                              heating_airflow_cfm: orig_heat_pump.heating_airflow_cfm,
-                              cooling_airflow_cfm: orig_heat_pump.cooling_airflow_cfm,
+                              heating_design_airflow_cfm: orig_heat_pump.heating_design_airflow_cfm,
+                              cooling_design_airflow_cfm: orig_heat_pump.cooling_design_airflow_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio,
                               pan_heater_control_type: pan_heater_control_type,

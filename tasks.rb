@@ -1325,31 +1325,31 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('CZ2')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
-        eer = 12.5
+        eer = 13.0
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 14.5
-        eer = 12.1
+        eer = 12.2
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
-        eer = 12.5
+        eer = 13.0
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 13
-        eer = 11
+        eer = 11.3
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 14
-        eer = 11.8
+        eer = 11.9
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       else
         seer = 13
-        eer = 11
+        eer = 11.3
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
@@ -1445,41 +1445,41 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
-        eer = 12.5
+        eer = 13.0
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 8.2
         seer = 15
-        eer = 12.5
+        eer = 12.4
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
-        eer = 12.5
+        eer = 13.0
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 8.5
         seer = 15
-        eer = 12.5
+        eer = 12.4
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
       if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
         hspf = 9.5
         seer = 16
-        eer = 12.5
+        eer = 13.0
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
-        eer = 12.5
+        eer = 13.0
         compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 9.5
         seer = 14.5
-        eer = 12.1
+        eer = 12.2
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
