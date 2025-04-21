@@ -8,7 +8,7 @@ __New Features__
   - **Breaking change**: `BackupHeatingLockoutTemperature` and `BackupHeatingSwitchoverTemperature` inputs are no longer allowed.
   - **Breaking change**: `CompressorLockoutTemperature` is no longer allowed for HPs w/ fossil fuel backup; it is only allowed for HPs with electric backup or no backup.
   - **Breaking change**: SHR inputs (e.g., `CoolingSensibleHeatFraction`) are no longer allowed.
-  - Adds design airflow rate inputs (`extension/HeatingDesignAirflowCFM` and `extension/CoolingDesignAirflowCFM`) to be used when the blower fan airflow is measured.
+  - Allows optional design airflow rate inputs (`extension/HeatingDesignAirflowCFM` and `extension/CoolingDesignAirflowCFM`) to be used when the blower fan airflow is measured.
   - Allows optional `extension/FanMotorType` input for central equipment.
   - Allows optional `extension/EquipmentType` inputs for central air conditioners and heat pumps; only used for SEER/SEER2, EER/EER2, and HSPF/HSPF2 conversions.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
