@@ -2493,7 +2493,7 @@ module ERI_301_Ruleset
       end
     end
 
-    ach50 = infil_values[:ach50] * a_ext
+    ach50 = infil_values[:ach50]
 
     # Apply min Natural ACH?
     min_nach = nil
@@ -2525,6 +2525,8 @@ module ERI_301_Ruleset
         ach50 = min_ach50
       end
     end
+
+    ach50 *= a_ext
 
     return ach50, a_ext
   end
