@@ -1571,10 +1571,17 @@ module ES_ZERH_Ruleset
     backup_heating_capacity = -1 if backup_heating_capacity.nil? # Use auto-sizing
 
     if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
+      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated
       heat_pump_backup_fuel = HPXML::FuelTypeElectricity
-      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
-      heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
-      heating_capacity_17F = -1
+      if orig_htg_system.is_a?(HPXML::HeatPump) && (not orig_htg_system.backup_heating_fuel.nil?)
+        heat_pump_backup_fuel = orig_htg_system.backup_heating_fuel
+      end
+      if heat_pump_backup_fuel == HPXML::FuelTypeElectricity
+        heat_pump_backup_eff = 1.0
+      else
+        heat_pump_backup_eff = get_default_furnace_afue(heat_pump_backup_fuel)
+      end
+      heating_capacity_17F = -1 # Use auto-sizing
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = Defaults.get_gshp_pump_power()
     end

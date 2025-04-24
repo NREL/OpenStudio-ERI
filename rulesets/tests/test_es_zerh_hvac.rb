@@ -732,7 +732,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: get_gas_furnace_afue_cz5(program_version), **hvac_iq_values }])
+
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
