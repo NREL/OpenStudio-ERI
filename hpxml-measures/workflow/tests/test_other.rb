@@ -19,7 +19,7 @@ class WorkflowOtherTest < Minitest::Test
       output_format = 'csv' if output_format == 'csv_dview'
 
       # Check for output files
-      assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
+      assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack')) # Produced because --debug flag if used
       assert(File.exist? File.join(File.dirname(xml), 'run', "results_annual.#{output_format}"))
       assert(File.exist? File.join(File.dirname(xml), 'run', "results_timeseries.#{output_format}"))
       assert(File.exist?(File.join(File.dirname(xml), 'run', "results_bills.#{output_format}")))
@@ -52,8 +52,10 @@ class WorkflowOtherTest < Minitest::Test
     assert(File.exist? File.join(File.dirname(xml), 'run', 'in.epJSON'))
 
     # Check for output files
-    assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
+
+    # Check for no E+ msgpack files
+    refute(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
   end
 
   def test_run_simulation_idf_input
@@ -67,8 +69,10 @@ class WorkflowOtherTest < Minitest::Test
     assert(File.exist? File.join(File.dirname(xml), 'run', 'in.idf'))
 
     # Check for output files
-    assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
+
+    # Check for no E+ msgpack files
+    refute(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
   end
 
   def test_run_simulation_faster_performance
@@ -79,8 +83,10 @@ class WorkflowOtherTest < Minitest::Test
     system(command, err: File::NULL)
 
     # Check for output files
-    assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
+
+    # Check for no E+ msgpack files
+    refute(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
 
     # Check component loads don't exist
     component_loads = {}
@@ -107,10 +113,16 @@ class WorkflowOtherTest < Minitest::Test
       system(command, err: File::NULL)
 
       # Check for output files
-      assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
       assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
       assert(File.exist? File.join(File.dirname(xml), 'run', 'in.schedules.csv'))
       assert(File.exist? File.join(File.dirname(xml), 'run', 'stochastic.csv'))
+
+      # Check for E+ msgpack files
+      if debug
+        assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
+      else
+        refute(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
+      end
 
       # Check stochastic.csv headers
       schedules = CSV.read(File.join(File.dirname(xml), 'run', 'stochastic.csv'), headers: true)
@@ -142,8 +154,10 @@ class WorkflowOtherTest < Minitest::Test
       system(command, err: File::NULL)
 
       # Check for output files
-      assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
       assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
+
+      # Check for no E+ msgpack files
+      refute(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
 
       timeseries_output_path = File.join(File.dirname(xml), 'run', 'results_timeseries.csv')
       if not invalid_variable_only
@@ -184,12 +198,14 @@ class WorkflowOtherTest < Minitest::Test
     system(command, err: File::NULL)
 
     # Check for output files
-    assert(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_timeseries_timestep.csv'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_timeseries_hourly.csv'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_timeseries_daily.csv'))
     assert(File.exist? File.join(File.dirname(xml), 'run', 'results_timeseries_monthly.csv'))
+
+    # Check for no E+ msgpack files
+    refute(File.exist? File.join(File.dirname(xml), 'run', 'eplusout.msgpack'))
 
     # Check timeseries columns exist
     { 'timestep' => ['Weather:'],
@@ -227,23 +243,36 @@ class WorkflowOtherTest < Minitest::Test
     # the same results as the original HPXML for a home with HVAC installation
     # defects.
 
-    # Run base.xml
     rb_path = File.join(File.dirname(__FILE__), '..', 'run_simulation.rb')
-    xml = File.join(File.dirname(__FILE__), '..', 'sample_files', 'base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml')
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{rb_path}\" -x \"#{xml}\""
+    sample_files_path = File.join(File.dirname(__FILE__), '..', 'sample_files')
+
+    tmp_hpxml_path = File.join(sample_files_path, 'tmp.xml')
+    hpxml = HPXML.new(hpxml_path: File.join(sample_files_path, 'base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml'))
+    hpxml.buildings[0].header.allow_increased_fixed_capacities = true
+    hpxml.buildings[0].heat_pumps[0].heating_capacity /= 10.0
+    hpxml.buildings[0].heat_pumps[0].cooling_capacity /= 10.0
+    hpxml.buildings[0].heat_pumps[0].backup_heating_capacity /= 10.0
+    hpxml.buildings[0].heat_pumps[0].heating_design_airflow_cfm /= 10.0
+    hpxml.buildings[0].heat_pumps[0].cooling_design_airflow_cfm /= 10.0
+    XMLHelper.write_file(hpxml.to_doc, tmp_hpxml_path)
+
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{rb_path}\" -x \"#{tmp_hpxml_path}\""
     system(command, err: File::NULL)
-    assert(File.exist? File.join(File.dirname(xml), 'run', 'results_annual.csv'))
-    base_results = CSV.read(File.join(File.dirname(xml), 'run', 'results_annual.csv'))
+    assert(File.exist? File.join(File.dirname(tmp_hpxml_path), 'run', 'results_annual.csv'))
+    base_results = CSV.read(File.join(File.dirname(tmp_hpxml_path), 'run', 'results_annual.csv'))
 
     # Run in.xml (generated from base.xml)
-    xml2 = File.join(File.dirname(xml), 'run', 'in.xml')
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{rb_path}\" -x \"#{xml2}\""
+    in_xml = File.join(File.dirname(tmp_hpxml_path), 'run', 'in.xml')
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{rb_path}\" -x \"#{in_xml}\""
     system(command, err: File::NULL)
-    assert(File.exist? File.join(File.dirname(xml2), 'run', 'results_annual.csv'))
-    default_results = CSV.read(File.join(File.dirname(xml2), 'run', 'results_annual.csv'))
+    assert(File.exist? File.join(File.dirname(in_xml), 'run', 'results_annual.csv'))
+    default_results = CSV.read(File.join(File.dirname(in_xml), 'run', 'results_annual.csv'))
 
     # Check two output files are identical
     assert_equal(base_results, default_results)
+
+    # Cleanup
+    File.delete(tmp_hpxml_path) if File.exist? tmp_hpxml_path
   end
 
   def test_template_osws
