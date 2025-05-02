@@ -1328,13 +1328,18 @@ module ERI_301_Ruleset
         orig_heat_pump.backup_heating_efficiency_percent = 1.0
         orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
       end
+      # FUTURE: Eventually require GSHP compressor type when OS-HPXML modeling reflects it
+      compressor_type = orig_heat_pump.compressor_type
+      if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir && orig_heat_pump.compressor_type.nil?
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
+      end
       new_bldg.heat_pumps.add(id: orig_heat_pump.id,
                               is_shared_system: orig_heat_pump.is_shared_system,
                               number_of_units_served: orig_heat_pump.number_of_units_served,
                               distribution_system_idref: orig_heat_pump.distribution_system_idref,
                               heat_pump_type: orig_heat_pump.heat_pump_type,
                               heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
-                              compressor_type: orig_heat_pump.compressor_type,
+                              compressor_type: compressor_type,
                               compressor_lockout_temp: orig_heat_pump.compressor_lockout_temp,
                               heating_capacity: orig_heat_pump.heating_capacity,
                               heating_capacity_17F: orig_heat_pump.heating_capacity_17F,

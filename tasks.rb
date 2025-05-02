@@ -2329,12 +2329,12 @@ def create_sample_hpxmls
                   'base-hvac-furnace-elec-only.xml',
                   'base-hvac-furnace-gas-only.xml',
                   'base-hvac-furnace-gas-plus-air-to-air-heat-pump-cooling.xml',
-                  'base-hvac-ground-to-air-heat-pump.xml',
+                  'base-hvac-ground-to-air-heat-pump-1-speed.xml', # FUTURE: Add 2/var-speed files when OS-HPXML modeling reflects it
                   'base-hvac-ground-to-air-heat-pump-cooling-only.xml',
                   'base-hvac-ground-to-air-heat-pump-heating-only.xml',
                   'base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-install-quality-furnace-gas-central-ac-1-speed.xml',
-                  'base-hvac-install-quality-ground-to-air-heat-pump.xml',
+                  'base-hvac-install-quality-ground-to-air-heat-pump-1-speed.xml',
                   'base-hvac-install-quality-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-install-quality-mini-split-heat-pump-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
@@ -2509,6 +2509,9 @@ def create_sample_hpxmls
       heat_pump.primary_heating_system = nil
       heat_pump.primary_cooling_system = nil
       next unless heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+      heat_pump.compressor_type = nil # FUTURE: Eventually remove this when OS-HPXML modeling reflects it
+
       next unless heat_pump.is_shared_system.nil?
 
       heat_pump.is_shared_system = false

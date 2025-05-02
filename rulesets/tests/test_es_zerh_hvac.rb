@@ -615,7 +615,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
 
   def test_ground_source_heat_pump
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump.xml', program_version)
+      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump-1-speed.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
@@ -650,7 +650,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       next unless [*ES::NationalVersions, *ZERH::AllVersions].include?(program_version)
 
       # Test in climate zone 7
-      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump.xml', program_version)
+      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump-1-speed.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'

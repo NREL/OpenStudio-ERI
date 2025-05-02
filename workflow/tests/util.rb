@@ -708,19 +708,21 @@ def _check_reference_home_components(results, test_num, version)
   # Internal gains
   if version == '2022C'
     # Pub 002-2024
-    if test_num == 1
-      assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
-    elsif test_num == 2
-      assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
-    elsif test_num == 3
-      assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
-    else
-      assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
-      assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
-    end
+    # FIXME: Temporarily disabled until RESNET acceptance criteria are updated
+    # Needs to be updated because of MINHERS Addenda 81 and 90f
+    # if test_num == 1
+    #  assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
+    #  assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
+    # elsif test_num == 2
+    #  assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
+    #  assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
+    # elsif test_num == 3
+    #  assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
+    #  assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
+    # else
+    #  assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
+    #  assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
+    # end
   else
     # Note: Values have been updated slightly relative to Pub 002 because we are
     # using rounded F_sensible values from 301-2022 Addendum C instead of the
@@ -1006,7 +1008,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   cooking_range = hpxml_bldg.cooking_ranges[0]
   cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
   oven = hpxml_bldg.ovens[0]
-  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, nbeds, nil, nil, cooking_range, oven)
+  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, hpxml_bldg, cooking_range, oven)
   btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cr_frac_sens * btu)
   xml_appl_lat += (cr_frac_lat * btu)
@@ -1022,7 +1024,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Dishwasher
   dishwasher = hpxml_bldg.dishwashers[0]
   dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
-  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, nbeds, nil, dishwasher)
+  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, hpxml_bldg, dishwasher)
   btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (dw_frac_sens * btu)
   xml_appl_lat += (dw_frac_lat * btu)
@@ -1030,7 +1032,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesWasher
   clothes_washer = hpxml_bldg.clothes_washers[0]
   clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
-  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, nbeds, nil, clothes_washer)
+  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, hpxml_bldg, clothes_washer)
   btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (cw_frac_sens * btu)
   xml_appl_lat += (cw_frac_lat * btu)
@@ -1038,7 +1040,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesDryer
   clothes_dryer = hpxml_bldg.clothes_dryers[0]
   clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
-  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, nbeds, nil, clothes_dryer, clothes_washer)
+  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, hpxml_bldg, clothes_dryer, clothes_washer)
   btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cd_frac_sens * btu)
   xml_appl_lat += (cd_frac_lat * btu)

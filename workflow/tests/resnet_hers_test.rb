@@ -64,14 +64,16 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_method
-    all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
-                                           'RESNET_Tests/4.3_HERS_Method')
+    _all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
+                                            'RESNET_Tests/4.3_HERS_Method')
 
     # Check results
-    all_results.each do |xml, results|
-      test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, '2019A')
-    end
+    # FIXME: Temporarily disabled until RESNET acceptance criteria are updated
+    # TRL needs to be updated because of MINHERS Addenda 81 and 90f
+    # all_results.each do |xml, _results|
+    #  test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
+    #  _check_method_results(results, test_num, test_num == 2, '2019A')
+    # end
   end
 
   def test_resnet_hvac
@@ -152,11 +154,13 @@ class RESNETTest < Minitest::Test
     end
     assert(all_results.size > 0)
 
-    dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
+    _dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
 
     # Check results if we have them all
-    if all_results.size > 1
-      _check_hot_water(dhw_energy)
-    end
+    # FIXME: Temporarily disabled until RESNET acceptance criteria are updated
+    # Needs to be updated because of MINHERS Addenda 81 and 90f
+    # if all_results.size > 1
+    #   _check_hot_water(dhw_energy)
+    # end
   end
 end
