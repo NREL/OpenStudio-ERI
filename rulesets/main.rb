@@ -29,7 +29,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       schema_validator = XMLValidator.get_xml_validator(schema_path)
     end
     if schematron_validator.nil?
-      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
+      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.sch')
       schematron_validator = XMLValidator.get_xml_validator(schematron_path)
     end
     orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_validator: schema_validator, schematron_validator: schematron_validator)
@@ -152,6 +152,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       # Write final HPXML file
       if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
         hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_doc, design.hpxml_output_path)
+        fail 'Unexpected error.' unless hpxml_strings[design.hpxml_output_path].is_a?(String)
       end
     end
   rescue Exception => e

@@ -1337,9 +1337,14 @@ module ERI_301_Ruleset
           HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
         pan_heater_control_type = HPXML::HVACPanHeaterControlTypeContinuous
       end
+      # FUTURE: Eventually require GSHP compressor type when OS-HPXML modeling reflects it
+      compressor_type = orig_heat_pump.compressor_type
+      if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir && orig_heat_pump.compressor_type.nil?
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
+      end
       compressor_lockout_temp = get_hp_compressor_lockout_temp(orig_heat_pump.heat_pump_type,
                                                                orig_heat_pump.backup_heating_fuel,
-                                                               orig_heat_pump.compressor_type,
+                                                               compressor_type,
                                                                orig_heat_pump.compressor_lockout_temp)
       backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(orig_heat_pump.heat_pump_type)
       new_bldg.heat_pumps.add(id: orig_heat_pump.id,
@@ -1348,7 +1353,7 @@ module ERI_301_Ruleset
                               distribution_system_idref: orig_heat_pump.distribution_system_idref,
                               heat_pump_type: orig_heat_pump.heat_pump_type,
                               heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
-                              compressor_type: orig_heat_pump.compressor_type,
+                              compressor_type: compressor_type,
                               compressor_lockout_temp: compressor_lockout_temp,
                               heating_capacity: orig_heat_pump.heating_capacity,
                               heating_capacity_17F: orig_heat_pump.heating_capacity_17F,

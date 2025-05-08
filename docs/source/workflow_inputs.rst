@@ -25,7 +25,7 @@ HPXML files submitted to OpenStudio-ERI undergo a two step validation process:
 
 2. Validation using `Schematron <http://schematron.com/>`_
 
-  The Schematron document for the ERI use case can be found at ``rulesets/resources/301validator.xml``.
+  The Schematron document for the ERI use case can be found at ``rulesets/resources/301validator.sch``.
   Schematron is a rule-based validation language, expressed in XML using XPath expressions, for validating the presence or absence of inputs in XML files.
   As opposed to an XSD Schema, a Schematron document validates constraints and requirements based on conditionals and other logical statements.
   For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
