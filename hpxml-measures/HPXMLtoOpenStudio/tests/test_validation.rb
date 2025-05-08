@@ -14,7 +14,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     schema_path = File.absolute_path(File.join(@root_path, 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @schema_validator = XMLValidator.get_xml_validator(schema_path)
-    @schematron_path = File.join(@root_path, 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    @schematron_path = File.join(@root_path, 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch')
     @schematron_validator = XMLValidator.get_xml_validator(@schematron_path)
 
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
@@ -257,7 +257,10 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
                             'missing-attached-to-space-slab' => ['Expected 1 element(s) for xpath: AttachedToSpace'],
                             'missing-attached-to-zone' => ['Expected 1 element(s) for xpath: AttachedToZone'],
                             'missing-cfis-supplemental-fan' => ['Expected 1 element(s) for xpath: CFISControls/SupplementalFan'],
-                            'missing-distribution-cfa-served' => ['Expected 1 element(s) for xpath: ../../../ConditionedFloorAreaServed [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[not(DuctSurfaceArea)], id: "Ducts2"]'],
+                            'missing-distribution-cfa-served' => ['Expected 1 element(s) for xpath: ../../../ConditionedFloorAreaServed [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[not(DuctSurfaceArea)], id: "Ducts1"]',
+                                                                  'Expected 1 element(s) for xpath: ../../../ConditionedFloorAreaServed [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[not(DuctSurfaceArea)], id: "Ducts2"]',
+                                                                  'Expected 1 element(s) for xpath: ../../../ConditionedFloorAreaServed [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[not(DuctSurfaceArea)], id: "Ducts3"]',
+                                                                  'Expected 1 element(s) for xpath: ../../../ConditionedFloorAreaServed [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[not(DuctSurfaceArea)], id: "Ducts4"]'],
                             'missing-duct-area' => ['Expected 1 or more element(s) for xpath: FractionDuctArea | DuctSurfaceArea [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[DuctLocation], id: "Ducts2"]'],
                             'missing-duct-location' => ['Expected 0 element(s) for xpath: FractionDuctArea | DuctSurfaceArea [context: /HPXML/Building/BuildingDetails/Systems/HVAC/HVACDistribution/DistributionSystemType/AirDistribution/Ducts[not(DuctLocation)], id: "Ducts2"]'],
                             'missing-elements' => ['Expected 1 element(s) for xpath: NumberofConditionedFloors [context: /HPXML/Building/BuildingDetails/BuildingSummary/BuildingConstruction, id: "MyBuilding"]',
@@ -637,11 +640,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml_bldg.dishwashers[0].label_electric_rate = 0
       when 'invalid-duct-area-fractions'
-        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ducts-area-fractions.xml')
-        hpxml_bldg.hvac_distributions[0].ducts[0].duct_surface_area = nil
-        hpxml_bldg.hvac_distributions[0].ducts[1].duct_surface_area = nil
-        hpxml_bldg.hvac_distributions[0].ducts[2].duct_surface_area = nil
-        hpxml_bldg.hvac_distributions[0].ducts[3].duct_surface_area = nil
+        hpxml, hpxml_bldg = _create_hpxml('base-enclosure-2stories.xml')
         hpxml_bldg.hvac_distributions[0].ducts[0].duct_fraction_area = 0.65
         hpxml_bldg.hvac_distributions[0].ducts[1].duct_fraction_area = 0.65
         hpxml_bldg.hvac_distributions[0].ducts[2].duct_fraction_area = 0.15
@@ -812,12 +811,12 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
         hpxml_bldg.ventilation_fans[1].delete
       when 'missing-distribution-cfa-served'
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
-        hpxml_bldg.hvac_distributions[0].ducts[1].duct_surface_area = nil
-        hpxml_bldg.hvac_distributions[0].ducts[1].duct_location = nil
+        hpxml_bldg.hvac_distributions[0].conditioned_floor_area_served = nil
       when 'missing-duct-area'
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml_bldg.hvac_distributions[0].conditioned_floor_area_served = hpxml_bldg.building_construction.conditioned_floor_area
-        hpxml_bldg.hvac_distributions[0].ducts[1].duct_surface_area = nil
+        hpxml_bldg.hvac_distributions[0].ducts[1].duct_fraction_area = nil
+        hpxml_bldg.hvac_distributions[0].ducts[3].duct_fraction_area = 1.0
       when 'missing-duct-location'
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml_bldg.hvac_distributions[0].ducts[1].duct_location = nil
@@ -1438,13 +1437,13 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base-hvac-air-to-air-heat-pump-1-speed-research-features.xml')
         hpxml_bldg.building_construction.number_of_units = 2
       when 'hvac-gshp-invalid-bore-depth-autosized'
-        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
+        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump-1-speed.xml')
         hpxml_bldg.site.ground_conductivity = 0.1
       when 'hvac-gshp-invalid-num-bore-holes'
         hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump-detailed-geothermal-loop.xml')
         hpxml_bldg.geothermal_loops[0].num_bore_holes = 5
       when 'hvac-gshp-invalid-num-bore-holes-autosized'
-        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
+        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump-1-speed.xml')
         hpxml_bldg.heat_pumps[0].cooling_capacity *= 2
         hpxml_bldg.site.ground_conductivity = 0.08
       when 'hvac-inconsistent-fan-powers'
@@ -1807,7 +1806,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base-appliances-dehumidifier.xml')
         hpxml_bldg.building_construction.number_of_units = 2
       when 'whole-mf-building-gshps-unit-multiplier'
-        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
+        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump-1-speed.xml')
         hpxml_bldg.building_construction.number_of_units = 2
       else
         fail "Unhandled case: #{error_case}."
@@ -1962,7 +1961,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
           dlm.duct_leakage_value = 100.0
         end
         hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
-          duct.duct_surface_area = nil
+          duct.duct_fraction_area = nil
           duct.duct_location = nil
         end
       when 'duct-lto-cfm25-uncond-space'
@@ -1978,7 +1977,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
           dlm.duct_leakage_value = 200.0
         end
         hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
-          duct.duct_surface_area = nil
+          duct.duct_fraction_area = nil
           duct.duct_location = nil
         end
       when 'duct-lto-cfm50-uncond-space'
@@ -1994,7 +1993,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
           dlm.duct_leakage_value = 0.035
         end
         hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
-          duct.duct_surface_area = nil
+          duct.duct_fraction_area = nil
           duct.duct_location = nil
         end
       when 'duct-lto-percent-uncond-space'
@@ -2009,7 +2008,7 @@ class HPXMLtoOpenStudioValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base-foundation-unvented-crawlspace.xml')
         hpxml_bldg.floors[0].floor_or_ceiling = HPXML::FloorOrCeilingCeiling
       when 'hvac-gshp-bore-depth-autosized-high'
-        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
+        hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump-1-speed.xml')
         hpxml_bldg.site.ground_conductivity = 0.07
       when 'hvac-seasons'
         hpxml, hpxml_bldg = _create_hpxml('base-hvac-seasons.xml')

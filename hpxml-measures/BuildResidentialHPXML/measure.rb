@@ -127,6 +127,14 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Research feature to select the type of defrost model. Use #{HPXML::AdvancedResearchDefrostModelTypeStandard} for default E+ defrost setting. Use #{HPXML::AdvancedResearchDefrostModelTypeAdvanced} for an improved model that better accounts for load and energy use during defrost; using #{HPXML::AdvancedResearchDefrostModelTypeAdvanced} may impact simulation runtime. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.")
     args << arg
 
+    ground_to_air_heat_pump_model_type_choices = OpenStudio::StringVector.new
+    ground_to_air_heat_pump_model_type_choices << HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeStandard
+    ground_to_air_heat_pump_model_type_choices << HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeExperimental
+    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('simulation_control_ground_to_air_heat_pump_model_type', ground_to_air_heat_pump_model_type_choices, false)
+    arg.setDisplayName('Simulation Control: Ground-to-Air Heat Pump Model Type')
+    arg.setDescription("Research feature to select the type of ground-to-air heat pump model. Use #{HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeStandard} for standard ground-to-air heat pump modeling. Use #{HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeExperimental} for an improved model that better accounts for coil staging. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.")
+    args << arg
+
     arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('simulation_control_onoff_thermostat_deadband', false)
     arg.setDisplayName('Simulation Control: HVAC On-Off Thermostat Deadband')
     arg.setDescription('Research feature to model on-off thermostat deadband and start-up degradation for single or two speed AC/ASHP systems, and realistic time-based staging for two speed AC/ASHP systems. Currently only supported with 1 min timestep.')
@@ -1393,7 +1401,7 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
 
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('heat_pump_compressor_type', compressor_type_choices, false)
     arg.setDisplayName('Heat Pump: Cooling Compressor Type')
-    arg.setDescription("The compressor type of the heat pump. Required for #{HPXML::HVACTypeHeatPumpAirToAir} and #{HPXML::HVACTypeHeatPumpMiniSplit}.")
+    arg.setDescription("The compressor type of the heat pump. Required for #{HPXML::HVACTypeHeatPumpAirToAir}, #{HPXML::HVACTypeHeatPumpMiniSplit} and #{HPXML::HVACTypeHeatPumpGroundToAir}.")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('heat_pump_heating_efficiency_type', heat_pump_heating_efficiency_type_choices, true)
@@ -4119,7 +4127,7 @@ module HPXMLFile
     xsd_errors, xsd_warnings = XMLValidator.validate_against_schema(hpxml_path, schema_validator)
 
     # Validate input HPXML against schematron docs
-    schematron_path = File.join(File.dirname(__FILE__), '..', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml')
+    schematron_path = File.join(File.dirname(__FILE__), '..', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch')
     schematron_validator = XMLValidator.get_xml_validator(schematron_path)
     sct_errors, sct_warnings = XMLValidator.validate_against_schematron(hpxml_path, schematron_validator, hpxml_doc)
 
@@ -4321,6 +4329,13 @@ module HPXMLFile
         errors << "'Simulation Control: Defrost Model Type' cannot vary across dwelling units."
       end
       hpxml.header.defrost_model_type = args[:simulation_control_defrost_model_type]
+    end
+
+    if not args[:simulation_control_ground_to_air_heat_pump_model_type].nil?
+      if (not hpxml.header.ground_to_air_heat_pump_model_type.nil?) && (hpxml.header.ground_to_air_heat_pump_model_type != args[:simulation_control_ground_to_air_heat_pump_model_type])
+        errors << "'Simulation Control: Ground-to-Air Heat Pump Model Type' cannot vary across dwelling units."
+      end
+      hpxml.header.ground_to_air_heat_pump_model_type = args[:simulation_control_ground_to_air_heat_pump_model_type]
     end
 
     if not args[:simulation_control_onoff_thermostat_deadband].nil?
@@ -5877,7 +5892,7 @@ module HPXMLFile
       end
     end
 
-    if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump_type
+    if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit, HPXML::HVACTypeHeatPumpGroundToAir].include? heat_pump_type
       compressor_type = args[:heat_pump_compressor_type]
     end
 
@@ -6368,12 +6383,15 @@ module HPXMLFile
       end
     end
 
+    ncfl = hpxml_bldg.building_construction.number_of_conditioned_floors
+    ncfl_ag = hpxml_bldg.building_construction.number_of_conditioned_floors_above_grade
+
     if (not ducts_supply_location.nil?) && args[:ducts_supply_surface_area].nil? && args[:ducts_supply_surface_area_fraction].nil?
       # Supply duct location without any area inputs provided; set area fraction
       if ducts_supply_location == HPXML::LocationConditionedSpace
         args[:ducts_supply_surface_area_fraction] = 1.0
       else
-        args[:ducts_supply_surface_area_fraction] = Defaults.get_duct_outside_fraction(args[:geometry_unit_num_floors_above_grade])
+        args[:ducts_supply_surface_area_fraction] = Defaults.get_duct_primary_fraction(ducts_supply_location, ncfl, ncfl_ag)
       end
     end
 
@@ -6382,7 +6400,7 @@ module HPXMLFile
       if ducts_return_location == HPXML::LocationConditionedSpace
         args[:ducts_return_surface_area_fraction] = 1.0
       else
-        args[:ducts_return_surface_area_fraction] = Defaults.get_duct_outside_fraction(args[:geometry_unit_num_floors_above_grade])
+        args[:ducts_return_surface_area_fraction] = Defaults.get_duct_primary_fraction(ducts_return_location, ncfl, ncfl_ag)
       end
     end
 
