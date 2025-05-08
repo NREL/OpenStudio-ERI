@@ -780,7 +780,7 @@ module ES_ZERH_Ruleset
                                                     duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
         # ASHRAE 152 duct area calculation based on conditioned floor area served
-        primary_duct_area, secondary_duct_area = Defaults.get_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
+        primary_duct_area, secondary_duct_area = Defaults.get_duct_surface_area(duct_type, nil, @ncfl, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
         total_duct_area = primary_duct_area + secondary_duct_area
 
         duct_location_areas = get_duct_location_areas(orig_bldg, total_duct_area)

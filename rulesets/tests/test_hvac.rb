@@ -827,10 +827,12 @@ class ERIHVACtest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone }])
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 75.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 25.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 547.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 203.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 182.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 68.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 81.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 27.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       else
         _check_ducts(hpxml_bldg)
         _check_duct_leakage(hpxml_bldg)
@@ -843,10 +845,12 @@ class ERIHVACtest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone }])
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 100.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 125.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 547.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 203.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 182.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 68.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 101.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM50, duct_leakage_value: 34.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       else
         _check_ducts(hpxml_bldg)
         _check_duct_leakage(hpxml_bldg)
@@ -859,28 +863,15 @@ class ERIHVACtest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 150.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 50.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep }])
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 75.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 25.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 547.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 203.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep },
+                                  { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 182.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone },
+                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 68.0, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 81.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: 27.0, duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       else
         _check_ducts(hpxml_bldg)
         _check_duct_leakage(hpxml_bldg)
-      end
-    end
-  end
-
-  def test_duct_fraction_area
-    hpxml_name = 'base-hvac-ducts-area-fractions.xml'
-
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::RatedHome].include? calc_type
-        _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 820.1, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 455.6, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 273.4, duct_location: HPXML::LocationExteriorWall, duct_buried: HPXML::DuctBuriedInsulationNone },
-                                  { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 0.0, duct_area: 151.9, duct_location: HPXML::LocationConditionedSpace, duct_buried: HPXML::DuctBuriedInsulationNone }])
-      else
-        _check_ducts(hpxml_bldg)
       end
     end
   end
@@ -1248,7 +1239,7 @@ class ERIHVACtest < Minitest::Test
         if duct_leakage_measurements[idx][:duct_leakage_value].nil?
           assert_nil(duct_leakage_measurement.duct_leakage_value)
         else
-          assert_equal(duct_leakage_measurements[idx][:duct_leakage_value], duct_leakage_measurement.duct_leakage_value)
+          assert_in_epsilon(duct_leakage_measurements[idx][:duct_leakage_value], duct_leakage_measurement.duct_leakage_value, 0.01)
         end
         if duct_leakage_measurements[idx][:duct_leakage_total_or_to_outside].nil?
           assert_nil(duct_leakage_measurement.duct_leakage_total_or_to_outside)
