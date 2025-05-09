@@ -769,7 +769,6 @@
               <HeatingCapacity17F>15000.0</HeatingCapacity17F>
               <CoolingCapacity>23800.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
-              <CompressorLockoutTemperature>35.0</CompressorLockoutTemperature>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>natural gas</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -782,6 +781,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER2</Units>
                 <Value>14.5</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER2</Units>
+                <Value>12.2</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF2</Units>

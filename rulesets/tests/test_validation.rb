@@ -14,7 +14,7 @@ class ERI301ValidationTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.absolute_path(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd')))
-    @schematron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.xml')
+    @schematron_path = File.join(@root_path, 'rulesets', 'resources', '301validator.sch')
     @schematron_validator = XMLValidator.get_xml_validator(@schematron_path)
 
     @tmp_output_path = File.join(@sample_files_path, 'tmp_output')
