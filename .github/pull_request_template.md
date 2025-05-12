@@ -7,7 +7,7 @@
 Not all may apply:
 
 - [ ] OS-HPXML git subtree has been pulled
-- [ ] 301validator.xml has been updated (reference EPvalidator.xml)
+- [ ] 301validator.sch has been updated (reference EPvalidator.sch)
 - [ ] Sample files have been added/updated (`openstudio tasks.rb update_hpxmls`)
 - [ ] Tests have been added/updated (e.g., `rulesets\tests` and/or `workflow/tests/*_test.rb`)
 - [ ] Documentation has been updated
