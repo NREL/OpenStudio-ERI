@@ -25,7 +25,7 @@ HPXML files submitted to OpenStudio-ERI undergo a two step validation process:
 
 2. Validation using `Schematron <http://schematron.com/>`_
 
-  The Schematron document for the ERI use case can be found at ``rulesets/resources/301validator.xml``.
+  The Schematron document for the ERI use case can be found at ``rulesets/resources/301validator.sch``.
   Schematron is a rule-based validation language, expressed in XML using XPath expressions, for validating the presence or absence of inputs in XML files.
   As opposed to an XSD Schema, a Schematron document validates constraints and requirements based on conditionals and other logical statements.
   For example, if an element is specified with a particular value, the applicable enumerations of another element may change.
@@ -142,7 +142,6 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   ``ResidentialFacilityType``                                    string               See [#]_                           Yes                 Type of dwelling unit
   ``NumberofConditionedFloors``                                  double               > 0                                Yes                 Number of conditioned floors (including a basement)
   ``NumberofConditionedFloorsAboveGrade``                        double               > 0, <= NumberofConditionedFloors  Yes                 Number of conditioned floors above grade (including a walkout basement)
-  ``AverageCeilingHeight``                                       double    ft         > 0                                No        8.2       Floor to ceiling height within conditioned space
   ``NumberofBedrooms``                                           integer              > 0                                Yes                 Number of bedrooms
   ``ConditionedFloorArea``                                       double    ft2        > 0                                Yes                 Floor area within conditioned space boundary
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
@@ -585,18 +584,29 @@ Each space type that borders the ground (i.e., basement, crawlspace, garage, and
   .. [#] InteriorAdjacentTo choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", or "garage".
          See :ref:`hpxmllocations` for descriptions.
   .. [#] For a crawlspace with a dirt floor, enter a thickness of zero.
-  .. [#] ExposedPerimeter includes any slab length that falls along the perimeter of the building's footprint (i.e., is exposed to ambient conditions).
-         So a basement slab edge adjacent to a garage or crawlspace, for example, should not be included.
+  .. [#] ExposedPerimeter includes any slab length that falls along the perimeter of the building's footprint (i.e., is exposed to ground or outdoor air conditions).
+         See the figure below for an example of calculating slab exposed perimeter.
   .. [#] If DepthBelowGrade not provided, defaults to zero for foundation types without walls.
          For foundation types with walls, DepthBelowGrade is ignored as the slab's position relative to grade is determined by the ``FoundationWall/DepthBelowGrade`` value(s).
   .. [#] InsulationWidth only required if InsulationSpansEntireSlab=true is not provided.
   .. [#] InsulationSpansEntireSlab=true only required if InsulationWidth is not provided.
   .. [#] If GapInsulationRValue not provided, defaults to 5.0 if there is under slab (horizontal) insulation, otherwise 0.0.
 
+An example of calculating slab exposed perimeter is shown below:
+
+.. image:: images/slab_exposed_perimeter.png
+   :align: center
+
+As illustrated above, basement slab edge adjacent to a garage slab or crawlspace is not considered exposed perimeter.
+It is quite uncommon for a slab to have an exposed perimeter of zero.
+Heat transfer is only calculated for the length of exposed perimeter; the rest of the perimeter is assumed to have minimal heat transfer.
+
 Slab insulation locations can be visualized in the figure below:
 
 .. image:: images/slab.png
    :align: center
+
+.. _windowinputs:
 
 HPXML Windows
 *************
@@ -701,19 +711,22 @@ If the skylight has a shaft, additional information is entered in ``Skylight``.
 HPXML Doors
 ***********
 
-Each opaque door is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Doors/Door``.
+Each door with opaque area is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Doors/Door``.
 
   ============================================  ========  ============  ============  ========  =========  ==============================
   Element                                       Type      Units         Constraints   Required  Default    Notes
   ============================================  ========  ============  ============  ========  =========  ==============================
   ``SystemIdentifier``                          id                                    Yes                  Unique identifier
   ``AttachedToWall``                            idref                   See [#]_      Yes                  ID of attached wall
-  ``Area``                                      double    ft2           > 0           Yes                  Total area
+  ``Area``                                      double    ft2           > 0           Yes                  Total opaque area [#]_
   ``Azimuth``                                   integer   deg           >= 0, <= 359  Yes                  Azimuth (clockwise from North)
-  ``RValue``                                    double    F-ft2-hr/Btu  > 0           Yes                  R-value
+  ``RValue``                                    double    F-ft2-hr/Btu  > 0           Yes                  R-value [#]_
   ============================================  ========  ============  ============  ========  =========  ==============================
 
   .. [#] AttachedToWall must reference a ``Wall`` or ``FoundationWall``.
+  .. [#] Any *glass* area in the door should be modeled using :ref:`windowinputs`.
+         For example, if a 30 ft2 door has 10 ft2 of glass, the door area should be entered as 20 ft2 (with a separate ``Window`` for the remaining 10 ft2).
+  .. [#] RValue includes interior/exterior air films and presence of any storm door.
 
 HPXML Systems
 -------------
@@ -996,7 +1009,7 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   ``CoolingSystemType``                                             string          central air conditioner  Yes                  Type of cooling system
   ``CoolingSystemFuel``                                             string          electricity              Yes                  Fuel type
   ``CoolingCapacity``                                               double  Btu/hr  >= 0 [#]_                Yes                  Cooling output capacity
-  ``CompressorType``                                                string          See [#]_                 No        See [#]_   Type of compressor
+  ``CompressorType``                                                string          See [#]_                 Yes                  Type of compressor
   ``FractionCoolLoadServed``                                        double  frac    >= 0, <= 1 [#]_          Yes                  Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0                      Yes                  Rated efficiency [#]_
   ``SensibleHeatFraction``                                          double  frac    > 0.5, <= 1              No        See [#]_   Sensible heat fraction
@@ -1008,7 +1021,6 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_air` (type: "regular velocity") or :ref:`hvac_distribution_dse`.
   .. [#] CoolingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
-  .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] The sum of all ``FractionCoolLoadServed`` (across all HVAC systems) must be less than or equal to 1.
   .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 (assumed to be a split system).
          If not a split system, provide SEER using the appropriate conversion factor.
@@ -1142,7 +1154,7 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
   ``CoolingSystemType``                                             string          mini-split       Yes                       Type of cooling system
   ``CoolingSystemFuel``                                             string          electricity      Yes                       Fuel type
   ``CoolingCapacity``                                               double  Btu/hr  >= 0 [#]_        Yes                       Cooling output capacity
-  ``CompressorType``                                                string          See [#]_         No        variable speed  Type of compressor
+  ``CompressorType``                                                string          variable speed   Yes                       Type of compressor
   ``FractionCoolLoadServed``                                        double  frac    >= 0, <= 1 [#]_  Yes                       Fraction of cooling load served
   ``AnnualCoolingEfficiency[Units="SEER" or Units="SEER2"]/Value``  double  Btu/Wh  > 0              Yes                       Rated cooling efficiency [#]_
   ``SensibleHeatFraction``                                          double  frac    > 0.5, <= 1      No        0.73            Sensible heat fraction
@@ -1153,7 +1165,6 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
 
   .. [#] If provided, HVACDistribution type must be :ref:`hvac_distribution_air` (type: "regular velocity") or :ref:`hvac_distribution_dse`.
   .. [#] CoolingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
-  .. [#] CompressorType only choices is "variable speed" (i.e., they are assumed to be inverter driven).
   .. [#] The sum of all ``FractionCoolLoadServed`` (across all HVAC systems) must be less than or equal to 1.
   .. [#] If SEER2 provided, converted to SEER using ANSI/RESNET/ICC 301-2022 Addendum C, where SEER = SEER2 / 0.95 if ducted and SEER = SEER2 if ductless.
   .. [#] If there is a heating system attached to the DistributionSystem, the heating and cooling systems cannot have different values for FanPowerWattsPerCFM.
@@ -1257,7 +1268,7 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   ``HeatingCapacity``                                               double  Btu/hr    >= 0 [#]_                 Yes                  Heating output capacity (excluding any backup heating)
   ``HeatingCapacity17F``                                            double  Btu/hr    >= 0, <= HeatingCapacity  No                   Heating output capacity at 17F, if available
   ``CoolingCapacity``                                               double  Btu/hr    >= 0                      Yes                  Cooling output capacity
-  ``CompressorType``                                                string            See [#]_                  No        See [#]_   Type of compressor
+  ``CompressorType``                                                string            See [#]_                  Yes                  Type of compressor
   ``CompressorLockoutTemperature``                                  double  F                                   No        See [#]_   Minimum outdoor temperature for compressor operation
   ``CoolingSensibleHeatFraction``                                   double  frac      > 0.5, <= 1               No        See [#]_   Sensible heat fraction
   ``BackupType``                                                    string            integrated                No        <none>     Type of backup heating [#]_
@@ -1274,7 +1285,6 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_air` (type: "regular velocity") or :ref:`hvac_distribution_dse`.
   .. [#] HeatingCapacity=-1 and CoolingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
   .. [#] CompressorType choices are "single stage", "two stage", or "variable speed".
-  .. [#] If CompressorType not provided, defaults to "single stage" if SEER <= 15, else "two stage" if SEER <= 21, else "variable speed".
   .. [#] If neither CompressorLockoutTemperature nor BackupHeatingSwitchoverTemperature provided, CompressorLockoutTemperature defaults to 25F if fossil fuel backup otherwise -20F if CompressorType is "variable speed" otherwise 0F.
   .. [#] If CoolingSensibleHeatFraction not provided, defaults to 0.73 for single/two stage and 0.78 for variable speed.
   .. [#] Additional backup inputs are described in :ref:`hvac_hp_backup`.
@@ -1325,7 +1335,7 @@ Each ``HeatPump`` is expected to represent a single outdoor unit, whether connec
   ``HeatingCapacity``                                               double  Btu/hr    >= 0 [#]_                 Yes                       Heating output capacity (excluding any backup heating)
   ``HeatingCapacity17F``                                            double  Btu/hr    >= 0, <= HeatingCapacity  No                        Heating output capacity at 17F, if available
   ``CoolingCapacity``                                               double  Btu/hr    >= 0                      Yes                       Cooling output capacity
-  ``CompressorType``                                                string            See [#]_                  No        variable speed  Type of compressor
+  ``CompressorType``                                                string            variable speed            Yes                       Type of compressor
   ``CompressorLockoutTemperature``                                  double  F                                   No        See [#]_        Minimum outdoor temperature for compressor operation
   ``CoolingSensibleHeatFraction``                                   double  frac      > 0.5, <= 1               No        0.73            Sensible heat fraction
   ``BackupType``                                                    string            integrated                No        <none>          Type of backup heating [#]_
@@ -1341,7 +1351,6 @@ Each ``HeatPump`` is expected to represent a single outdoor unit, whether connec
 
   .. [#] If DistributionSystem provided, HVACDistribution type must be :ref:`hvac_distribution_air` (type: "regular velocity") or :ref:`hvac_distribution_dse`.
   .. [#] HeatingCapacity=-1 and CoolingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
-  .. [#] CompressorType only choice is "variable speed" (i.e., they are assumed to be inverter driven).
   .. [#] If neither CompressorLockoutTemperature nor BackupHeatingSwitchoverTemperature provided, CompressorLockoutTemperature defaults to 25F if fossil fuel backup otherwise -20F.
   .. [#] Additional backup inputs are described in :ref:`hvac_hp_backup`.
   .. [#] The sum of all ``FractionHeatLoadServed`` (across all HVAC systems) must be less than or equal to 1.
@@ -2312,14 +2321,14 @@ Simple Inputs
 
 A simple solar hot water system is entered as a ``/HPXML/Building/BuildingDetails/Systems/SolarThermal/SolarThermalSystem``.
 
-  ====================  =======  =====  ===========  ========  ========  ======================
-  Element               Type     Units  Constraints  Required  Default   Notes
-  ====================  =======  =====  ===========  ========  ========  ======================
-  ``SystemIdentifier``  id                           Yes                 Unique identifier
-  ``SystemType``        string          hot water    Yes                 Type of solar thermal system
-  ``SolarFraction``     double   frac   > 0, <= 1    Yes                 Solar fraction [#]_
-  ``ConnectedTo``       idref           See [#]_     No [#]_   <none>    Connected water heater
-  ====================  =======  =====  ===========  ========  ========  ======================
+  ====================  =======  =====  ============  ========  ========  ======================
+  Element               Type     Units  Constraints   Required  Default   Notes
+  ====================  =======  =====  ============  ========  ========  ======================
+  ``SystemIdentifier``  id                            Yes                 Unique identifier
+  ``SystemType``        string          hot water     Yes                 Type of solar thermal system
+  ``SolarFraction``     double   frac   > 0, <= 0.99  Yes                 Solar fraction [#]_
+  ``ConnectedTo``       idref           See [#]_      No [#]_   <none>    Connected water heater
+  ====================  =======  =====  ============  ========  ========  ======================
 
   .. [#] Portion of total conventional hot water heating load (delivered energy plus tank standby losses).
          Can be obtained from `Directory of SRCC OG-300 Solar Water Heating System Ratings <https://solar-rating.org/programs/og-300-program/>`_ or NREL's `System Advisor Model <https://sam.nrel.gov/>`_ or equivalent.
@@ -2349,7 +2358,7 @@ A detailed solar hot water system is entered as a ``/HPXML/Building/BuildingDeta
   ``CollectorAzimuth``                 integer  deg           >= 0, <= 359  Yes                 Azimuth (clockwise from North)
   ``CollectorTilt``                    double   deg           >= 0, <= 90   Yes                 Tilt relative to horizontal
   ``CollectorRatedOpticalEfficiency``  double   frac          > 0, < 1      Yes                 Rated optical efficiency [#]_
-  ``CollectorRatedThermalLosses``      double   Btu/hr-ft2-R  > 0           Yes                 Rated thermal losses [#]_
+  ``CollectorRatedThermalLosses``      double   Btu/hr-ft2-F  > 0           Yes                 Rated thermal losses [#]_
   ``StorageVolume``                    double   gal           > 0           Yes                 Hot water storage volume
   ``ConnectedTo``                      idref                  See [#]_      Yes                 Connected water heater
   ===================================  =======  ============  ============  ========  ========  ==============================

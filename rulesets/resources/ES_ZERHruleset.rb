@@ -780,7 +780,7 @@ module ES_ZERH_Ruleset
                                                     duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside)
 
         # ASHRAE 152 duct area calculation based on conditioned floor area served
-        primary_duct_area, secondary_duct_area = Defaults.get_duct_surface_area(duct_type, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
+        primary_duct_area, secondary_duct_area = Defaults.get_duct_surface_area(duct_type, nil, @ncfl, @ncfl_ag, new_hvac_dist.conditioned_floor_area_served, new_hvac_dist.number_of_return_registers) # sqft
         total_duct_area = primary_duct_area + secondary_duct_area
 
         duct_location_areas = get_duct_location_areas(orig_bldg, total_duct_area)
@@ -1481,6 +1481,9 @@ module ES_ZERH_Ruleset
 
     hvac_installation = get_hvac_installation_quality()
 
+    # FIXME: Get guidance from EPA; currently preserving previous behavior.
+    compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
+
     new_bldg.cooling_systems.add(id: "TargetCoolingSystem#{new_bldg.cooling_systems.size + 1}",
                                  distribution_system_idref: dist_id,
                                  cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
@@ -1488,6 +1491,7 @@ module ES_ZERH_Ruleset
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
                                  cooling_efficiency_seer: seer,
+                                 compressor_type: compressor_type,
                                  cooling_shr: shr,
                                  charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
@@ -1596,6 +1600,11 @@ module ES_ZERH_Ruleset
       hvac_installation = get_hvac_installation_quality()
     end
 
+    if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
+      # FIXME: Get guidance from EPA; currently preserving previous behavior.
+      compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
+    end
+
     new_bldg.heat_pumps.add(id: "TargetHeatPump#{new_bldg.heat_pumps.size + 1}",
                             is_shared_system: is_shared_system,
                             number_of_units_served: number_of_units_served,
@@ -1617,6 +1626,7 @@ module ES_ZERH_Ruleset
                             cooling_efficiency_eer: eer,
                             heating_efficiency_hspf: hspf,
                             heating_efficiency_cop: cop,
+                            compressor_type: compressor_type,
                             pump_watts_per_ton: pump_watts_per_ton,
                             cooling_shr: shr,
                             charge_defect_ratio: hvac_installation[:charge_defect_ratio],

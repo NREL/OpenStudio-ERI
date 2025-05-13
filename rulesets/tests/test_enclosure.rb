@@ -13,8 +13,8 @@ class ERIEnclosureTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.sch'))
     @results_paths = []
   end
 
@@ -42,7 +42,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        _check_infiltration(hpxml_bldg, ach50: 9.1, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [CalcType::IndexAdjHome].include? calc_type
@@ -104,7 +104,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        _check_infiltration(hpxml_bldg, ach50: 9.1, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [CalcType::IndexAdjHome].include? calc_type
@@ -114,7 +114,7 @@ class ERIEnclosureTest < Minitest::Test
       end
     end
 
-    # Test attached dwelling where airtightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
+    # Test attached dwelling where air tightness test results <= 0.30 cfm50 per ft2 of Compartmentalization Boundary
     # Create derivative file for testing
     hpxml_name = 'base-bldgtype-mf-unit.xml'
     hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
@@ -158,7 +158,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 2.49, height: 8.0, volume: 7200.0)
+        _check_infiltration(hpxml_bldg, ach50: 2.43, height: 8.0, volume: 7200.0)
       elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 8.0, volume: 7200.0)
       elsif [CalcType::IndexAdjHome].include? calc_type
@@ -174,7 +174,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_infiltration(hpxml_bldg, ach50: 9.3, height: 9.75, volume: 21600.0) # 0.3 nACH
+        _check_infiltration(hpxml_bldg, ach50: 9.1, height: 9.75, volume: 21600.0) # 0.3 nACH
       elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_infiltration(hpxml_bldg, ach50: 7.09, height: 9.75, volume: 21600.0)
       elsif [CalcType::IndexAdjHome].include? calc_type

@@ -1,14 +1,25 @@
 ## OpenStudio-ERI v1.10.0
 
 __New Features__
+- Updates to OpenStudio 3.10/EnergyPlus 25.1.
+- Updated DX heat pump and air conditioner models per RESNET MINHERS Addendum 82.
+  - **Breaking change**: `CompressorType` required for central and mini-split air conditioners and heat pumps.
+- Updates calculations for dishwashers, clothes washers, fixtures, and hot water waste per RESNET MINHERS Addenda 81 and 90f.
 - Allows multiple versions of a given program (e.g., ENERGY STAR 3.2 and 3.3) to be calculated in a single call.
   - **Breaking change**: Output directories and files have been reorganized/renamed (output file contents are not changed in any way).
 - Allows specifying the number of parallel processors to use for simulations with `-n <NUM>` or `--num-proc <NUM>`.
+- `AverageCeilingHeight` is no longer used (for infiltration calculations, Hf = InfiltrationVolume/CFA).
+- Output updates:
+  - Adds new outputs for *net* peak electricity (summer/winter/annual); same as *total* peak electricity outputs but subtracts power produced by PV.
+  - Adds generator electricity produced to *total* fuel/energy use; previously it was only included in *net* values.
 
 __Bugfixes__
+- Fixes 301validator schematron file extension (.sch, not .xml).
 - Fixes U-factor for floors over 'other multifamily buffer space' per ENERGY STAR MFNC Rev 05.
 - Fixes modeling of 0.3 ACHnatural infiltration minimum for MF dwelling units where Aext < 0.5 and the mechanical ventilation system is solely exhaust-only.
 - Fixes ZERH Target Home and ESRD so that dual-fuel heat pumps are preserved.
+- Fixes battery charging/discharging not being included in peak electricity outputs.
+- Fixes error if there's a vented attic with zero roof pitch.
 
 ## OpenStudio-ERI v1.9.4
 

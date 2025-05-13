@@ -223,7 +223,7 @@ Annual energy outputs are listed below.
   Type                                  Notes
   ====================================  ===========================
   Energy Use: Total (MBtu)              Total energy consumption
-  Energy Use: Net (MBtu)                Subtracts any power produced by PV or generators
+  Energy Use: Net (MBtu)                Total energy consumption minus power produced by PV
   ====================================  ===========================
 
 Annual Energy by Fuel Type
@@ -235,7 +235,7 @@ Fuel uses are listed below.
   Type                                  Notes
   ====================================  ===========================
   Fuel Use: Electricity: Total (MBtu)   Total electricity consumption
-  Fuel Use: Electricity: Net (MBtu)     Subtracts any power produced by PV or generators
+  Fuel Use: Electricity: Net (MBtu)     Total energy consumption minus power produced by PV
   Fuel Use: Natural Gas: Total (MBtu)
   Fuel Use: Fuel Oil: Total (MBtu)
   Fuel Use: Propane: Total (MBtu)
@@ -283,7 +283,6 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
   End Use: Electricity: Ceiling Fan (MBtu)
   End Use: Electricity: Television (MBtu)
   End Use: Electricity: Plug Loads (MBtu)                           Excludes independently reported plug loads (e.g., well pump)
-  End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
   End Use: Electricity: Well Pump (MBtu)                            Not used by OS-ERI
   End Use: Electricity: Pool Heater (MBtu)                          Not used by OS-ERI
   End Use: Electricity: Pool Pump (MBtu)                            Not used by OS-ERI
@@ -292,6 +291,7 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
   End Use: Electricity: PV (MBtu)                                   Negative value for any power produced
   End Use: Electricity: Generator (MBtu)                            Negative value for any power produced
   End Use: Electricity: Battery (MBtu)                              Not used by OS-ERI
+  End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
   End Use: Natural Gas: Heating (MBtu)                              Excludes heat pump backup
   End Use: Natural Gas: Heating Heat Pump Backup (MBtu)
   End Use: Natural Gas: Hot Water (MBtu)
@@ -383,7 +383,7 @@ Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
   Type                                                              Notes
   ================================================================  ===============================================================
   Emissions: <EmissionsType>: ANSI301: Total (lb)                   Total emissions
-  Emissions: <EmissionsType>: ANSI301: Net (lb)                     Subtracts any power produced by PV or generators
+  Emissions: <EmissionsType>: ANSI301: Net (lb)                     Total emissions minus power produced by PV
   ================================================================  ===============================================================
 
 Annual Emissions by Fuel Use
@@ -397,7 +397,7 @@ Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
   Type                                                              Notes
   ================================================================  ===============================================================
   Emissions: <EmissionsType>: ANSI301: Electricity: Total (lb)      Emissions for Electricity only
-  Emissions: <EmissionsType>: ANSI301: Electricity: Net (lb)        Subtracts any power produced by PV or generators
+  Emissions: <EmissionsType>: ANSI301: Electricity: Net (lb)        Emissions for Electricity only minus power produced by PV
   Emissions: <EmissionsType>: ANSI301: Natural Gas: Total (lb)      Emissions for Natural Gas only
   Emissions: <EmissionsType>: ANSI301: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
   Emissions: <EmissionsType>: ANSI301: Propane: Total (lb)          Emissions for Propane only
@@ -450,14 +450,15 @@ Annual Unmet Hours
 
 Annual unmet hours are listed below.
 
-  =========================  =====
-  Type                       Notes
-  =========================  =====
-  Unmet Hours: Heating (hr)  Number of hours where the heating setpoint is not maintained.
-  Unmet Hours: Cooling (hr)  Number of hours where the cooling setpoint is not maintained.
-  =========================  =====
+  ============================  =====
+  Type                          Notes
+  ============================  =====
+  Unmet Hours: Heating (hr)     Number of hours where the heating setpoint is not maintained. [#]_
+  Unmet Hours: Cooling (hr)     Number of hours where the cooling setpoint is not maintained.
+  Unmet Hours: EV Driving (hr)  Not used by OS-ERI
+  ============================  =====
 
-These numbers reflect the number of hours during the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
+  .. [#] The unmet heating and cooling numbers reflect the number of hours during the heating/cooling season when the conditioned space temperature deviates more than 0.2 deg-C (0.36 deg-F) from the heating/cooling setpoint.
 
 Peak Building Electricity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -467,10 +468,16 @@ Peak building electricity outputs are listed below.
   ==================================  =============================================================
   Type                                Notes
   ==================================  =============================================================
-  Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
-  Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
-  Peak Electricity: Annual Total (W)  Maximum value in any month
+  Peak Electricity: Winter Total (W)  Winter maximum for total electricity consumption [#]_
+  Peak Electricity: Summer Total (W)  Summer maximum for total electricity consumption [#]_
+  Peak Electricity: Annual Total (W)  Annual maximum for total electricity consumption
+  Peak Electricity: Winter Net (W)    Winter maximum for total electricity consumption minus power produced by PV
+  Peak Electricity: Summer Net (W)    Summer maximum for total electricity consumption minus power produced by PV
+  Peak Electricity: Annual Net (W)    Annual maximum for total electricity consumption minus power produced by PV
   ==================================  =============================================================
+
+  .. [#] Winter is Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere).
+  .. [#] Summer is Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere).
 
 Peak Building Loads
 ~~~~~~~~~~~~~~~~~~~
@@ -639,7 +646,7 @@ Depending on the outputs requested, CSV files may include:
   =======================  ===================  ================================================================================================================================================
   Type                     Argument [#]_        Notes
   =======================  ===================  ================================================================================================================================================
-  Total Consumptions       ``total``            Energy use for building total and net (i.e., subtracts any power produced by PV or generators).
+  Total Consumptions       ``total``            Energy use for building total and net (i.e., subtracts any power produced by PV).
   Fuel Consumptions        ``fuels``            Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
   End Use Consumptions     ``enduses``          Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
   System Use Consumptions  ``systemuses``       Energy use for each HVAC and water heating system (in kBtu).

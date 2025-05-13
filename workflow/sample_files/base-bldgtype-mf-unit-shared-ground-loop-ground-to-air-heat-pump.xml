@@ -198,7 +198,6 @@
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>12000.0</HeatingCapacity>
               <CoolingCapacity>12000.0</CoolingCapacity>
-              <CoolingSensibleHeatFraction>0.73</CoolingSensibleHeatFraction>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -249,14 +248,14 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <DuctSurfaceArea>150.0</DuctSurfaceArea>
+                  <FractionDuctArea>1.0</FractionDuctArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id='Ducts2'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
-                  <DuctSurfaceArea>50.0</DuctSurfaceArea>
+                  <FractionDuctArea>1.0</FractionDuctArea>
                 </Ducts>
                 <NumberofReturnRegisters>1</NumberofReturnRegisters>
               </AirDistribution>

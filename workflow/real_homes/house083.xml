@@ -242,6 +242,7 @@
               <HeatingCapacity>17400.0</HeatingCapacity>
               <HeatingCapacity17F>10600.0</HeatingCapacity17F>
               <CoolingCapacity>17400.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
