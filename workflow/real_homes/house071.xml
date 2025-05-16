@@ -451,7 +451,6 @@
               <HeatingCapacity17F>13400.0</HeatingCapacity17F>
               <CoolingCapacity>23200.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
-              <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -464,6 +463,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>15.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>12.5</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
