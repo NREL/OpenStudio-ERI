@@ -1326,12 +1326,17 @@ module ERI_301_Ruleset
         airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
         charge_defect_ratio = orig_heat_pump.charge_defect_ratio
       end
+      backup_type = orig_heat_pump.backup_type
+      backup_heating_fuel = orig_heat_pump.backup_heating_fuel
+      backup_heating_efficiency_percent = orig_heat_pump.backup_heating_efficiency_percent
+      backup_heating_efficiency_afue = orig_heat_pump.backup_heating_efficiency_afue
+      backup_heating_capacity = orig_heat_pump.backup_heating_capacity
       if orig_heat_pump.backup_heating_capacity.to_f == 0 && orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
-        # Force some backup heating to prevent unmet loads
-        orig_heat_pump.backup_type = HPXML::HeatPumpBackupTypeIntegrated
-        orig_heat_pump.backup_heating_fuel = HPXML::FuelTypeElectricity
-        orig_heat_pump.backup_heating_efficiency_percent = 1.0
-        orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
+        # Force backup heating to prevent unmet loads
+        backup_type = HPXML::HeatPumpBackupTypeIntegrated
+        backup_heating_fuel = HPXML::FuelTypeElectricity
+        backup_heating_efficiency_percent = 1.0
+        backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
       end
       if [HPXML::HVACTypeHeatPumpAirToAir,
           HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
@@ -1343,10 +1348,11 @@ module ERI_301_Ruleset
         compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
       compressor_lockout_temp = get_hp_compressor_lockout_temp(orig_heat_pump.heat_pump_type,
-                                                               orig_heat_pump.backup_heating_fuel,
+                                                               backup_heating_fuel,
                                                                compressor_type,
                                                                orig_heat_pump.compressor_lockout_temp)
       backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(orig_heat_pump.heat_pump_type)
+      backup_heating_active_during_defrost = get_hp_backup_heating_active_during_defrost(orig_heat_pump.heat_pump_type, orig_heat_pump.backup_type)
       new_bldg.heat_pumps.add(id: orig_heat_pump.id,
                               is_shared_system: orig_heat_pump.is_shared_system,
                               number_of_units_served: orig_heat_pump.number_of_units_served,
@@ -1358,12 +1364,13 @@ module ERI_301_Ruleset
                               heating_capacity: orig_heat_pump.heating_capacity,
                               heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
                               cooling_capacity: orig_heat_pump.cooling_capacity,
-                              backup_type: orig_heat_pump.backup_type,
+                              backup_type: backup_type,
                               backup_heating_lockout_temp: backup_heating_lockout_temp,
-                              backup_heating_fuel: orig_heat_pump.backup_heating_fuel,
-                              backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
-                              backup_heating_efficiency_percent: orig_heat_pump.backup_heating_efficiency_percent,
-                              backup_heating_efficiency_afue: orig_heat_pump.backup_heating_efficiency_afue,
+                              backup_heating_fuel: backup_heating_fuel,
+                              backup_heating_capacity: backup_heating_capacity,
+                              backup_heating_efficiency_percent: backup_heating_efficiency_percent,
+                              backup_heating_efficiency_afue: backup_heating_efficiency_afue,
+                              backup_heating_active_during_defrost: backup_heating_active_during_defrost,
                               fraction_heat_load_served: orig_heat_pump.fraction_heat_load_served,
                               fraction_cool_load_served: orig_heat_pump.fraction_cool_load_served,
                               cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
@@ -2731,6 +2738,7 @@ module ERI_301_Ruleset
                                                              backup_fuel,
                                                              compressor_type)
     backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(heat_pump_type)
+    backup_heating_active_during_defrost = get_hp_backup_heating_active_during_defrost(heat_pump_type, backup_type)
 
     new_bldg.heat_pumps.add(id: "HeatPump#{new_bldg.heat_pumps.size + 1}",
                             distribution_system_idref: dist_id,
@@ -2747,6 +2755,7 @@ module ERI_301_Ruleset
                             backup_heating_capacity: backup_capacity,
                             backup_heating_efficiency_percent: backup_efficiency_percent,
                             backup_heating_efficiency_afue: backup_efficiency_afue,
+                            backup_heating_active_during_defrost: backup_heating_active_during_defrost,
                             fraction_heat_load_served: htg_load_frac,
                             fraction_cool_load_served: clg_load_frac,
                             cooling_efficiency_seer2: 12.35,
@@ -3145,8 +3154,6 @@ module ERI_301_Ruleset
 
     # Logic per RESNET MINHERS 82
     if backup_heating_fuel == HPXML::FuelTypeElectricity
-      # Electric
-
       # Use user input if provided
       if not compressor_lockout_temp.nil?
         return compressor_lockout_temp
@@ -3158,9 +3165,7 @@ module ERI_301_Ruleset
       else
         return 0.0 # F
       end
-    else
-      # Fossil fuel
-
+    else # Fossil fuel
       # Use RESNET prescribed value
       return 30.0 # F
     end
@@ -3170,5 +3175,16 @@ module ERI_301_Ruleset
     return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
 
     return 80.0 # F, effectively disables the lockout temp
+  end
+
+  def self.get_hp_backup_heating_active_during_defrost(heat_pump_type, backup_type)
+    # Logic per RESNET MINHERS 82
+    # For the Rated Home, backup heat should be active during defrost only if
+    # the system has supplemental heating.
+    # For the Reference Home, backup heat should always be active during defrost
+    # because the heat pump represents a conventional ducted system.
+    return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+    return backup_type == HPXML::HeatPumpBackupTypeIntegrated
   end
 end
