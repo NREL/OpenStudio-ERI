@@ -65,8 +65,12 @@ hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5
 hvac_gshp_cop		2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
+hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
 hvac_ac_seer		18	18	18	18	18	18	16	16	16	16	16	14	14	14	14	14	14	14	14	14
 hvac_ashp_seer		18	18	18	18	18	18	16	16	16	16	16	16	16	16	16	16	16	16	16	16
+hvac_ac_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
+hvac_ashp_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	13	13	13	13	13	13	13	13	13
 hvac_gshp_eer		16	16	16	16	16	16	14	14	14	14	14	14	14	14	14	14	14	14	14	14
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75

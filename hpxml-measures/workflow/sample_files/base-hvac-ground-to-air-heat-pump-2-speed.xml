@@ -327,7 +327,11 @@
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>36000.0</HeatingCapacity>
               <CoolingCapacity>36000.0</CoolingCapacity>
+<<<<<<<< HEAD:hpxml-measures/workflow/sample_files/base-hvac-ground-to-air-heat-pump-2-speed.xml
               <CompressorType>two stage</CompressorType>
+========
+              <CompressorType>single stage</CompressorType>
+>>>>>>>> 6a2f3de99bd8f15a93f702eee76f950054ac6ab9:hpxml-measures/workflow/sample_files/base-hvac-ground-to-air-heat-pump-1-speed.xml
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
