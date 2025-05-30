@@ -708,21 +708,20 @@ def _check_reference_home_components(results, test_num, version)
   # Internal gains
   if version == '2022C'
     # Pub 002-2024
-    # FIXME: Temporarily disabled until RESNET acceptance criteria are updated
-    # Needs to be updated because of MINHERS Addenda 81 and 90f
-    # if test_num == 1
-    #  assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
-    #  assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
-    # elsif test_num == 2
-    #  assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
-    #  assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
-    # elsif test_num == 3
-    #  assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
-    #  assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
-    # else
-    #  assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
-    #  assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
-    # end
+    # Note: Values updated because of MINHERS Addenda 81 and 90f and provided by Philip on 5/29/25
+    if test_num == 1
+      assert_in_epsilon(55037, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13589, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 2
+      assert_in_epsilon(52367, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12519, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 3
+      assert_in_epsilon(47826, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9146, results['Latent Internal gains (Btu/day)'], epsilon)
+    else
+      assert_in_epsilon(82522, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17646, results['Latent Internal gains (Btu/day)'], epsilon)
+    end
   else
     # Note: Values have been updated slightly relative to Pub 002 because we are
     # using rounded F_sensible values from 301-2022 Addendum C instead of the
