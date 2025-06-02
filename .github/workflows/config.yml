@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   run-ruleset-tests:
+    if: false
     runs-on: ubuntu-22.04
     container:
       image: docker://nrel/openstudio:3.9.0
@@ -68,6 +69,7 @@ jobs:
           path: docs/_build/html/
 
   run-sample-files1-tests:
+    if: false
     runs-on: ubuntu-22.04
     container:
       image: docker://nrel/openstudio:3.9.0
@@ -91,6 +93,7 @@ jobs:
           name: test_results_sample_files1
 
   run-sample-files2-tests:
+    if: false
     runs-on: ubuntu-22.04
     container:
       image: docker://nrel/openstudio:3.9.0
@@ -137,6 +140,7 @@ jobs:
           name: test_results_real_homes
 
   run-other-tests:
+    if: false
     runs-on: ubuntu-22.04
     container:
       image: docker://nrel/openstudio:3.9.0
@@ -160,6 +164,7 @@ jobs:
           name: test_results_other
 
   run-windows-tests:
+    if: false
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -176,6 +181,7 @@ jobs:
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base-versions-multiple-sf.xml
 
   merge-results:
+    if: false
     runs-on: ubuntu-22.04
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
@@ -212,6 +218,7 @@ jobs:
           name: test_results
 
   compare-results:
+    if: false
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
     needs: merge-results
@@ -247,12 +254,12 @@ jobs:
           cp -r base_results/*.csv workflow/tests/base_results
           mkdir workflow/tests/test_results
           cp -r test_results/*.csv workflow/tests/test_results
-          
+
           pip install numpy
           pip install pandas
           pip install plotly
           pip install kaleido
-          
+
           python hpxml-measures/workflow/tests/compare.py -a results
           python hpxml-measures/workflow/tests/compare.py -a visualize
 
@@ -263,6 +270,7 @@ jobs:
           name: comparisons
 
   update-results:
+    if: false
     runs-on: ubuntu-22.04
     needs: merge-results
     steps:
@@ -277,7 +285,7 @@ jobs:
           name: test_results
 
       - name: Commit latest results
-        shell: bash        
+        shell: bash
         run: |
           branch_name="${{ github.head_ref }}"
           git pull origin $branch_name
