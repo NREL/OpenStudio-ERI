@@ -181,9 +181,8 @@ jobs:
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base-versions-multiple-sf.xml
 
   merge-results:
-    if: false
     runs-on: ubuntu-22.04
-    needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
+    needs: [run-real-home-tests]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -269,7 +268,6 @@ jobs:
           name: comparisons
 
   update-results:
-    if: false
     runs-on: ubuntu-22.04
     needs: merge-results
     steps:
