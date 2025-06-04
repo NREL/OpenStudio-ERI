@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.10.0
 
 __New Features__
-- Updates to OpenStudio 3.10/EnergyPlus 25.1.
+- Updates to OpenStudio 3.10/EnergyPlus 25.1/HPXML v4.2-rc2.
 - Updated DX heat pump and air conditioner models per RESNET MINHERS Addendum 82.
   - **Breaking change**: `CompressorType` required for central and mini-split air conditioners and heat pumps.
 - Updates calculations for dishwashers, clothes washers, fixtures, and hot water waste per RESNET MINHERS Addenda 81 and 90f.
