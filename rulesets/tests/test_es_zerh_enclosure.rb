@@ -326,7 +326,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
-          type = nil
+          type = HPXML::FoundationWallTypeSolidConcrete
         end
         _check_foundation_walls(hpxml_bldg, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
@@ -357,7 +357,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
-          type = nil
+          type = HPXML::FoundationWallTypeSolidConcrete
         end
         _check_foundation_walls(hpxml_bldg, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
@@ -366,14 +366,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7)
+      _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
 
       hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                      'base-foundation-vented-crawlspace.xml']
       hpxml_names.each do |name|
         _convert_to_es_zerh(name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
-        _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3)
+        _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
   end
