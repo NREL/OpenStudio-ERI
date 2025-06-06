@@ -2504,6 +2504,7 @@ def create_sample_hpxmls
       floor.floor_or_ceiling = nil
     end
     hpxml_bldg.foundation_walls.each do |fwall|
+      fwall.thickness = 8.0 if fwall.thickness.nil?
       fwall.interior_finish_type = nil
       fwall.interior_finish_thickness = nil
       fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
@@ -2709,6 +2710,11 @@ def create_sample_hpxmls
     end
     hpxml_bldg.pv_systems.each do |pv_system|
       pv_system.is_shared_system = false if pv_system.is_shared_system.nil?
+      pv_system.location = HPXML::LocationRoof if pv_system.location.nil?
+      pv_system.module_type = HPXML::PVModuleTypeStandard if pv_system.module_type.nil?
+      pv_system.tracking = HPXML::PVTrackingTypeFixed if pv_system.tracking.nil?
+      pv_system.system_losses_fraction = 0.14 if pv_system.system_losses_fraction.nil?
+      pv_system.inverter.inverter_efficiency = 0.96 if pv_system.inverter.inverter_efficiency.nil?
     end
     hpxml_bldg.generators.each do |generator|
       generator.is_shared_system = false if generator.is_shared_system.nil?
