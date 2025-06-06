@@ -404,13 +404,9 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_name = 'base.xml'
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::RatedHome].include? calc_type
-        _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 8.9, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::RatedHome, CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::IndexAdjHome].include? calc_type
-        _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::IndexAdjReferenceHome].include? calc_type
+      elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
@@ -422,9 +418,7 @@ class ERIEnclosureTest < Minitest::Test
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 18.9, ins_top: 2, ins_bottom: 16, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
       elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, rvalue: 10.0, ins_bottom: 8, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeConcreteBlockFoamCore)
-      elsif [CalcType::IndexAdjHome].include? calc_type
-        _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::IndexAdjReferenceHome].include? calc_type
+      elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
@@ -432,13 +426,9 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::RatedHome].include? calc_type
+      if [CalcType::RatedHome, CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
-        _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::IndexAdjHome].include? calc_type
-        _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-      elsif [CalcType::IndexAdjReferenceHome].include? calc_type
+      elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
         _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
@@ -449,12 +439,10 @@ class ERIEnclosureTest < Minitest::Test
     hpxml_names.each do |hpxml_name|
       _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::RatedHome].include? calc_type
-          _check_foundation_walls(hpxml_bldg, area: 600, rvalue: 8.9, ins_bottom: 4, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
+          _check_foundation_walls(hpxml_bldg, area: 600, rvalue: 10.0, ins_bottom: 4, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
         elsif [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
           _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
-        elsif [CalcType::IndexAdjHome].include? calc_type
-          _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
-        elsif [CalcType::IndexAdjReferenceHome].include? calc_type
+        elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
           _check_foundation_walls(hpxml_bldg, area: 277.12, height: 2, type: HPXML::FoundationWallTypeSolidConcrete)
         end
       end
