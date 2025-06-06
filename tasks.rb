@@ -2357,6 +2357,7 @@ def create_sample_hpxmls
                   'base-hvac-elec-resistance-only.xml',
                   'base-hvac-evap-cooler-only.xml',
                   'base-hvac-evap-cooler-only-ducted.xml',
+                  'base-hvac-fan-motor-type.xml',
                   'base-hvac-fireplace-wood-only.xml',
                   'base-hvac-floor-furnace-propane-only.xml',
                   'base-hvac-furnace-elec-only.xml',

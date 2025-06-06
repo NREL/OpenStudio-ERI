@@ -3167,7 +3167,7 @@ module ERI_301_Ruleset
       end
     else # Fossil fuel
       # Use RESNET prescribed value
-      return 30.0 # F
+      return 40.0 # F
     end
   end
 
