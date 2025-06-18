@@ -206,7 +206,6 @@
             <Type>solid concrete</Type>
             <Height>8.0</Height>
             <Area>1200.0</Area>
-            <Thickness>8.0</Thickness>
             <DepthBelowGrade>7.0</DepthBelowGrade>
             <Insulation>
               <SystemIdentifier id='FoundationWall1Insulation'/>
@@ -258,7 +257,6 @@
             <SystemIdentifier id='Slab1'/>
             <InteriorAdjacentTo>garage</InteriorAdjacentTo>
             <Area>400.0</Area>
-            <Thickness>4.0</Thickness>
             <ExposedPerimeter>40.0</ExposedPerimeter>
             <PerimeterInsulation>
               <SystemIdentifier id='Slab1PerimeterInsulation'/>
@@ -283,7 +281,6 @@
             <SystemIdentifier id='Slab2'/>
             <InteriorAdjacentTo>basement - conditioned</InteriorAdjacentTo>
             <Area>950.0</Area>
-            <Thickness>4.0</Thickness>
             <ExposedPerimeter>110.0</ExposedPerimeter>
             <PerimeterInsulation>
               <SystemIdentifier id='Slab2PerimeterInsulation'/>
@@ -370,7 +367,7 @@
                 <Furnace/>
               </HeatingSystemType>
               <HeatingSystemFuel>natural gas</HeatingSystemFuel>
-              <HeatingCapacity>48000.0</HeatingCapacity>
+              <HeatingCapacity>50000.0</HeatingCapacity>
               <AnnualHeatingEfficiency>
                 <Units>AFUE</Units>
                 <Value>0.92</Value>

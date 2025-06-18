@@ -1013,10 +1013,10 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_overhangs(hpxml_bldg, [{ depth: 2.5, top: 0, bottom: 4 },
+        _check_overhangs(hpxml_bldg, [{ depth: 1.5, top: 2, bottom: 6 },
                                       { depth: 1.5, top: 2, bottom: 6 },
                                       { depth: 0.0, top: 0, bottom: 0 },
-                                      { depth: 1.5, top: 2, bottom: 7 }])
+                                      { depth: 1.5, top: 2, bottom: 6 }])
       else
         _check_overhangs(hpxml_bldg)
       end

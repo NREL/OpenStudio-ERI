@@ -2396,11 +2396,9 @@ def create_sample_hpxmls
 
   # Update HPXMLs as needed
   puts 'Updating HPXML inputs for OS-ERI...'
-  hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
-    hpxml_paths << hpxml_path
-  end
-  hpxml_paths.each do |hpxml_path|
+    next unless File.file? hpxml_path
+
     hpxml = HPXML.new(hpxml_path: hpxml_path)
     hpxml_bldg = hpxml.buildings[0]
 
@@ -2471,7 +2469,6 @@ def create_sample_hpxmls
       floor.floor_or_ceiling = nil
     end
     hpxml_bldg.foundation_walls.each do |fwall|
-      fwall.thickness = 8.0 if fwall.thickness.nil?
       fwall.interior_finish_type = nil
       fwall.interior_finish_thickness = nil
       fwall.insulation_interior_distance_to_top = 0 if fwall.insulation_interior_distance_to_top.nil?
