@@ -529,7 +529,7 @@ module ES_ZERH_Ruleset
           slab_under_width = nil
         end
         if (not slab_perim_rvalue.nil?) && slab_perim_depth.nil?
-          slab_perim_depth = orig_slab.thickness
+          slab_perim_depth = orig_slab.thickness.nil? ? 4.0 : orig_slab.thickness
         end
         perimeter_insulation_depth = slab_perim_depth
         under_slab_insulation_width = slab_under_width
