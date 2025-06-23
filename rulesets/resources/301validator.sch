@@ -253,7 +253,7 @@
   <sch:pattern>
     <sch:title>[RoofType=AdjacentToUnventedAttic]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:Roofs/h:Roof[h:InteriorAdjacentTo="attic - unvented"]'>
-      <sch:assert role='ERROR' test='count(../../h:Attics/h:Attic[h:AtticType/h:Attic[h:Vented="false"]]/h:WithinInfiltrationVolume) = 1'>Expected 1 element(s) for xpath: ../../Attics/Attic[AtticType/Attic[Vented="false"]]/WithinInfiltrationVolume</sch:assert>
+      <sch:assert role='ERROR' test='count(../../h:Attics/h:Attic[h:AtticType/h:Attic[h:Vented="false"]]/h:WithinInfiltrationVolume) = count(../../h:Attics/h:Attic[h:AtticType/h:Attic[h:Vented="false"]])'>Expected 1 element(s) for xpath: ../../Attics/Attic[AtticType/Attic[Vented="false"]]/WithinInfiltrationVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 
@@ -342,21 +342,21 @@
   <sch:pattern>
     <sch:title>[FoundationWallType=AdjacentToUnventedCrawl]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FoundationWalls/h:FoundationWall[h:InteriorAdjacentTo="crawlspace - unvented"]'>
-      <sch:assert role='ERROR' test='count(../../h:Foundations/h:Foundation[h:FoundationType/h:Crawlspace[h:Vented="false"]]/h:WithinInfiltrationVolume) = 1'>Expected 1 element(s) for xpath: ../../Foundations/Foundation[FoundationType/Crawlspace[Vented="false"]]/WithinInfiltrationVolume</sch:assert>
+      <sch:assert role='ERROR' test='count(../../h:Foundations/h:Foundation[h:FoundationType/h:Crawlspace[h:Vented="false"]]/h:WithinInfiltrationVolume) = count(../../h:Foundations/h:Foundation[h:FoundationType/h:Crawlspace[h:Vented="false"]])'>Expected 1 element(s) for xpath: ../../Foundations/Foundation[FoundationType/Crawlspace[Vented="false"]]/WithinInfiltrationVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
     <sch:title>[FoundationWallType=AdjacentToUncondBasement]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FoundationWalls/h:FoundationWall[h:InteriorAdjacentTo="basement - unconditioned"]'>
-      <sch:assert role='ERROR' test='count(../../h:Foundations/h:Foundation[h:FoundationType/h:Basement[h:Conditioned="false"]]/h:WithinInfiltrationVolume) = 1'>Expected 1 element(s) for xpath: ../../Foundations/Foundation[FoundationType/Basement[Conditioned="false"]]/WithinInfiltrationVolume</sch:assert>
+      <sch:assert role='ERROR' test='count(../../h:Foundations/h:Foundation[h:FoundationType/h:Basement[h:Conditioned="false"]]/h:WithinInfiltrationVolume) = count(../../h:Foundations/h:Foundation[h:FoundationType/h:Basement[h:Conditioned="false"]])'>Expected 1 element(s) for xpath: ../../Foundations/Foundation[FoundationType/Basement[Conditioned="false"]]/WithinInfiltrationVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
     <sch:title>[FoundationWallType=AdjacentToCondBasement]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Enclosure/h:FoundationWalls/h:FoundationWall[h:InteriorAdjacentTo="basement - conditioned"]'>
-      <sch:assert role='ERROR' test='count(../../h:Foundations/h:Foundation[h:FoundationType/h:Basement[h:Conditioned="true"]]/h:WithinInfiltrationVolume) &lt;= 1'>Expected 0 or 1 element(s) for xpath: ../../Foundations/Foundation[FoundationType/Basement[Conditioned="true"]]/WithinInfiltrationVolume</sch:assert>
+      <sch:assert role='ERROR' test='count(../../h:Foundations/h:Foundation[h:FoundationType/h:Basement[h:Conditioned="true"]]/h:WithinInfiltrationVolume) &lt;= count(../../h:Foundations/h:Foundation[h:FoundationType/h:Basement[h:Conditioned="true"]])'>Expected 0 or 1 element(s) for xpath: ../../Foundations/Foundation[FoundationType/Basement[Conditioned="true"]]/WithinInfiltrationVolume</sch:assert>
     </sch:rule>
   </sch:pattern>
 
