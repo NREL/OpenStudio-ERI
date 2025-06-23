@@ -508,7 +508,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml_bldg.building_construction.unit_height_above_grade = nil
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_building_construction_values(default_hpxml_bldg, 22140, 8.2, 2, 1, -7)
+    _test_default_building_construction_values(default_hpxml_bldg, 21600, 8.0, 2, 1, -7)
 
     # Test defaults w/ conditioned crawlspace
     hpxml, hpxml_bldg = _create_hpxml('base-foundation-conditioned-crawlspace.xml')
@@ -771,6 +771,82 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
     _test_default_infiltration_compartmentalization_test_values(default_hpxml_bldg.air_infiltration_measurements[0], 0.247)
+  end
+
+  def test_infiltration_height_and_volume
+    # Test conditioned basement
+    hpxml, hpxml_bldg = _create_hpxml('base.xml')
+    hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.conditioned_building_volume = nil
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(9.75, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(21600, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test w/ conditioned basement not within infiltration volume
+    hpxml_bldg.foundations[0].within_infiltration_volume = false
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(8, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(10800, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test w/ attic within infiltration volume
+    hpxml_bldg.attics[0].within_infiltration_volume = true
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(16.22, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(14500, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test conditioned crawlspace
+    hpxml, hpxml_bldg = _create_hpxml('base-foundation-conditioned-crawlspace.xml')
+    hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.conditioned_building_volume = nil
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(9.75, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(16200, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test unconditioned basement
+    hpxml, hpxml_bldg = _create_hpxml('base-foundation-unconditioned-basement.xml')
+    hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.conditioned_building_volume = nil
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(8, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(10800, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test walkout basement
+    hpxml, hpxml_bldg = _create_hpxml('base-foundation-walkout-basement.xml')
+    hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.conditioned_building_volume = nil
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(16, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(21600, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test 2 story building
+    hpxml, hpxml_bldg = _create_hpxml('base-enclosure-2stories.xml')
+    hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.conditioned_building_volume = nil
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(17.75, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(32400, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
+
+    # Test cathedral ceiling
+    hpxml, hpxml_bldg = _create_hpxml('base-atticroof-cathedral.xml')
+    hpxml_bldg.building_construction.average_ceiling_height = nil
+    hpxml_bldg.building_construction.conditioned_building_volume = nil
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    assert_in_epsilon(11.12, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_height, 0.01)
+    assert_in_epsilon(25300, default_hpxml_bldg.air_infiltration_measurements[0].infiltration_volume, 0.01)
   end
 
   def test_attics
@@ -2949,7 +3025,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
                                     used_for_whole_building_ventilation: true)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mech_vent_values(default_hpxml_bldg, false, 24.0, 29.9, 85.5)
+    _test_default_mech_vent_values(default_hpxml_bldg, false, 24.0, 32.0, 91.3)
 
     # Test inputs not overridden by defaults w/ CFIS
     hpxml, hpxml_bldg = _create_hpxml('base-mechvent-cfis.xml')
@@ -3948,11 +4024,13 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml_bldg.clothes_dryers[0].weekday_fractions = ConstantDaySchedule
     hpxml_bldg.clothes_dryers[0].weekend_fractions = ConstantDaySchedule
     hpxml_bldg.clothes_dryers[0].monthly_multipliers = ConstantMonthSchedule
+    hpxml_bldg.clothes_dryers[0].is_vented = false
+    hpxml_bldg.clothes_dryers[0].drying_method = HPXML::DryingMethodOther
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], true, HPXML::LocationBasementConditioned, 3.33, 1.1, ConstantDaySchedule, ConstantDaySchedule, ConstantMonthSchedule)
+    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], true, HPXML::LocationBasementConditioned, 3.33, 1.1, ConstantDaySchedule, ConstantDaySchedule, ConstantMonthSchedule, HPXML::DryingMethodOther, false)
 
-    # Test defaults w/ electric clothes dryer
+    # Test defaults w/ electric condensing clothes dryer
     hpxml_bldg.clothes_dryers[0].location = nil
     hpxml_bldg.clothes_dryers[0].is_shared_appliance = nil
     hpxml_bldg.clothes_dryers[0].combined_energy_factor = nil
@@ -3960,29 +4038,37 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml_bldg.clothes_dryers[0].weekday_fractions = nil
     hpxml_bldg.clothes_dryers[0].weekend_fractions = nil
     hpxml_bldg.clothes_dryers[0].monthly_multipliers = nil
+    hpxml_bldg.clothes_dryers[0].is_vented = nil
+    hpxml_bldg.clothes_dryers[0].drying_method = HPXML::DryingMethodCondensing
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
     default_cd_sched = @default_schedules_csv_data[SchedulesFile::Columns[:ClothesDryer].name]
-    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 3.01, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'])
+    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 3.01, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'], HPXML::DryingMethodCondensing, false)
+
+    # Test defaults w/ unspecified electric clothes dryer
+    hpxml_bldg.clothes_dryers[0].drying_method = nil
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _default_hpxml, default_hpxml_bldg = _test_measure()
+    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 3.01, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'], HPXML::DryingMethodConventional, true)
 
     # Test defaults w/ gas clothes dryer
     hpxml_bldg.clothes_dryers[0].fuel_type = HPXML::FuelTypeNaturalGas
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 3.01, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'])
+    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 3.01, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'], HPXML::DryingMethodConventional, true)
 
     # Test defaults w/ electric clothes dryer before 301-2019 Addendum A
     hpxml.header.eri_calculation_versions = ['2019']
     hpxml_bldg.clothes_dryers[0].fuel_type = HPXML::FuelTypeElectricity
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 2.62, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'])
+    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 2.62, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'], HPXML::DryingMethodConventional, true)
 
     # Test defaults w/ gas clothes dryer before 301-2019 Addendum A
     hpxml_bldg.clothes_dryers[0].fuel_type = HPXML::FuelTypeNaturalGas
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 2.32, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'])
+    _test_default_clothes_dryer_values(default_hpxml_bldg.clothes_dryers[0], false, HPXML::LocationConditionedSpace, 2.32, 1.0, default_cd_sched['WeekdayScheduleFractions'], default_cd_sched['WeekendScheduleFractions'], default_cd_sched['MonthlyScheduleMultipliers'], HPXML::DryingMethodConventional, true)
   end
 
   def test_clothes_dryer_exhaust
@@ -6117,7 +6203,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
   end
 
   def _test_default_clothes_dryer_values(clothes_dryer, is_shared, location, cef, usage_multiplier,
-                                         weekday_sch, weekend_sch, monthly_mults)
+                                         weekday_sch, weekend_sch, monthly_mults, drying_method, is_vented)
     assert_equal(is_shared, clothes_dryer.is_shared_appliance)
     assert_equal(location, clothes_dryer.location)
     assert_equal(cef, clothes_dryer.combined_energy_factor)
@@ -6137,6 +6223,8 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     else
       assert_equal(monthly_mults, clothes_dryer.monthly_multipliers)
     end
+    assert_equal(drying_method, clothes_dryer.drying_method)
+    assert_equal(is_vented, clothes_dryer.is_vented)
   end
 
   def _test_default_clothes_dryer_exhaust_values(clothes_dryer, is_vented, vented_flow_rate)
