@@ -467,7 +467,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
                                                  air_leakage: ach50,
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
-    tot_cb_area, _ext_cb_area = hpxml_bldg.compartmentalization_boundary_areas()
+    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg)
     if hpxml_file.include?('MF_National_1.3')
       air_leakage = 0.27
     else
@@ -2537,6 +2537,7 @@ def create_sample_hpxmls
       end
     end
     if not hpxml_bldg.clothes_dryers.empty?
+      hpxml_bldg.clothes_dryers[0].drying_method = nil
       if hpxml_bldg.clothes_dryers[0].is_shared_appliance
         hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_dryers[0].count = 2

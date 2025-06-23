@@ -235,7 +235,7 @@ Building air leakage is entered in ``/HPXML/Building/BuildingDetails/Enclosure/A
 
   .. [#] InfiltrationVolume can be thought of as the volume of space most impacted by a blower door test.
          Note that InfiltrationVolume can be larger than ConditionedBuildingVolume as it can include, e.g., attics or basements with access doors/hatches that are open during the blower door test.
-  .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., conditioned floor area, number of conditioned floors above-grade, above-grade foundation wall height, etc.).
+  .. [#] If InfiltrationHeight not provided, it is inferred from other inputs (e.g., ConditionedFloorArea, NumberofConditionedFloorsAboveGrade, attics/foundations with WithinInfiltrationVolume=true, etc.).
   .. [#] InfiltrationHeight is defined as the vertical distance between the lowest and highest above-grade points within the pressure boundary, per ASHRAE 62.2.
 
 In addition, one of the following air leakage types must also be defined:
@@ -330,6 +330,16 @@ If the dwelling unit has a vented attic, additional information is entered in ``
 
 HPXML Foundations
 *****************
+
+If the dwelling unit has a conditioned basement, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation/FoundationType/Basement[Conditioned='true']``.
+
+  ============================  =======  =====  ===========  ========  =======  ===============================================
+  Element                       Type     Units  Constraints  Required  Default  Notes
+  ============================  =======  =====  ===========  ========  =======  ===============================================
+  ``WithinInfiltrationVolume``  boolean         See [#]_     No        true     In accordance with ANSI/RESNET/ICC Standard 380
+  ============================  =======  =====  ===========  ========  =======  ===============================================
+
+  .. [#] If there are multiple conditioned basements, they must all have the same value.
 
 If the dwelling unit has an unconditioned basement, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]``.
 

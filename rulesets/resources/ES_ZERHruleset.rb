@@ -1187,7 +1187,7 @@ module ES_ZERH_Ruleset
     infil_air_leakage_ach50 = lookup_reference_value('infil_air_leakage_ach50') if infil_air_leakage_ach50.nil?
 
     if not infil_air_leakage_cfm50_per_sqft.nil?
-      tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+      tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
       infil_air_leakage = tot_cb_area * infil_air_leakage_cfm50_per_sqft
       infil_unit_of_measure = HPXML::UnitsCFM
     elsif not infil_air_leakage_ach50.nil?
