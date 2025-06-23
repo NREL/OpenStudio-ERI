@@ -311,10 +311,11 @@ If the dwelling unit has an unvented attic, additional information is entered in
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
+  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Whether door/hatch to conditioned space open during blower door test [#]_
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
   .. [#] If there are multiple unvented attics, they must all have the same value.
+  .. [#] See `ANSI/RESNET/ICC 380-2022 <https://codes.iccsafe.org/content/RESNET3802022P1>`_ for more information.
 
 If the dwelling unit has a vented attic, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Attics/Attic[AtticType/Attic[Vented="true"]]``.
 
@@ -336,30 +337,33 @@ If the dwelling unit has a conditioned basement, additional information is enter
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean         See [#]_     No        true     In accordance with ANSI/RESNET/ICC Standard 380
+  ``WithinInfiltrationVolume``  boolean         See [#]_     No        true     Whether door/hatch to conditioned space open during blower door test [#]_
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
   .. [#] If there are multiple conditioned basements, they must all have the same value.
+  .. [#] See `ANSI/RESNET/ICC 380-2022 <https://codes.iccsafe.org/content/RESNET3802022P1>`_ for more information.
 
 If the dwelling unit has an unconditioned basement, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Basement[Conditioned='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
+  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Whether door/hatch to conditioned space open during blower door test [#]_
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
   .. [#] If there are multiple unconditioned basements, they must all have the same value.
+  .. [#] See `ANSI/RESNET/ICC 380-2022 <https://codes.iccsafe.org/content/RESNET3802022P1>`_ for more information.
 
 If the dwelling unit has an unvented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented='false']]``.
 
   ============================  =======  =====  ===========  ========  =======  ===============================================
   Element                       Type     Units  Constraints  Required  Default  Notes
   ============================  =======  =====  ===========  ========  =======  ===============================================
-  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Included in the air infiltration measurement?
+  ``WithinInfiltrationVolume``  boolean         See [#]_     Yes                Whether door/hatch to conditioned space open during blower door test [#]_
   ============================  =======  =====  ===========  ========  =======  ===============================================
 
   .. [#] If there are multiple unvented crawlspaces, they must all have the same value.
+  .. [#] See `ANSI/RESNET/ICC 380-2022 <https://codes.iccsafe.org/content/RESNET3802022P1>`_ for more information.
 
 If the dwelling unit has a vented crawlspace, additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/Foundations/Foundation[FoundationType/Crawlspace[Vented="true"]]``.
 
