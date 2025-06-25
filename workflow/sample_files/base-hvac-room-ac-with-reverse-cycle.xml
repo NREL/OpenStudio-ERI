@@ -281,6 +281,7 @@
               <HeatPumpType>room air conditioner with reverse cycle</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>36000.0</HeatingCapacity>
+              <HeatingCapacity17F>21600.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
@@ -360,8 +361,6 @@
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <Vented>true</Vented>
-          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

@@ -689,7 +689,7 @@ module ES_ZERH_Ruleset
             fraction_cool_load_served = 0.0
           end
           created_hp = true
-          add_reference_heat_pump(orig_bldg, new_bldg, fraction_heat_load_served, fraction_cool_load_served, heating_system, cooling_system)
+          add_reference_heat_pump(orig_bldg, new_bldg, fraction_heat_load_served, fraction_cool_load_served, heating_system)
         else
           add_reference_furnace(orig_bldg, new_bldg, fraction_heat_load_served, heating_system, heating_fuel)
         end
@@ -1472,7 +1472,8 @@ module ES_ZERH_Ruleset
 
   def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system)
     seer = lookup_reference_value('hvac_ac_seer')
-    shr = orig_system.cooling_shr
+    eer = lookup_reference_value('hvac_ac_eer')
+    compressor_type = lookup_reference_value('hvac_ac_compressor')
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
@@ -1481,9 +1482,6 @@ module ES_ZERH_Ruleset
 
     hvac_installation = get_hvac_installation_quality()
 
-    # FIXME: Get guidance from EPA; currently preserving previous behavior.
-    compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
-
     new_bldg.cooling_systems.add(id: "TargetCoolingSystem#{new_bldg.cooling_systems.size + 1}",
                                  distribution_system_idref: dist_id,
                                  cooling_system_type: HPXML::HVACTypeCentralAirConditioner,
@@ -1491,8 +1489,8 @@ module ES_ZERH_Ruleset
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
                                  cooling_efficiency_seer: seer,
+                                 cooling_efficiency_eer: eer,
                                  compressor_type: compressor_type,
-                                 cooling_shr: shr,
                                  charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
                                  fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
@@ -1522,7 +1520,7 @@ module ES_ZERH_Ruleset
                                  fan_coil_watts: orig_system.fan_coil_watts)
   end
 
-  def self.add_reference_heat_pump(orig_bldg, new_bldg, heat_load_frac, cool_load_frac, orig_htg_system, orig_clg_system = nil)
+  def self.add_reference_heat_pump(orig_bldg, new_bldg, heat_load_frac, cool_load_frac, orig_htg_system)
     # Heat pump type and efficiency
     is_shared_system = false
     if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir)
@@ -1544,6 +1542,8 @@ module ES_ZERH_Ruleset
       elsif heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
         hspf = lookup_reference_value('hvac_ashp_hspf')
         seer = lookup_reference_value('hvac_ashp_seer')
+        eer = lookup_reference_value('hvac_ashp_eer')
+        compressor_type = lookup_reference_value('hvac_ashp_compressor')
       end
       if orig_htg_system.is_shared_system && orig_htg_system.is_a?(HPXML::HeatPump) &&
          (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir) &&
@@ -1580,29 +1580,15 @@ module ES_ZERH_Ruleset
         heat_pump_backup_eff = 1.0
       else
         heat_pump_backup_eff = get_default_furnace_afue(heat_pump_backup_fuel)
-        backup_heating_switchover_temp = orig_htg_system.backup_heating_switchover_temp unless orig_htg_system.backup_heating_switchover_temp.nil?
-        backup_heating_lockout_temp = orig_htg_system.backup_heating_lockout_temp unless orig_htg_system.backup_heating_lockout_temp.nil?
-        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp unless orig_htg_system.compressor_lockout_temp.nil?
       end
+      heating_capacity_17F = -1 # Use auto-sizing
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = Defaults.get_gshp_pump_power()
-    end
-
-    if (not orig_htg_system.nil?) && orig_htg_system.respond_to?(:cooling_shr)
-      shr = orig_htg_system.cooling_shr
-    end
-    if (not orig_clg_system.nil?) && orig_clg_system.respond_to?(:cooling_shr)
-      shr = orig_clg_system.cooling_shr
     end
 
     hvac_installation = {}
     if heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
       hvac_installation = get_hvac_installation_quality()
-    end
-
-    if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
-      # FIXME: Get guidance from EPA; currently preserving previous behavior.
-      compressor_type = (seer > 15 ? HPXML::HVACCompressorTypeTwoStage : HPXML::HVACCompressorTypeSingleStage)
     end
 
     new_bldg.heat_pumps.add(id: "TargetHeatPump#{new_bldg.heat_pumps.size + 1}",
@@ -1613,13 +1599,11 @@ module ES_ZERH_Ruleset
                             heat_pump_fuel: HPXML::FuelTypeElectricity,
                             cooling_capacity: cooling_capacity,
                             heating_capacity: heating_capacity,
-                            compressor_lockout_temp: compressor_lockout_temp,
+                            heating_capacity_17F: heating_capacity_17F,
                             backup_type: heat_pump_backup_type,
                             backup_heating_fuel: heat_pump_backup_fuel,
                             backup_heating_capacity: backup_heating_capacity,
                             backup_heating_efficiency_percent: heat_pump_backup_eff,
-                            backup_heating_switchover_temp: backup_heating_switchover_temp,
-                            backup_heating_lockout_temp: backup_heating_lockout_temp,
                             fraction_heat_load_served: heat_load_frac,
                             fraction_cool_load_served: cool_load_frac,
                             cooling_efficiency_seer: seer,
@@ -1628,7 +1612,6 @@ module ES_ZERH_Ruleset
                             heating_efficiency_cop: cop,
                             compressor_type: compressor_type,
                             pump_watts_per_ton: pump_watts_per_ton,
-                            cooling_shr: shr,
                             charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                             airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
                             fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm],

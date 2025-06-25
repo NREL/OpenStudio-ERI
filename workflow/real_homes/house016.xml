@@ -549,6 +549,7 @@
               <HeatPumpType>mini-split</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>36000.0</HeatingCapacity>
+              <HeatingCapacity17F>21600.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
               <CompressorType>variable speed</CompressorType>
               <BackupType>integrated</BackupType>
@@ -563,6 +564,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>16.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>11.4</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>

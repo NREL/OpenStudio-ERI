@@ -64,8 +64,12 @@ hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.9	0.9	0.95	0.95
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2
 hvac_gshp_cop		2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
+hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
 hvac_ac_seer		16	16	16	16	16	16	16	16	16	16	16	14	14	14	14	14	14	14	14	14
 hvac_ashp_seer		16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16
+hvac_ac_eer		13	13	13	13	13	13	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
+hvac_ashp_eer		13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13
 hvac_gshp_eer		14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75

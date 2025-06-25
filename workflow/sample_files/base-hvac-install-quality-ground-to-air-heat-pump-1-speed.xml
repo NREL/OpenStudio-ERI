@@ -298,6 +298,8 @@
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
                 <FanPowerWattsPerCFM>0.365</FanPowerWattsPerCFM>
+                <HeatingDesignAirflowCFM>1080.0</HeatingDesignAirflowCFM>
+                <CoolingDesignAirflowCFM>1080.0</CoolingDesignAirflowCFM>
                 <PumpPowerWattsPerTon>100.0</PumpPowerWattsPerTon>
               </extension>
             </HeatPump>
@@ -415,8 +417,6 @@
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <Vented>true</Vented>
-          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

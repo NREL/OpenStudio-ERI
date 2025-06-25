@@ -287,6 +287,10 @@
                 <Units>SEER</Units>
                 <Value>19.0</Value>
               </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>12.3</Value>
+              </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
@@ -353,8 +357,6 @@
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <Vented>true</Vented>
-          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

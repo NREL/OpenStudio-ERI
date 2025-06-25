@@ -282,6 +282,7 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>0.0</HeatingCapacity>
+              <HeatingCapacity17F>0.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
               <FractionHeatLoadServed>0.0</FractionHeatLoadServed>
@@ -289,6 +290,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>13.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>11.0</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -414,8 +419,6 @@
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <Vented>true</Vented>
-          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
