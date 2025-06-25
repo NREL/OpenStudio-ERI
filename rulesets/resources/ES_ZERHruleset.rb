@@ -1,33 +1,40 @@
 # frozen_string_literal: true
 
 module ES_ZERH_Ruleset
-  def self.apply_ruleset(hpxml, calc_type, lookup_program_data)
+  def self.apply_ruleset(hpxml, calc_type, program_version, eri_version, lookup_program_data)
     # Use latest version of ANSI 301
-    @eri_version = Constants::ERIVersions[-1]
-    hpxml.header.eri_calculation_version = @eri_version
+    @eri_version = eri_version
+    hpxml.header.eri_calculation_versions = [@eri_version]
+    hpxml.header.co2index_calculation_versions = nil
+    hpxml.header.iecc_eri_calculation_versions = nil
+    hpxml.header.energystar_calculation_versions = nil
+    hpxml.header.zerh_calculation_versions = nil
 
-    if calc_type == ESConstants::CalcTypeEnergyStarReference
-      @program_version = hpxml.header.energystar_calculation_version
-    elsif calc_type == ZERHConstants::CalcTypeZERHReference
-      @program_version = hpxml.header.zerh_calculation_version
-    end
+    @program_version = program_version
 
-    if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
+    if [ES::SFNationalVer3_3, ES::SFNationalVer3_2, ES::MFNationalVer1_3,
+        ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif @program_version == ZERHConstants::Ver1
+    elsif [ZERH::Ver1].include? @program_version
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
-    else
+    elsif [ES::SFNationalVer3_1, ES::MFNationalVer1_1, ES::SFOregonWashingtonVer3_2,
+           ES::MFOregonWashingtonVer1_2].include? @program_version
+      # Use Year=2012 for Reference Home configuration
+      iecc_climate_zone_year = 2012
+    elsif [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1,
+           ES::MFNationalVer1_0].include? @program_version
       # Use Year=2006 for Reference Home configuration
       iecc_climate_zone_year = 2006
+    else
+      fail "Need to handle IECC climate zone mapping for program version '#{@program_version}'."
     end
     @iecc_zone, _year = get_climate_zone_of_year(hpxml.buildings[0], iecc_climate_zone_year)
     @lookup_program_data = lookup_program_data
 
     # Update HPXML object based on ESRD configuration
-    if [ESConstants::CalcTypeEnergyStarReference,
-        ZERHConstants::CalcTypeZERHReference].include? calc_type
+    if calc_type == InitCalcType::TargetHome
       hpxml = apply_ruleset_reference(hpxml)
     end
 
@@ -98,7 +105,7 @@ module ES_ZERH_Ruleset
     new_hpxml.header.transaction = orig_hpxml.header.transaction
     new_hpxml.header.software_program_used = orig_hpxml.header.software_program_used
     new_hpxml.header.software_program_version = orig_hpxml.header.software_program_version
-    new_hpxml.header.eri_calculation_version = orig_hpxml.header.eri_calculation_version
+    new_hpxml.header.eri_calculation_versions = orig_hpxml.header.eri_calculation_versions
 
     orig_bldg = orig_hpxml.buildings[0]
     new_hpxml.buildings.add(building_id: orig_bldg.building_id)
@@ -108,28 +115,12 @@ module ES_ZERH_Ruleset
     new_bldg.state_code = orig_bldg.state_code
     new_bldg.zip_code = orig_bldg.zip_code
 
-    bldg_type = orig_bldg.building_construction.residential_facility_type
-    if (bldg_type == HPXML::ResidentialTypeSFA) && ESConstants::MFVersions.include?(@program_version)
-      begin
-        # ESRD configured as SF National v3.X
-        ref_design_config_mapping = {
-          ESConstants::MFNationalVer1_2 => ESConstants::SFNationalVer3_2,
-          ESConstants::MFNationalVer1_1 => ESConstants::SFNationalVer3_1,
-          ESConstants::MFNationalVer1_0 => ESConstants::SFNationalVer3_0,
-          ESConstants::MFOregonWashingtonVer1_2 => ESConstants::SFOregonWashingtonVer3_2
-        }
-        @program_version = ref_design_config_mapping.fetch(@program_version)
-      rescue KeyError
-        fail "Need to handle program version '#{@program_version}'."
-      end
-    end
-    @state_code = orig_bldg.state_code
-
     return new_hpxml
   end
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
+    @state_code = orig_bldg.state_code
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
@@ -505,7 +496,8 @@ module ES_ZERH_Ruleset
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
 
-      if orig_floor.is_thermal_boundary && (not (multifamily_adjacent_locations - [HPXML::LocationOtherNonFreezingSpace]).include?(orig_floor.exterior_adjacent_to))
+      if orig_floor.is_thermal_boundary && (not [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace].include?(orig_floor.exterior_adjacent_to))
+        # This is meant to apply to floors over unconditioned spaces, non-freezing spaces, multifamily buffer boundaries, or the outdoor environment
         insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
       else
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
@@ -583,8 +575,8 @@ module ES_ZERH_Ruleset
     orig_total_win_area = ext_thermal_bndry_windows.map { |window| window.area }.sum(0)
     window_to_cfa_ratio = orig_total_win_area / @cfa
 
-    # Default natural ventilation
-    fraction_operable = Defaults.get_fraction_of_windows_operable()
+    # Preserve operable window fraction for natural ventilation
+    fraction_operable = orig_bldg.fraction_of_windows_operable()
 
     window_area = lookup_reference_value('window_area')
 
@@ -947,34 +939,32 @@ module ES_ZERH_Ruleset
   end
 
   def self.set_appliances_clothes_washer_reference(orig_bldg, new_bldg)
-    # Default values
-    id = 'ClothesWasher'
-    location = HPXML::LocationConditionedSpace
-    reference_values = Defaults.get_clothes_washer_values(@eri_version)
-    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor]
-    rated_annual_kwh = reference_values[:rated_annual_kwh]
-    label_electric_rate = reference_values[:label_electric_rate]
-    label_gas_rate = reference_values[:label_gas_rate]
-    label_annual_gas_cost = reference_values[:label_annual_gas_cost]
-    label_usage = reference_values[:label_usage]
-    capacity = reference_values[:capacity]
-
-    # Override values?
+    # Override efficiency values equal to "Std 2018-Present" Standard if clothes washer present in the Rated Home
     if not orig_bldg.clothes_washers.empty?
       clothes_washer = orig_bldg.clothes_washers[0]
       id = clothes_washer.id
       location = clothes_washer.location.gsub('unvented', 'vented')
 
-      if [ESConstants::SFNationalVer3_2, ESConstants::MFNationalVer1_2, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? @program_version
-        integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef')
-        rated_annual_kwh = lookup_reference_value('clothes_washer_ler')
-        label_electric_rate = lookup_reference_value('clothes_washer_elec_rate')
-        label_gas_rate = lookup_reference_value('clothes_washer_gas_rate')
-        label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc')
-        label_usage = lookup_reference_value('clothes_washer_lcy') / 52.0
-        capacity = lookup_reference_value('clothes_washer_capacity')
-      end
+      integrated_modified_energy_factor = lookup_reference_value('clothes_washer_imef', 'clothes washer present')
+      rated_annual_kwh = lookup_reference_value('clothes_washer_ler', 'clothes washer present')
+      label_electric_rate = lookup_reference_value('clothes_washer_elec_rate', 'clothes washer present')
+      label_gas_rate = lookup_reference_value('clothes_washer_gas_rate', 'clothes washer present')
+      label_annual_gas_cost = lookup_reference_value('clothes_washer_ghwc', 'clothes washer present')
+      label_usage = lookup_reference_value('clothes_washer_lcy', 'clothes washer present')
+      capacity = lookup_reference_value('clothes_washer_capacity', 'clothes washer present')
     end
+
+    # Default values same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
+    id = 'ClothesWasher' if id.nil?
+    location = HPXML::LocationConditionedSpace if location.nil?
+    reference_values = Defaults.get_clothes_washer_values(@eri_version)
+    integrated_modified_energy_factor = reference_values[:integrated_modified_energy_factor] if integrated_modified_energy_factor.nil?
+    rated_annual_kwh = reference_values[:rated_annual_kwh] if rated_annual_kwh.nil?
+    label_electric_rate = reference_values[:label_electric_rate] if label_electric_rate.nil?
+    label_gas_rate = reference_values[:label_gas_rate] if label_gas_rate.nil?
+    label_annual_gas_cost = reference_values[:label_annual_gas_cost] if label_annual_gas_cost.nil?
+    label_usage = reference_values[:label_usage] * 52 if label_usage.nil?
+    capacity = reference_values[:capacity] if capacity.nil?
 
     new_bldg.clothes_washers.add(id: id,
                                  location: location,
@@ -984,7 +974,7 @@ module ES_ZERH_Ruleset
                                  label_electric_rate: label_electric_rate,
                                  label_gas_rate: label_gas_rate,
                                  label_annual_gas_cost: label_annual_gas_cost,
-                                 label_usage: label_usage,
+                                 label_usage: label_usage / 52,
                                  capacity: capacity)
   end
 
@@ -1049,6 +1039,7 @@ module ES_ZERH_Ruleset
     end
 
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
+    rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh] if rated_annual_kwh.nil?
 
     new_bldg.refrigerators.add(id: id,
                                location: location,
@@ -1529,7 +1520,7 @@ module ES_ZERH_Ruleset
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, heat_load_frac, cool_load_frac, orig_htg_system, orig_clg_system = nil)
     # Heat pump type and efficiency
-
+    is_shared_system = false
     if orig_htg_system.is_a?(HPXML::HeatPump) && (orig_htg_system.heat_pump_type == HPXML::HVACTypeHeatPumpWaterLoopToAir)
       heat_pump_type = HPXML::HVACTypeHeatPumpWaterLoopToAir
       cop = lookup_reference_value('hvac_wlhp_cop')
@@ -1576,9 +1567,19 @@ module ES_ZERH_Ruleset
     backup_heating_capacity = -1 if backup_heating_capacity.nil? # Use auto-sizing
 
     if heat_pump_type == HPXML::HVACTypeHeatPumpAirToAir
+      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated
       heat_pump_backup_fuel = HPXML::FuelTypeElectricity
-      heat_pump_backup_type = HPXML::HeatPumpBackupTypeIntegrated unless heat_pump_backup_fuel.nil?
-      heat_pump_backup_eff = 1.0 unless heat_pump_backup_fuel.nil?
+      if orig_htg_system.is_a?(HPXML::HeatPump) && (not orig_htg_system.backup_heating_fuel.nil?)
+        heat_pump_backup_fuel = orig_htg_system.backup_heating_fuel
+      end
+      if heat_pump_backup_fuel == HPXML::FuelTypeElectricity
+        heat_pump_backup_eff = 1.0
+      else
+        heat_pump_backup_eff = get_default_furnace_afue(heat_pump_backup_fuel)
+        backup_heating_switchover_temp = orig_htg_system.backup_heating_switchover_temp unless orig_htg_system.backup_heating_switchover_temp.nil?
+        backup_heating_lockout_temp = orig_htg_system.backup_heating_lockout_temp unless orig_htg_system.backup_heating_lockout_temp.nil?
+        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp unless orig_htg_system.compressor_lockout_temp.nil?
+      end
     elsif heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
       pump_watts_per_ton = Defaults.get_gshp_pump_power()
     end
@@ -1603,10 +1604,13 @@ module ES_ZERH_Ruleset
                             heat_pump_fuel: HPXML::FuelTypeElectricity,
                             cooling_capacity: cooling_capacity,
                             heating_capacity: heating_capacity,
+                            compressor_lockout_temp: compressor_lockout_temp,
                             backup_type: heat_pump_backup_type,
                             backup_heating_fuel: heat_pump_backup_fuel,
                             backup_heating_capacity: backup_heating_capacity,
                             backup_heating_efficiency_percent: heat_pump_backup_eff,
+                            backup_heating_switchover_temp: backup_heating_switchover_temp,
+                            backup_heating_lockout_temp: backup_heating_lockout_temp,
                             fraction_heat_load_served: heat_load_frac,
                             fraction_cool_load_served: cool_load_frac,
                             cooling_efficiency_seer: seer,

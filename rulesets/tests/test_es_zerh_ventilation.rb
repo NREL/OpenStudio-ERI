@@ -15,160 +15,221 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
     @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
     @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @results_paths = []
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    FileUtils.rm_rf(@results_path) if Dir.exist? @results_path
+    @results_paths.each do |results_path|
+      FileUtils.rm_rf(results_path) if Dir.exist? results_path
+    end
+    @results_paths.clear
     puts
   end
 
   def cfm_per_watt(program_version, hpxml_bldg)
     iecc_zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if [ESConstants::SFNationalVer3_0, ESConstants::MFNationalVer1_0, ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1].include? program_version
+    if [ES::SFNationalVer3_0, ES::MFNationalVer1_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
       return 2.2
-    elsif [ESConstants::SFNationalVer3_1, ESConstants::SFNationalVer3_2, ESConstants::SFOregonWashingtonVer3_2,
-           ESConstants::MFNationalVer1_1, ESConstants::MFNationalVer1_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
+    elsif [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFOregonWashingtonVer3_2,
+           ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFOregonWashingtonVer1_2].include? program_version
       return 2.8
-    elsif [ZERHConstants::Ver1].include? program_version
+    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_3].include? program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
+        return 3.8
+      elsif ['4C', '5A', '5B', '5C'].include? iecc_zone
+        return 2.8
+      elsif ['6A', '6B', '6C'].include? iecc_zone
+        return 1.2
+      end
+    elsif [ZERH::Ver1].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return 2.8
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? iecc_zone
         return 1.2
       end
-    elsif [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+    elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return 2.9
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C'].include? iecc_zone
         return 1.2
       end
+    else
+      fail "Unhandled program version: #{program_version}"
     end
   end
 
   def fan_type(program_version, hpxml_bldg)
     iecc_zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if [ESConstants::SFPacificVer3_0, ESConstants::SFFloridaVer3_1].include? program_version
+    if [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
       return HPXML::MechVentTypeSupply
-    elsif [ESConstants::SFOregonWashingtonVer3_2, ESConstants::MFOregonWashingtonVer1_2].include? program_version
+    elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
       return HPXML::MechVentTypeExhaust
-    elsif [ZERHConstants::Ver1, ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+    elsif [ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return HPXML::MechVentTypeSupply
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return HPXML::MechVentTypeHRV
       end
-    else
+    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_3].include? program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
+        return HPXML::MechVentTypeSupply
+      elsif ['4C', '5A', '5B', '5C'].include? iecc_zone
+        return HPXML::MechVentTypeExhaust
+      elsif ['6A', '6B', '6C', '7', '8'].include? iecc_zone
+        return HPXML::MechVentTypeHRV
+      end
+    elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2,
+           ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return HPXML::MechVentTypeSupply
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return HPXML::MechVentTypeExhaust
       end
+    else
+      fail "Unhandled program version: #{program_version}"
     end
   end
 
   def sre(program_version, hpxml_bldg)
     iecc_zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if ESConstants::AllVersions.include? program_version
+    if ES::AllVersions.include? program_version
       return
-    elsif [ZERHConstants::Ver1].include? program_version
+    elsif [ZERH::Ver1].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return 0.6
       end
-    elsif [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_3].include? program_version
+      if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B', '4C', '5A', '5B', '5C'].include? iecc_zone
+        return
+      elsif ['6A', '6B', '6C', '7', '8'].include? iecc_zone
+        return 0.65
+      end
+    elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
       return
+    else
+      fail "Unhandled program version: #{program_version}"
     end
   end
 
   def asre(program_version, hpxml_bldg)
     iecc_zone = hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone
-    if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+    if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
       if ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C', '4A', '4B'].include? iecc_zone
         return
       elsif ['4C', '5A', '5B', '5C', '6A', '6B', '6C', '7', '8'].include? iecc_zone
         return 0.65
       end
-    else
+    elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+           ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+           ZERH::Ver1].include? program_version
       return
+    else
+      fail "Unhandled program version: #{program_version}"
     end
   end
 
   def test_mech_vent
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_mech_vent_attached_housing
-    ESConstants::AllVersions.each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_mech_vent_erv
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-mechvent-erv.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_mech_vent_hrv
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-mechvent-hrv.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 57.0, hours: 24, power: (57.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_mech_vent_nbeds_5
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-enclosure-beds-5.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 72.0, hours: 24, power: (72.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 72.0, hours: 24, power: (72.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_mech_vent_location_miami_fl
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-location-miami-fl.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 43.5, hours: 24, power: (43.5 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 43.5, hours: 24, power: (43.5 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_mech_vent_attached_housing_location_miami_fl
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
-      next unless ESConstants::NationalVersions.include?(program_version)
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+      next unless ES::NationalVersions.include?(program_version)
 
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -177,47 +238,58 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
       hpxml_bldg.climate_and_risk_zones.weather_station_name = 'Miami, FL'
       hpxml_bldg.climate_and_risk_zones.weather_station_wmo = 722020
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
-      if [ZERHConstants::SFVer2, ZERHConstants::MFVer2].include? program_version
+      hpxml_bldg = _test_ruleset(program_version)
+      if [ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), asre: asre(program_version, hpxml_bldg) }])
-      else
+      elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+             ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+             ZERH::Ver1].include? program_version
         _check_mech_vent(hpxml_bldg, [{ fantype: fan_type(program_version, hpxml_bldg), flowrate: 39.0, hours: 24, power: (39.0 / cfm_per_watt(program_version, hpxml_bldg)), sre: sre(program_version, hpxml_bldg) }])
+      else
+        fail "Unhandled program version: #{program_version}"
       end
     end
   end
 
   def test_whole_house_fan
-    [*ESConstants::AllVersions, *ZERHConstants::AllVersions].each do |program_version|
+    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-mechvent-whole-house-fan.xml', program_version)
-      _hpxml, hpxml_bldg = _test_ruleset(program_version)
+      hpxml_bldg = _test_ruleset(program_version)
       _check_whf(hpxml_bldg)
     end
   end
 
   def _test_ruleset(program_version)
     print '.'
-    if ESConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference,
-                            output_dir: @sample_files_path)]
-    elsif ZERHConstants::AllVersions.include? program_version
-      designs = [Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference,
-                            output_dir: @sample_files_path)]
-    end
 
-    success, errors, _, _, hpxml = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
+    if ES::AllVersions.include? program_version
+      run_type = RunType::ES
+    elsif ZERH::AllVersions.include? program_version
+      run_type = RunType::ZERH
+    end
+    designs = [Design.new(run_type: run_type,
+                          init_calc_type: InitCalcType::TargetHome,
+                          output_dir: @sample_files_path,
+                          version: program_version)]
+
+    success, errors, _, _, hpxml_bldgs = run_rulesets(@tmp_hpxml_path, designs, @schema_validator, @erivalidator)
 
     errors.each do |s|
       puts "Error: #{s}"
     end
 
     # assert that it ran correctly
-    assert_equal(true, success)
+    assert(success)
 
     # validate against 301 schematron
-    assert_equal(true, @erivalidator.validate(designs[0].init_hpxml_output_path))
-    @results_path = File.dirname(designs[0].init_hpxml_output_path)
+    designs.each do |design|
+      valid = @erivalidator.validate(design.init_hpxml_output_path)
+      puts @erivalidator.errors.map { |e| e.logMessage } unless valid
+      assert(valid)
+      @results_paths << File.absolute_path(File.join(File.dirname(design.init_hpxml_output_path), '..'))
+    end
 
-    return hpxml, hpxml.buildings[0]
+    return hpxml_bldgs.values[0]
   end
 
   def _check_mech_vent(hpxml_bldg, all_expected_values = [])
@@ -278,9 +350,5 @@ class EnergyStarZeroEnergyReadyHomeVentTest < Minitest::Test
 
   def _check_whf(hpxml_bldg)
     assert_equal(0, hpxml_bldg.ventilation_fans.select { |f| f.used_for_seasonal_cooling_load_reduction }.size)
-  end
-
-  def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
-    return convert_to_es_zerh(hpxml_name, program_version, @root_path, @tmp_hpxml_path, state_code)
   end
 end

@@ -15,7 +15,7 @@
         <Version>latest</Version>
       </CO2IndexCalculation>
       <EnergyStarCalculation>
-        <Version>MF_National_1.2</Version>
+        <Version>MF_National_1.3</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
         <Version>2024</Version>
@@ -31,7 +31,7 @@
       <SiteID id='Site'/>
       <Address>
         <StateCode>NY</StateCode>
-        <ZipCode>10001</ZipCode>
+        <ZipCode>11437</ZipCode>
       </Address>
     </Site>
     <ProjectStatus>

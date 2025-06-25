@@ -7,6 +7,13 @@ on:
     types: [ synchronize, opened ]
   workflow_dispatch:
 
+# Cancel in-progress jobs when a new commit is pushed to the PR
+# This avoids CI jobs "stacking up" for the same PR
+# This won't stop existing job if new commit is pushed with [ci skip].
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   run-ruleset-tests:
     runs-on: ubuntu-22.04
@@ -28,9 +35,10 @@ jobs:
         shell: bash
         run: |
           echo "Regenerating HPXML files..."
-          openstudio tasks.rb update_measures
-          echo "Checking for HPXML differences..."
+          openstudio tasks.rb update_hpxmls
           git config --global --add safe.directory $(realpath .)
+          echo "Checking for HPXML differences..."
+          echo "If differences are found below, then HPXMLs need to be regenerated using: openstudio tasks.rb update_hpxmls"
           git diff --exit-code --ignore-cr-at-eol workflow/*.xml
 
       - name: Run ruleset tests
@@ -165,6 +173,7 @@ jobs:
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
+          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base-versions-multiple-sf.xml
 
   merge-results:
     runs-on: ubuntu-22.04
