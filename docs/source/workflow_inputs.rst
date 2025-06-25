@@ -483,7 +483,7 @@ Any wall surface in contact with the ground is considered a foundation wall.
   ``Height``                                                      double    ft            > 0              Yes                        Total height
   ``Area``                                                        double    ft2           > 0              Yes                        Gross area (including doors/windows)
   ``Azimuth``                                                     integer   deg           >= 0, <= 359     No         See [#]_        Azimuth (clockwise from North)
-  ``Thickness``                                                   double    in            > 0              Yes                        Thickness excluding interior framing
+  ``Thickness``                                                   double    in            > 0              No         8.0             Thickness excluding interior framing
   ``DepthBelowGrade``                                             double    ft            >= 0, <= Height  Yes                        Depth below grade [#]_
   ``Insulation/SystemIdentifier``                                 id                                       Yes                        Unique identifier
   ``Insulation/Layer[InstallationType="continuous - interior"]``  element                                  See [#]_                   Interior insulation layer
@@ -566,7 +566,7 @@ Each space type that borders the ground (i.e., basement, crawlspace, garage, and
   ``SystemIdentifier``                                     id                                   Yes                  Unique identifier
   ``InteriorAdjacentTo``                                   string                  See [#]_     Yes                  Interior adjacent space type
   ``Area``                                                 double    ft2           > 0          Yes                  Gross area
-  ``Thickness``                                            double    in            >= 0         Yes                  Thickness [#]_
+  ``Thickness``                                            double    in            >= 0         No         See [#]_  Thickness [#]_
   ``ExposedPerimeter``                                     double    ft            >= 0         Yes                  Perimeter exposed to ambient conditions [#]_
   ``DepthBelowGrade``                                      double    ft            >= 0         No         See [#]_  Depth from the top of the slab surface to grade
   ``PerimeterInsulation/SystemIdentifier``                 id                                   Yes                  Unique identifier
@@ -583,6 +583,7 @@ Each space type that borders the ground (i.e., basement, crawlspace, garage, and
 
   .. [#] InteriorAdjacentTo choices are "conditioned space", "basement - conditioned", "basement - unconditioned", "crawlspace - vented", "crawlspace - unvented", or "garage".
          See :ref:`hpxmllocations` for descriptions.
+  .. [#] If Thickness not provided, defaults to 0 when adjacent to crawlspace and 4 inches for all other cases.
   .. [#] For a crawlspace with a dirt floor, enter a thickness of zero.
   .. [#] ExposedPerimeter includes any slab length that falls along the perimeter of the building's footprint (i.e., is exposed to ground or outdoor air conditions).
          See the figure below for an example of calculating slab exposed perimeter.
