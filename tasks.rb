@@ -2571,6 +2571,7 @@ def create_sample_hpxmls
       end
     end
     if not hpxml_bldg.clothes_dryers.empty?
+      hpxml_bldg.clothes_dryers[0].drying_method = nil
       if hpxml_bldg.clothes_dryers[0].is_shared_appliance
         hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_dryers[0].count = 2
@@ -2658,12 +2659,20 @@ def create_sample_hpxmls
     hpxml_bldg.heat_pumps.each do |heat_pump|
       heat_pump.backup_heating_lockout_temp = nil
       heat_pump.backup_heating_switchover_temp = nil
+
       if heat_pump.heating_capacity_17F.nil?
-        if not heat_pump.heating_capacity_fraction_17F.nil?
-          heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * heat_pump.heating_capacity_fraction_17F).round
+        if [HPXML::HVACTypeHeatPumpAirToAir,
+            HPXML::HVACTypeHeatPumpMiniSplit,
+            HPXML::HVACTypeHeatPumpPTHP,
+            HPXML::HVACTypeHeatPumpRoom].include? heat_pump.heat_pump_type
+          if not heat_pump.heating_capacity_fraction_17F.nil?
+            heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * heat_pump.heating_capacity_fraction_17F).round
+          else
+            heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * 0.6).round
+          end
+          heat_pump.heating_capacity_fraction_17F = nil
         end
       end
-      heat_pump.heating_capacity_fraction_17F = nil
 
       next unless [HPXML::HVACTypeHeatPumpAirToAir,
                    HPXML::HVACTypeHeatPumpGroundToAir,

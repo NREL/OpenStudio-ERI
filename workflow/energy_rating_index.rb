@@ -209,7 +209,7 @@ def retrieve_design_outputs(designs)
     design_outputs[calc_type] = {}
 
     hpxml = HPXML.new(hpxml_path: design.hpxml_output_path)
-    HVAC.apply_shared_systems(hpxml.buildings[0])
+    Defaults.apply_shared_systems(hpxml.buildings[0])
     design_outputs[calc_type]['HPXML'] = hpxml
     design_outputs[calc_type]['OUTPUT_DIR'] = File.dirname(design.annual_output_path)
 
