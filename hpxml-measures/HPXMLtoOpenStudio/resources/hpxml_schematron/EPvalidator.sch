@@ -54,8 +54,8 @@
     <sch:title>[AdvancedResearchFeatures]</sch:title>
     <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:SimulationControl/h:AdvancedResearchFeatures'>
       <sch:assert role='ERROR' test='count(h:TemperatureCapacitanceMultiplier) &lt;= 1'>Expected 0 or 1 element(s) for xpath: TemperatureCapacitanceMultiplier</sch:assert>
-      <sch:assert role='ERROR' test='count(h:DefrostModelType) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DefrostModelType</sch:assert>
-      <sch:assert role='ERROR' test='h:DefrostModelType[text()="standard" or text()="advanced"] or not(h:DefrostModelType)'>Expected DefrostModelType to be 'standard' or 'advanced'</sch:assert>
+      <!-- Deprecated DefrostModelType input; see https://github.com/NREL/OpenStudio-HPXML/pull/2015 -->
+      <sch:assert role='ERROR' test='count(h:DefrostModelType) = 0'>DefrostModelType has been deprecated</sch:assert>
       <sch:assert role='ERROR' test='count(h:OnOffThermostatDeadbandTemperature) &lt;= 1'>Expected 0 or 1 element(s) for xpath: OnOffThermostatDeadbandTemperature</sch:assert> <!-- See [OnOffThermostatDeadbandTemperature] -->
       <sch:assert role='ERROR' test='number(h:OnOffThermostatDeadbandTemperature) &gt; 0 or not(h:OnOffThermostatDeadbandTemperature)'>Expected OnOffThermostatDeadbandTemperature to be greater than 0</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatPumpBackupCapacityIncrement) &lt;= 1'>Expected 0 or 1 element(s) for xpath: HeatPumpBackupCapacityIncrement</sch:assert>
@@ -1339,6 +1339,7 @@
       <sch:report role='WARN' test='number(h:AnnualCoolingEfficiency[h:Units="EER"]/h:Value) &lt; 6'>EER should typically be greater than or equal to 6.</sch:report>
       <sch:report role='WARN' test='number(h:AnnualCoolingEfficiency[h:Units="CEER"]/h:Value) &lt; 5.9'>CEER should typically be greater than or equal to 5.9.</sch:report>
       <sch:report role='WARN' test='number(h:CoolingCapacity) &lt;= 1000 and number(h:CoolingCapacity) &gt; 0 and h:CoolingCapacity'>Cooling capacity should typically be greater than or equal to 1000 Btu/hr.</sch:report>
+      <sch:report role='WARN' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/h:FanMotorType) &gt; 0'>Fan power watts per cfm or fan motor type is not used for simulation of this HVAC system type.</sch:report>
     </sch:rule>
   </sch:pattern>
 
@@ -1354,6 +1355,7 @@
       <sch:assert role='ERROR' test='count(h:IntegratedHeatingSystemFuel) = 0'>Expected 0 element(s) for xpath: IntegratedHeatingSystemFuel</sch:assert>
       <!-- Warnings -->
       <sch:report role='WARN' test='number(h:CoolingCapacity) &lt;= 1000 and number(h:CoolingCapacity) &gt; 0 and h:CoolingCapacity'>Cooling capacity should typically be greater than or equal to 1000 Btu/hr.</sch:report>
+      <sch:report role='WARN' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/h:FanMotorType) &gt; 0'>Fan power watts per cfm or fan motor type is not used for simulation of this HVAC system type.</sch:report>
     </sch:rule>
   </sch:pattern>
 
@@ -1687,6 +1689,8 @@
       <sch:assert role='ERROR' test='h:HeatPumpFuel[text()="electricity"] or not(h:HeatPumpFuel)'>Expected HeatPumpFuel to be 'electricity'</sch:assert>
       <sch:assert role='ERROR' test='count(h:BackupType) &lt;= 1'>Expected 0 or 1 element(s) for xpath: BackupType</sch:assert> <!-- See [HeatPumpBackup] or [HeatPumpBackup=Integrated] or [HeatPumpBackup=Separate] -->
       <sch:assert role='ERROR' test='h:BackupType[text()="integrated" or text()="separate"] or not(h:BackupType)'>Expected BackupType to be 'integrated' or 'separate'</sch:assert>
+      <!-- Warnings -->
+      <sch:report role='WARN' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/h:FanMotorType) &gt; 0'>Fan power watts per cfm or fan motor type is not used for simulation of this HVAC system type.</sch:report>
     </sch:rule>
   </sch:pattern>
 
@@ -1718,6 +1722,7 @@
       <!-- Warnings -->
       <sch:report role='WARN' test='number(h:HeatingCapacity) &lt;= 1000 and number(h:HeatingCapacity) &gt; 0 and h:HeatingCapacity'>Heating capacity should typically be greater than or equal to 1000 Btu/hr.</sch:report>
       <sch:report role='WARN' test='number(h:CoolingCapacity) &lt;= 1000 and number(h:CoolingCapacity) &gt; 0 and h:CoolingCapacity'>Cooling capacity should typically be greater than or equal to 1000 Btu/hr.</sch:report>
+      <sch:report role='WARN' test='count(h:extension/h:FanPowerWattsPerCFM) + count(h:extension/h:FanMotorType) &gt; 0'>Fan power watts per cfm or fan motor type is not used for simulation of this HVAC system type.</sch:report>
     </sch:rule>
   </sch:pattern>
 
@@ -2959,6 +2964,8 @@
       <sch:assert role='ERROR' test='h:Location[text()="conditioned space" or text()="basement - unconditioned" or text()="basement - conditioned" or text()="attic - unvented" or text()="attic - vented" or text()="garage" or text()="crawlspace - unvented" or text()="crawlspace - vented" or text()="crawlspace - conditioned" or text()="other housing unit" or text()="other heated space" or text()="other multifamily buffer space" or text()="other non-freezing space"] or not(h:Location)'>Expected Location to be 'conditioned space' or 'basement - unconditioned' or 'basement - conditioned' or 'attic - unvented' or 'attic - vented' or 'garage' or 'crawlspace - unvented' or 'crawlspace - vented' or 'crawlspace - conditioned' or 'other housing unit' or 'other heated space' or 'other multifamily buffer space' or 'other non-freezing space'</sch:assert>
       <sch:assert role='ERROR' test='count(h:FuelType) = 1'>Expected 1 element(s) for xpath: FuelType</sch:assert>
       <sch:assert role='ERROR' test='h:FuelType[text()="natural gas" or text()="fuel oil" or text()="fuel oil 1" or text()="fuel oil 2" or text()="fuel oil 4" or text()="fuel oil 5/6" or text()="diesel" or text()="propane" or text()="kerosene" or text()="coal" or text()="coke" or text()="bituminous coal" or text()="anthracite coal" or text()="electricity" or text()="wood" or text()="wood pellets"] or not(h:FuelType)'>Expected FuelType to be 'natural gas' or 'fuel oil' or 'fuel oil 1' or 'fuel oil 2' or 'fuel oil 4' or 'fuel oil 5/6' or 'diesel' or 'propane' or 'kerosene' or 'coal' or 'coke' or 'bituminous coal' or 'anthracite coal' or 'electricity' or 'wood' or 'wood pellets'</sch:assert>
+      <sch:assert role='ERROR' test='count(h:DryingMethod) &lt;= 1'>Expected 0 or 1 element(s) for xpath: DryingMethod</sch:assert>
+      <sch:assert role='ERROR' test='h:DryingMethod[text()="conventional" or text()="condensing" or text()="heat pump" or text()="other"] or not(h:DryingMethod)'>Expected DryingMethod to be 'conventional' or 'condensing' or 'heat pump' or 'other'</sch:assert>
       <sch:assert role='ERROR' test='count(h:CombinedEnergyFactor) + count(h:EnergyFactor) &lt;= 1'>Expected 0 or 1 element(s) for xpath: CombinedEnergyFactor | EnergyFactor</sch:assert>
       <sch:assert role='ERROR' test='count(h:Vented) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Vented</sch:assert> <!-- See [ClothesDryerType=Vented] -->
       <sch:assert role='ERROR' test='count(h:extension/h:UsageMultiplier) &lt;= 1'>Expected 0 or 1 element(s) for xpath: extension/UsageMultiplier</sch:assert>

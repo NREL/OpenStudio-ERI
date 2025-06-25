@@ -332,7 +332,12 @@
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
+<<<<<<<< HEAD:hpxml-measures/workflow/sample_files/base-hvac-dual-fuel-air-to-air-heat-pump-2-speed-advanced-defrost.xml
               <BackupHeatingCapacity>36000.0</BackupHeatingCapacity>
+              <BackupHeatingSwitchoverTemperature>30.0</BackupHeatingSwitchoverTemperature>
+========
+              <BackupHeatingCapacity>34121.0</BackupHeatingCapacity>
+>>>>>>>> d2dd86da151acd87578dcbb552089a4dad4ff02c:hpxml-measures/workflow/sample_files/base-hvac-air-to-air-heat-pump-1-speed-space-constrained.xml
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -344,8 +349,11 @@
                 <Value>7.7</Value>
               </AnnualHeatingEfficiency>
               <extension>
+<<<<<<<< HEAD:hpxml-measures/workflow/sample_files/base-hvac-dual-fuel-air-to-air-heat-pump-2-speed-advanced-defrost.xml
                 <HeatingCapacityFraction17F>0.6</HeatingCapacityFraction17F>
+========
                 <EquipmentType>space constrained system</EquipmentType>
+>>>>>>>> d2dd86da151acd87578dcbb552089a4dad4ff02c:hpxml-measures/workflow/sample_files/base-hvac-air-to-air-heat-pump-1-speed-space-constrained.xml
               </extension>
             </HeatPump>
           </HVACPlant>
@@ -459,9 +467,8 @@
           <SystemIdentifier id='ClothesDryer1'/>
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
+          <DryingMethod>conventional</DryingMethod>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <Vented>true</Vented>
-          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

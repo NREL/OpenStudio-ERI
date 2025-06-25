@@ -55,8 +55,6 @@ class HPXML < Object
   # Constants
   AddressTypeMailing = 'mailing'
   AddressTypeStreet = 'street'
-  AdvancedResearchDefrostModelTypeStandard = 'standard'
-  AdvancedResearchDefrostModelTypeAdvanced = 'advanced'
   AdvancedResearchGroundToAirHeatPumpModelTypeStandard = 'standard'
   AdvancedResearchGroundToAirHeatPumpModelTypeExperimental = 'experimental'
   AirTypeFanCoil = 'fan coil'
@@ -97,6 +95,10 @@ class HPXML < Object
   ColorReflective = 'reflective'
   DehumidifierTypePortable = 'portable'
   DehumidifierTypeWholeHome = 'whole-home'
+  DryingMethodConventional = 'conventional'
+  DryingMethodCondensing = 'condensing'
+  DryingMethodHeatPump = 'heat pump'
+  DryingMethodOther = 'other'
   DuctBuriedInsulationNone = 'not buried'
   DuctBuriedInsulationPartial = 'partially buried'
   DuctBuriedInsulationFull = 'fully buried'
@@ -941,7 +943,6 @@ class HPXML < Object
              :sim_end_day,                                 # [Integer] SoftwareInfo/extension/SimulationControl/EndDayOfMonth
              :sim_calendar_year,                           # [Integer] SoftwareInfo/extension/SimulationControl/CalendarYear
              :temperature_capacitance_multiplier,          # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/TemperatureCapacitanceMultiplier
-             :defrost_model_type,                          # [String] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/DefrostModelType (HPXML::AdvancedResearchDefrostModelTypeXXX)
              :ground_to_air_heat_pump_model_type,          # [String] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/GroundToAirHeatPumpModelType (HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeXXX)
              :hvac_onoff_thermostat_deadband,              # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/OnOffThermostatDeadbandTemperature (F)
              :heat_pump_backup_heating_capacity_increment, # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/HeatPumpBackupCapacityIncrement (Btu/hr)
@@ -1008,7 +1009,7 @@ class HPXML < Object
           XMLHelper.add_element(calculation, 'Version', calculation_version, :string)
         end
       end
-      if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @temperature_capacitance_multiplier.nil?) || (not @defrost_model_type.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?)
+      if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @temperature_capacitance_multiplier.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?)
         extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
         simulation_control = XMLHelper.add_element(extension, 'SimulationControl')
         XMLHelper.add_element(simulation_control, 'Timestep', @timestep, :integer, @timestep_isdefaulted) unless @timestep.nil?
@@ -1017,10 +1018,9 @@ class HPXML < Object
         XMLHelper.add_element(simulation_control, 'EndMonth', @sim_end_month, :integer, @sim_end_month_isdefaulted) unless @sim_end_month.nil?
         XMLHelper.add_element(simulation_control, 'EndDayOfMonth', @sim_end_day, :integer, @sim_end_day_isdefaulted) unless @sim_end_day.nil?
         XMLHelper.add_element(simulation_control, 'CalendarYear', @sim_calendar_year, :integer, @sim_calendar_year_isdefaulted) unless @sim_calendar_year.nil?
-        if (not @defrost_model_type.nil?) || (not @temperature_capacitance_multiplier.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?) || (not @ground_to_air_heat_pump_model_type.nil?)
+        if (not @temperature_capacitance_multiplier.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?) || (not @ground_to_air_heat_pump_model_type.nil?)
           advanced_research_features = XMLHelper.create_elements_as_needed(simulation_control, ['AdvancedResearchFeatures'])
           XMLHelper.add_element(advanced_research_features, 'TemperatureCapacitanceMultiplier', @temperature_capacitance_multiplier, :float, @temperature_capacitance_multiplier_isdefaulted) unless @temperature_capacitance_multiplier.nil?
-          XMLHelper.add_element(advanced_research_features, 'DefrostModelType', @defrost_model_type, :string, @defrost_model_type_isdefaulted) unless @defrost_model_type.nil?
           XMLHelper.add_element(advanced_research_features, 'OnOffThermostatDeadbandTemperature', @hvac_onoff_thermostat_deadband, :float, @hvac_onoff_thermostat_deadband_isdefaulted) unless @hvac_onoff_thermostat_deadband.nil?
           XMLHelper.add_element(advanced_research_features, 'HeatPumpBackupCapacityIncrement', @heat_pump_backup_heating_capacity_increment, :float, @heat_pump_backup_heating_capacity_increment_isdefaulted) unless @heat_pump_backup_heating_capacity_increment.nil?
           XMLHelper.add_element(advanced_research_features, 'GroundToAirHeatPumpModelType', @ground_to_air_heat_pump_model_type, :string, @ground_to_air_heat_pump_model_type_isdefaulted) unless @ground_to_air_heat_pump_model_type.nil?
@@ -1064,7 +1064,6 @@ class HPXML < Object
       @sim_end_day = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/EndDayOfMonth', :integer)
       @sim_calendar_year = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/CalendarYear', :integer)
       @temperature_capacitance_multiplier = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/TemperatureCapacitanceMultiplier', :float)
-      @defrost_model_type = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/DefrostModelType', :string)
       @hvac_onoff_thermostat_deadband = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/OnOffThermostatDeadbandTemperature', :float)
       @heat_pump_backup_heating_capacity_increment = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/HeatPumpBackupCapacityIncrement', :float)
       @ground_to_air_heat_pump_model_type = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/GroundToAirHeatPumpModelType', :string)
@@ -10565,6 +10564,7 @@ class HPXML < Object
              :number_of_units_served, # [Integer] NumberofUnitsServed
              :location,               # [String] Location (HPXML::LocationXXX)
              :fuel_type,              # [String] FuelType (HPXML::FuelTypeXXX)
+             :drying_method,          # [String] DryingMethod (HPXML::DryingMethodXXX)
              :energy_factor,          # [Double] EnergyFactor (lb/kWh)
              :combined_energy_factor, # [Double] CombinedEnergyFactor (lb/kWh)
              :control_type,           # [String] ControlType (HPXML::ClothesDryerControlTypeXXX)
@@ -10621,6 +10621,7 @@ class HPXML < Object
       XMLHelper.add_element(clothes_dryer, 'NumberofUnitsServed', @number_of_units_served, :integer) unless @number_of_units_served.nil?
       XMLHelper.add_element(clothes_dryer, 'Location', @location, :string, @location_isdefaulted) unless @location.nil?
       XMLHelper.add_element(clothes_dryer, 'FuelType', @fuel_type, :string) unless @fuel_type.nil?
+      XMLHelper.add_element(clothes_dryer, 'DryingMethod', @drying_method, :string, @drying_method_isdefaulted) unless @drying_method.nil?
       XMLHelper.add_element(clothes_dryer, 'EnergyFactor', @energy_factor, :float) unless @energy_factor.nil?
       XMLHelper.add_element(clothes_dryer, 'CombinedEnergyFactor', @combined_energy_factor, :float, @combined_energy_factor_isdefaulted) unless @combined_energy_factor.nil?
       XMLHelper.add_element(clothes_dryer, 'ControlType', @control_type, :string, @control_type_isdefaulted) unless @control_type.nil?
@@ -10645,6 +10646,7 @@ class HPXML < Object
       @number_of_units_served = XMLHelper.get_value(clothes_dryer, 'NumberofUnitsServed', :integer)
       @location = XMLHelper.get_value(clothes_dryer, 'Location', :string)
       @fuel_type = XMLHelper.get_value(clothes_dryer, 'FuelType', :string)
+      @drying_method = XMLHelper.get_value(clothes_dryer, 'DryingMethod', :string)
       @energy_factor = XMLHelper.get_value(clothes_dryer, 'EnergyFactor', :float)
       @combined_energy_factor = XMLHelper.get_value(clothes_dryer, 'CombinedEnergyFactor', :float)
       @control_type = XMLHelper.get_value(clothes_dryer, 'ControlType', :string)

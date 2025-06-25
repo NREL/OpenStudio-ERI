@@ -119,15 +119,6 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDescription("Affects the transient calculation of indoor air temperatures. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.")
     args << arg
 
-    defrost_model_type_choices = OpenStudio::StringVector.new
-    defrost_model_type_choices << HPXML::AdvancedResearchDefrostModelTypeStandard
-    defrost_model_type_choices << HPXML::AdvancedResearchDefrostModelTypeAdvanced
-
-    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('simulation_control_defrost_model_type', defrost_model_type_choices, false)
-    arg.setDisplayName('Simulation Control: Defrost Model Type')
-    arg.setDescription("Research feature to select the type of defrost model. Use #{HPXML::AdvancedResearchDefrostModelTypeStandard} for default E+ defrost setting. Use #{HPXML::AdvancedResearchDefrostModelTypeAdvanced} for an improved model that better accounts for load and energy use during defrost; using #{HPXML::AdvancedResearchDefrostModelTypeAdvanced} may impact simulation runtime. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.")
-    args << arg
-
     ground_to_air_heat_pump_model_type_choices = OpenStudio::StringVector.new
     ground_to_air_heat_pump_model_type_choices << HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeStandard
     ground_to_air_heat_pump_model_type_choices << HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeExperimental
@@ -3313,10 +3304,21 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     clothes_dryer_efficiency_type_choices << 'EnergyFactor'
     clothes_dryer_efficiency_type_choices << 'CombinedEnergyFactor'
 
+    clothes_dryer_drying_method_choices = OpenStudio::StringVector.new
+    clothes_dryer_drying_method_choices << HPXML::DryingMethodConventional
+    clothes_dryer_drying_method_choices << HPXML::DryingMethodCondensing
+    clothes_dryer_drying_method_choices << HPXML::DryingMethodHeatPump
+    clothes_dryer_drying_method_choices << HPXML::DryingMethodOther
+
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('clothes_dryer_fuel_type', clothes_dryer_fuel_choices, true)
     arg.setDisplayName('Clothes Dryer: Fuel Type')
     arg.setDescription('Type of fuel used by the clothes dryer.')
     arg.setDefaultValue(HPXML::FuelTypeNaturalGas)
+    args << arg
+
+    arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('clothes_dryer_drying_method', clothes_dryer_drying_method_choices, false)
+    arg.setDisplayName('Clothes Dryer: Drying Method')
+    arg.setDescription("The method of drying used by the clothes dryer. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-clothes-dryer'>HPXML Clothes Dryer</a>) is used.")
     args << arg
 
     arg = OpenStudio::Measure::OSArgument::makeChoiceArgument('clothes_dryer_efficiency_type', clothes_dryer_efficiency_type_choices, true)
@@ -3329,12 +3331,6 @@ class BuildResidentialHPXML < OpenStudio::Measure::ModelMeasure
     arg.setDisplayName('Clothes Dryer: Efficiency')
     arg.setUnits('lb/kWh')
     arg.setDescription("The efficiency of the clothes dryer. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-clothes-dryer'>HPXML Clothes Dryer</a>) is used.")
-    args << arg
-
-    arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('clothes_dryer_vented_flow_rate', false)
-    arg.setDisplayName('Clothes Dryer: Vented Flow Rate')
-    arg.setDescription("The exhaust flow rate of the vented clothes dryer. If not provided, the OS-HPXML default (see <a href='#{docs_base_url}#hpxml-clothes-dryer'>HPXML Clothes Dryer</a>) is used.")
-    arg.setUnits('CFM')
     args << arg
 
     arg = OpenStudio::Measure::OSArgument::makeDoubleArgument('clothes_dryer_usage_multiplier', false)
@@ -4610,13 +4606,6 @@ module HPXMLFile
         errors << "'Simulation Control: Temperature Capacitance Multiplier' cannot vary across dwelling units."
       end
       hpxml.header.temperature_capacitance_multiplier = args[:simulation_control_temperature_capacitance_multiplier]
-    end
-
-    if not args[:simulation_control_defrost_model_type].nil?
-      if (not hpxml.header.defrost_model_type.nil?) && (hpxml.header.defrost_model_type != args[:simulation_control_defrost_model_type])
-        errors << "'Simulation Control: Defrost Model Type' cannot vary across dwelling units."
-      end
-      hpxml.header.defrost_model_type = args[:simulation_control_defrost_model_type]
     end
 
     if not args[:simulation_control_ground_to_air_heat_pump_model_type].nil?
@@ -7833,21 +7822,12 @@ module HPXMLFile
       combined_energy_factor = args[:clothes_dryer_efficiency]
     end
 
-    if not args[:clothes_dryer_vented_flow_rate].nil?
-      is_vented = false
-      if args[:clothes_dryer_vented_flow_rate] > 0
-        is_vented = true
-        vented_flow_rate = args[:clothes_dryer_vented_flow_rate]
-      end
-    end
-
     hpxml_bldg.clothes_dryers.add(id: "ClothesDryer#{hpxml_bldg.clothes_dryers.size + 1}",
                                   location: args[:clothes_dryer_location],
                                   fuel_type: args[:clothes_dryer_fuel_type],
+                                  drying_method: args[:clothes_dryer_drying_method],
                                   energy_factor: energy_factor,
                                   combined_energy_factor: combined_energy_factor,
-                                  is_vented: is_vented,
-                                  vented_flow_rate: vented_flow_rate,
                                   usage_multiplier: args[:clothes_dryer_usage_multiplier])
   end
 

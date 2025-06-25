@@ -180,19 +180,6 @@ Affects the transient calculation of indoor air temperatures. If not provided, t
 
 <br/>
 
-**Simulation Control: Defrost Model Type**
-
-Research feature to select the type of defrost model. Use standard for default E+ defrost setting. Use advanced for an improved model that better accounts for load and energy use during defrost; using advanced may impact simulation runtime. If not provided, the OS-HPXML default (see <a href='https://openstudio-hpxml.readthedocs.io/en/v1.10.0/workflow_inputs.html#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.
-
-- **Name:** ``simulation_control_defrost_model_type``
-- **Type:** ``Choice``
-
-- **Required:** ``false``
-
-- **Choices:** `standard`, `advanced`
-
-<br/>
-
 **Simulation Control: Ground-to-Air Heat Pump Model Type**
 
 Research feature to select the type of ground-to-air heat pump model. Use standard for standard ground-to-air heat pump modeling. Use experimental for an improved model that better accounts for coil staging. If not provided, the OS-HPXML default (see <a href='https://openstudio-hpxml.readthedocs.io/en/v1.10.0/workflow_inputs.html#hpxml-simulation-control'>HPXML Simulation Control</a>) is used.
@@ -5729,6 +5716,19 @@ Type of fuel used by the clothes dryer.
 
 <br/>
 
+**Clothes Dryer: Drying Method**
+
+The method of drying used by the clothes dryer. If not provided, the OS-HPXML default (see <a href='https://openstudio-hpxml.readthedocs.io/en/v1.10.0/workflow_inputs.html#hpxml-clothes-dryer'>HPXML Clothes Dryer</a>) is used.
+
+- **Name:** ``clothes_dryer_drying_method``
+- **Type:** ``Choice``
+
+- **Required:** ``false``
+
+- **Choices:** `conventional`, `condensing`, `heat pump`, `other`
+
+<br/>
+
 **Clothes Dryer: Efficiency Type**
 
 The efficiency type of the clothes dryer.
@@ -5750,19 +5750,6 @@ The efficiency of the clothes dryer. If not provided, the OS-HPXML default (see 
 - **Type:** ``Double``
 
 - **Units:** ``lb/kWh``
-
-- **Required:** ``false``
-
-<br/>
-
-**Clothes Dryer: Vented Flow Rate**
-
-The exhaust flow rate of the vented clothes dryer. If not provided, the OS-HPXML default (see <a href='https://openstudio-hpxml.readthedocs.io/en/v1.10.0/workflow_inputs.html#hpxml-clothes-dryer'>HPXML Clothes Dryer</a>) is used.
-
-- **Name:** ``clothes_dryer_vented_flow_rate``
-- **Type:** ``Double``
-
-- **Units:** ``CFM``
 
 - **Required:** ``false``
 

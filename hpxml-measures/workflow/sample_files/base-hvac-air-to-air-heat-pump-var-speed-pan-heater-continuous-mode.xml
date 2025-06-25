@@ -332,7 +332,7 @@
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>36000.0</BackupHeatingCapacity>
+              <BackupHeatingCapacity>34121.0</BackupHeatingCapacity>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -344,9 +344,12 @@
                 <Value>10.0</Value>
               </AnnualHeatingEfficiency>
               <extension>
+<<<<<<<< HEAD:hpxml-measures/workflow/sample_files/base-hvac-air-to-air-heat-pump-var-speed-backup-boiler-advanced-defrost.xml
+                <HeatingCapacityFraction17F>0.6</HeatingCapacityFraction17F>
+========
                 <PanHeaterPowerWatts>100.0</PanHeaterPowerWatts>
                 <PanHeaterControlType>continuous</PanHeaterControlType>
-                <HeatingCapacityFraction17F>0.6</HeatingCapacityFraction17F>
+>>>>>>>> d2dd86da151acd87578dcbb552089a4dad4ff02c:hpxml-measures/workflow/sample_files/base-hvac-air-to-air-heat-pump-var-speed-pan-heater-continuous-mode.xml
               </extension>
             </HeatPump>
           </HVACPlant>
@@ -460,9 +463,8 @@
           <SystemIdentifier id='ClothesDryer1'/>
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
+          <DryingMethod>conventional</DryingMethod>
           <CombinedEnergyFactor>3.73</CombinedEnergyFactor>
-          <Vented>true</Vented>
-          <VentedFlowRate>150.0</VentedFlowRate>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
