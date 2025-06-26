@@ -66,6 +66,17 @@
             <InfiltrationVolume>20400.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='ConditionedBasement'/>
+            <FoundationType>
+              <Basement>
+                <Conditioned>true</Conditioned>
+              </Basement>
+            </FoundationType>
+            <WithinInfiltrationVolume>true</WithinInfiltrationVolume>
+          </Foundation>
+        </Foundations>
         <RimJoists>
           <RimJoist>
             <SystemIdentifier id='RimJoist1'/>

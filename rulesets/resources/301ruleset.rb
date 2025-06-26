@@ -348,7 +348,7 @@ module ERI_301_Ruleset
 
   def self.set_enclosure_air_infiltration_iad(new_bldg)
     infil_volume = 20400
-    infil_height = new_bldg.inferred_infiltration_height(infil_volume)
+    infil_height = 17.0
 
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
@@ -2501,13 +2501,13 @@ module ERI_301_Ruleset
     if @bldg_type == HPXML::ResidentialTypeSFD
       a_ext = 1.0
     else
-      tot_cb_area, ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+      tot_cb_area, ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
       a_ext = ext_cb_area / tot_cb_area
 
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
         if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
           cfm50 = infil_values[:ach50] * infil_values[:volume] / 60.0
-          tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+          tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
           if cfm50 / tot_cb_area > 0.30
             a_ext = 1.0
           end
