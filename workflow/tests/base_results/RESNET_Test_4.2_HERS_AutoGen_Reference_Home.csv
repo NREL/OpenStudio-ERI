@@ -22,8 +22,8 @@ West window area (ft2),69.26,69.26,69.26,102.64
 Window U-Factor,0.4,0.65,1.2,0.35
 Window SHGCo,0.33,0.33,0.33,0.33
 SLAo (ft2/ft2),0.00036,0.00036,0.00036,0.00036
-Sensible Internal gains (Btu/day),55037,52370,47829,82522
-Latent Internal gains (Btu/day),13588,12519,9145,17645
+Sensible Internal gains (Btu/day),55142,52470,47839,82721
+Latent Internal gains (Btu/day),13635,12565,9150,17734
 Labeled heating system rating and efficiency,0.78,7.7,7.7,0.78
 Labeled cooling system rating and efficiency,13.0,13.0,13.0,13.0
 Air Distribution System Efficiency,0.8,0.8,0.8,0.8
@@ -33,4 +33,4 @@ Cooling thermostat settings,78,78,78,78
 Mechanical ventilation (kWh/y),0.0,223.88,288.07,763.41
 DHW pipe length refPipeL,88.5,88.5,88.5,98.5
 DHW loop length refLoopL,156.9,156.9,156.9,176.9
-e-Ratio,0.999983,0.999853,1.0000194,0.9999849
+e-Ratio,0.9999746,0.9998727,1.0000194,0.9999931
