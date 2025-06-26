@@ -800,7 +800,7 @@ class ERIHVACtest < Minitest::Test
   def test_manual_thermostat
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeManual,
                                     htg_setpoints: '68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68',
                                     clg_setpoints: '78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78')
@@ -810,7 +810,7 @@ class ERIHVACtest < Minitest::Test
   def test_programmable_thermostat
     hpxml_name = 'base-hvac-programmable-thermostat.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable,
                                       htg_setpoints: '66, 66, 66, 66, 66, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 66',
@@ -838,7 +838,7 @@ class ERIHVACtest < Minitest::Test
   def test_ducts
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 547.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 203.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
@@ -856,7 +856,7 @@ class ERIHVACtest < Minitest::Test
   def test_ducts_cfm50
     hpxml_name = 'base-hvac-ducts-leakage-cfm50.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 547.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 203.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationNone },
@@ -874,7 +874,7 @@ class ERIHVACtest < Minitest::Test
   def test_ducts_buried
     hpxml_name = 'base-hvac-ducts-buried.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 4.0, duct_area: 547.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep },
                                   { duct_type: HPXML::DuctTypeReturn, duct_rvalue: 4.0, duct_area: 203.0, duct_location: HPXML::LocationAtticUnvented, duct_buried: HPXML::DuctBuriedInsulationDeep },
@@ -892,7 +892,7 @@ class ERIHVACtest < Minitest::Test
   def test_dse
     hpxml_name = 'base-hvac-dse.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         hvac_iq_values = _get_default_hvac_iq_values('latest', 0.5)
         _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, equiptype: HPXML::HVACEquipmentTypeSplit, fuel: HPXML::FuelTypeElectricity, comptype: HPXML::HVACCompressorTypeSingleStage, seer2: 12.35, eer2: 10.5, frac_load: 1.0, dse: 0.7, fan_motor_type: HPXML::HVACFanMotorTypePSC, **hvac_iq_values }])
@@ -909,7 +909,7 @@ class ERIHVACtest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name, version)
+  def _test_ruleset(hpxml_name, version = 'latest')
     print '.'
 
     designs = []

@@ -103,13 +103,13 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
           fail "Unhandled IECC version: #{design.version}."
         end
       elsif [RunType::ES, RunType::ZERH].include? design.run_type
-        eri_version = Constants::ERIVersions[-1]
+        # Use latest ANSI version/addenda
+        eri_version = Constants::ERIVersions[-2]
       elsif [RunType::ERI, RunType::CO2e].include? design.run_type
         eri_version = design.version
       else
         fail 'Unexpected design run type.'
       end
-      eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
       if eri_version.nil?
         fail 'Unexpected error; ERI version not set.'
       end

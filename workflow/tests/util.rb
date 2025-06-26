@@ -22,8 +22,8 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
 
-  eri_versions = hpxml.header.eri_calculation_versions.map { |v| v == 'latest' ? Constants::ERIVersions[-1] : v }
-  co2_versions = hpxml.header.co2index_calculation_versions.map { |v| v == 'latest' ? Constants::ERIVersions[-1] : v }
+  eri_versions = hpxml.header.eri_calculation_versions
+  co2_versions = hpxml.header.co2index_calculation_versions
   iecc_versions = hpxml.header.iecc_eri_calculation_versions
   es_versions = hpxml.header.energystar_calculation_versions
   zerh_versions = hpxml.header.zerh_calculation_versions
@@ -707,9 +707,8 @@ def _check_reference_home_components(results, test_num, version)
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2022C'
-    # Pub 002-2024
-    # Note: Values updated because of MINHERS Addenda 81 and 90f and provided by Philip on 5/29/25
+  if version == 'latest'
+    # Includes updated values due to MINHERS Addenda 81 and 90f and provided by Philip on 5/29/25
     if test_num == 1
       assert_in_epsilon(55037, results['Sensible Internal gains (Btu/day)'], epsilon)
       assert_in_epsilon(13589, results['Latent Internal gains (Btu/day)'], epsilon)
@@ -722,6 +721,21 @@ def _check_reference_home_components(results, test_num, version)
     else
       assert_in_epsilon(82522, results['Sensible Internal gains (Btu/day)'], epsilon)
       assert_in_epsilon(17646, results['Latent Internal gains (Btu/day)'], epsilon)
+    end
+  elsif version == '2022C'
+    # Pub 002-2024
+    if test_num == 1
+      assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13635, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 2
+      assert_in_epsilon(52470, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12565, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 3
+      assert_in_epsilon(47839, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9150, results['Latent Internal gains (Btu/day)'], epsilon)
+    else
+      assert_in_epsilon(82721, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17734, results['Latent Internal gains (Btu/day)'], epsilon)
     end
   else
     # Note: Values have been updated slightly relative to Pub 002 because we are

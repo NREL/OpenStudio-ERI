@@ -2,7 +2,6 @@
 
 module ES_ZERH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, program_version, eri_version, lookup_program_data)
-    # Use latest version of ANSI 301
     @eri_version = eri_version
     hpxml.header.eri_calculation_versions = [@eri_version]
     hpxml.header.co2index_calculation_versions = nil

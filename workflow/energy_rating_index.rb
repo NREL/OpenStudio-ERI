@@ -40,10 +40,6 @@ def get_program_versions(hpxml_doc, print_output: true)
     versions = []
     xml_versions = XMLHelper.get_values(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string).uniq
     xml_versions.each do |version|
-      if version == 'latest'
-        version = all_versions[-1]
-      end
-
       if (not version.nil?) && (not all_versions.include? version)
         puts "Unexpected #{xpath}: '#{version}'"
         exit!

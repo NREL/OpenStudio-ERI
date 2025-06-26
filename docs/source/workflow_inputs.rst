@@ -61,9 +61,9 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
 
   .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
          For example, a value of "2019AB" tells the workflow to use ANSI/RESNET/ICC 301-2019 with both Addendum A and Addendum B included.
-         A value of "latest" can be used to always point to the latest version available.
+         A value of "latest" can be used to always point to the latest version available, including any RESNET HERS addenda not yet incorporated in ANSI/RESNET/ICC 301 at the time of release.
   .. [#] CO2IndexCalculation/Version choices are "latest", "2022CE", "2022C", "2022", or "2019ABCD".
-         A value of "latest" can be used to always point to the latest version available.
+         A value of "latest" can be used to always point to the latest version available, including any RESNET HERS addenda not yet incorporated in ANSI/RESNET/ICC 301 at the time of release.
          If :ref:`hers_diagnostic_output` is requested, a single CO2IndexCalculation/Version and a single ERICalculation/Version must be provided and use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
