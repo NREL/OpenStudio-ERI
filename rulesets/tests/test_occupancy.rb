@@ -30,13 +30,13 @@ class ERIOccupancyTest < Minitest::Test
   def test_building
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, _calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, _calc_type), hpxml_bldg|
       _check_occupancy(hpxml_bldg)
       _check_general_water_use(hpxml_bldg)
     end
   end
 
-  def _test_ruleset(hpxml_name, version)
+  def _test_ruleset(hpxml_name, version = 'latest')
     print '.'
 
     designs = []

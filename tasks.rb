@@ -270,8 +270,8 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml.header.eri_calculation_versions = ['2019']
   elsif hpxml_file.include?('Other_HERS_AutoGen_IAD_Home')
     hpxml.header.eri_calculation_versions = ['2019ABCD']
-  elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
-    hpxml.header.eri_calculation_versions = ['latest']
+  elsif hpxml_file.include?('RESNET_Tests/4.')
+    hpxml.header.eri_calculation_versions = ['2022CE']
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.header.xml_type = 'HPXML'
     hpxml.header.xml_generated_by = 'tasks.rb'
@@ -291,7 +291,7 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
   end
 
   eri_version = (hpxml.header.eri_calculation_versions.nil? ? nil : hpxml.header.eri_calculation_versions[0])
-  eri_version = Constants::ERIVersions[-1] if (eri_version == 'latest' || eri_version.nil?)
+  eri_version = 'latest' if eri_version.nil?
   return eri_version
 end
 

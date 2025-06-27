@@ -51,7 +51,7 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_reference_home_auto_generation
-    version = '2022C'
+    version = '2022C' # Latest version that caused changes to results
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_4.2_HERS_AutoGen_Reference_Home',
                                                                    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home',
                                                                    version)
@@ -64,16 +64,15 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_method
-    _all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
-                                            'RESNET_Tests/4.3_HERS_Method')
+    version = '2019A' # Latest version that caused changes to results
+    all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
+                                           'RESNET_Tests/4.3_HERS_Method')
 
     # Check results
-    # FIXME: Temporarily disabled until RESNET acceptance criteria are updated
-    # TRL needs to be updated because of MINHERS Addenda 81 and 90f
-    # all_results.each do |xml, _results|
-    #  test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-    #  _check_method_results(results, test_num, test_num == 2, '2019A')
-    # end
+    all_results.each do |xml, results|
+      test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
+      _check_method_results(results, test_num, test_num == 2, version)
+    end
   end
 
   def test_resnet_hvac
@@ -104,7 +103,7 @@ class RESNETTest < Minitest::Test
 
     # Check result if we have them all
     if all_results.size > 1
-      # FIXME: Temporarily disabled
+      # FIXME: Temporarily disabled until RESNET updates acceptance criteria for HERS Addendum 82
       # _check_hvac_test_results(hvac_energy)
     end
   end
@@ -155,13 +154,11 @@ class RESNETTest < Minitest::Test
     end
     assert(all_results.size > 0)
 
-    _dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
+    dhw_energy = _write_hers_hot_water_results(all_results, test_results_csv)
 
     # Check results if we have them all
-    # FIXME: Temporarily disabled until RESNET acceptance criteria are updated
-    # Needs to be updated because of MINHERS Addenda 81 and 90f
-    # if all_results.size > 1
-    #   _check_hot_water(dhw_energy)
-    # end
+    if all_results.size > 1
+      _check_hot_water(dhw_energy)
+    end
   end
 end
