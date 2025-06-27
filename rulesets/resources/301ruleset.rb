@@ -259,7 +259,6 @@ module ERI_301_Ruleset
 
   def self.set_summary_reference(orig_bldg, new_bldg)
     # Global variables
-    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
@@ -271,14 +270,12 @@ module ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
-    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
     new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_rated(orig_bldg, new_bldg)
     # Global variables
-    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = orig_bldg.building_construction.conditioned_floor_area
     @nbeds = orig_bldg.building_construction.number_of_bedrooms
@@ -290,14 +287,12 @@ module ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = orig_bldg.building_construction.number_of_bedrooms
     new_bldg.building_construction.conditioned_floor_area = orig_bldg.building_construction.conditioned_floor_area
     new_bldg.building_construction.residential_facility_type = @bldg_type
-    new_bldg.building_construction.average_ceiling_height = orig_bldg.building_construction.average_ceiling_height
     new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
 
   def self.set_summary_iad(orig_bldg, new_bldg)
     # Global variables
-    apply_default_average_ceiling_height(orig_bldg)
     @bldg_type = orig_bldg.building_construction.residential_facility_type
     @cfa = 2400.0
     @nbeds = 3
@@ -309,7 +304,6 @@ module ERI_301_Ruleset
     new_bldg.building_construction.number_of_bedrooms = @nbeds
     new_bldg.building_construction.conditioned_floor_area = @cfa
     new_bldg.building_construction.residential_facility_type = @bldg_type
-    new_bldg.building_construction.average_ceiling_height = 8.5
     new_bldg.building_construction.unit_height_above_grade = 0
     new_bldg.air_infiltration.has_flue_or_chimney_in_conditioned_space = false
   end
@@ -328,7 +322,7 @@ module ERI_301_Ruleset
   def self.set_enclosure_air_infiltration_reference(orig_bldg, new_bldg)
     infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @weather)
     sla = 0.00036
-    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, 0.65, @cfa, infil_values[:volume])
+    ach50 = Airflow.get_infiltration_ACH50_from_SLA(sla, infil_values[:avg_ceil_height])
     new_bldg.air_infiltration_measurements.add(id: 'Infiltration_ACH50',
                                                house_pressure: 50,
                                                unit_of_measure: HPXML::UnitsACH,
@@ -354,7 +348,7 @@ module ERI_301_Ruleset
 
   def self.set_enclosure_air_infiltration_iad(new_bldg)
     infil_volume = 20400
-    infil_height = new_bldg.inferred_infiltration_height(infil_volume)
+    infil_height = 17.0
 
     if ['1A', '1B', '1C', '2A', '2B', '2C'].include? @iecc_zone
       ach50 = 5.0
@@ -1268,8 +1262,10 @@ module ERI_301_Ruleset
                                    fraction_heat_load_served: orig_heating_system.fraction_heat_load_served,
                                    shared_loop_watts: orig_heating_system.shared_loop_watts,
                                    fan_coil_watts: orig_heating_system.fan_coil_watts,
+                                   fan_motor_type: orig_heating_system.fan_motor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    fan_watts: orig_heating_system.fan_watts,
+                                   heating_design_airflow_cfm: orig_heating_system.heating_design_airflow_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    htg_seed_id: orig_heating_system.htg_seed_id.nil? ? orig_heating_system.id : orig_heating_system.htg_seed_id)
     end
@@ -1300,12 +1296,14 @@ module ERI_301_Ruleset
                                    cooling_efficiency_seer: orig_cooling_system.cooling_efficiency_seer,
                                    cooling_efficiency_seer2: orig_cooling_system.cooling_efficiency_seer2,
                                    cooling_efficiency_eer: orig_cooling_system.cooling_efficiency_eer,
+                                   cooling_efficiency_eer2: orig_cooling_system.cooling_efficiency_eer2,
                                    cooling_efficiency_ceer: orig_cooling_system.cooling_efficiency_ceer,
                                    cooling_efficiency_kw_per_ton: orig_cooling_system.cooling_efficiency_kw_per_ton,
-                                   cooling_shr: orig_cooling_system.cooling_shr,
                                    shared_loop_watts: orig_cooling_system.shared_loop_watts,
                                    fan_coil_watts: orig_cooling_system.fan_coil_watts,
+                                   fan_motor_type: orig_cooling_system.fan_motor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
+                                   cooling_design_airflow_cfm: orig_cooling_system.cooling_design_airflow_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    charge_defect_ratio: charge_defect_ratio,
                                    clg_seed_id: orig_cooling_system.clg_seed_id.nil? ? orig_cooling_system.id : orig_cooling_system.clg_seed_id,
@@ -1313,6 +1311,7 @@ module ERI_301_Ruleset
                                    integrated_heating_system_capacity: orig_cooling_system.integrated_heating_system_capacity,
                                    integrated_heating_system_efficiency_percent: orig_cooling_system.integrated_heating_system_efficiency_percent,
                                    integrated_heating_system_fraction_heat_load_served: orig_cooling_system.integrated_heating_system_fraction_heat_load_served,
+                                   equipment_type: orig_cooling_system.equipment_type,
                                    htg_seed_id: htg_seed_id)
     end
     # Add reference cooling system for residual load
@@ -1327,47 +1326,70 @@ module ERI_301_Ruleset
         airflow_defect_ratio = orig_heat_pump.airflow_defect_ratio
         charge_defect_ratio = orig_heat_pump.charge_defect_ratio
       end
+      backup_type = orig_heat_pump.backup_type
+      backup_heating_fuel = orig_heat_pump.backup_heating_fuel
+      backup_heating_efficiency_percent = orig_heat_pump.backup_heating_efficiency_percent
+      backup_heating_efficiency_afue = orig_heat_pump.backup_heating_efficiency_afue
+      backup_heating_capacity = orig_heat_pump.backup_heating_capacity
       if orig_heat_pump.backup_heating_capacity.to_f == 0 && orig_heat_pump.heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
-        # Force some backup heating to prevent unmet loads
-        orig_heat_pump.backup_type = HPXML::HeatPumpBackupTypeIntegrated
-        orig_heat_pump.backup_heating_fuel = HPXML::FuelTypeElectricity
-        orig_heat_pump.backup_heating_efficiency_percent = 1.0
-        orig_heat_pump.backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
+        # Force backup heating to prevent unmet loads
+        backup_type = HPXML::HeatPumpBackupTypeIntegrated
+        backup_heating_fuel = HPXML::FuelTypeElectricity
+        backup_heating_efficiency_percent = 1.0
+        backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
       end
+      if [HPXML::HVACTypeHeatPumpAirToAir,
+          HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
+        pan_heater_control_type = HPXML::HVACPanHeaterControlTypeContinuous
+      end
+      # FUTURE: Eventually require GSHP compressor type when OS-HPXML modeling reflects it
+      compressor_type = orig_heat_pump.compressor_type
+      if orig_heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir && orig_heat_pump.compressor_type.nil?
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
+      end
+      compressor_lockout_temp = get_hp_compressor_lockout_temp(orig_heat_pump.heat_pump_type,
+                                                               backup_heating_fuel,
+                                                               compressor_type,
+                                                               orig_heat_pump.compressor_lockout_temp)
+      backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(orig_heat_pump.heat_pump_type)
+      backup_heating_active_during_defrost = get_hp_backup_heating_active_during_defrost(orig_heat_pump.heat_pump_type, orig_heat_pump.backup_type)
       new_bldg.heat_pumps.add(id: orig_heat_pump.id,
                               is_shared_system: orig_heat_pump.is_shared_system,
                               number_of_units_served: orig_heat_pump.number_of_units_served,
                               distribution_system_idref: orig_heat_pump.distribution_system_idref,
                               heat_pump_type: orig_heat_pump.heat_pump_type,
                               heat_pump_fuel: orig_heat_pump.heat_pump_fuel,
-                              compressor_type: orig_heat_pump.compressor_type,
-                              compressor_lockout_temp: orig_heat_pump.compressor_lockout_temp,
+                              compressor_type: compressor_type,
+                              compressor_lockout_temp: compressor_lockout_temp,
                               heating_capacity: orig_heat_pump.heating_capacity,
                               heating_capacity_17F: orig_heat_pump.heating_capacity_17F,
-                              heating_capacity_retention_fraction: orig_heat_pump.heating_capacity_retention_fraction,
-                              heating_capacity_retention_temp: orig_heat_pump.heating_capacity_retention_temp,
                               cooling_capacity: orig_heat_pump.cooling_capacity,
-                              cooling_shr: orig_heat_pump.cooling_shr,
-                              backup_type: orig_heat_pump.backup_type,
-                              backup_heating_fuel: orig_heat_pump.backup_heating_fuel,
-                              backup_heating_capacity: orig_heat_pump.backup_heating_capacity,
-                              backup_heating_efficiency_percent: orig_heat_pump.backup_heating_efficiency_percent,
-                              backup_heating_efficiency_afue: orig_heat_pump.backup_heating_efficiency_afue,
-                              backup_heating_lockout_temp: orig_heat_pump.backup_heating_lockout_temp,
-                              backup_heating_switchover_temp: orig_heat_pump.backup_heating_switchover_temp,
+                              backup_type: backup_type,
+                              backup_heating_lockout_temp: backup_heating_lockout_temp,
+                              backup_heating_fuel: backup_heating_fuel,
+                              backup_heating_capacity: backup_heating_capacity,
+                              backup_heating_efficiency_percent: backup_heating_efficiency_percent,
+                              backup_heating_efficiency_afue: backup_heating_efficiency_afue,
+                              backup_heating_active_during_defrost: backup_heating_active_during_defrost,
                               fraction_heat_load_served: orig_heat_pump.fraction_heat_load_served,
                               fraction_cool_load_served: orig_heat_pump.fraction_cool_load_served,
                               cooling_efficiency_seer: orig_heat_pump.cooling_efficiency_seer,
                               cooling_efficiency_seer2: orig_heat_pump.cooling_efficiency_seer2,
                               cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
+                              cooling_efficiency_eer2: orig_heat_pump.cooling_efficiency_eer2,
                               heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                               heating_efficiency_hspf2: orig_heat_pump.heating_efficiency_hspf2,
                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
                               shared_loop_watts: orig_heat_pump.shared_loop_watts,
                               pump_watts_per_ton: orig_heat_pump.pump_watts_per_ton,
+                              fan_motor_type: orig_heat_pump.fan_motor_type,
                               fan_watts_per_cfm: fan_watts_per_cfm,
+                              heating_design_airflow_cfm: orig_heat_pump.heating_design_airflow_cfm,
+                              cooling_design_airflow_cfm: orig_heat_pump.cooling_design_airflow_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio,
+                              pan_heater_control_type: pan_heater_control_type,
+                              equipment_type: orig_heat_pump.equipment_type,
                               htg_seed_id: orig_heat_pump.htg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.htg_seed_id,
                               clg_seed_id: orig_heat_pump.clg_seed_id.nil? ? orig_heat_pump.id : orig_heat_pump.clg_seed_id)
     end
@@ -1639,7 +1661,7 @@ module ERI_301_Ruleset
 
     # Calculate fan cfm
     infil_values = Airflow.get_values_from_air_infiltration_measurements(new_bldg, @weather)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], 0.65, @cfa, infil_values[:volume])
+    sla = Airflow.get_infiltration_SLA_from_ACH50(infil_values[:ach50], infil_values[:avg_ceil_height])
     q_fan = calc_mech_vent_qfan(q_tot, sla, true, 0.0, infil_values[:height])
     fan_power_w = 0.70 * q_fan
 
@@ -2479,13 +2501,13 @@ module ERI_301_Ruleset
     if @bldg_type == HPXML::ResidentialTypeSFD
       a_ext = 1.0
     else
-      tot_cb_area, ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+      tot_cb_area, ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
       a_ext = ext_cb_area / tot_cb_area
 
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
         if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
           cfm50 = infil_values[:ach50] * infil_values[:volume] / 60.0
-          tot_cb_area, _ext_cb_area = orig_bldg.compartmentalization_boundary_areas()
+          tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
           if cfm50 / tot_cb_area > 0.30
             a_ext = 1.0
           end
@@ -2518,9 +2540,8 @@ module ERI_301_Ruleset
     end
 
     if not min_nach.nil?
-      avg_ceiling_height = orig_bldg.building_construction.average_ceiling_height
-      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_values[:height], avg_ceiling_height, @weather)
-      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, 0.65, @cfa, infil_values[:volume])
+      min_sla = Airflow.get_infiltration_SLA_from_ACH(min_nach, infil_values[:height], infil_values[:avg_ceil_height], @weather)
+      min_ach50 = Airflow.get_infiltration_ACH50_from_SLA(min_sla, infil_values[:avg_ceil_height])
       if ach50 < min_ach50
         ach50 = min_ach50
       end
@@ -2599,7 +2620,7 @@ module ERI_301_Ruleset
   def self.calc_rated_home_qfan(orig_bldg, is_balanced, frac_imbal)
     infil_values = Airflow.get_values_from_air_infiltration_measurements(orig_bldg, @weather)
     ach50, _ = calc_rated_home_infiltration_ach50(orig_bldg)
-    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, @cfa, infil_values[:volume])
+    sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_values[:avg_ceil_height])
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)
     q_fan = calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_values[:height])
     return q_fan
@@ -2607,7 +2628,7 @@ module ERI_301_Ruleset
 
   def self.calc_mech_vent_qfan(q_tot, sla, is_balanced, frac_imbal, infil_height)
     nl = Airflow.get_infiltration_NL_from_SLA(sla, infil_height)
-    q_inf = Airflow.get_infiltration_Qinf_from_NL(nl, @weather, @cfa)
+    q_inf = Airflow.get_mech_vent_qinf_cfm(nl, @weather, @cfa)
     a_ext = 1.0 # Use Aext=1.0 because sla reflects 'unit exterior' infiltration so it already incorporates Aext
     q_fan = Airflow.get_mech_vent_qfan_cfm(q_tot, q_inf, is_balanced, frac_imbal, a_ext, @bldg_type, @eri_version, nil)
     return q_fan
@@ -2674,7 +2695,7 @@ module ERI_301_Ruleset
   end
 
   def self.add_reference_heat_pump(orig_bldg, new_bldg, htg_load_frac, clg_load_frac, orig_htg_system: nil, orig_clg_system: nil, is_all_electric: false)
-    # 7.7 HSPF, SEER 13 air source heat pump
+    # 7.7 HSPF (6.55 HSPF2), SEER 13 (SEER2 12.35), EER 11.3 (EER2 10.7) air source heat pump
     if not orig_htg_system.nil?
       if orig_htg_system.is_a? HPXML::CoolingSystem # Cooling system w/ integrated heating
         htg_seed_id = orig_htg_system.clg_seed_id.nil? ? orig_htg_system.id : orig_htg_system.clg_seed_id
@@ -2685,18 +2706,14 @@ module ERI_301_Ruleset
       # Handle backup
       if orig_htg_system.is_a?(HPXML::HeatPump) && orig_htg_system.is_dual_fuel && !is_all_electric
         # Dual-fuel HP in both Rated and Reference homes
-        compressor_lockout_temp = orig_htg_system.compressor_lockout_temp
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_fuel = orig_htg_system.backup_heating_fuel
         backup_efficiency_afue = 0.78
         backup_capacity = -1
-        backup_switchover_temp = orig_htg_system.backup_heating_switchover_temp
-        backup_lockout_temp = orig_htg_system.backup_heating_lockout_temp
       end
     end
     if not orig_clg_system.nil?
       clg_seed_id = orig_clg_system.clg_seed_id.nil? ? orig_clg_system.id : orig_clg_system.clg_seed_id
-      shr = orig_clg_system.cooling_shr
     end
     htg_seed_id = 'ResidualHeating' if htg_seed_id.nil?
     clg_seed_id = 'ResidualCooling' if clg_seed_id.nil?
@@ -2714,38 +2731,49 @@ module ERI_301_Ruleset
     fan_watts_per_cfm = get_reference_hvac_fan_watts_per_cfm()
     charge_defect_ratio = get_reference_hvac_charge_defect_ratio()
 
+    heat_pump_type = HPXML::HVACTypeHeatPumpAirToAir
+    compressor_type = HPXML::HVACCompressorTypeSingleStage
+
+    compressor_lockout_temp = get_hp_compressor_lockout_temp(heat_pump_type,
+                                                             backup_fuel,
+                                                             compressor_type)
+    backup_heating_lockout_temp = get_hp_backup_heating_lockout_temp(heat_pump_type)
+    backup_heating_active_during_defrost = get_hp_backup_heating_active_during_defrost(heat_pump_type, backup_type)
+
     new_bldg.heat_pumps.add(id: "HeatPump#{new_bldg.heat_pumps.size + 1}",
                             distribution_system_idref: dist_id,
-                            heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
+                            heat_pump_type: heat_pump_type,
                             heat_pump_fuel: HPXML::FuelTypeElectricity,
-                            compressor_type: HPXML::HVACCompressorTypeSingleStage,
+                            compressor_type: compressor_type,
                             compressor_lockout_temp: compressor_lockout_temp,
                             cooling_capacity: -1, # Use auto-sizing
                             heating_capacity: -1, # Use auto-sizing
+                            heating_capacity_17F: -1, # Use auto-sizing
                             backup_type: backup_type,
+                            backup_heating_lockout_temp: backup_heating_lockout_temp,
                             backup_heating_fuel: backup_fuel,
                             backup_heating_capacity: backup_capacity,
                             backup_heating_efficiency_percent: backup_efficiency_percent,
                             backup_heating_efficiency_afue: backup_efficiency_afue,
-                            backup_heating_lockout_temp: backup_lockout_temp,
-                            backup_heating_switchover_temp: backup_switchover_temp,
+                            backup_heating_active_during_defrost: backup_heating_active_during_defrost,
                             fraction_heat_load_served: htg_load_frac,
                             fraction_cool_load_served: clg_load_frac,
-                            cooling_shr: shr,
-                            cooling_efficiency_seer: 13.0,
-                            heating_efficiency_hspf: 7.7,
+                            cooling_efficiency_seer2: 12.35,
+                            cooling_efficiency_eer2: 10.7,
+                            heating_efficiency_hspf2: 6.55,
                             airflow_defect_ratio: airflow_defect_ratio,
                             fan_watts_per_cfm: fan_watts_per_cfm,
                             charge_defect_ratio: charge_defect_ratio,
+                            pan_heater_control_type: HPXML::HVACPanHeaterControlTypeContinuous,
+                            equipment_type: HPXML::HVACEquipmentTypeSplit,
                             htg_seed_id: htg_seed_id,
                             clg_seed_id: clg_seed_id)
   end
 
   def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system: nil)
-    # 13 SEER electric air conditioner
+    # SEER 13 (SEER2 12.35), EER 11.3 (EER2 10.7) electric air conditioner
     if not orig_system.nil?
       seed_id = orig_system.clg_seed_id.nil? ? orig_system.id : orig_system.clg_seed_id
-      shr = orig_system.cooling_shr
       dist_id = orig_system.distribution_system.id unless orig_system.distribution_system.nil?
     end
     seed_id = 'ResidualCooling' if seed_id.nil?
@@ -2762,11 +2790,12 @@ module ERI_301_Ruleset
                                  compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
-                                 cooling_efficiency_seer: 13.0,
-                                 cooling_shr: shr,
+                                 cooling_efficiency_seer2: 12.35,
+                                 cooling_efficiency_eer2: 10.7,
                                  airflow_defect_ratio: airflow_defect_ratio,
                                  fan_watts_per_cfm: fan_watts_per_cfm,
                                  charge_defect_ratio: charge_defect_ratio,
+                                 equipment_type: HPXML::HVACEquipmentTypeSplit,
                                  clg_seed_id: seed_id)
   end
 
@@ -3120,10 +3149,42 @@ module ERI_301_Ruleset
     fail "Unable to calculate area-weighted avg for #{attribute}."
   end
 
-  def self.apply_default_average_ceiling_height(orig_bldg)
-    if orig_bldg.building_construction.average_ceiling_height.nil?
-      # ASHRAE 62.2 default for average floor to ceiling height
-      orig_bldg.building_construction.average_ceiling_height = 8.2
+  def self.get_hp_compressor_lockout_temp(heat_pump_type, backup_heating_fuel, compressor_type, compressor_lockout_temp = nil)
+    return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+    # Logic per RESNET HERS Addendum 82
+    if backup_heating_fuel == HPXML::FuelTypeElectricity
+      # Use user input if provided
+      if not compressor_lockout_temp.nil?
+        return compressor_lockout_temp
+      end
+
+      # No user input, default
+      if compressor_type == HPXML::HVACCompressorTypeVariableSpeed
+        return -20.0 # F
+      else
+        return 0.0 # F
+      end
+    else # Fossil fuel
+      # Use RESNET prescribed value
+      return 40.0 # F
     end
+  end
+
+  def self.get_hp_backup_heating_lockout_temp(heat_pump_type)
+    return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+    return 80.0 # F, effectively disables the lockout temp
+  end
+
+  def self.get_hp_backup_heating_active_during_defrost(heat_pump_type, backup_type)
+    # Logic per RESNET HERS Addendum 82
+    # For the Rated Home, backup heat should be active during defrost only if
+    # the system has supplemental heating.
+    # For the Reference Home, backup heat should always be active during defrost
+    # because the heat pump represents a conventional ducted system.
+    return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+    return backup_type == HPXML::HeatPumpBackupTypeIntegrated
   end
 end

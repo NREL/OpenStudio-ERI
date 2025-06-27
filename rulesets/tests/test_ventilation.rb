@@ -13,8 +13,8 @@ class ERIMechVentTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.sch'))
     @results_paths = []
   end
 
@@ -30,11 +30,11 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_none
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 0.3, hours: 24, power: 0.2 }]) # Supplemental balanced ventilation to meet total airflow requirement
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 3.0, hours: 24, power: 2.1 }]) # Supplemental balanced ventilation to meet total airflow requirement
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -70,11 +70,11 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_none_attached_housing
     hpxml_name = 'base-bldgtype-mf-unit.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 31.1, hours: 24, power: 0.0 }]) # Should have airflow but not fan energy
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 47.9, hours: 24, power: 33.5 }]) # Supplemental balanced ventilation to meet total airflow requirement
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 48.1, hours: 24, power: 33.7 }]) # Supplemental balanced ventilation to meet total airflow requirement
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -110,7 +110,7 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_exhaust
     hpxml_name = 'base-mechvent-exhaust.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -162,7 +162,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -212,7 +212,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -261,11 +261,11 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.0 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 6.8 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 30.0 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 19.6, hours: 24, power: 30.0 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -275,7 +275,7 @@ class ERIMechVentTest < Minitest::Test
 
     _test_ruleset(hpxml_name, '2019ABCD').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.2 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.1 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 30.0 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
@@ -312,11 +312,11 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.0 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 6.8 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 5.3 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 19.6, hours: 24, power: 6.8 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -326,7 +326,7 @@ class ERIMechVentTest < Minitest::Test
 
     _test_ruleset(hpxml_name, '2019ABCD').each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 0.2 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.1 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeExhaust, flowrate: 15.0, hours: 24, power: 5.3 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
@@ -352,7 +352,7 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_supply
     hpxml_name = 'base-mechvent-supply.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -392,7 +392,7 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_balanced
     hpxml_name = 'base-mechvent-balanced.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 52.8 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -420,11 +420,11 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_erv
     hpxml_name = 'base-mechvent-erv.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72, tre: 0.48 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.7, tre: 0.6 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -436,7 +436,7 @@ class ERIMechVentTest < Minitest::Test
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72, tre: 0.48 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.7, tre: 0.6 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -448,11 +448,11 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_erv_adjusted
     hpxml_name = 'base-mechvent-erv-atre-asre.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79, atre: 0.526 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.77, atre: 0.66 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -464,7 +464,7 @@ class ERIMechVentTest < Minitest::Test
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79, atre: 0.526 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeERV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.77, atre: 0.66 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -476,11 +476,11 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_hrv
     hpxml_name = 'base-mechvent-hrv.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.7 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -492,7 +492,7 @@ class ERIMechVentTest < Minitest::Test
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.72 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, sre: 0.7 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -504,11 +504,11 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_hrv_adjusted
     hpxml_name = 'base-mechvent-hrv-asre.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.77 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -520,7 +520,7 @@ class ERIMechVentTest < Minitest::Test
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 37.0, hours: 24, power: 75.4 }])
       elsif [CalcType::RatedHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.79 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeHRV, flowrate: 110.0, hours: 24, power: 60.0, asre: 0.77 }])
       elsif [CalcType::IndexAdjHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 60.1, hours: 24, power: 42.0 }])
       elsif [CalcType::IndexAdjReferenceHome].include? calc_type
@@ -558,12 +558,12 @@ class ERIMechVentTest < Minitest::Test
         cfis_control_type = HPXML::CFISControlTypeTimer
       end
 
-      _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+      _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
         if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
           if hpxml_name == 'base-mechvent-cfis-no-additional-runtime.xml'
             # CFIS doesn't qualify as a Dwelling Unit Mechanical Ventilation System, so rated home gets 0.3 nACH and
             # ventilation requirement is lower, resulting in lower Reference Home fan power
-            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 2.1 }])
+            _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 6.8 }])
           else
             _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 27.0, hours: 24, power: 35.6 }])
           end
@@ -620,9 +620,9 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if calc_type == CalcType::RatedHome
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 45.0, hours: 8, cfis_mode: HPXML::CFISModeAirHandler,
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 58.7, hours: 8, cfis_mode: HPXML::CFISModeAirHandler,
                                         cfis_control_type: HPXML::CFISControlTypeOptimized }])
       end
     end
@@ -639,7 +639,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       next unless calc_type == CalcType::RatedHome
 
       _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeCFIS, flowrate: 330.0, hours: 8,
@@ -668,7 +668,7 @@ class ERIMechVentTest < Minitest::Test
   def test_mech_vent_shared
     hpxml_name = 'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 31.1, hours: 24, power: 19.6 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -706,7 +706,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 31.1, hours: 24, power: 19.6 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -727,7 +727,7 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 31.1, hours: 24, power: 19.5 }])
       elsif [CalcType::RatedHome].include? calc_type
@@ -750,9 +750,9 @@ class ERIMechVentTest < Minitest::Test
     hpxml_name = File.basename(@tmp_hpxml_path)
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
-        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 31.1, hours: 24, power: 19.6 }])
+        _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeBalanced, flowrate: 31.1, hours: 24, power: 19.5 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_mech_vent(hpxml_bldg, [{ fantype: HPXML::MechVentTypeSupply, flowrate: 800.0, hours: 24, power: 800.0, in_unit_flowrate: 30.0, frac_recirc: 0.5, has_preheat: true, has_precool: true },
                                       { fantype: HPXML::MechVentTypeExhaust, flowrate: 72.0, hours: 24, power: 26.0 }])
@@ -791,7 +791,7 @@ class ERIMechVentTest < Minitest::Test
   def test_whole_house_fan
     hpxml_name = 'base-mechvent-whole-house-fan.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_whf(hpxml_bldg, flowrate: 4500, power: 300)
       else
@@ -800,7 +800,7 @@ class ERIMechVentTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name, version, run_iecc: false)
+  def _test_ruleset(hpxml_name, version = 'latest', run_iecc: false)
     print '.'
 
     designs = []

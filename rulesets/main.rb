@@ -29,7 +29,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       schema_validator = XMLValidator.get_xml_validator(schema_path)
     end
     if schematron_validator.nil?
-      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
+      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.sch')
       schematron_validator = XMLValidator.get_xml_validator(schematron_path)
     end
     orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_validator: schema_validator, schematron_validator: schematron_validator)
@@ -65,7 +65,6 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     # Obtain weather object
     weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
-    # Obtain egrid subregion & cambium gea region
     zip_code = orig_hpxml_bldg.zip_code
     egrid_subregion = get_epa_egrid_subregion(zip_code)
     if egrid_subregion.nil?
@@ -104,13 +103,13 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
           fail "Unhandled IECC version: #{design.version}."
         end
       elsif [RunType::ES, RunType::ZERH].include? design.run_type
-        eri_version = Constants::ERIVersions[-1]
+        # Use latest ANSI version/addenda
+        eri_version = Constants::ERIVersions[-2]
       elsif [RunType::ERI, RunType::CO2e].include? design.run_type
         eri_version = design.version
       else
         fail 'Unexpected design run type.'
       end
-      eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
       if eri_version.nil?
         fail 'Unexpected error; ERI version not set.'
       end
@@ -153,6 +152,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       # Write final HPXML file
       if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
         hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_doc, design.hpxml_output_path)
+        fail 'Unexpected error.' unless hpxml_strings[design.hpxml_output_path].is_a?(String)
       end
     end
   rescue Exception => e

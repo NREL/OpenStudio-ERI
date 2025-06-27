@@ -13,7 +13,7 @@ door_ufactor		0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0
 window_area		"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"
 window_ufactor		0.32	0.32	0.32	0.32	0.32	0.32	0.28	0.28	0.28	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25
 window_shgc		0.23	0.23	0.23	0.23	0.23	0.23	0.23	0.23	0.23	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
-ceiling_ufactor		0.035	0.035	0.035	0.030	0.030	0.030	0.030	0.030	0.030	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026
+ceiling_ufactor		0.035	0.035	0.035	0.03	0.03	0.03	0.03	0.03	0.03	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026	0.026
 radiant_barrier	ducts in unconditioned attic	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 vented_attic		always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always
@@ -42,7 +42,7 @@ dishwasher_lcy	compact	208	208	208	208	208	208	208	208	208	208	208	208	208	208	2
 dishwasher_ler	standard	240	240	240	240	240	240	240	240	240	240	240	240	240	240	240	240	240	240	240	240
 dishwasher_elec_rate	standard	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14	0.14
 dishwasher_gas_rate	standard	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21	1.21
-dishwasher_ghwc	standard	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0	24.0
+dishwasher_ghwc	standard	24	24	24	24	24	24	24	24	24	24	24	24	24	24	24	24	24	24	24	24
 dishwasher_lcy	standard	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208	208
 range_induction		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 oven_convection		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
@@ -60,8 +60,12 @@ hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5
 hvac_gshp_cop																					
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
+hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
 hvac_ac_seer		16	16	16	16	16	16	16	16	16	16	16	14	14	14	14	14	14	14	14	14
 hvac_ashp_seer		16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16
+hvac_ac_eer		13	13	13	13	13	13	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
+hvac_ashp_eer		13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13
 hvac_gshp_eer																					
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75

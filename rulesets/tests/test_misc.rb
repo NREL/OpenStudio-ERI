@@ -13,8 +13,8 @@ class ERIMiscTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.sch'))
     @results_paths = []
   end
 
@@ -30,7 +30,7 @@ class ERIMiscTest < Minitest::Test
   def test_misc
     hpxml_name = 'base.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
         _check_misc(hpxml_bldg, misc_kwh: 2184, misc_sens: 0.855, misc_lat: 0.045, tv_kwh: 620, tv_sens: 1, tv_lat: 0)
       else
@@ -39,7 +39,7 @@ class ERIMiscTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name, version)
+  def _test_ruleset(hpxml_name, version = 'latest')
     print '.'
 
     designs = []

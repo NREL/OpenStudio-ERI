@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -1352,7 +1352,9 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>42000.0</HeatingCapacity>
+              <HeatingCapacity17F>25200.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -1365,6 +1367,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>19.3</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.6</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -1382,7 +1388,9 @@
               <HeatPumpType>mini-split</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>20900.0</HeatingCapacity>
+              <HeatingCapacity17F>12540.0</HeatingCapacity17F>
               <CoolingCapacity>18200.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -1395,6 +1403,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>21.6</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>13.1</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -1413,7 +1425,9 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>42000.0</HeatingCapacity>
+              <HeatingCapacity17F>25200.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -1426,6 +1440,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>19.3</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.6</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -1444,7 +1462,9 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>42000.0</HeatingCapacity>
+              <HeatingCapacity17F>25200.0</HeatingCapacity17F>
               <CoolingCapacity>36000.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -1457,6 +1477,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>19.3</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>14.6</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>

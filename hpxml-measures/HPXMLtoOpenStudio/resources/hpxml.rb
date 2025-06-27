@@ -55,8 +55,8 @@ class HPXML < Object
   # Constants
   AddressTypeMailing = 'mailing'
   AddressTypeStreet = 'street'
-  AdvancedResearchDefrostModelTypeStandard = 'standard'
-  AdvancedResearchDefrostModelTypeAdvanced = 'advanced'
+  AdvancedResearchGroundToAirHeatPumpModelTypeStandard = 'standard'
+  AdvancedResearchGroundToAirHeatPumpModelTypeExperimental = 'experimental'
   AirTypeFanCoil = 'fan coil'
   AirTypeGravity = 'gravity'
   AirTypeHighVelocity = 'high velocity'
@@ -65,6 +65,8 @@ class HPXML < Object
   AtticTypeCathedral = 'CathedralCeiling'
   AtticTypeConditioned = 'ConditionedAttic'
   AtticTypeFlatRoof = 'FlatRoof'
+  AtticTypeOther = 'Other'
+  AtticTypeUnknown = 'UnknownAttic'
   AtticTypeUnvented = 'UnventedAttic'
   AtticTypeVented = 'VentedAttic'
   AtticWallTypeGable = 'gable'
@@ -76,6 +78,7 @@ class HPXML < Object
   BlindsOpen = 'open'
   BlindsHalfOpen = 'half open'
   CapacityDescriptionMinimum = 'minimum'
+  CapacityDescriptionNominal = 'nominal'
   CapacityDescriptionMaximum = 'maximum'
   CertificationEnergyStar = 'Energy Star'
   ClothesDryerControlTypeMoisture = 'moisture'
@@ -92,6 +95,10 @@ class HPXML < Object
   ColorReflective = 'reflective'
   DehumidifierTypePortable = 'portable'
   DehumidifierTypeWholeHome = 'whole-home'
+  DryingMethodConventional = 'conventional'
+  DryingMethodCondensing = 'condensing'
+  DryingMethodHeatPump = 'heat pump'
+  DryingMethodOther = 'other'
   DuctBuriedInsulationNone = 'not buried'
   DuctBuriedInsulationPartial = 'partially buried'
   DuctBuriedInsulationFull = 'fully buried'
@@ -115,9 +122,31 @@ class HPXML < Object
   DuctTypeSupply = 'supply'
   DWHRFacilitiesConnectedAll = 'all'
   DWHRFacilitiesConnectedOne = 'one'
+  ElectricPanelLoadCalculationType2023ExistingDwellingLoadBased = '2023 Existing Dwelling Load-Based'
+  ElectricPanelLoadCalculationType2023ExistingDwellingMeterBased = '2023 Existing Dwelling Meter-Based'
+  ElectricPanelLoadTypeHeating = 'heating'
+  ElectricPanelLoadTypeCooling = 'cooling'
+  ElectricPanelLoadTypeWaterHeater = 'hot water'
+  ElectricPanelLoadTypeClothesDryer = 'clothes dryer'
+  ElectricPanelLoadTypeDishwasher = 'dishwasher'
+  ElectricPanelLoadTypeRangeOven = 'range/oven'
+  ElectricPanelLoadTypeMechVent = 'mech vent'
+  ElectricPanelLoadTypePermanentSpaHeater = 'permanent spa heater'
+  ElectricPanelLoadTypePermanentSpaPump = 'permanent spa pump'
+  ElectricPanelLoadTypePoolHeater = 'pool heater'
+  ElectricPanelLoadTypePoolPump = 'pool pump'
+  ElectricPanelLoadTypeWellPump = 'well pump'
+  ElectricPanelLoadTypeElectricVehicleCharging = 'electric vehicle charging'
+  ElectricPanelLoadTypeLighting = 'lighting'
+  ElectricPanelLoadTypeKitchen = 'kitchen'
+  ElectricPanelLoadTypeLaundry = 'laundry'
+  ElectricPanelLoadTypeOther = 'other'
+  ElectricPanelVoltage120 = '120'
+  ElectricPanelVoltage240 = '240'
   ElectricResistanceDistributionRadiantCeiling = 'radiant ceiling'
   ElectricResistanceDistributionRadiantFloor = 'radiant floor'
   ElectricResistanceDistributionBaseboard = 'baseboard'
+  ElectricVehicleChargingLocationHome = 'Home'
   ExteriorShadingTypeAwnings = 'awnings'
   ExteriorShadingTypeBuilding = 'building'
   ExteriorShadingTypeDeciduousTree = 'deciduous tree'
@@ -131,10 +160,15 @@ class HPXML < Object
   FoundationTypeAmbient = 'Ambient'
   FoundationTypeBasementConditioned = 'ConditionedBasement'
   FoundationTypeBasementUnconditioned = 'UnconditionedBasement'
+  FoundationTypeBasementUnknown = 'UnknownBasement'
   FoundationTypeCrawlspaceConditioned = 'ConditionedCrawlspace'
   FoundationTypeCrawlspaceUnvented = 'UnventedCrawlspace'
+  FoundationTypeCrawlspaceUnknown = 'UnknownCrawlspace'
   FoundationTypeCrawlspaceVented = 'VentedCrawlspace'
   FoundationTypeBellyAndWing = 'BellyAndWing'
+  FoundationTypeGarage = 'Garage'
+  FoundationTypeOther = 'Other'
+  FoundationTypeRubbleStone = 'RubbleStone'
   FoundationTypeSlab = 'SlabOnGrade'
   FoundationWallTypeConcreteBlock = 'concrete block'
   FoundationWallTypeConcreteBlockFoamCore = 'concrete block foam core'
@@ -203,6 +237,10 @@ class HPXML < Object
   HVACDistributionTypeAir = 'AirDistribution'
   HVACDistributionTypeDSE = 'DSE'
   HVACDistributionTypeHydronic = 'HydronicDistribution'
+  HVACEquipmentTypeSplit = 'split system'
+  HVACEquipmentTypePackaged = 'packaged system'
+  HVACEquipmentTypeSDHV = 'small duct high velocity system'
+  HVACEquipmentTypeSpaceConstrained = 'space constrained system'
   HVACTypeBoiler = 'Boiler'
   HVACTypeCentralAirConditioner = 'central air conditioner'
   HVACTypeChiller = 'chiller'
@@ -224,6 +262,10 @@ class HPXML < Object
   HVACTypeSpaceHeater = 'SpaceHeater'
   HVACTypeStove = 'Stove'
   HVACTypeWallFurnace = 'WallFurnace'
+  HVACFanMotorTypePSC = 'PSC'
+  HVACFanMotorTypeBPM = 'BPM'
+  HVACPanHeaterControlTypeContinuous = 'continuous'
+  HVACPanHeaterControlTypeDefrost = 'defrost mode'
   HydronicTypeBaseboard = 'baseboard'
   HydronicTypeRadiantCeiling = 'radiant ceiling'
   HydronicTypeRadiantFloor = 'radiant floor'
@@ -425,6 +467,7 @@ class HPXML < Object
   UnitsDollars = '$'
   UnitsDollarsPerkW = '$/kW'
   UnitsEER = 'EER'
+  UnitsEER2 = 'EER2'
   UnitsELA = 'EffectiveLeakageArea'
   UnitsCEER = 'CEER'
   UnitsHSPF = 'HSPF'
@@ -432,13 +475,23 @@ class HPXML < Object
   UnitsKwh = 'kWh'
   UnitsKwhPerYear = 'kWh/year'
   UnitsKwhPerDay = 'kWh/day'
+  UnitsKwhPerMile = 'kWh/mile'
   UnitsKwPerTon = 'kW/ton'
+  UnitsMiles = 'miles'
+  UnitsMilePerKwh = 'mile/kWh'
+  UnitsMPG = 'mpg'
+  UnitsMPGe = 'mpge'
   UnitsPercent = 'Percent'
   UnitsPercentPerHour = '%/hr'
   UnitsSEER = 'SEER'
   UnitsSEER2 = 'SEER2'
   UnitsSLA = 'SLA'
   UnitsThermPerYear = 'therm/year'
+  VehicleTypeBEV = 'BatteryElectricVehicle'
+  VehicleTypePHEV = 'PlugInHybridElectricVehicle'
+  VehicleTypeHybrid = 'HybridElectricVehicle'
+  VehicleTypeICE = 'InternalCombustionEngine'
+  VehicleTypeFCEV = 'FuelCellElectricVehicle'
   VerticalSurroundingsNoAboveOrBelow = 'no units above or below'
   VerticalSurroundingsAboveAndBelow = 'unit above and below'
   VerticalSurroundingsBelow = 'unit below'
@@ -537,6 +590,17 @@ class HPXML < Object
                     cdl_lat_vent: 'Ventilation',
                     cdl_lat_intgains: 'InternalLoads' }
 
+  # Electric panel attributes
+  CLB_ATTRS = { clb_type: 'Type',
+                clb_total_w: 'TotalWatts',
+                clb_total_a: 'TotalAmps',
+                clb_headroom_a: 'HeadroomAmps' }
+  BS_ATTRS = { bs_total: 'Total',
+               bs_occupied: 'Occupied',
+               bs_headroom: 'Headroom' }
+
+  attr_accessor(:contents)
+
   def initialize(hpxml_path: nil, schema_validator: nil, schematron_validator: nil, building_id: nil)
     @hpxml_path = hpxml_path
     @errors = []
@@ -545,7 +609,8 @@ class HPXML < Object
 
     hpxml_element = nil
     if not hpxml_path.nil?
-      doc = XMLHelper.parse_file(hpxml_path)
+      @contents = File.read(hpxml_path)
+      doc = XMLHelper.parse_file(hpxml_path, hpxml_contents: @contents)
 
       # Validate against XSD schema
       if not schema_validator.nil?
@@ -660,40 +725,62 @@ class HPXML < Object
 
   # Returns a hash with whether each fuel exists in the HPXML Building or Buildings
   #
-  # @param hpxml_doc [Oga::XML::Document] HPXML object as an XML document
   # @param building_id [String] If provided, only search the single HPXML Building with the given ID
   # @return [Hash] Map of HPXML::FuelTypeXXX => boolean
-  def has_fuels(hpxml_doc, building_id = nil)
-    has_fuels = {}
-
-    fuel_element_names = ['HeatingSystemFuel',
-                          'CoolingSystemFuel',
-                          'HeatPumpFuel',
-                          'BackupSystemFuel',
-                          'FuelType',
-                          'IntegratedHeatingSystemFuel',
-                          'Heater/Type']
+  def has_fuels(building_id = nil)
+    has_fuel = {}
+    has_fuel[HPXML::FuelTypeElectricity] = true
 
     HPXML::fossil_fuels.each do |fuel|
-      has_fuels[fuel] = false
-      fuel_element_names.each do |fuel_element_name|
-        if fuel_element_name == 'Heater/Type' && fuel == HPXML::FuelTypeNaturalGas
-          fuel_element_value = HPXML::HeaterTypeGas
-        else
-          fuel_element_value = fuel
+      has_fuel[fuel] = false
+
+      buildings.each do |hpxml_bldg|
+        next if (not building_id.nil?) && (hpxml_bldg.building_id != building_id)
+
+        # Check HVAC systems
+        hpxml_bldg.hvac_systems.each do |hvac_system|
+          if hvac_system.respond_to?(:heating_system_fuel) && hvac_system.heating_system_fuel == fuel
+            has_fuel[fuel] = true
+          end
+          if hvac_system.respond_to?(:cooling_system_fuel) && hvac_system.cooling_system_fuel == fuel
+            has_fuel[fuel] = true
+          end
+          if hvac_system.respond_to?(:heat_pump_fuel) && hvac_system.heat_pump_fuel == fuel
+            has_fuel[fuel] = true
+          end
+          if hvac_system.respond_to?(:backup_heating_fuel) && hvac_system.backup_heating_fuel == fuel
+            has_fuel[fuel] = true
+          end
+          if hvac_system.respond_to?(:integrated_heating_system_fuel) && hvac_system.integrated_heating_system_fuel == fuel
+            has_fuel[fuel] = true
+          end
         end
-        search_str = "/HPXML/Building[BuildingID/@id='#{building_id}']//#{fuel_element_name}[text() = '#{fuel_element_value}']"
-        if building_id.nil?
-          search_str = "/HPXML/Building//#{fuel_element_name}[text() = '#{fuel_element_value}']"
+
+        # Check other appliances
+        (hpxml_bldg.water_heating_systems +
+         hpxml_bldg.generators +
+         hpxml_bldg.clothes_dryers +
+         hpxml_bldg.cooking_ranges +
+         hpxml_bldg.fuel_loads).each do |appliance|
+          if appliance.fuel_type == fuel
+            has_fuel[fuel] = true
+          end
         end
-        if XMLHelper.has_element(hpxml_doc, search_str)
-          has_fuels[fuel] = true
-          break
+
+        # Check pool/spa heaters
+        if fuel == HPXML::FuelTypeNaturalGas
+          (hpxml_bldg.pools + hpxml_bldg.permanent_spas).each do |pool_or_spa|
+            if pool_or_spa.heater_type == HPXML::HeaterTypeGas
+              has_fuel[fuel] = true
+            end
+          end
         end
+
+        break if has_fuel[fuel]
       end
     end
 
-    return has_fuels
+    return has_fuel
   end
 
   # Object to store additional properties on an HPXML object that are not intended
@@ -856,9 +943,10 @@ class HPXML < Object
              :sim_end_day,                                 # [Integer] SoftwareInfo/extension/SimulationControl/EndDayOfMonth
              :sim_calendar_year,                           # [Integer] SoftwareInfo/extension/SimulationControl/CalendarYear
              :temperature_capacitance_multiplier,          # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/TemperatureCapacitanceMultiplier
-             :defrost_model_type,                          # [String] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/DefrostModelType (HPXML::AdvancedResearchDefrostModelTypeXXX)
+             :ground_to_air_heat_pump_model_type,          # [String] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/GroundToAirHeatPumpModelType (HPXML::AdvancedResearchGroundToAirHeatPumpModelTypeXXX)
              :hvac_onoff_thermostat_deadband,              # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/OnOffThermostatDeadbandTemperature (F)
-             :heat_pump_backup_heating_capacity_increment] # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/HeatPumpBackupCapacityIncrement (Btu/hr)
+             :heat_pump_backup_heating_capacity_increment, # [Double] SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/HeatPumpBackupCapacityIncrement (Btu/hr)
+             :service_feeders_load_calculation_types]      # [Array<String>] SoftwareInfo/extension/ElectricPanelLoadCalculations/ServiceFeeders/Type
     attr_reader(*CLASS_ATTRS)
     attr_accessor(*ATTRS)
 
@@ -921,7 +1009,7 @@ class HPXML < Object
           XMLHelper.add_element(calculation, 'Version', calculation_version, :string)
         end
       end
-      if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @temperature_capacitance_multiplier.nil?) || (not @defrost_model_type.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?)
+      if (not @timestep.nil?) || (not @sim_begin_month.nil?) || (not @sim_begin_day.nil?) || (not @sim_end_month.nil?) || (not @sim_end_day.nil?) || (not @temperature_capacitance_multiplier.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?)
         extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
         simulation_control = XMLHelper.add_element(extension, 'SimulationControl')
         XMLHelper.add_element(simulation_control, 'Timestep', @timestep, :integer, @timestep_isdefaulted) unless @timestep.nil?
@@ -930,12 +1018,20 @@ class HPXML < Object
         XMLHelper.add_element(simulation_control, 'EndMonth', @sim_end_month, :integer, @sim_end_month_isdefaulted) unless @sim_end_month.nil?
         XMLHelper.add_element(simulation_control, 'EndDayOfMonth', @sim_end_day, :integer, @sim_end_day_isdefaulted) unless @sim_end_day.nil?
         XMLHelper.add_element(simulation_control, 'CalendarYear', @sim_calendar_year, :integer, @sim_calendar_year_isdefaulted) unless @sim_calendar_year.nil?
-        if (not @defrost_model_type.nil?) || (not @temperature_capacitance_multiplier.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?)
+        if (not @temperature_capacitance_multiplier.nil?) || (not @hvac_onoff_thermostat_deadband.nil?) || (not @heat_pump_backup_heating_capacity_increment.nil?) || (not @ground_to_air_heat_pump_model_type.nil?)
           advanced_research_features = XMLHelper.create_elements_as_needed(simulation_control, ['AdvancedResearchFeatures'])
           XMLHelper.add_element(advanced_research_features, 'TemperatureCapacitanceMultiplier', @temperature_capacitance_multiplier, :float, @temperature_capacitance_multiplier_isdefaulted) unless @temperature_capacitance_multiplier.nil?
-          XMLHelper.add_element(advanced_research_features, 'DefrostModelType', @defrost_model_type, :string, @defrost_model_type_isdefaulted) unless @defrost_model_type.nil?
           XMLHelper.add_element(advanced_research_features, 'OnOffThermostatDeadbandTemperature', @hvac_onoff_thermostat_deadband, :float, @hvac_onoff_thermostat_deadband_isdefaulted) unless @hvac_onoff_thermostat_deadband.nil?
           XMLHelper.add_element(advanced_research_features, 'HeatPumpBackupCapacityIncrement', @heat_pump_backup_heating_capacity_increment, :float, @heat_pump_backup_heating_capacity_increment_isdefaulted) unless @heat_pump_backup_heating_capacity_increment.nil?
+          XMLHelper.add_element(advanced_research_features, 'GroundToAirHeatPumpModelType', @ground_to_air_heat_pump_model_type, :string, @ground_to_air_heat_pump_model_type_isdefaulted) unless @ground_to_air_heat_pump_model_type.nil?
+        end
+      end
+      if (not @service_feeders_load_calculation_types.nil?) && (not @service_feeders_load_calculation_types.empty?)
+        extension = XMLHelper.create_elements_as_needed(software_info, ['extension'])
+        electric_panel_load_calculations = XMLHelper.create_elements_as_needed(extension, ['ElectricPanelLoadCalculations'])
+        service_feeders = XMLHelper.add_element(electric_panel_load_calculations, 'ServiceFeeders')
+        @service_feeders_load_calculation_types.each do |service_feeders_load_calculation_type|
+          XMLHelper.add_element(service_feeders, 'Type', service_feeders_load_calculation_type, :string)
         end
       end
       @emissions_scenarios.to_doc(hpxml)
@@ -968,11 +1064,12 @@ class HPXML < Object
       @sim_end_day = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/EndDayOfMonth', :integer)
       @sim_calendar_year = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/CalendarYear', :integer)
       @temperature_capacitance_multiplier = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/TemperatureCapacitanceMultiplier', :float)
-      @defrost_model_type = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/DefrostModelType', :string)
       @hvac_onoff_thermostat_deadband = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/OnOffThermostatDeadbandTemperature', :float)
       @heat_pump_backup_heating_capacity_increment = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/HeatPumpBackupCapacityIncrement', :float)
+      @ground_to_air_heat_pump_model_type = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/SimulationControl/AdvancedResearchFeatures/GroundToAirHeatPumpModelType', :string)
       @apply_ashrae140_assumptions = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/ApplyASHRAE140Assumptions', :boolean)
       @whole_sfa_or_mf_building_sim = XMLHelper.get_value(hpxml, 'SoftwareInfo/extension/WholeSFAorMFBuildingSimulation', :boolean)
+      @service_feeders_load_calculation_types = XMLHelper.get_values(hpxml, 'SoftwareInfo/extension/ElectricPanelLoadCalculations/ServiceFeeders/Type', :string)
       @emissions_scenarios.from_doc(hpxml)
       @utility_bill_scenarios.from_doc(hpxml)
       @unavailable_periods.from_doc(hpxml)
@@ -1423,7 +1520,10 @@ class HPXML < Object
                    :solar_thermal_systems,         # [HPXML::SolarThermalSystems]
                    :pv_systems,                    # [HPXML::PVSystems]
                    :inverters,                     # [HPXML::Inverters]
+                   :electric_panels,               # [HPXML::ElectricPanels]
                    :batteries,                     # [HPXML::Batteries]
+                   :vehicles,                      # [HPXML::Vehicles]
+                   :ev_chargers,                   # [HPXML::EVChargers]
                    :generators,                    # [HPXML::Generators]
                    :clothes_washers,               # [HPXML::ClothesWashers]
                    :clothes_dryers,                # [HPXML::ClothesDryers]
@@ -1562,7 +1662,10 @@ class HPXML < Object
       @solar_thermal_systems.to_doc(building)
       @pv_systems.to_doc(building)
       @inverters.to_doc(building)
+      @electric_panels.to_doc(building)
       @batteries.to_doc(building)
+      @vehicles.to_doc(building)
+      @ev_chargers.to_doc(building)
       @generators.to_doc(building)
       @clothes_washers.to_doc(building)
       @clothes_dryers.to_doc(building)
@@ -1648,7 +1751,10 @@ class HPXML < Object
       @solar_thermal_systems = SolarThermalSystems.new(self, building)
       @pv_systems = PVSystems.new(self, building)
       @inverters = Inverters.new(self, building)
+      @electric_panels = ElectricPanels.new(self, building)
       @batteries = Batteries.new(self, building)
+      @vehicles = Vehicles.new(self, building)
+      @ev_chargers = ElectricVehicleChargers.new(self, building)
       @generators = Generators.new(self, building)
       @clothes_washers = ClothesWashers.new(self, building)
       @clothes_dryers = ClothesDryers.new(self, building)
@@ -1691,7 +1797,7 @@ class HPXML < Object
 
     # Returns whether the building has a given location.
     #
-    # @param location [String] Location (HPXML::LocationXXX)
+    # @param location [String] The location of interest (HPXML::LocationXXX)
     # @return [Boolean] True if location is used by the building
     def has_location(location)
       # Search for surfaces attached to this location
@@ -1717,11 +1823,9 @@ class HPXML < Object
 
     # Returns a hash with whether each fuel exists in the HPXML Building.
     #
-    # @param hpxml_doc [Oga::XML::Document] HPXML object as an XML document
     # @return [Hash] Map of HPXML::FuelTypeXXX => boolean
-    def has_fuels(hpxml_doc)
-      # Returns a hash with whether each fuel exists in the HPXML Building
-      return @parent_object.has_fuels(hpxml_doc, @building_id)
+    def has_fuels()
+      return @parent_object.has_fuels(@building_id)
     end
 
     # Returns the predominant heating fuel type (weighted by fraction of
@@ -1819,25 +1923,16 @@ class HPXML < Object
       return @heating_systems.total_fraction_heat_load_served + @heat_pumps.total_fraction_heat_load_served + @cooling_systems.total_fraction_heat_load_served
     end
 
-    # Estimates whether the building has a walkout basement based on its foundation
-    # type and the number of conditioned floors (total and above-grade).
-    #
-    # return [Boolean] True if the building has a walkout basement
-    def has_walkout_basement
-      has_conditioned_basement = has_location(LocationBasementConditioned)
-      ncfl = @building_construction.number_of_conditioned_floors
-      ncfl_ag = @building_construction.number_of_conditioned_floors_above_grade
-      return (has_conditioned_basement && (ncfl == ncfl_ag))
-    end
-
     # Calculates above-grade and below-grade thermal boundary wall areas.
-    # Used to calculate the window area in the ERI Reference Home per ANSI 301.
+    # Used to calculate the window area in the ERI Reference Home.
     #
     # Thermal boundary wall is any wall that separates conditioned space from
     # unconditioned space, outside, or soil. Above-grade thermal boundary
     # wall is any portion of a thermal boundary wall not in contact with soil.
     # Below-grade thermal boundary wall is any portion of a thermal boundary
     # wall in contact with soil.
+    #
+    # Source: ANSI/RESNET/ICC 301
     #
     # @return [Array<Double, Double>] Above-grade and below-grade thermal boundary wall areas (ft2)
     def thermal_boundary_wall_areas
@@ -1884,8 +1979,9 @@ class HPXML < Object
       return ag_cond_vol
     end
 
-    # Calculates common wall area.
-    # Used to calculate the window area in the ERI Reference Home per ANSI 301.
+    # Calculates common wall area. Used to calculate the window area in the ERI Reference Home.
+    #
+    # Source: ANSI/RESNET/ICC 301
     #
     # Common wall is the total wall area of walls adjacent to other unit's
     # conditioned space, not including foundation walls.
@@ -1903,112 +1999,6 @@ class HPXML < Object
         end
       end
       return area
-    end
-
-    # Returns the total and exterior compartmentalization boundary area.
-    # Used to convert between total infiltration and exterior infiltration for
-    # SFA/MF dwelling units per ANSI 301.
-    #
-    # @return [Array<Double, Double>] Total and exterior compartmentalization areas (ft2)
-    def compartmentalization_boundary_areas
-      total_area = 0.0 # Total surface area that bounds the Infiltration Volume
-      exterior_area = 0.0 # Same as above excluding surfaces attached to garage, other housing units, or other multifamily spaces (see 301-2019 Addendum B)
-
-      # Determine which spaces are within infiltration volume
-      spaces_within_infil_volume = HPXML::conditioned_locations_this_unit
-      @attics.each do |attic|
-        next unless [AtticTypeUnvented].include? attic.attic_type
-        next unless attic.within_infiltration_volume
-
-        spaces_within_infil_volume << attic.to_location
-      end
-      @foundations.each do |foundation|
-        next unless [FoundationTypeBasementUnconditioned,
-                     FoundationTypeCrawlspaceUnvented].include? foundation.foundation_type
-        next unless foundation.within_infiltration_volume
-
-        spaces_within_infil_volume << foundation.to_location
-      end
-
-      # Get surfaces bounding infiltration volume
-      spaces_within_infil_volume.each do |location|
-        (@roofs + @rim_joists + @walls + @foundation_walls + @floors + @slabs).each do |surface|
-          is_adiabatic_surface = (surface.interior_adjacent_to == surface.exterior_adjacent_to)
-          next unless [surface.interior_adjacent_to,
-                       surface.exterior_adjacent_to].include? location
-
-          if not is_adiabatic_surface
-            # Exclude surfaces between two different spaces that are both within infiltration volume
-            next if spaces_within_infil_volume.include?(surface.interior_adjacent_to) && spaces_within_infil_volume.include?(surface.exterior_adjacent_to)
-          end
-
-          # Update Compartmentalization Boundary areas
-          total_area += surface.area
-          next unless (not [LocationGarage,
-                            LocationOtherHousingUnit,
-                            LocationOtherHeatedSpace,
-                            LocationOtherMultifamilyBufferSpace,
-                            LocationOtherNonFreezingSpace].include? surface.exterior_adjacent_to) &&
-                      (not is_adiabatic_surface)
-
-          exterior_area += surface.area
-        end
-      end
-
-      return total_area, exterior_area
-    end
-
-    # Calculates the inferred infiltration height.
-    # Infiltration height is the vertical distance between lowest and highest
-    # above-grade points within the pressure boundary.
-    #
-    # Note: The WithinInfiltrationVolume properties are intentionally ignored for now.
-    #
-    # @param infil_volume [Double] Volume of space most impacted by the blower door test (ft3)
-    # @return [Double] Inferred infiltration height (ft)
-    def inferred_infiltration_height(infil_volume)
-      cfa = @building_construction.conditioned_floor_area
-
-      ncfl_ag = @building_construction.number_of_conditioned_floors_above_grade
-      if has_walkout_basement()
-        infil_height = ncfl_ag * infil_volume / cfa
-      else
-        infil_volume -= inferred_conditioned_crawlspace_volume()
-
-        # Calculate maximum above-grade height of conditioned foundation walls
-        max_cond_fnd_wall_height_ag = 0.0
-        @foundation_walls.each do |foundation_wall|
-          next unless foundation_wall.is_exterior && HPXML::conditioned_below_grade_locations.include?(foundation_wall.interior_adjacent_to)
-
-          height_ag = foundation_wall.height - foundation_wall.depth_below_grade
-          next unless height_ag > max_cond_fnd_wall_height_ag
-
-          max_cond_fnd_wall_height_ag = height_ag
-        end
-
-        # Add assumed rim joist height
-        cond_fnd_rim_joist_height = 0
-        @rim_joists.each do |rim_joist|
-          next unless rim_joist.is_exterior && HPXML::conditioned_below_grade_locations.include?(rim_joist.interior_adjacent_to)
-
-          cond_fnd_rim_joist_height = UnitConversions.convert(9, 'in', 'ft')
-        end
-
-        infil_height = ncfl_ag * infil_volume / cfa + max_cond_fnd_wall_height_ag + cond_fnd_rim_joist_height
-      end
-      return infil_height
-    end
-
-    # Calculates the inferred conditioned crawlspace volume.
-    #
-    # @return [Double] Inferred conditioned crawlspace volume (ft3)
-    def inferred_conditioned_crawlspace_volume
-      if has_location(HPXML::LocationCrawlspaceConditioned)
-        conditioned_crawl_area = @slabs.select { |s| s.interior_adjacent_to == HPXML::LocationCrawlspaceConditioned }.map { |s| s.area }.sum
-        conditioned_crawl_height = @foundation_walls.select { |w| w.interior_adjacent_to == HPXML::LocationCrawlspaceConditioned }.map { |w| w.height }.max
-        return conditioned_crawl_area * conditioned_crawl_height
-      end
-      return 0.0
     end
 
     # Deletes any adiabatic sub-surfaces since EnergyPlus does not allow it.
@@ -2373,6 +2363,13 @@ class HPXML < Object
              :height]      # [Double] Height (ft)
     attr_accessor(*ATTRS)
 
+    # Deletes the current object from the array.
+    #
+    # @return [nil]
+    def delete
+      @parent_object.neighbor_buildings.delete(self)
+    end
+
     # Additional error-checking beyond what's checked in Schema/Schematron validators.
     #
     # @return [Array<String>] List of error messages
@@ -2569,6 +2566,7 @@ class HPXML < Object
              :shading_summer_begin_day,             # [Integer] ShadingControl/SummerBeginDayOfMonth
              :shading_summer_end_month,             # [Integer] ShadingControl/SummerEndMonth
              :shading_summer_end_day,               # [Integer] ShadingControl/SummerEndDayOfMonth
+             :electric_panel_baseline_peak_power,   # [Double] ElectricPanelBaselinePeakPower
              :extension_properties]                 # [Hash] AdditionalProperties
     attr_accessor(*ATTRS)
 
@@ -2623,6 +2621,9 @@ class HPXML < Object
         XMLHelper.add_element(window_shading_season, 'SummerEndMonth', @shading_summer_end_month, :integer, @shading_summer_end_month_isdefaulted) unless @shading_summer_end_month.nil?
         XMLHelper.add_element(window_shading_season, 'SummerEndDayOfMonth', @shading_summer_end_day, :integer, @shading_summer_end_day_isdefaulted) unless @shading_summer_end_day.nil?
       end
+      if not @electric_panel_baseline_peak_power.nil?
+        XMLHelper.add_extension(building_summary, 'ElectricPanelBaselinePeakPower', @electric_panel_baseline_peak_power, :float)
+      end
       if (not @extension_properties.nil?) && (not @extension_properties.empty?)
         properties = XMLHelper.create_elements_as_needed(building_summary, ['extension', 'AdditionalProperties'])
         @extension_properties.each do |key, value|
@@ -2662,6 +2663,7 @@ class HPXML < Object
       @manualj_num_occupants = XMLHelper.get_value(building_summary, 'extension/HVACSizingControl/ManualJInputs/NumberofOccupants', :float)
       @manualj_infiltration_shielding_class = XMLHelper.get_value(building_summary, 'extension/HVACSizingControl/ManualJInputs/InfiltrationShieldingClass', :integer)
       @manualj_infiltration_method = XMLHelper.get_value(building_summary, 'extension/HVACSizingControl/ManualJInputs/InfiltrationMethod', :string)
+      @electric_panel_baseline_peak_power = XMLHelper.get_value(building_summary, 'extension/ElectricPanelBaselinePeakPower', :float)
       @extension_properties = {}
       XMLHelper.get_elements(building_summary, 'extension/AdditionalProperties').each do |property|
         property.children.each do |child|
@@ -3408,12 +3410,16 @@ class HPXML < Object
     def to_location
       return if @attic_type.nil?
 
-      if [AtticTypeCathedral, AtticTypeConditioned, AtticTypeFlatRoof, AtticTypeBelowApartment].include? @attic_type
+      case @attic_type
+      when AtticTypeCathedral, AtticTypeConditioned,
+           AtticTypeFlatRoof, AtticTypeBelowApartment
         return LocationConditionedSpace
-      elsif [AtticTypeUnvented].include? @attic_type
+      when AtticTypeUnvented
         return LocationAtticUnvented
-      elsif [AtticTypeVented].include? @attic_type
+      when AtticTypeVented
         return LocationAtticVented
+      when AtticTypeUnknown, AtticTypeOther
+        return # Not currently used
       else
         fail "Unexpected attic type: '#{@attic_type}'."
       end
@@ -3451,12 +3457,13 @@ class HPXML < Object
       XMLHelper.add_attribute(sys_id, 'id', @id)
       if not @attic_type.nil?
         attic_type_el = XMLHelper.add_element(attic, 'AtticType')
-        if [AtticTypeFlatRoof, AtticTypeCathedral, AtticTypeBelowApartment].include? @attic_type
+        case @attic_type
+        when AtticTypeFlatRoof, AtticTypeCathedral, AtticTypeBelowApartment
           XMLHelper.add_element(attic_type_el, @attic_type)
-        elsif [AtticTypeUnvented].include? @attic_type
+        when AtticTypeUnvented
           attic_type_attic = XMLHelper.add_element(attic_type_el, 'Attic')
           XMLHelper.add_element(attic_type_attic, 'Vented', false, :boolean)
-        elsif [AtticTypeVented].include? @attic_type
+        when AtticTypeVented
           attic_type_attic = XMLHelper.add_element(attic_type_el, 'Attic')
           XMLHelper.add_element(attic_type_attic, 'Vented', true, :boolean)
           if not @vented_attic_sla.nil?
@@ -3468,12 +3475,18 @@ class HPXML < Object
             XMLHelper.add_element(ventilation_rate, 'UnitofMeasure', UnitsACHNatural, :string)
             XMLHelper.add_element(ventilation_rate, 'Value', @vented_attic_ach, :float)
           end
-        elsif [AtticTypeConditioned].include? @attic_type
+        when AtticTypeConditioned
           attic_type_attic = XMLHelper.add_element(attic_type_el, 'Attic')
           XMLHelper.add_element(attic_type_attic, 'Conditioned', true, :boolean)
+        when AtticTypeUnknown
+          XMLHelper.add_element(attic_type_el, 'Attic')
+        when AtticTypeOther
+          XMLHelper.add_element(attic_type_el, @attic_type)
         else
           fail "Unhandled attic type '#{@attic_type}'."
         end
+      else
+        fail 'AtticType is a required element.'
       end
       XMLHelper.add_element(attic, 'WithinInfiltrationVolume', @within_infiltration_volume, :boolean, @within_infiltration_volume_isdefaulted) unless @within_infiltration_volume.nil?
       if not @attached_to_roof_idrefs.nil?
@@ -3510,12 +3523,16 @@ class HPXML < Object
         @attic_type = AtticTypeVented
       elsif XMLHelper.has_element(attic, "AtticType/Attic[Conditioned='true']")
         @attic_type = AtticTypeConditioned
+      elsif XMLHelper.has_element(attic, 'AtticType/Attic')
+        @attic_type = AtticTypeUnknown
       elsif XMLHelper.has_element(attic, 'AtticType/FlatRoof')
         @attic_type = AtticTypeFlatRoof
       elsif XMLHelper.has_element(attic, 'AtticType/CathedralCeiling')
         @attic_type = AtticTypeCathedral
       elsif XMLHelper.has_element(attic, 'AtticType/BelowApartment')
         @attic_type = AtticTypeBelowApartment
+      elsif XMLHelper.has_element(attic, 'AtticType/Other')
+        @attic_type = AtticTypeOther
       end
       if @attic_type == AtticTypeVented
         @vented_attic_sla = XMLHelper.get_value(attic, "VentilationRate[UnitofMeasure='#{UnitsSLA}']/Value", :float)
@@ -3649,22 +3666,29 @@ class HPXML < Object
     def to_location
       return if @foundation_type.nil?
 
-      if [FoundationTypeSlab, FoundationTypeAboveApartment].include? @foundation_type
+      case @foundation_type
+      when FoundationTypeSlab, FoundationTypeAboveApartment
         return LocationConditionedSpace
-      elsif [FoundationTypeAmbient].include? @foundation_type
+      when FoundationTypeAmbient
         return LocationOutside
-      elsif [FoundationTypeBasementConditioned].include? @foundation_type
+      when FoundationTypeBasementConditioned
         return LocationBasementConditioned
-      elsif [FoundationTypeBasementUnconditioned].include? @foundation_type
+      when FoundationTypeBasementUnconditioned
         return LocationBasementUnconditioned
-      elsif [FoundationTypeCrawlspaceUnvented].include? @foundation_type
+      when FoundationTypeCrawlspaceUnvented
         return LocationCrawlspaceUnvented
-      elsif [FoundationTypeCrawlspaceVented].include? @foundation_type
+      when FoundationTypeCrawlspaceVented
         return LocationCrawlspaceVented
-      elsif @foundation_type == FoundationTypeCrawlspaceConditioned
+      when FoundationTypeCrawlspaceConditioned
         return LocationCrawlspaceConditioned
-      elsif @foundation_type == FoundationTypeBellyAndWing
+      when FoundationTypeBellyAndWing
         return LocationManufacturedHomeUnderBelly
+      when FoundationTypeBasementUnknown,
+           FoundationTypeCrawlspaceUnknown,
+           FoundationTypeGarage,
+           FoundationTypeRubbleStone,
+           FoundationTypeOther
+        return # Not currently used
       else
         fail "Unexpected foundation type: '#{@foundation_type}'."
       end
@@ -3722,15 +3746,18 @@ class HPXML < Object
       XMLHelper.add_attribute(sys_id, 'id', @id)
       if not @foundation_type.nil?
         foundation_type_el = XMLHelper.add_element(foundation, 'FoundationType')
-        if [FoundationTypeSlab, FoundationTypeAmbient, FoundationTypeAboveApartment].include? @foundation_type
+        case @foundation_type
+        when FoundationTypeSlab, FoundationTypeAmbient, FoundationTypeAboveApartment
           XMLHelper.add_element(foundation_type_el, @foundation_type)
-        elsif [FoundationTypeBasementConditioned].include? @foundation_type
+        when FoundationTypeBasementConditioned
           basement = XMLHelper.add_element(foundation_type_el, 'Basement')
           XMLHelper.add_element(basement, 'Conditioned', true, :boolean)
-        elsif [FoundationTypeBasementUnconditioned].include? @foundation_type
+        when FoundationTypeBasementUnconditioned
           basement = XMLHelper.add_element(foundation_type_el, 'Basement')
           XMLHelper.add_element(basement, 'Conditioned', false, :boolean)
-        elsif [FoundationTypeCrawlspaceVented].include? @foundation_type
+        when FoundationTypeBasementUnknown
+          XMLHelper.add_element(foundation_type_el, 'Basement')
+        when FoundationTypeCrawlspaceVented
           crawlspace = XMLHelper.add_element(foundation_type_el, 'Crawlspace')
           XMLHelper.add_element(crawlspace, 'Vented', true, :boolean)
           if not @vented_crawlspace_sla.nil?
@@ -3738,18 +3765,28 @@ class HPXML < Object
             XMLHelper.add_element(ventilation_rate, 'UnitofMeasure', UnitsSLA, :string)
             XMLHelper.add_element(ventilation_rate, 'Value', @vented_crawlspace_sla, :float, @vented_crawlspace_sla_isdefaulted)
           end
-        elsif [FoundationTypeCrawlspaceUnvented].include? @foundation_type
+        when FoundationTypeCrawlspaceUnvented
           crawlspace = XMLHelper.add_element(foundation_type_el, 'Crawlspace')
           XMLHelper.add_element(crawlspace, 'Vented', false, :boolean)
-        elsif @foundation_type == FoundationTypeCrawlspaceConditioned
+        when FoundationTypeCrawlspaceConditioned
           crawlspace = XMLHelper.add_element(foundation_type_el, 'Crawlspace')
           XMLHelper.add_element(crawlspace, 'Conditioned', true, :boolean)
-        elsif @foundation_type == FoundationTypeBellyAndWing
+        when FoundationTypeCrawlspaceUnknown
+          XMLHelper.add_element(foundation_type_el, 'Crawlspace')
+        when FoundationTypeBellyAndWing
           belly_and_wing = XMLHelper.add_element(foundation_type_el, 'BellyAndWing')
           XMLHelper.add_element(belly_and_wing, 'SkirtPresent', @belly_wing_skirt_present, :boolean, @belly_wing_skirt_present_isdefaulted) unless @belly_wing_skirt_present.nil?
+        when FoundationTypeGarage
+          XMLHelper.add_element(foundation_type_el, 'Garage')
+        when FoundationTypeRubbleStone
+          XMLHelper.add_element(foundation_type_el, 'RubbleStone')
+        when FoundationTypeOther
+          XMLHelper.add_element(foundation_type_el, 'Other')
         else
           fail "Unhandled foundation type '#{@foundation_type}'."
         end
+      else
+        fail 'FoundationType is a required element.'
       end
       XMLHelper.add_element(foundation, 'WithinInfiltrationVolume', @within_infiltration_volume, :boolean) unless @within_infiltration_volume.nil?
       if not @attached_to_rim_joist_idrefs.nil?
@@ -3798,12 +3835,16 @@ class HPXML < Object
         @foundation_type = FoundationTypeBasementUnconditioned
       elsif XMLHelper.has_element(foundation, "FoundationType/Basement[Conditioned='true']")
         @foundation_type = FoundationTypeBasementConditioned
+      elsif XMLHelper.has_element(foundation, 'FoundationType/Basement')
+        @foundation_type = FoundationTypeBasementUnknown
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace[Vented='false']")
         @foundation_type = FoundationTypeCrawlspaceUnvented
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace[Vented='true']")
         @foundation_type = FoundationTypeCrawlspaceVented
       elsif XMLHelper.has_element(foundation, "FoundationType/Crawlspace[Conditioned='true']")
         @foundation_type = FoundationTypeCrawlspaceConditioned
+      elsif XMLHelper.has_element(foundation, 'FoundationType/Crawlspace')
+        @foundation_type = FoundationTypeCrawlspaceUnknown
       elsif XMLHelper.has_element(foundation, 'FoundationType/Ambient')
         @foundation_type = FoundationTypeAmbient
       elsif XMLHelper.has_element(foundation, 'FoundationType/AboveApartment')
@@ -3811,6 +3852,12 @@ class HPXML < Object
       elsif XMLHelper.has_element(foundation, 'FoundationType/BellyAndWing')
         @foundation_type = FoundationTypeBellyAndWing
         @belly_wing_skirt_present = XMLHelper.get_value(foundation, 'FoundationType/BellyAndWing/SkirtPresent', :boolean)
+      elsif XMLHelper.has_element(foundation, 'FoundationType/RubbleStone')
+        @foundation_type = FoundationTypeRubbleStone
+      elsif XMLHelper.has_element(foundation, 'FoundationType/Garage')
+        @foundation_type = FoundationTypeGarage
+      elsif XMLHelper.has_element(foundation, 'FoundationType/Other')
+        @foundation_type = FoundationTypeOther
       end
       if @foundation_type == FoundationTypeCrawlspaceVented
         @vented_crawlspace_sla = XMLHelper.get_value(foundation, "VentilationRate[UnitofMeasure='#{UnitsSLA}']/Value", :float)
@@ -6340,12 +6387,27 @@ class HPXML < Object
              :fan_watts_per_cfm,                # [Double] extension/FanPowerWattsPerCFM (W/cfm)
              :fan_watts,                        # [Double] extension/FanPowerWatts (W)
              :airflow_defect_ratio,             # [Double] extension/AirflowDefectRatio (frac)
-             :heating_airflow_cfm,              # [Double] extension/HeatingAirflowCFM (cfm)
+             :heating_design_airflow_cfm,       # [Double] extension/HeatingDesignAirflowCFM (cfm)
              :heating_autosizing_factor,        # [Double] extension/HeatingAutosizingFactor (frac)
              :heating_autosizing_limit,         # [Double] extension/HeatingAutosizingLimit (Btu/hr)
+             :fan_motor_type,                   # [String] extension/FanMotorType
              :htg_seed_id]                      # [String] extension/HeatingSeedId
     attr_reader(*CLASS_ATTRS)
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Returns the zone that the heating system serves.
     #
@@ -6507,11 +6569,12 @@ class HPXML < Object
       XMLHelper.add_element(heating_system, 'ElectricAuxiliaryEnergy', @electric_auxiliary_energy, :float, @electric_auxiliary_energy_isdefaulted) unless @electric_auxiliary_energy.nil?
       XMLHelper.add_extension(heating_system, 'SharedLoopWatts', @shared_loop_watts, :float) unless @shared_loop_watts.nil?
       XMLHelper.add_extension(heating_system, 'SharedLoopMotorEfficiency', @shared_loop_motor_efficiency, :float) unless @shared_loop_motor_efficiency.nil?
+      XMLHelper.add_extension(heating_system, 'FanMotorType', @fan_motor_type, :string, @fan_motor_type_isdefaulted) unless @fan_motor_type.nil?
       XMLHelper.add_extension(heating_system, 'FanCoilWatts', @fan_coil_watts, :float) unless @fan_coil_watts.nil?
       XMLHelper.add_extension(heating_system, 'FanPowerWattsPerCFM', @fan_watts_per_cfm, :float, @fan_watts_per_cfm_isdefaulted) unless @fan_watts_per_cfm.nil?
       XMLHelper.add_extension(heating_system, 'FanPowerWatts', @fan_watts, :float, @fan_watts_isdefaulted) unless @fan_watts.nil?
       XMLHelper.add_extension(heating_system, 'AirflowDefectRatio', @airflow_defect_ratio, :float, @airflow_defect_ratio_isdefaulted) unless @airflow_defect_ratio.nil?
-      XMLHelper.add_extension(heating_system, 'HeatingAirflowCFM', @heating_airflow_cfm, :float, @heating_airflow_cfm_isdefaulted) unless @heating_airflow_cfm.nil?
+      XMLHelper.add_extension(heating_system, 'HeatingDesignAirflowCFM', @heating_design_airflow_cfm, :float, @heating_design_airflow_cfm_isdefaulted) unless @heating_design_airflow_cfm.nil?
       XMLHelper.add_extension(heating_system, 'HeatingAutosizingFactor', @heating_autosizing_factor, :float, @heating_autosizing_factor_isdefaulted) unless @heating_autosizing_factor.nil?
       XMLHelper.add_extension(heating_system, 'HeatingAutosizingLimit', @heating_autosizing_limit, :float, @heating_autosizing_limit_isdefaulted) unless @heating_autosizing_limit.nil?
       XMLHelper.add_extension(heating_system, 'HeatingSeedId', @htg_seed_id, :string) unless @htg_seed_id.nil?
@@ -6553,11 +6616,12 @@ class HPXML < Object
       @electric_auxiliary_energy = XMLHelper.get_value(heating_system, 'ElectricAuxiliaryEnergy', :float)
       @shared_loop_watts = XMLHelper.get_value(heating_system, 'extension/SharedLoopWatts', :float)
       @shared_loop_motor_efficiency = XMLHelper.get_value(heating_system, 'extension/SharedLoopMotorEfficiency', :float)
+      @fan_motor_type = XMLHelper.get_value(heating_system, 'extension/FanMotorType', :string)
       @fan_coil_watts = XMLHelper.get_value(heating_system, 'extension/FanCoilWatts', :float)
       @fan_watts_per_cfm = XMLHelper.get_value(heating_system, 'extension/FanPowerWattsPerCFM', :float)
       @fan_watts = XMLHelper.get_value(heating_system, 'extension/FanPowerWatts', :float)
       @airflow_defect_ratio = XMLHelper.get_value(heating_system, 'extension/AirflowDefectRatio', :float)
-      @heating_airflow_cfm = XMLHelper.get_value(heating_system, 'extension/HeatingAirflowCFM', :float)
+      @heating_design_airflow_cfm = XMLHelper.get_value(heating_system, 'extension/HeatingDesignAirflowCFM', :float)
       @heating_autosizing_factor = XMLHelper.get_value(heating_system, 'extension/HeatingAutosizingFactor', :float)
       @heating_autosizing_limit = XMLHelper.get_value(heating_system, 'extension/HeatingAutosizingLimit', :float)
       @htg_seed_id = XMLHelper.get_value(heating_system, 'extension/HeatingSeedId', :string)
@@ -6630,28 +6694,44 @@ class HPXML < Object
              :cooling_efficiency_seer,                             # [Double] AnnualCoolingEfficiency[Units="SEER"]/Value (Btu/Wh)
              :cooling_efficiency_seer2,                            # [Double] AnnualCoolingEfficiency[Units="SEER2"]/Value (Btu/Wh)
              :cooling_efficiency_eer,                              # [Double] AnnualCoolingEfficiency[Units="EER"]/Value (Btu/Wh)
+             :cooling_efficiency_eer2,                             # [Double] AnnualCoolingEfficiency[Units="EER2"]/Value (Btu/Wh)
              :cooling_efficiency_ceer,                             # [Double] AnnualCoolingEfficiency[Units="CEER"]/Value (Btu/Wh)
              :cooling_efficiency_kw_per_ton,                       # [Double] AnnualCoolingEfficiency[Units="kW/ton"]/Value (kW/ton)
-             :cooling_shr,                                         # [Double] SensibleHeatFraction (frac)
              :integrated_heating_system_fuel,                      # [String] IntegratedHeatingSystemFuel (HPXML::FuelTypeXXX)
              :integrated_heating_system_capacity,                  # [Double] IntegratedHeatingSystemCapacity (Btu/hr)
              :integrated_heating_system_efficiency_percent,        # [Double] IntegratedHeatingSystemAnnualEfficiency[Units="Percent"]/Value (frac)
              :integrated_heating_system_fraction_heat_load_served, # [Double] IntegratedHeatingSystemFractionHeatLoadServed (frac)
              :airflow_defect_ratio,                                # [Double] extension/AirflowDefectRatio (frac)
              :charge_defect_ratio,                                 # [Double] extension/ChargeDefectRatio (frac)
+             :fan_motor_type,                                      # [String] extension/FanMotorType
              :fan_watts_per_cfm,                                   # [Double] extension/FanPowerWattsPerCFM (W/cfm)
-             :cooling_airflow_cfm,                                 # [Double] extension/CoolingAirflowCFM (cfm)
-             :integrated_heating_system_airflow_cfm,               # [Double] extension/HeatingAirflowCFM (cfm)
+             :cooling_design_airflow_cfm,                          # [Double] extension/CoolingDesignAirflowCFM (cfm)
+             :integrated_heating_system_airflow_cfm,               # [Double] extension/HeatingDesignAirflowCFM (cfm)
              :shared_loop_watts,                                   # [Double] extension/SharedLoopWatts (W)
              :shared_loop_motor_efficiency,                        # [Double] extension/SharedLoopMotorEfficiency (frac)
              :fan_coil_watts,                                      # [Double] extension/FanCoilWatts (W)
              :crankcase_heater_watts,                              # [Double] extension/CrankcaseHeaterPowerWatts (W)
              :cooling_autosizing_factor,                           # [Double] extension/CoolingAutosizingFactor (frac)
              :cooling_autosizing_limit,                            # [Double] extension/CoolingAutosizingLimit (Btu/hr)
+             :equipment_type,                                      # [String] extension/EquipmentType (HPXML::HVACEquipmentTypeXXX)
              :clg_seed_id,                                         # [String] extension/CoolingSeedId
              :htg_seed_id]                                         # [String] extension/HeatingSeedId
     attr_reader(*CLASS_ATTRS)
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Returns the zone that the cooling system serves.
     #
@@ -6773,6 +6853,11 @@ class HPXML < Object
         XMLHelper.add_element(annual_efficiency, 'Units', UnitsEER, :string)
         XMLHelper.add_element(annual_efficiency, 'Value', @cooling_efficiency_eer, :float, @cooling_efficiency_eer_isdefaulted)
       end
+      if not @cooling_efficiency_eer2.nil?
+        annual_efficiency = XMLHelper.add_element(cooling_system, 'AnnualCoolingEfficiency')
+        XMLHelper.add_element(annual_efficiency, 'Units', UnitsEER2, :string)
+        XMLHelper.add_element(annual_efficiency, 'Value', @cooling_efficiency_eer2, :float, @cooling_efficiency_eer2_isdefaulted)
+      end
       if not @cooling_efficiency_ceer.nil?
         annual_efficiency = XMLHelper.add_element(cooling_system, 'AnnualCoolingEfficiency')
         XMLHelper.add_element(annual_efficiency, 'Units', UnitsCEER, :string)
@@ -6783,7 +6868,6 @@ class HPXML < Object
         XMLHelper.add_element(annual_efficiency, 'Units', UnitsKwPerTon, :string)
         XMLHelper.add_element(annual_efficiency, 'Value', @cooling_efficiency_kw_per_ton, :float, @cooling_efficiency_kw_per_ton_isdefaulted)
       end
-      XMLHelper.add_element(cooling_system, 'SensibleHeatFraction', @cooling_shr, :float, @cooling_shr_isdefaulted) unless @cooling_shr.nil?
       @cooling_detailed_performance_data.to_doc(cooling_system)
       XMLHelper.add_element(cooling_system, 'IntegratedHeatingSystemFuel', @integrated_heating_system_fuel, :string) unless @integrated_heating_system_fuel.nil?
       XMLHelper.add_element(cooling_system, 'IntegratedHeatingSystemCapacity', @integrated_heating_system_capacity, :float, @integrated_heating_system_capacity_isdefaulted) unless @integrated_heating_system_capacity.nil?
@@ -6795,15 +6879,17 @@ class HPXML < Object
       XMLHelper.add_element(cooling_system, 'IntegratedHeatingSystemFractionHeatLoadServed', @integrated_heating_system_fraction_heat_load_served, :float) unless @integrated_heating_system_fraction_heat_load_served.nil?
       XMLHelper.add_extension(cooling_system, 'AirflowDefectRatio', @airflow_defect_ratio, :float, @airflow_defect_ratio_isdefaulted) unless @airflow_defect_ratio.nil?
       XMLHelper.add_extension(cooling_system, 'ChargeDefectRatio', @charge_defect_ratio, :float, @charge_defect_ratio_isdefaulted) unless @charge_defect_ratio.nil?
+      XMLHelper.add_extension(cooling_system, 'FanMotorType', @fan_motor_type, :string, @fan_motor_type_isdefaulted) unless @fan_motor_type.nil?
       XMLHelper.add_extension(cooling_system, 'FanPowerWattsPerCFM', @fan_watts_per_cfm, :float, @fan_watts_per_cfm_isdefaulted) unless @fan_watts_per_cfm.nil?
-      XMLHelper.add_extension(cooling_system, 'CoolingAirflowCFM', @cooling_airflow_cfm, :float, @cooling_airflow_cfm_isdefaulted) unless @cooling_airflow_cfm.nil?
-      XMLHelper.add_extension(cooling_system, 'HeatingAirflowCFM', @integrated_heating_system_airflow_cfm, :float, @integrated_heating_system_airflow_cfm_isdefaulted) unless @integrated_heating_system_airflow_cfm.nil?
+      XMLHelper.add_extension(cooling_system, 'CoolingDesignAirflowCFM', @cooling_design_airflow_cfm, :float, @cooling_design_airflow_cfm_isdefaulted) unless @cooling_design_airflow_cfm.nil?
+      XMLHelper.add_extension(cooling_system, 'HeatingDesignAirflowCFM', @integrated_heating_system_airflow_cfm, :float, @integrated_heating_system_airflow_cfm_isdefaulted) unless @integrated_heating_system_airflow_cfm.nil?
       XMLHelper.add_extension(cooling_system, 'SharedLoopWatts', @shared_loop_watts, :float) unless @shared_loop_watts.nil?
       XMLHelper.add_extension(cooling_system, 'SharedLoopMotorEfficiency', @shared_loop_motor_efficiency, :float) unless @shared_loop_motor_efficiency.nil?
       XMLHelper.add_extension(cooling_system, 'FanCoilWatts', @fan_coil_watts, :float) unless @fan_coil_watts.nil?
       XMLHelper.add_extension(cooling_system, 'CrankcaseHeaterPowerWatts', @crankcase_heater_watts, :float, @crankcase_heater_watts_isdefaulted) unless @crankcase_heater_watts.nil?
       XMLHelper.add_extension(cooling_system, 'CoolingAutosizingFactor', @cooling_autosizing_factor, :float, @cooling_autosizing_factor_isdefaulted) unless @cooling_autosizing_factor.nil?
       XMLHelper.add_extension(cooling_system, 'CoolingAutosizingLimit', @cooling_autosizing_limit, :float, @cooling_autosizing_limit_isdefaulted) unless @cooling_autosizing_limit.nil?
+      XMLHelper.add_extension(cooling_system, 'EquipmentType', @equipment_type, :string, @equipment_type_isdefaulted) unless @equipment_type.nil?
       XMLHelper.add_extension(cooling_system, 'CoolingSeedId', @clg_seed_id, :string) unless @clg_seed_id.nil?
       XMLHelper.add_extension(cooling_system, 'HeatingSeedId', @htg_seed_id, :string) unless @htg_seed_id.nil?
       if @primary_system
@@ -6835,25 +6921,27 @@ class HPXML < Object
       @cooling_efficiency_seer = XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='#{UnitsSEER}']/Value", :float)
       @cooling_efficiency_seer2 = XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='#{UnitsSEER2}']/Value", :float)
       @cooling_efficiency_eer = XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='#{UnitsEER}']/Value", :float)
+      @cooling_efficiency_eer2 = XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='#{UnitsEER2}']/Value", :float)
       @cooling_efficiency_ceer = XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='#{UnitsCEER}']/Value", :float)
       @cooling_efficiency_kw_per_ton = XMLHelper.get_value(cooling_system, "AnnualCoolingEfficiency[Units='#{UnitsKwPerTon}']/Value", :float)
       @cooling_detailed_performance_data.from_doc(cooling_system)
-      @cooling_shr = XMLHelper.get_value(cooling_system, 'SensibleHeatFraction', :float)
       @integrated_heating_system_fuel = XMLHelper.get_value(cooling_system, 'IntegratedHeatingSystemFuel', :string)
       @integrated_heating_system_capacity = XMLHelper.get_value(cooling_system, 'IntegratedHeatingSystemCapacity', :float)
       @integrated_heating_system_efficiency_percent = XMLHelper.get_value(cooling_system, "IntegratedHeatingSystemAnnualEfficiency[Units='#{UnitsPercent}']/Value", :float)
       @integrated_heating_system_fraction_heat_load_served = XMLHelper.get_value(cooling_system, 'IntegratedHeatingSystemFractionHeatLoadServed', :float)
       @airflow_defect_ratio = XMLHelper.get_value(cooling_system, 'extension/AirflowDefectRatio', :float)
       @charge_defect_ratio = XMLHelper.get_value(cooling_system, 'extension/ChargeDefectRatio', :float)
+      @fan_motor_type = XMLHelper.get_value(cooling_system, 'extension/FanMotorType', :string)
       @fan_watts_per_cfm = XMLHelper.get_value(cooling_system, 'extension/FanPowerWattsPerCFM', :float)
-      @cooling_airflow_cfm = XMLHelper.get_value(cooling_system, 'extension/CoolingAirflowCFM', :float)
-      @integrated_heating_system_airflow_cfm = XMLHelper.get_value(cooling_system, 'extension/HeatingAirflowCFM', :float)
+      @cooling_design_airflow_cfm = XMLHelper.get_value(cooling_system, 'extension/CoolingDesignAirflowCFM', :float)
+      @integrated_heating_system_airflow_cfm = XMLHelper.get_value(cooling_system, 'extension/HeatingDesignAirflowCFM', :float)
       @shared_loop_watts = XMLHelper.get_value(cooling_system, 'extension/SharedLoopWatts', :float)
       @shared_loop_motor_efficiency = XMLHelper.get_value(cooling_system, 'extension/SharedLoopMotorEfficiency', :float)
       @fan_coil_watts = XMLHelper.get_value(cooling_system, 'extension/FanCoilWatts', :float)
       @crankcase_heater_watts = XMLHelper.get_value(cooling_system, 'extension/CrankcaseHeaterPowerWatts', :float)
       @cooling_autosizing_factor = XMLHelper.get_value(cooling_system, 'extension/CoolingAutosizingFactor', :float)
       @cooling_autosizing_limit = XMLHelper.get_value(cooling_system, 'extension/CoolingAutosizingLimit', :float)
+      @equipment_type = XMLHelper.get_value(cooling_system, 'extension/EquipmentType', :string)
       @clg_seed_id = XMLHelper.get_value(cooling_system, 'extension/CoolingSeedId', :string)
       @htg_seed_id = XMLHelper.get_value(cooling_system, 'extension/HeatingSeedId', :string)
       primary_cooling_system = HPXML::get_idref(XMLHelper.get_element(cooling_system, '../PrimarySystems/PrimaryCoolingSystem'))
@@ -6910,63 +6998,95 @@ class HPXML < Object
     end
     CLASS_ATTRS = [:cooling_detailed_performance_data, # [HPXML::CoolingDetailedPerformanceData]
                    :heating_detailed_performance_data] # [HPXML::HeatingDetailedPerformanceData]
-    ATTRS = [:primary_heating_system,              # [Boolean] ../PrimarySystems/PrimaryHeatingSystem/@idref
-             :primary_cooling_system,              # [Boolean] ../PrimarySystems/PrimaryCoolingSystem/@idref
-             :id,                                  # [String] SystemIdentifier/@id
-             :attached_to_zone_idref,              # [String] AttachedToZone/@idref
-             :location,                            # [String] UnitLocation (HPXML::LocationXXX)
-             :year_installed,                      # [Integer] YearInstalled
-             :third_party_certification,           # [String] ThirdPartyCertification
-             :distribution_system_idref,           # [String] DistributionSystem/@idref
-             :is_shared_system,                    # [Boolean] IsSharedSystem
-             :number_of_units_served,              # [Integer] NumberofUnitsServed
-             :heat_pump_type,                      # [String] HeatPumpType (HPXML::HVACTypeXXX)
-             :heat_pump_fuel,                      # [String] HeatPumpFuel (HPXML::FuelTypeXXX)
-             :heating_capacity,                    # [Double] HeatingCapacity (Btu/hr)
-             :heating_capacity_17F,                # [Double] HeatingCapacity17F (Btu/hr)
-             :cooling_capacity,                    # [Double] CoolingCapacity (Btu/hr)
-             :compressor_type,                     # [String] CompressorType (HPXML::HVACCompressorTypeXXX)
-             :compressor_lockout_temp,             # [Double] CompressorLockoutTemperature (F)
-             :cooling_shr,                         # [Double] CoolingSensibleHeatFraction (frac)
-             :backup_type,                         # [String] BackupType (HPXML::HeatPumpBackupTypeXXX)
-             :backup_system_idref,                 # [String] BackupSystem/@idref
-             :backup_heating_fuel,                 # [String] BackupSystemFuel (HPXML::FuelTypeXXX)
-             :backup_heating_efficiency_percent,   # [Double] BackupAnnualHeatingEfficiency[Units="Percent"]/Value (frac)
-             :backup_heating_efficiency_afue,      # [Double] BackupAnnualHeatingEfficiency[Units="AFUE"]/Value (frac)
-             :backup_heating_capacity,             # [Double] BackupHeatingCapacity (Btu/hr)
-             :backup_heating_switchover_temp,      # [Double] BackupHeatingSwitchoverTemperature (F)
-             :backup_heating_lockout_temp,         # [Double] BackupHeatingLockoutTemperature (F)
-             :fraction_heat_load_served,           # [Double] FractionHeatLoadServed (frac)
-             :fraction_cool_load_served,           # [Double] FractionCoolLoadServed (frac)
-             :cooling_efficiency_seer,             # [Double] AnnualCoolingEfficiency[Units="SEER"]/Value (Btu/Wh)
-             :cooling_efficiency_seer2,            # [Double] AnnualCoolingEfficiency[Units="SEER2"]/Value (Btu/Wh)
-             :cooling_efficiency_eer,              # [Double] AnnualCoolingEfficiency[Units="EER"]/Value (Btu/Wh)
-             :cooling_efficiency_ceer,             # [Double] AnnualCoolingEfficiency[Units="CEER"]/Value (Btu/Wh)
-             :heating_efficiency_hspf,             # [Double] AnnualHeatingEfficiency[Units="HSPF"]/Value (Btu/Wh)
-             :heating_efficiency_hspf2,            # [Double] AnnualHeatingEfficiency[Units="HSPF2"]/Value (Btu/Wh)
-             :heating_efficiency_cop,              # [Double] AnnualHeatingEfficiency[Units="COP"]/Value (W/W)
-             :geothermal_loop_idref,               # [String] AttachedToGeothermalLoop/@idref
-             :airflow_defect_ratio,                # [Double] extension/AirflowDefectRatio (frac)
-             :charge_defect_ratio,                 # [Double] extension/ChargeDefectRatio (frac)
-             :fan_watts_per_cfm,                   # [Double] extension/FanPowerWattsPerCFM (W/cfm)
-             :heating_airflow_cfm,                 # [Double] extension/HeatingAirflowCFM (cfm)
-             :cooling_airflow_cfm,                 # [Double] extension/CoolingAirflowCFM (cfm)
-             :pump_watts_per_ton,                  # [Double] extension/PumpPowerWattsPerTon (W/ton)
-             :shared_loop_watts,                   # [Double] extension/SharedLoopWatts (W)
-             :shared_loop_motor_efficiency,        # [Double] extension/SharedLoopMotorEfficiency (frac)
-             :heating_capacity_retention_fraction, # [Double] extension/HeatingCapacityRetention/Fraction (frac)
-             :heating_capacity_retention_temp,     # [Double] extension/HeatingCapacityRetention/Temperature (F)
-             :crankcase_heater_watts,              # [Double] extension/CrankcaseHeaterPowerWatts (W)
-             :cooling_autosizing_factor,           # [Double] extension/CoolingAutosizingFactor (frac)
-             :heating_autosizing_factor,           # [Double] extension/HeatingAutosizingFactor (frac)
-             :backup_heating_autosizing_factor,    # [Double] extension/BackupHeatingAutosizingFactor (frac)
-             :cooling_autosizing_limit,            # [Double] extension/CoolingAutosizingLimit (Btu/hr)
-             :heating_autosizing_limit,            # [Double] extension/HeatingAutosizingLimit (Btu/hr)
-             :backup_heating_autosizing_limit,     # [Double] extension/BackupHeatingAutosizingLimit (Btu/hr)
-             :htg_seed_id,                         # [String] extension/HeatingSeedId
-             :clg_seed_id]                         # [String] extension/CoolingSeedId
+    ATTRS = [:primary_heating_system,               # [Boolean] ../PrimarySystems/PrimaryHeatingSystem/@idref
+             :primary_cooling_system,               # [Boolean] ../PrimarySystems/PrimaryCoolingSystem/@idref
+             :id,                                   # [String] SystemIdentifier/@id
+             :attached_to_zone_idref,               # [String] AttachedToZone/@idref
+             :location,                             # [String] UnitLocation (HPXML::LocationXXX)
+             :year_installed,                       # [Integer] YearInstalled
+             :third_party_certification,            # [String] ThirdPartyCertification
+             :distribution_system_idref,            # [String] DistributionSystem/@idref
+             :is_shared_system,                     # [Boolean] IsSharedSystem
+             :number_of_units_served,               # [Integer] NumberofUnitsServed
+             :heat_pump_type,                       # [String] HeatPumpType (HPXML::HVACTypeXXX)
+             :heat_pump_fuel,                       # [String] HeatPumpFuel (HPXML::FuelTypeXXX)
+             :heating_capacity,                     # [Double] HeatingCapacity (Btu/hr)
+             :heating_capacity_17F,                 # [Double] HeatingCapacity17F (Btu/hr)
+             :cooling_capacity,                     # [Double] CoolingCapacity (Btu/hr)
+             :compressor_type,                      # [String] CompressorType (HPXML::HVACCompressorTypeXXX)
+             :compressor_lockout_temp,              # [Double] CompressorLockoutTemperature (F)
+             :backup_type,                          # [String] BackupType (HPXML::HeatPumpBackupTypeXXX)
+             :backup_system_idref,                  # [String] BackupSystem/@idref
+             :backup_heating_fuel,                  # [String] BackupSystemFuel (HPXML::FuelTypeXXX)
+             :backup_heating_efficiency_percent,    # [Double] BackupAnnualHeatingEfficiency[Units="Percent"]/Value (frac)
+             :backup_heating_efficiency_afue,       # [Double] BackupAnnualHeatingEfficiency[Units="AFUE"]/Value (frac)
+             :backup_heating_capacity,              # [Double] BackupHeatingCapacity (Btu/hr)
+             :backup_heating_switchover_temp,       # [Double] BackupHeatingSwitchoverTemperature (F)
+             :backup_heating_lockout_temp,          # [Double] BackupHeatingLockoutTemperature (F)
+             :fraction_heat_load_served,            # [Double] FractionHeatLoadServed (frac)
+             :fraction_cool_load_served,            # [Double] FractionCoolLoadServed (frac)
+             :cooling_efficiency_seer,              # [Double] AnnualCoolingEfficiency[Units="SEER"]/Value (Btu/Wh)
+             :cooling_efficiency_seer2,             # [Double] AnnualCoolingEfficiency[Units="SEER2"]/Value (Btu/Wh)
+             :cooling_efficiency_eer,               # [Double] AnnualCoolingEfficiency[Units="EER"]/Value (Btu/Wh)
+             :cooling_efficiency_eer2,              # [Double] AnnualCoolingEfficiency[Units="EER2"]/Value (Btu/Wh)
+             :cooling_efficiency_ceer,              # [Double] AnnualCoolingEfficiency[Units="CEER"]/Value (Btu/Wh)
+             :heating_efficiency_hspf,              # [Double] AnnualHeatingEfficiency[Units="HSPF"]/Value (Btu/Wh)
+             :heating_efficiency_hspf2,             # [Double] AnnualHeatingEfficiency[Units="HSPF2"]/Value (Btu/Wh)
+             :heating_efficiency_cop,               # [Double] AnnualHeatingEfficiency[Units="COP"]/Value (W/W)
+             :geothermal_loop_idref,                # [String] AttachedToGeothermalLoop/@idref
+             :airflow_defect_ratio,                 # [Double] extension/AirflowDefectRatio (frac)
+             :charge_defect_ratio,                  # [Double] extension/ChargeDefectRatio (frac)
+             :fan_motor_type,                       # [String] extension/FanMotorType
+             :fan_watts_per_cfm,                    # [Double] extension/FanPowerWattsPerCFM (W/cfm)
+             :heating_design_airflow_cfm,           # [Double] extension/HeatingDesignAirflowCFM (cfm)
+             :cooling_design_airflow_cfm,           # [Double] extension/CoolingDesignAirflowCFM (cfm)
+             :pump_watts_per_ton,                   # [Double] extension/PumpPowerWattsPerTon (W/ton)
+             :shared_loop_watts,                    # [Double] extension/SharedLoopWatts (W)
+             :shared_loop_motor_efficiency,         # [Double] extension/SharedLoopMotorEfficiency (frac)
+             :crankcase_heater_watts,               # [Double] extension/CrankcaseHeaterPowerWatts (W)
+             :pan_heater_watts,                     # [Double] extension/PanHeaterPowerWatts (W)
+             :pan_heater_control_type,              # [String] extension/PanHeaterControlType (HPXML::HVACPanHeaterControlTypeXXX)
+             :backup_heating_active_during_defrost, # [Boolean] extension/BackupHeatingActiveDuringDefrost
+             :heating_capacity_fraction_17F,        # [Double] extension/HeatingCapacityFraction17F (frac)
+             :cooling_autosizing_factor,            # [Double] extension/CoolingAutosizingFactor (frac)
+             :heating_autosizing_factor,            # [Double] extension/HeatingAutosizingFactor (frac)
+             :backup_heating_autosizing_factor,     # [Double] extension/BackupHeatingAutosizingFactor (frac)
+             :cooling_autosizing_limit,             # [Double] extension/CoolingAutosizingLimit (Btu/hr)
+             :heating_autosizing_limit,             # [Double] extension/HeatingAutosizingLimit (Btu/hr)
+             :backup_heating_autosizing_limit,      # [Double] extension/BackupHeatingAutosizingLimit (Btu/hr)
+             :equipment_type,                       # [String] extension/EquipmentType (HPXML::HVACEquipmentTypeXXX)
+             :htg_seed_id,                          # [String] extension/HeatingSeedId (Used by OS-ERI)
+             :clg_seed_id]                          # [String] extension/CoolingSeedId (Used by OS-ERI)
     attr_reader(*CLASS_ATTRS)
     attr_accessor(*ATTRS)
+
+    # Based on compressor and backup heating lockout temperatures, returns whether the heat pump and backup system can both operate in the same temperature range.
+    # Note that this indicates there may be simultaneous operation (e.g., a heat pump with integrated electric backup) or they may cycle (e.g., a dual-fuel heat pump).
+    #
+    # @return [Boolean] True if backup system can operate at the same time as the compressor
+    def overlapping_compressor_and_backup_operation
+      if !@compressor_lockout_temp.nil? &&
+         !@backup_heating_lockout_temp.nil? &&
+         (@backup_heating_lockout_temp > @compressor_lockout_temp)
+        return true
+      end
+
+      return false
+    end
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Returns the zone that the heat pump serves.
     #
@@ -7104,11 +7224,10 @@ class HPXML < Object
       XMLHelper.add_element(heat_pump, 'HeatPumpType', @heat_pump_type, :string) unless @heat_pump_type.nil?
       XMLHelper.add_element(heat_pump, 'HeatPumpFuel', @heat_pump_fuel, :string) unless @heat_pump_fuel.nil?
       XMLHelper.add_element(heat_pump, 'HeatingCapacity', @heating_capacity, :float, @heating_capacity_isdefaulted) unless @heating_capacity.nil?
-      XMLHelper.add_element(heat_pump, 'HeatingCapacity17F', @heating_capacity_17F, :float) unless @heating_capacity_17F.nil?
+      XMLHelper.add_element(heat_pump, 'HeatingCapacity17F', @heating_capacity_17F, :float, @heating_capacity_17F_isdefaulted) unless @heating_capacity_17F.nil?
       XMLHelper.add_element(heat_pump, 'CoolingCapacity', @cooling_capacity, :float, @cooling_capacity_isdefaulted) unless @cooling_capacity.nil?
       XMLHelper.add_element(heat_pump, 'CompressorType', @compressor_type, :string, @compressor_type_isdefaulted) unless @compressor_type.nil?
       XMLHelper.add_element(heat_pump, 'CompressorLockoutTemperature', @compressor_lockout_temp, :float, @compressor_lockout_temp_isdefaulted) unless @compressor_lockout_temp.nil?
-      XMLHelper.add_element(heat_pump, 'CoolingSensibleHeatFraction', @cooling_shr, :float, @cooling_shr_isdefaulted) unless @cooling_shr.nil?
       XMLHelper.add_element(heat_pump, 'BackupType', @backup_type, :string, @backup_type_isdefaulted) unless @backup_type.nil?
       if not @backup_system_idref.nil?
         backup_system = XMLHelper.add_element(heat_pump, 'BackupSystem')
@@ -7150,6 +7269,11 @@ class HPXML < Object
         XMLHelper.add_element(annual_efficiency, 'Units', UnitsEER, :string)
         XMLHelper.add_element(annual_efficiency, 'Value', @cooling_efficiency_eer, :float, @cooling_efficiency_eer_isdefaulted)
       end
+      if not @cooling_efficiency_eer2.nil?
+        annual_efficiency = XMLHelper.add_element(heat_pump, 'AnnualCoolingEfficiency')
+        XMLHelper.add_element(annual_efficiency, 'Units', UnitsEER2, :string)
+        XMLHelper.add_element(annual_efficiency, 'Value', @cooling_efficiency_eer2, :float, @cooling_efficiency_eer2_isdefaulted)
+      end
       if not @heating_efficiency_hspf.nil?
         annual_efficiency = XMLHelper.add_element(heat_pump, 'AnnualHeatingEfficiency')
         XMLHelper.add_element(annual_efficiency, 'Units', UnitsHSPF, :string)
@@ -7173,24 +7297,25 @@ class HPXML < Object
       @heating_detailed_performance_data.to_doc(heat_pump)
       XMLHelper.add_extension(heat_pump, 'AirflowDefectRatio', @airflow_defect_ratio, :float, @airflow_defect_ratio_isdefaulted) unless @airflow_defect_ratio.nil?
       XMLHelper.add_extension(heat_pump, 'ChargeDefectRatio', @charge_defect_ratio, :float, @charge_defect_ratio_isdefaulted) unless @charge_defect_ratio.nil?
+      XMLHelper.add_extension(heat_pump, 'FanMotorType', @fan_motor_type, :string, @fan_motor_type_isdefaulted) unless @fan_motor_type.nil?
       XMLHelper.add_extension(heat_pump, 'FanPowerWattsPerCFM', @fan_watts_per_cfm, :float, @fan_watts_per_cfm_isdefaulted) unless @fan_watts_per_cfm.nil?
-      XMLHelper.add_extension(heat_pump, 'HeatingAirflowCFM', @heating_airflow_cfm, :float, @heating_airflow_cfm_isdefaulted) unless @heating_airflow_cfm.nil?
-      XMLHelper.add_extension(heat_pump, 'CoolingAirflowCFM', @cooling_airflow_cfm, :float, @cooling_airflow_cfm_isdefaulted) unless @cooling_airflow_cfm.nil?
+      XMLHelper.add_extension(heat_pump, 'HeatingDesignAirflowCFM', @heating_design_airflow_cfm, :float, @heating_design_airflow_cfm_isdefaulted) unless @heating_design_airflow_cfm.nil?
+      XMLHelper.add_extension(heat_pump, 'CoolingDesignAirflowCFM', @cooling_design_airflow_cfm, :float, @cooling_design_airflow_cfm_isdefaulted) unless @cooling_design_airflow_cfm.nil?
       XMLHelper.add_extension(heat_pump, 'PumpPowerWattsPerTon', @pump_watts_per_ton, :float, @pump_watts_per_ton_isdefaulted) unless @pump_watts_per_ton.nil?
       XMLHelper.add_extension(heat_pump, 'SharedLoopWatts', @shared_loop_watts, :float) unless @shared_loop_watts.nil?
       XMLHelper.add_extension(heat_pump, 'SharedLoopMotorEfficiency', @shared_loop_motor_efficiency, :float) unless @shared_loop_motor_efficiency.nil?
-      if (not @heating_capacity_retention_fraction.nil?) || (not @heating_capacity_retention_temp.nil?)
-        htg_cap_retention = XMLHelper.add_extension(heat_pump, 'HeatingCapacityRetention')
-        XMLHelper.add_element(htg_cap_retention, 'Fraction', @heating_capacity_retention_fraction, :float, @heating_capacity_retention_fraction_isdefaulted) unless @heating_capacity_retention_fraction.nil?
-        XMLHelper.add_element(htg_cap_retention, 'Temperature', @heating_capacity_retention_temp, :float, @heating_capacity_retention_temp_isdefaulted) unless @heating_capacity_retention_temp.nil?
-      end
       XMLHelper.add_extension(heat_pump, 'CrankcaseHeaterPowerWatts', @crankcase_heater_watts, :float, @crankcase_heater_watts_isdefaulted) unless @crankcase_heater_watts.nil?
+      XMLHelper.add_extension(heat_pump, 'PanHeaterPowerWatts', @pan_heater_watts, :float, @pan_heater_watts_isdefaulted) unless @pan_heater_watts.nil?
+      XMLHelper.add_extension(heat_pump, 'PanHeaterControlType', @pan_heater_control_type, :string, @pan_heater_control_type_isdefaulted) unless @pan_heater_control_type.nil?
+      XMLHelper.add_extension(heat_pump, 'BackupHeatingActiveDuringDefrost', @backup_heating_active_during_defrost, :boolean, @backup_heating_active_during_defrost_isdefaulted) unless @backup_heating_active_during_defrost.nil?
+      XMLHelper.add_extension(heat_pump, 'HeatingCapacityFraction17F', @heating_capacity_fraction_17F, :float, @heating_capacity_fraction_17F_isdefaulted) unless @heating_capacity_fraction_17F.nil?
       XMLHelper.add_extension(heat_pump, 'CoolingAutosizingFactor', @cooling_autosizing_factor, :float, @cooling_autosizing_factor_isdefaulted) unless @cooling_autosizing_factor.nil?
       XMLHelper.add_extension(heat_pump, 'HeatingAutosizingFactor', @heating_autosizing_factor, :float, @heating_autosizing_factor_isdefaulted) unless @heating_autosizing_factor.nil?
       XMLHelper.add_extension(heat_pump, 'BackupHeatingAutosizingFactor', @backup_heating_autosizing_factor, :float, @backup_heating_autosizing_factor_isdefaulted) unless @backup_heating_autosizing_factor.nil?
       XMLHelper.add_extension(heat_pump, 'CoolingAutosizingLimit', @cooling_autosizing_limit, :float, @cooling_autosizing_limit_isdefaulted) unless @cooling_autosizing_limit.nil?
       XMLHelper.add_extension(heat_pump, 'HeatingAutosizingLimit', @heating_autosizing_limit, :float, @heating_autosizing_limit_isdefaulted) unless @heating_autosizing_limit.nil?
       XMLHelper.add_extension(heat_pump, 'BackupHeatingAutosizingLimit', @backup_heating_autosizing_limit, :float, @backup_heating_autosizing_limit_isdefaulted) unless @backup_heating_autosizing_limit.nil?
+      XMLHelper.add_extension(heat_pump, 'EquipmentType', @equipment_type, :string, @equipment_type_isdefaulted) unless @equipment_type.nil?
       XMLHelper.add_extension(heat_pump, 'HeatingSeedId', @htg_seed_id, :string) unless @htg_seed_id.nil?
       XMLHelper.add_extension(heat_pump, 'CoolingSeedId', @clg_seed_id, :string) unless @clg_seed_id.nil?
       if @primary_heating_system
@@ -7225,7 +7350,6 @@ class HPXML < Object
       @cooling_capacity = XMLHelper.get_value(heat_pump, 'CoolingCapacity', :float)
       @compressor_type = XMLHelper.get_value(heat_pump, 'CompressorType', :string)
       @compressor_lockout_temp = XMLHelper.get_value(heat_pump, 'CompressorLockoutTemperature', :float)
-      @cooling_shr = XMLHelper.get_value(heat_pump, 'CoolingSensibleHeatFraction', :float)
       @backup_type = XMLHelper.get_value(heat_pump, 'BackupType', :string)
       @backup_system_idref = HPXML::get_idref(XMLHelper.get_element(heat_pump, 'BackupSystem'))
       @backup_heating_fuel = XMLHelper.get_value(heat_pump, 'BackupSystemFuel', :string)
@@ -7240,6 +7364,7 @@ class HPXML < Object
       @cooling_efficiency_seer2 = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{UnitsSEER2}']/Value", :float)
       @cooling_efficiency_ceer = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{UnitsCEER}']/Value", :float)
       @cooling_efficiency_eer = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{UnitsEER}']/Value", :float)
+      @cooling_efficiency_eer2 = XMLHelper.get_value(heat_pump, "AnnualCoolingEfficiency[Units='#{UnitsEER2}']/Value", :float)
       @heating_efficiency_hspf = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{UnitsHSPF}']/Value", :float)
       @heating_efficiency_hspf2 = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{UnitsHSPF2}']/Value", :float)
       @heating_efficiency_cop = XMLHelper.get_value(heat_pump, "AnnualHeatingEfficiency[Units='#{UnitsCOP}']/Value", :float)
@@ -7248,21 +7373,25 @@ class HPXML < Object
       @heating_detailed_performance_data.from_doc(heat_pump)
       @airflow_defect_ratio = XMLHelper.get_value(heat_pump, 'extension/AirflowDefectRatio', :float)
       @charge_defect_ratio = XMLHelper.get_value(heat_pump, 'extension/ChargeDefectRatio', :float)
+      @fan_motor_type = XMLHelper.get_value(heat_pump, 'extension/FanMotorType', :string)
       @fan_watts_per_cfm = XMLHelper.get_value(heat_pump, 'extension/FanPowerWattsPerCFM', :float)
-      @heating_airflow_cfm = XMLHelper.get_value(heat_pump, 'extension/HeatingAirflowCFM', :float)
-      @cooling_airflow_cfm = XMLHelper.get_value(heat_pump, 'extension/CoolingAirflowCFM', :float)
+      @heating_design_airflow_cfm = XMLHelper.get_value(heat_pump, 'extension/HeatingDesignAirflowCFM', :float)
+      @cooling_design_airflow_cfm = XMLHelper.get_value(heat_pump, 'extension/CoolingDesignAirflowCFM', :float)
       @pump_watts_per_ton = XMLHelper.get_value(heat_pump, 'extension/PumpPowerWattsPerTon', :float)
       @shared_loop_watts = XMLHelper.get_value(heat_pump, 'extension/SharedLoopWatts', :float)
       @shared_loop_motor_efficiency = XMLHelper.get_value(heat_pump, 'extension/SharedLoopMotorEfficiency', :float)
-      @heating_capacity_retention_fraction = XMLHelper.get_value(heat_pump, 'extension/HeatingCapacityRetention/Fraction', :float)
-      @heating_capacity_retention_temp = XMLHelper.get_value(heat_pump, 'extension/HeatingCapacityRetention/Temperature', :float)
       @crankcase_heater_watts = XMLHelper.get_value(heat_pump, 'extension/CrankcaseHeaterPowerWatts', :float)
+      @pan_heater_watts = XMLHelper.get_value(heat_pump, 'extension/PanHeaterPowerWatts', :float)
+      @pan_heater_control_type = XMLHelper.get_value(heat_pump, 'extension/PanHeaterControlType', :string)
+      @backup_heating_active_during_defrost = XMLHelper.get_value(heat_pump, 'extension/BackupHeatingActiveDuringDefrost', :boolean)
+      @heating_capacity_fraction_17F = XMLHelper.get_value(heat_pump, 'extension/HeatingCapacityFraction17F', :float)
       @cooling_autosizing_factor = XMLHelper.get_value(heat_pump, 'extension/CoolingAutosizingFactor', :float)
       @heating_autosizing_factor = XMLHelper.get_value(heat_pump, 'extension/HeatingAutosizingFactor', :float)
       @backup_heating_autosizing_factor = XMLHelper.get_value(heat_pump, 'extension/BackupHeatingAutosizingFactor', :float)
       @cooling_autosizing_limit = XMLHelper.get_value(heat_pump, 'extension/CoolingAutosizingLimit', :float)
       @heating_autosizing_limit = XMLHelper.get_value(heat_pump, 'extension/HeatingAutosizingLimit', :float)
       @backup_heating_autosizing_limit = XMLHelper.get_value(heat_pump, 'extension/BackupHeatingAutosizingLimit', :float)
+      @equipment_type = XMLHelper.get_value(heat_pump, 'extension/EquipmentType', :string)
       @htg_seed_id = XMLHelper.get_value(heat_pump, 'extension/HeatingSeedId', :string)
       @clg_seed_id = XMLHelper.get_value(heat_pump, 'extension/CoolingSeedId', :string)
       primary_heating_system = HPXML::get_idref(XMLHelper.get_element(heat_pump, '../PrimarySystems/PrimaryHeatingSystem'))
@@ -7724,11 +7853,12 @@ class HPXML < Object
       hvac_distribution = XMLHelper.add_element(hvac, 'HVACDistribution')
       sys_id = XMLHelper.add_element(hvac_distribution, 'SystemIdentifier')
       XMLHelper.add_attribute(sys_id, 'id', @id)
-      distribution_system_type_el = XMLHelper.add_element(hvac_distribution, 'DistributionSystemType')
       if [HVACDistributionTypeAir, HVACDistributionTypeHydronic].include? @distribution_system_type
+        distribution_system_type_el = XMLHelper.add_element(hvac_distribution, 'DistributionSystemType')
         XMLHelper.add_element(distribution_system_type_el, @distribution_system_type)
         XMLHelper.add_element(hvac_distribution, 'ConditionedFloorAreaServed', @conditioned_floor_area_served, :float) unless @conditioned_floor_area_served.nil?
       elsif [HVACDistributionTypeDSE].include? @distribution_system_type
+        distribution_system_type_el = XMLHelper.add_element(hvac_distribution, 'DistributionSystemType')
         XMLHelper.add_element(distribution_system_type_el, 'Other', @distribution_system_type, :string)
         XMLHelper.add_element(hvac_distribution, 'AnnualHeatingDistributionSystemEfficiency', @annual_heating_dse, :float) unless @annual_heating_dse.nil?
         XMLHelper.add_element(hvac_distribution, 'AnnualCoolingDistributionSystemEfficiency', @annual_cooling_dse, :float) unless @annual_cooling_dse.nil?
@@ -8127,6 +8257,20 @@ class HPXML < Object
              :cfis_vent_mode_airflow_fraction]                 # [Double] extension/VentilationOnlyModeAirflowFraction (frac)
     attr_accessor(*ATTRS)
 
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
+
     # Returns the HVAC distribution system for the ventilation fan.
     #
     # @return [HPXML::HVACDistribution] The attached HVAC distribution system
@@ -8494,6 +8638,20 @@ class HPXML < Object
              :tank_model_type,           # [String] extension/TankModelType (HPXML::WaterHeaterTankModelTypeXXX)
              :number_of_bedrooms_served] # [Integer] extension/NumberofBedroomsServed
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Returns the HVAC system related to this water heating system (e.g., for
     # a combination boiler that provides both water heating and space heating).
@@ -9229,6 +9387,680 @@ class HPXML < Object
     end
   end
 
+  # Array of HPXML::ElectricVehicleCharger objects
+  class ElectricVehicleChargers < BaseArrayElement
+    # Adds a new object, with the specified keyword arguments, to the array.
+    #
+    # @return [nil]
+    def add(**kwargs)
+      self << ElectricVehicleCharger.new(@parent_object, **kwargs)
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def from_doc(building)
+      return if building.nil?
+
+      XMLHelper.get_elements(building, 'BuildingDetails/Systems/ElectricVehicleChargers/ElectricVehicleCharger').each do |charger|
+        self << ElectricVehicleCharger.new(@parent_object, charger)
+      end
+    end
+  end
+
+  # Object for /HPXML/Building/BuildingDetails/Systems/ElectricVehicleChargers/ElectricVehicleCharger.
+  class ElectricVehicleCharger < BaseElement
+    ATTRS = [:id,             # [String] SystemIdentifier/@id
+             :charging_level, # [Integer] ChargingLevel (1-3)
+             :charging_power] # [Double] ChargingPower (W)
+    attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
+
+    # Deletes the current object from the array.
+    #
+    # @return [nil]
+    def delete
+      @parent_object.ev_chargers.delete(self)
+    end
+
+    # Additional error-checking beyond what's checked in Schema/Schematron validators.
+    #
+    # @return [Array<String>] List of error messages
+    def check_for_errors
+      errors = []
+      return errors
+    end
+
+    # Adds this object to the provided Oga XML element.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def to_doc(building)
+      return if nil?
+
+      chargers = XMLHelper.create_elements_as_needed(building, ['BuildingDetails', 'Systems', 'ElectricVehicleChargers'])
+      charger = XMLHelper.add_element(chargers, 'ElectricVehicleCharger')
+      sys_id = XMLHelper.add_element(charger, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', @id)
+      XMLHelper.add_element(charger, 'ChargingLevel', @charging_level, :integer, @charging_level_isdefaulted) unless @charging_level.nil?
+      XMLHelper.add_element(charger, 'ChargingPower', @charging_power, :float, @charging_power_isdefaulted) unless @charging_power.nil?
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param battery [Oga::XML::Element] The current Battery XML element
+    # @return [nil]
+    def from_doc(charger)
+      return if charger.nil?
+
+      @id = HPXML::get_id(charger)
+      @charging_level = XMLHelper.get_value(charger, 'ChargingLevel', :integer)
+      @charging_power = XMLHelper.get_value(charger, 'ChargingPower', :float)
+    end
+  end
+
+  # Array of HPXML::Vehicle objects.
+  class Vehicles < BaseArrayElement
+    # Adds a new object, with the specified keyword arguments, to the array.
+    #
+    # @return [nil]
+    def add(**kwargs)
+      self << Vehicle.new(@parent_object, **kwargs)
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def from_doc(building)
+      return if building.nil?
+
+      XMLHelper.get_elements(building, 'BuildingDetails/Systems/Vehicles/Vehicle').each do |vehicle|
+        self << Vehicle.new(@parent_object, vehicle)
+      end
+    end
+  end
+
+  # Object for /HPXML/Building/BuildingDetails/Systems/Vehicles/Vehicle.
+  class Vehicle < BaseElement
+    ATTRS = [:id,                     # [String] SystemIdentifier/@id
+             :vehicle_type,           # [String] VehicleType (HPXML::VehicleTypeXXX)
+             :miles_per_year,         # [Double] MilesDrivenPerYear (miles)
+             :hours_per_week,         # [Double] HoursDrivenPerWeek (hours)
+             :fuel_economy_combined,  # [Double] FuelEconomyCombined/Value
+             :fuel_economy_units,     # [String] FuelEconomyCombined/Units
+             :fraction_charged_home,  # [Double] VehicleType/BatteryElectricVehicle/FractionChargedLocation[Location="Home"]/Percentage (frac)
+             :ev_charger_idref,       # [String] VehicleType/BatteryElectricVehicle/ConnectedCharger/@idref
+             :battery_type,           # [String] VehicleType/BatteryElectricVehicle/Battery/BatteryType (HPXML::BatteryTypeXXX)
+             :nominal_capacity_kwh,   # [Double] VehicleType/BatteryElectricVehicle/Battery/NominalCapacity[Units="kWh"]/Value (kWh)
+             :nominal_capacity_ah,    # [Double] VehicleType/BatteryElectricVehicle/Battery/NominalCapacity[Units="Ah"]/Value (Ah)
+             :usable_capacity_kwh,    # [Double] VehicleType/BatteryElectricVehicle/Battery/UsableCapacity[Units="kWh"]/Value (kWh)
+             :usable_capacity_ah,     # [Double] VehicleType/BatteryElectricVehicle/Battery/UsableCapacity[Units="Ah"]/Value (Ah)
+             :nominal_voltage,        # [Double] VehicleType/BatteryElectricVehicle/Battery/NominalVoltage (V)
+             :lifetime_model,         # [String] VehicleType/BatteryElectricVehicle/Battery/extension/LifetimeModel (HPXML::BatteryLifetimeModelXXX)
+             :ev_weekday_fractions,   # [String] VehicleType/BatteryElectricVehicle/extension/WeekdayScheduleFractions
+             :ev_weekend_fractions,   # [String] VehicleType/BatteryElectricVehicle/extension/WeekendScheduleFractions
+             :ev_monthly_multipliers] # [String] VehicleType/BatteryElectricVehicle/extension/MonthlyScheduleMultipliers
+    attr_accessor(*ATTRS)
+
+    # Deletes the current object from the array.
+    #
+    # @return [nil]
+    def delete
+      @parent_object.vehicles.delete(self)
+    end
+
+    # Additional error-checking beyond what's checked in Schema/Schematron validators.
+    #
+    # @return [Array<String>] List of error messages
+    def check_for_errors
+      errors = []
+      return errors
+    end
+
+    # Adds this object to the provided Oga XML element.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def to_doc(building)
+      return if nil?
+
+      vehicles = XMLHelper.create_elements_as_needed(building, ['BuildingDetails', 'Systems', 'Vehicles'])
+      vehicle = XMLHelper.add_element(vehicles, 'Vehicle')
+      sys_id = XMLHelper.add_element(vehicle, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', @id)
+      vehicle_type_element = XMLHelper.add_element(vehicle, 'VehicleType')
+      vehicle_type = XMLHelper.add_element(vehicle_type_element, @vehicle_type)
+
+      if [HPXML::VehicleTypeBEV, HPXML::VehicleTypePHEV, HPXML::VehicleTypeHybrid].include? @vehicle_type
+        if (not @battery_type.nil?) || (not @nominal_capacity_kwh.nil?) || (not @nominal_capacity_ah.nil?) || (not @usable_capacity_kwh.nil?) || (not @usable_capacity_ah.nil?) || (not @nominal_voltage.nil?) || (not @lifetime_model.nil?)
+          battery = XMLHelper.add_element(vehicle_type, 'Battery')
+          XMLHelper.add_element(battery, 'BatteryType', @battery_type, :string, @battery_type_isdefaulted) unless @battery_type.nil?
+          if not @nominal_capacity_kwh.nil?
+            nominal_capacity = XMLHelper.add_element(battery, 'NominalCapacity')
+            XMLHelper.add_element(nominal_capacity, 'Units', UnitsKwh, :string)
+            XMLHelper.add_element(nominal_capacity, 'Value', @nominal_capacity_kwh, :float, @nominal_capacity_kwh_isdefaulted)
+          end
+          if not @nominal_capacity_ah.nil?
+            nominal_capacity = XMLHelper.add_element(battery, 'NominalCapacity')
+            XMLHelper.add_element(nominal_capacity, 'Units', UnitsAh, :string)
+            XMLHelper.add_element(nominal_capacity, 'Value', @nominal_capacity_ah, :float, @nominal_capacity_ah_isdefaulted)
+          end
+          if not @usable_capacity_kwh.nil?
+            usable_capacity = XMLHelper.add_element(battery, 'UsableCapacity')
+            XMLHelper.add_element(usable_capacity, 'Units', UnitsKwh, :string)
+            XMLHelper.add_element(usable_capacity, 'Value', @usable_capacity_kwh, :float, @usable_capacity_kwh_isdefaulted)
+          end
+          if not @usable_capacity_ah.nil?
+            usable_capacity = XMLHelper.add_element(battery, 'UsableCapacity')
+            XMLHelper.add_element(usable_capacity, 'Units', UnitsAh, :string)
+            XMLHelper.add_element(usable_capacity, 'Value', @usable_capacity_ah, :float, @usable_capacity_ah_isdefaulted)
+          end
+          XMLHelper.add_element(battery, 'NominalVoltage', @nominal_voltage, :float, @nominal_voltage_isdefaulted) unless @nominal_voltage.nil?
+          XMLHelper.add_extension(battery, 'LifetimeModel', @lifetime_model, :string, @lifetime_model_isdefaulted) unless @lifetime_model.nil?
+        end
+      end
+
+      case @vehicle_type
+      when HPXML::VehicleTypeBEV
+        if not @fraction_charged_home.nil?
+          fraction_charged_location = XMLHelper.add_element(vehicle_type, 'FractionChargedLocation')
+          XMLHelper.add_element(fraction_charged_location, 'Location', HPXML::ElectricVehicleChargingLocationHome, :string)
+          XMLHelper.add_element(fraction_charged_location, 'Percentage', @fraction_charged_home, :float, @fraction_charged_home_isdefaulted)
+        end
+        if not @ev_charger_idref.nil?
+          charger = XMLHelper.add_element(vehicle_type, 'ConnectedCharger')
+          XMLHelper.add_attribute(charger, 'idref', @ev_charger_idref)
+        end
+        XMLHelper.add_extension(vehicle_type, 'WeekdayScheduleFractions', @ev_weekday_fractions, :string, @ev_weekday_fractions_isdefaulted) unless @ev_weekday_fractions.nil?
+        XMLHelper.add_extension(vehicle_type, 'WeekendScheduleFractions', @ev_weekend_fractions, :string, @ev_weekend_fractions_isdefaulted) unless @ev_weekend_fractions.nil?
+        XMLHelper.add_extension(vehicle_type, 'MonthlyScheduleMultipliers', @ev_monthly_multipliers, :string, @ev_monthly_multipliers_isdefaulted) unless @ev_monthly_multipliers.nil?
+      end
+
+      XMLHelper.add_element(vehicle, 'MilesDrivenPerYear', @miles_per_year, :float, @miles_per_year_isdefaulted) unless @miles_per_year.nil?
+      XMLHelper.add_element(vehicle, 'HoursDrivenPerWeek', @hours_per_week, :float, @hours_per_week_isdefaulted) unless @hours_per_week.nil?
+      if (not @fuel_economy_units.nil?) && (not @fuel_economy_combined.nil?)
+        fuel_economy = XMLHelper.add_element(vehicle, 'FuelEconomyCombined')
+        XMLHelper.add_element(fuel_economy, 'Units', @fuel_economy_units, :string, @fuel_economy_units_isdefaulted)
+        XMLHelper.add_element(fuel_economy, 'Value', @fuel_economy_combined, :float, @fuel_economy_combined_isdefaulted)
+      end
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param battery [Oga::XML::Element] The current Battery XML element
+    # @return [nil]
+    def from_doc(vehicle)
+      return if vehicle.nil?
+
+      @id = HPXML::get_id(vehicle)
+      @miles_per_year = XMLHelper.get_value(vehicle, 'MilesDrivenPeryear', :float)
+      @hours_per_week = XMLHelper.get_value(vehicle, 'HoursDrivenPerWeek', :float)
+      @fuel_economy_combined = XMLHelper.get_value(vehicle, 'FuelEconomyCombined/Value', :float)
+      @fuel_economy_units = XMLHelper.get_value(vehicle, 'FuelEconomyCombined/Units', :string)
+      @vehicle_type = XMLHelper.get_child_name(vehicle, 'VehicleType')
+      if @vehicle_type == HPXML::VehicleTypeBEV
+        battery_prefix = "VehicleType/#{@vehicle_type}/Battery"
+        @battery_type = XMLHelper.get_value(vehicle, "#{battery_prefix}/BatteryType", :string)
+        @nominal_capacity_kwh = XMLHelper.get_value(vehicle, "#{battery_prefix}/NominalCapacity[Units='#{UnitsKwh}']/Value", :float)
+        @nominal_capacity_ah = XMLHelper.get_value(vehicle, "#{battery_prefix}/NominalCapacity[Units='#{UnitsAh}']/Value", :float)
+        @usable_capacity_kwh = XMLHelper.get_value(vehicle, "#{battery_prefix}/UsableCapacity[Units='#{UnitsKwh}']/Value", :float)
+        @usable_capacity_ah = XMLHelper.get_value(vehicle, "#{battery_prefix}/UsableCapacity[Units='#{UnitsAh}']/Value", :float)
+        @nominal_voltage = XMLHelper.get_value(vehicle, "#{battery_prefix}/NominalVoltage", :float)
+        @fraction_charged_home = XMLHelper.get_value(vehicle, "VehicleType/#{@vehicle_type}/FractionChargedLocation[Location='#{HPXML::ElectricVehicleChargingLocationHome}']/Percentage", :float)
+        @ev_charger_idref = HPXML::get_idref(XMLHelper.get_element(vehicle, "VehicleType/#{@vehicle_type}/ConnectedCharger"))
+        @lifetime_model = XMLHelper.get_value(vehicle, "#{battery_prefix}/extension/LifetimeModel", :string)
+        @ev_weekday_fractions = XMLHelper.get_value(vehicle, "VehicleType/#{@vehicle_type}/extension/WeekdayScheduleFractions", :string)
+        @ev_weekend_fractions = XMLHelper.get_value(vehicle, "VehicleType/#{@vehicle_type}/extension/WeekendScheduleFractions", :string)
+        @ev_monthly_multipliers = XMLHelper.get_value(vehicle, "VehicleType/#{@vehicle_type}/extension/MonthlyScheduleMultipliers", :string)
+      end
+    end
+
+    # Returns the EV charger for the vehicle.
+    #
+    # @return [HPXML::ElectricVehicleCharger] The connected EV charger
+    def ev_charger
+      return if @ev_charger_idref.nil?
+
+      @parent_object.ev_chargers.each do |ev_charger|
+        next unless ev_charger.id == @ev_charger_idref
+
+        return ev_charger
+      end
+      fail "Connected charger '#{@ev_charger_idref}' not found for vehicle '#{@id}'."
+    end
+  end
+
+  # Array of HPXML::ElectricPanel objects.
+  class ElectricPanels < BaseArrayElement
+    # Adds a new object, with the specified keyword arguments, to the array.
+    #
+    # @return [nil]
+    def add(**kwargs)
+      self << ElectricPanel.new(@parent_object, **kwargs)
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def from_doc(building)
+      return if building.nil?
+
+      XMLHelper.get_elements(building, 'BuildingDetails/Systems/ElectricPanels/ElectricPanel').each do |electric_panel|
+        self << ElectricPanel.new(@parent_object, electric_panel)
+      end
+    end
+  end
+
+  # Object for /HPXML/Building/BuildingDetails/Systems/ElectricPanels/ElectricPanel.
+  class ElectricPanel < BaseElement
+    def initialize(hpxml_element, *args, **kwargs)
+      @branch_circuits = BranchCircuits.new(hpxml_element)
+      @service_feeders = ServiceFeeders.new(hpxml_element)
+      super(hpxml_element, *args, **kwargs)
+    end
+    CLASS_ATTRS = [:branch_circuits,
+                   :service_feeders]
+    ATTRS = [:id,                      # [String] SystemIdentifier/@id
+             :voltage,                 # [String] Voltage
+             :max_current_rating,      # [Double] MaxCurrentRating
+             :headroom_spaces,         # [Integer] HeadroomSpaces
+             :rated_total_spaces,      # [Integer] RatedTotalSpaces
+             :capacity_types,          # [Array<String>] extension/Outputs/Capacity/Type
+             :capacity_total_watts,    # [Array<Double>] extension/Outputs/Capacity/TotalWatts
+             :capacity_total_amps,     # [Array<Double>] extension/Outputs/Capacity/TotalAmps
+             :capacity_headroom_amps,  # [Array<Double>] extension/Outputs/Capacity/HeadroomAmps
+             :breaker_spaces_total,    # [Integer] extension/Outputs/BreakerSpaces/Total
+             :breaker_spaces_occupied, # [Double] extension/Outputs/BreakerSpaces/Occupied
+             :breaker_spaces_headroom] # [Double] extension/Outputs/BreakerSpaces/Headroom
+    attr_reader(*CLASS_ATTRS)
+    attr_accessor(*ATTRS)
+
+    # Returns the electric panels attached to branch circuits.
+    #
+    # @return [Array<HPXML::ElectricPanel>] The list of attached electric panels
+    def sub_panels
+      list = []
+      @parent_object.electric_panels.each do |electric_panel|
+        next unless @id == electric_panel.id
+
+        electric_panel.branch_circuits.each do |branch_circuit|
+          list << branch_circuit.electric_panel
+        end
+      end
+      return list
+    end
+
+    # Deletes the current object from the array.
+    #
+    # @return [nil]
+    def delete
+      @parent_object.electric_panels.delete(self)
+    end
+
+    # Additional error-checking beyond what's checked in Schema/Schematron validators.
+    #
+    # @return [Array<String>] List of error messages
+    def check_for_errors
+      errors = []
+      errors += @branch_circuits.check_for_errors
+      errors += @service_feeders.check_for_errors
+      return errors
+    end
+
+    # Adds this object to the provided Oga XML element.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def to_doc(building)
+      return if nil?
+
+      electric_panels = XMLHelper.create_elements_as_needed(building, ['BuildingDetails', 'Systems', 'ElectricPanels'])
+      electric_panel = XMLHelper.add_element(electric_panels, 'ElectricPanel')
+      sys_id = XMLHelper.add_element(electric_panel, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', @id)
+      XMLHelper.add_element(electric_panel, 'Voltage', @voltage, :string, @voltage_isdefaulted) unless @voltage.nil?
+      XMLHelper.add_element(electric_panel, 'MaxCurrentRating', @max_current_rating, :float, @max_current_rating_isdefaulted) unless @max_current_rating.nil?
+      XMLHelper.add_element(electric_panel, 'HeadroomSpaces', @headroom_spaces, :integer, @headroom_spaces_isdefaulted) unless @headroom_spaces.nil?
+      XMLHelper.add_element(electric_panel, 'RatedTotalSpaces', @rated_total_spaces, :integer, @rated_total_spaces_isdefaulted) unless @rated_total_spaces.nil?
+      @branch_circuits.to_doc(electric_panel)
+      @service_feeders.to_doc(electric_panel)
+      if (not @capacity_types.nil?) && (not @capacity_types.empty?)
+        outputs = XMLHelper.create_elements_as_needed(electric_panel, ['extension', 'Outputs'])
+        XMLHelper.add_attribute(outputs, 'dataSource', 'software')
+        capacities = @capacity_types.zip(@capacity_total_watts, @capacity_total_amps, @capacity_headroom_amps)
+        capacities.each do |capacity|
+          capacity_type, capacity_total_watt, capacity_total_amp, capacity_headroom_amp = capacity
+          capacity = XMLHelper.add_element(outputs, 'Capacity')
+          XMLHelper.add_element(capacity, 'Type', capacity_type, :string)
+          XMLHelper.add_element(capacity, 'TotalWatts', capacity_total_watt, :float)
+          XMLHelper.add_element(capacity, 'TotalAmps', capacity_total_amp, :float)
+          XMLHelper.add_element(capacity, 'HeadroomAmps', capacity_headroom_amp, :float)
+        end
+      end
+      if not @breaker_spaces_total.nil?
+        outputs = XMLHelper.create_elements_as_needed(electric_panel, ['extension', 'Outputs'])
+        XMLHelper.add_attribute(outputs, 'dataSource', 'software')
+        breaker_spaces = XMLHelper.add_element(outputs, 'BreakerSpaces')
+        XMLHelper.add_element(breaker_spaces, 'Total', @breaker_spaces_total, :integer)
+        XMLHelper.add_element(breaker_spaces, 'Occupied', @breaker_spaces_occupied, :float)
+        XMLHelper.add_element(breaker_spaces, 'Headroom', @breaker_spaces_headroom, :float)
+      end
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param electric_panel [Oga::XML::Element] The current ElectricPanel XML element
+    # @return [nil]
+    def from_doc(electric_panel)
+      return if electric_panel.nil?
+
+      @id = HPXML::get_id(electric_panel)
+      @voltage = XMLHelper.get_value(electric_panel, 'Voltage', :string)
+      @max_current_rating = XMLHelper.get_value(electric_panel, 'MaxCurrentRating', :float)
+      @headroom_spaces = XMLHelper.get_value(electric_panel, 'HeadroomSpaces', :integer)
+      @rated_total_spaces = XMLHelper.get_value(electric_panel, 'RatedTotalSpaces', :integer)
+      @branch_circuits.from_doc(electric_panel)
+      @service_feeders.from_doc(electric_panel)
+      @capacity_types = XMLHelper.get_values(electric_panel, 'extension/Outputs/Capacity/Type', :string)
+      @capacity_total_watts = XMLHelper.get_values(electric_panel, 'extension/Outputs/Capacity/TotalWatts', :float)
+      @capacity_total_amps = XMLHelper.get_values(electric_panel, 'extension/Outputs/Capacity/TotalAmps', :float)
+      @capacity_headroom_amps = XMLHelper.get_values(electric_panel, 'extension/Outputs/Capacity/HeadroomAmps', :float)
+      @breaker_spaces_total = XMLHelper.get_value(electric_panel, 'extension/Outputs/BreakerSpaces/Total', :integer)
+      @breaker_spaces_occupied = XMLHelper.get_value(electric_panel, 'extension/Outputs/BreakerSpaces/Occupied', :float)
+      @breaker_spaces_headroom = XMLHelper.get_value(electric_panel, 'extension/Outputs/BreakerSpaces/Headroom', :float)
+    end
+  end
+
+  # Array of HPXML::BranchCircuit objects.
+  class BranchCircuits < BaseArrayElement
+    # Adds a new object, with the specified keyword arguments, to the array.
+    #
+    # @return [nil]
+    def add(**kwargs)
+      self << BranchCircuit.new(@parent_object, **kwargs)
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param electric_panel [Oga::XML::Element] The current Electric panel XML element
+    # @return [nil]
+    def from_doc(electric_panel)
+      return if electric_panel.nil?
+
+      XMLHelper.get_elements(electric_panel, 'BranchCircuits/BranchCircuit').each do |branch_circuit|
+        self << BranchCircuit.new(@parent_object, branch_circuit)
+      end
+    end
+  end
+
+  # Object for /HPXML/Building/BuildingDetails/Systems/ElectricPanels/ElectricPanel/BranchCircuits/BranchCircuit.
+  class BranchCircuit < BaseElement
+    ATTRS = [:id,                 # [String] SystemIdentifier/@id
+             :voltage,            # [String] Voltage
+             :max_current_rating, # [Double] MaxCurrentRating
+             :occupied_spaces,    # [Double] OccupiedSpaces
+             :component_idrefs,   # [Array<String>] AttachedToComponent/@idref
+             :panel_idref]        # [String] AttachedToElectricPanel/@idref
+    attr_accessor(*ATTRS)
+
+    # Returns the components attached to the branch circuit.
+    # These are the same components that can be attached to a service feeder, plus any components defaulted to 240V.
+    #
+    # @return [Array<HPXML::XXX>] The attached components
+    def components
+      return [] if @component_idrefs.nil?
+
+      heating_systems = @parent_object.heating_systems.select { |heating_system| @component_idrefs.include? heating_system.id }
+      cooling_systems = @parent_object.cooling_systems.select { |cooling_system| @component_idrefs.include? cooling_system.id }
+      heat_pumps = @parent_object.heat_pumps.select { |heat_pump| @component_idrefs.include? heat_pump.id }
+      water_heating_systems = @parent_object.water_heating_systems.select { |water_heating_system| @component_idrefs.include? water_heating_system.id }
+      clothes_dryers = @parent_object.clothes_dryers.select { |clothes_dryer| @component_idrefs.include? clothes_dryer.id }
+      dishwashers = @parent_object.dishwashers.select { |dishwasher| @component_idrefs.include? dishwasher.id }
+      cooking_ranges = @parent_object.cooking_ranges.select { |cooking_range| @component_idrefs.include? cooking_range.id }
+      ventilation_fans = @parent_object.ventilation_fans.select { |ventilation_fan| @component_idrefs.include? ventilation_fan.id }
+      permanent_spa_pumps = @parent_object.permanent_spas.select { |permanent_spa| @component_idrefs.include? permanent_spa.pump_id }
+      permanent_spa_heaters = @parent_object.permanent_spas.select { |permanent_spa| @component_idrefs.include? permanent_spa.heater_id }
+      pool_pumps = @parent_object.pools.select { |pool| @component_idrefs.include? pool.pump_id }
+      pool_heaters = @parent_object.pools.select { |pool| @component_idrefs.include? pool.heater_id }
+      plug_load_well_pumps = @parent_object.plug_loads.select { |plug_load| @component_idrefs.include?(plug_load.id) && plug_load.plug_load_type == HPXML::PlugLoadTypeWellPump }
+      plug_load_vehicles = @parent_object.plug_loads.select { |plug_load| @component_idrefs.include?(plug_load.id) && plug_load.plug_load_type == HPXML::PlugLoadTypeElectricVehicleCharging }
+      ev_chargers = @parent_object.ev_chargers.select { |ev_charger| @component_idrefs.include?(ev_charger.id) }
+      pv_systems = @parent_object.pv_systems.select { |pv_system| @component_idrefs.include? pv_system.id }
+      batteries = @parent_object.batteries.select { |battery| @component_idrefs.include? battery.id }
+
+      list = (heating_systems + cooling_systems + heat_pumps + water_heating_systems + clothes_dryers + dishwashers + cooking_ranges + ventilation_fans +
+              permanent_spa_pumps + permanent_spa_heaters + pool_pumps + pool_heaters + plug_load_well_pumps + plug_load_vehicles + ev_chargers + pv_systems + batteries)
+
+      return list
+    end
+
+    # Returns the panel connected to the branch circuit.
+    #
+    # @return [HPXML::ElectricPanel] The attached electric panel object
+    def electric_panel
+      return if @panel_idref.nil?
+
+      @parent_object.electric_panels.each do |electric_panel|
+        next unless electric_panel.id == @panel_idref
+
+        return electric_panel
+      end
+      fail "Attached electric panel '#{@panel_idref}' not found for branch circuit '#{@id}'."
+    end
+
+    # Deletes the current object from the array.
+    #
+    # @return [nil]
+    def delete
+      @parent_object.electric_panels.each do |electric_panel|
+        electric_panel.branch_circuits.delete(self)
+      end
+    end
+
+    # Additional error-checking beyond what's checked in Schema/Schematron validators.
+    #
+    # @return [Array<String>] List of error messages
+    def check_for_errors
+      errors = []
+      return errors
+    end
+
+    # Adds this object to the provided Oga XML element.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def to_doc(electric_panel)
+      return if nil?
+
+      branch_circuits = XMLHelper.create_elements_as_needed(electric_panel, ['BranchCircuits'])
+      branch_circuit = XMLHelper.add_element(branch_circuits, 'BranchCircuit')
+      sys_id = XMLHelper.add_element(branch_circuit, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', @id)
+      XMLHelper.add_element(branch_circuit, 'Voltage', @voltage, :string, @voltage_isdefaulted) unless @voltage.nil?
+      XMLHelper.add_element(branch_circuit, 'MaxCurrentRating', @max_current_rating, :float, @max_current_rating_isdefaulted) unless @max_current_rating.nil?
+      XMLHelper.add_element(branch_circuit, 'OccupiedSpaces', @occupied_spaces, :float, @occupied_spaces_isdefaulted) unless @occupied_spaces.nil?
+      if (not @component_idrefs.nil?) && (not @component_idrefs.empty?)
+        @component_idrefs.each do |component_idref|
+          component = XMLHelper.add_element(branch_circuit, 'AttachedToComponent')
+          XMLHelper.add_attribute(component, 'idref', component_idref)
+          XMLHelper.add_attribute(component, 'dataSource', 'software') if @component_idrefs_isdefaulted
+        end
+      end
+      if not @panel_idref.nil?
+        attached_to_panel = XMLHelper.add_element(branch_circuit, 'AttachedToElectricPanel')
+        XMLHelper.add_attribute(attached_to_panel, 'idref', @panel_idref)
+      end
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param branch_circuit [Oga::XML::Element] The current BranchCircuit XML element
+    # @return [nil]
+    def from_doc(branch_circuit)
+      return if branch_circuit.nil?
+
+      @id = HPXML::get_id(branch_circuit)
+      @voltage = XMLHelper.get_value(branch_circuit, 'Voltage', :string)
+      @max_current_rating = XMLHelper.get_value(branch_circuit, 'MaxCurrentRating', :float)
+      @occupied_spaces = XMLHelper.get_value(branch_circuit, 'OccupiedSpaces', :float)
+      @component_idrefs = HPXML::get_idrefs(branch_circuit, 'AttachedToComponent')
+      @panel_idref = HPXML::get_idref(XMLHelper.get_element(branch_circuit, 'AttachedToElectricPanel'))
+    end
+  end
+
+  # Array of HPXML::ServiceFeeder objects.
+  class ServiceFeeders < BaseArrayElement
+    # Adds a new object, with the specified keyword arguments, to the array.
+    #
+    # @return [nil]
+    def add(**kwargs)
+      self << ServiceFeeder.new(@parent_object, **kwargs)
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param electric_panel [Oga::XML::Element] The current Electric panel XML element
+    # @return [nil]
+    def from_doc(electric_panel)
+      return if electric_panel.nil?
+
+      XMLHelper.get_elements(electric_panel, 'ServiceFeeders/ServiceFeeder').each do |service_feeder|
+        self << ServiceFeeder.new(@parent_object, service_feeder)
+      end
+    end
+  end
+
+  # Object for /HPXML/Building/BuildingDetails/Systems/ElectricPanels/ElectricPanel/ServiceFeeders/ServiceFeeder.
+  class ServiceFeeder < BaseElement
+    ATTRS = [:id,                # [String] SystemIdentifier/@id
+             :type,              # [String] LoadType
+             :power,             # [Double] PowerRating
+             :is_new_load,       # [Boolean] IsNewLoad
+             :component_idrefs]  # [Array<String>] AttachedToComponent/@idref
+    attr_accessor(*ATTRS)
+
+    # Returns the components attached to the service feeder (i.e., components that are allowed for a given load type).
+    #
+    # @return [Array<HPXML::XXX>] The attached components
+    def components
+      return [] if @component_idrefs.nil?
+
+      heating_systems = @parent_object.heating_systems.select { |heating_system| @component_idrefs.include? heating_system.id }
+      cooling_systems = @parent_object.cooling_systems.select { |cooling_system| @component_idrefs.include? cooling_system.id }
+      heat_pumps = @parent_object.heat_pumps.select { |heat_pump| @component_idrefs.include? heat_pump.id }
+      water_heating_systems = @parent_object.water_heating_systems.select { |water_heating_system| @component_idrefs.include? water_heating_system.id }
+      clothes_dryers = @parent_object.clothes_dryers.select { |clothes_dryer| @component_idrefs.include? clothes_dryer.id }
+      dishwashers = @parent_object.dishwashers.select { |dishwasher| @component_idrefs.include? dishwasher.id }
+      cooking_ranges = @parent_object.cooking_ranges.select { |cooking_range| @component_idrefs.include? cooking_range.id }
+      ventilation_fans = @parent_object.ventilation_fans.select { |ventilation_fan| @component_idrefs.include? ventilation_fan.id }
+      permanent_spa_pumps = @parent_object.permanent_spas.select { |permanent_spa| @component_idrefs.include? permanent_spa.pump_id }
+      permanent_spa_heaters = @parent_object.permanent_spas.select { |permanent_spa| @component_idrefs.include? permanent_spa.heater_id }
+      pool_pumps = @parent_object.pools.select { |pool| @component_idrefs.include? pool.pump_id }
+      pool_heaters = @parent_object.pools.select { |pool| @component_idrefs.include? pool.heater_id }
+      plug_load_well_pumps = @parent_object.plug_loads.select { |plug_load| @component_idrefs.include?(plug_load.id) && plug_load.plug_load_type == HPXML::PlugLoadTypeWellPump }
+      plug_load_vehicles = @parent_object.plug_loads.select { |plug_load| @component_idrefs.include?(plug_load.id) && plug_load.plug_load_type == HPXML::PlugLoadTypeElectricVehicleCharging }
+      ev_chargers = @parent_object.ev_chargers.select { |ev_charger| @component_idrefs.include?(ev_charger.id) }
+
+      {
+        heating_systems => [HPXML::ElectricPanelLoadTypeHeating],
+        cooling_systems => [HPXML::ElectricPanelLoadTypeCooling],
+        heat_pumps => [HPXML::ElectricPanelLoadTypeHeating, HPXML::ElectricPanelLoadTypeCooling],
+        water_heating_systems => [HPXML::ElectricPanelLoadTypeWaterHeater],
+        clothes_dryers => [HPXML::ElectricPanelLoadTypeClothesDryer],
+        dishwashers => [HPXML::ElectricPanelLoadTypeDishwasher],
+        cooking_ranges => [HPXML::ElectricPanelLoadTypeRangeOven],
+        ventilation_fans => [HPXML::ElectricPanelLoadTypeMechVent],
+        permanent_spa_pumps => [HPXML::ElectricPanelLoadTypePermanentSpaPump],
+        permanent_spa_heaters => [HPXML::ElectricPanelLoadTypePermanentSpaHeater],
+        pool_pumps => [HPXML::ElectricPanelLoadTypePoolPump],
+        pool_heaters => [HPXML::ElectricPanelLoadTypePoolHeater],
+        plug_load_well_pumps => [HPXML::ElectricPanelLoadTypeWellPump],
+        plug_load_vehicles => [HPXML::ElectricPanelLoadTypeElectricVehicleCharging],
+        ev_chargers => [HPXML::ElectricPanelLoadTypeElectricVehicleCharging],
+      }.each do |hpxml_objects, load_types|
+        if !hpxml_objects.empty? && !load_types.include?(@type)
+          fail "One or more referenced components '#{@component_idrefs.join("', '")}' not valid for service feeder '#{@id}' with LoadType '#{@type}'."
+        end
+      end
+
+      list = (heating_systems + cooling_systems + heat_pumps + water_heating_systems + clothes_dryers + dishwashers + cooking_ranges + ventilation_fans +
+              permanent_spa_pumps + permanent_spa_heaters + pool_pumps + pool_heaters + plug_load_well_pumps + plug_load_vehicles + ev_chargers)
+
+      return list
+    end
+
+    # Deletes the current object from the array.
+    #
+    # @return [nil]
+    def delete
+      @parent_object.electric_panels.each do |electric_panel|
+        electric_panel.service_feeders.delete(self)
+      end
+    end
+
+    # Additional error-checking beyond what's checked in Schema/Schematron validators.
+    #
+    # @return [Array<String>] List of error messages
+    def check_for_errors
+      errors = []
+      begin; components; rescue StandardError => e; errors << e.message; end
+      return errors
+    end
+
+    # Adds this object to the provided Oga XML element.
+    #
+    # @param building [Oga::XML::Element] The current Building XML element
+    # @return [nil]
+    def to_doc(electric_panel)
+      return if nil?
+
+      service_feeders = XMLHelper.create_elements_as_needed(electric_panel, ['ServiceFeeders'])
+      service_feeder = XMLHelper.add_element(service_feeders, 'ServiceFeeder')
+      sys_id = XMLHelper.add_element(service_feeder, 'SystemIdentifier')
+      XMLHelper.add_attribute(sys_id, 'id', @id)
+      XMLHelper.add_element(service_feeder, 'LoadType', @type, :string, @type_isdefaulted) unless @type.nil?
+      XMLHelper.add_element(service_feeder, 'PowerRating', @power, :float, @power_isdefaulted) unless @power.nil?
+      XMLHelper.add_element(service_feeder, 'IsNewLoad', @is_new_load, :boolean, @is_new_load_isdefaulted) unless @is_new_load.nil?
+      if (not @component_idrefs.nil?) && (not @component_idrefs.empty?)
+        @component_idrefs.each do |component_idref|
+          component = XMLHelper.add_element(service_feeder, 'AttachedToComponent')
+          XMLHelper.add_attribute(component, 'idref', component_idref)
+          XMLHelper.add_attribute(component, 'dataSource', 'software') if @component_idrefs_isdefaulted
+        end
+      end
+    end
+
+    # Populates the HPXML object(s) from the XML document.
+    #
+    # @param service_feeder [Oga::XML::Element] The current ServiceFeeder XML element
+    # @return [nil]
+    def from_doc(service_feeder)
+      return if service_feeder.nil?
+
+      @id = HPXML::get_id(service_feeder)
+      @type = XMLHelper.get_value(service_feeder, 'LoadType', :string)
+      @power = XMLHelper.get_value(service_feeder, 'PowerRating', :float)
+      @is_new_load = XMLHelper.get_value(service_feeder, 'IsNewLoad', :boolean)
+      @component_idrefs = HPXML::get_idrefs(service_feeder, 'AttachedToComponent')
+    end
+  end
+
   # Array of HPXML::Battery objects.
   class Batteries < BaseArrayElement
     # Adds a new object, with the specified keyword arguments, to the array.
@@ -9613,6 +10445,7 @@ class HPXML < Object
              :number_of_units_served, # [Integer] NumberofUnitsServed
              :location,               # [String] Location (HPXML::LocationXXX)
              :fuel_type,              # [String] FuelType (HPXML::FuelTypeXXX)
+             :drying_method,          # [String] DryingMethod (HPXML::DryingMethodXXX)
              :energy_factor,          # [Double] EnergyFactor (lb/kWh)
              :combined_energy_factor, # [Double] CombinedEnergyFactor (lb/kWh)
              :control_type,           # [String] ControlType (HPXML::ClothesDryerControlTypeXXX)
@@ -9623,6 +10456,20 @@ class HPXML < Object
              :weekend_fractions,      # [String] extension/WeekendScheduleFractions
              :monthly_multipliers]    # [String] extension/MonthlyScheduleMultipliers
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Deletes the current object from the array.
     #
@@ -9655,6 +10502,7 @@ class HPXML < Object
       XMLHelper.add_element(clothes_dryer, 'NumberofUnitsServed', @number_of_units_served, :integer) unless @number_of_units_served.nil?
       XMLHelper.add_element(clothes_dryer, 'Location', @location, :string, @location_isdefaulted) unless @location.nil?
       XMLHelper.add_element(clothes_dryer, 'FuelType', @fuel_type, :string) unless @fuel_type.nil?
+      XMLHelper.add_element(clothes_dryer, 'DryingMethod', @drying_method, :string, @drying_method_isdefaulted) unless @drying_method.nil?
       XMLHelper.add_element(clothes_dryer, 'EnergyFactor', @energy_factor, :float) unless @energy_factor.nil?
       XMLHelper.add_element(clothes_dryer, 'CombinedEnergyFactor', @combined_energy_factor, :float, @combined_energy_factor_isdefaulted) unless @combined_energy_factor.nil?
       XMLHelper.add_element(clothes_dryer, 'ControlType', @control_type, :string, @control_type_isdefaulted) unless @control_type.nil?
@@ -9679,6 +10527,7 @@ class HPXML < Object
       @number_of_units_served = XMLHelper.get_value(clothes_dryer, 'NumberofUnitsServed', :integer)
       @location = XMLHelper.get_value(clothes_dryer, 'Location', :string)
       @fuel_type = XMLHelper.get_value(clothes_dryer, 'FuelType', :string)
+      @drying_method = XMLHelper.get_value(clothes_dryer, 'DryingMethod', :string)
       @energy_factor = XMLHelper.get_value(clothes_dryer, 'EnergyFactor', :float)
       @combined_energy_factor = XMLHelper.get_value(clothes_dryer, 'CombinedEnergyFactor', :float)
       @control_type = XMLHelper.get_value(clothes_dryer, 'ControlType', :string)
@@ -9732,6 +10581,20 @@ class HPXML < Object
              :weekend_fractions,            # [String] extension/WeekendScheduleFractions
              :monthly_multipliers]          # [String] extension/MonthlyScheduleMultipliers
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Returns the water heating system connected to the dishwasher.
     #
@@ -10140,6 +11003,20 @@ class HPXML < Object
              :weekend_fractions,   # [String] WeekendScheduleFractions
              :monthly_multipliers] # [String] MonthlyScheduleMultipliers
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
 
     # Deletes the current object from the array.
     #
@@ -10583,6 +11460,34 @@ class HPXML < Object
              :heater_monthly_multipliers] # [String] Heater/MonthlyScheduleMultipliers
     attr_accessor(*ATTRS)
 
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def pump_branch_circuits
+      return HPXML::branch_circuits(@pump_id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def pump_service_feeders
+      return HPXML::service_feeders(@pump_id, @parent_object.electric_panels)
+    end
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def heater_branch_circuits
+      return HPXML::branch_circuits(@heater_id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def heater_service_feeders
+      return HPXML::service_feeders(@heater_id, @parent_object.electric_panels)
+    end
+
     # Deletes the current object from the array.
     #
     # @return [nil]
@@ -10726,6 +11631,34 @@ class HPXML < Object
              :heater_weekend_fractions,   # [String] Heater/WeekendScheduleFractions
              :heater_monthly_multipliers] # [String] Heater/MonthlyScheduleMultipliers
     attr_accessor(*ATTRS)
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def pump_branch_circuits
+      return HPXML::branch_circuits(@pump_id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def pump_service_feeders
+      return HPXML::service_feeders(@pump_id, @parent_object.electric_panels)
+    end
+
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def heater_branch_circuits
+      return HPXML::branch_circuits(@heater_id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def heater_service_feeders
+      return HPXML::service_feeders(@heater_id, @parent_object.electric_panels)
+    end
 
     # Deletes the current object from the array.
     #
@@ -10927,6 +11860,20 @@ class HPXML < Object
              :monthly_multipliers] # [String] MonthlyScheduleMultipliers
     attr_accessor(*ATTRS)
 
+    # Returns any branch circuits that the component may be attached to.
+    #
+    # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+    def branch_circuits
+      return HPXML::branch_circuits(@id, @parent_object.electric_panels)
+    end
+
+    # Returns any service feeders that the component may be attached to.
+    #
+    # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+    def service_feeders
+      return HPXML::service_feeders(@id, @parent_object.electric_panels)
+    end
+
     # Deletes the current object from the array.
     #
     # @return [nil]
@@ -11093,15 +12040,6 @@ class HPXML < Object
     # @return [Array<String>] List of error messages
     def check_for_errors
       errors = []
-      # For every unique outdoor temperature, check we have exactly one minimum and one maximum datapoint
-      outdoor_temps = self.select { |dp| [HPXML::CapacityDescriptionMinimum, HPXML::CapacityDescriptionMaximum].include? dp.capacity_description }.map { |dp| dp.outdoor_temperature }.uniq
-      outdoor_temps.each do |outdoor_temp|
-        num_min = count { |dp| dp.capacity_description == HPXML::CapacityDescriptionMinimum && dp.outdoor_temperature == outdoor_temp }
-        num_max = count { |dp| dp.capacity_description == HPXML::CapacityDescriptionMaximum && dp.outdoor_temperature == outdoor_temp }
-        if (num_min != 1) || (num_max != 1)
-          errors << "Cooling detailed performance data for outdoor temperature = #{outdoor_temp} is incomplete; there must be exactly one minimum and one maximum capacity datapoint."
-        end
-      end
       return errors
     end
 
@@ -11129,7 +12067,9 @@ class HPXML < Object
              :capacity_description,         # [String] CapacityDescription (HPXML::CapacityDescriptionXXX)
              :efficiency_cop,               # [Double] Efficiency[Units="COP"]/Value (W/W)
              :gross_capacity,               # FUTURE: Not in HPXML schema, should move to additional_properties
-             :gross_efficiency_cop]         # FUTURE: Not in HPXML schema, should move to additional_properties
+             :gross_efficiency_cop,         # FUTURE: Not in HPXML schema, should move to additional_properties
+             :gross_input_power,            # FUTURE: Not in HPXML schema, should move to additional_properties
+             :input_power]                  # FUTURE: Not in HPXML schema, should move to additional_properties
     attr_accessor(*ATTRS)
 
     # Deletes the current object from the array.
@@ -11201,15 +12141,6 @@ class HPXML < Object
     # @return [Array<String>] List of error messages
     def check_for_errors
       errors = []
-      # For every unique outdoor temperature, check we have exactly one minimum and one maximum datapoint
-      outdoor_temps = self.select { |dp| [HPXML::CapacityDescriptionMinimum, HPXML::CapacityDescriptionMaximum].include? dp.capacity_description }.map { |dp| dp.outdoor_temperature }.uniq
-      outdoor_temps.each do |outdoor_temp|
-        num_min = count { |dp| dp.capacity_description == HPXML::CapacityDescriptionMinimum && dp.outdoor_temperature == outdoor_temp }
-        num_max = count { |dp| dp.capacity_description == HPXML::CapacityDescriptionMaximum && dp.outdoor_temperature == outdoor_temp }
-        if (num_min != 1) || (num_max != 1)
-          errors << "Heating detailed performance data for outdoor temperature = #{outdoor_temp} is incomplete; there must be exactly one minimum and one maximum capacity datapoint."
-        end
-      end
       return errors
     end
 
@@ -11236,7 +12167,9 @@ class HPXML < Object
              :capacity_description,         # [String] CapacityDescription (HPXML::CapacityDescriptionXXX)
              :efficiency_cop,               # [Double] Efficiency[Units="COP"]/Value (W/W)
              :gross_capacity,               # FUTURE: Not in HPXML schema, should move to additional_properties
-             :gross_efficiency_cop]         # FUTURE: Not in HPXML schema, should move to additional_properties
+             :gross_efficiency_cop,         # FUTURE: Not in HPXML schema, should move to additional_properties
+             :gross_input_power,            # FUTURE: Not in HPXML schema, should move to additional_properties
+             :input_power]                  # FUTURE: Not in HPXML schema, should move to additional_properties
     attr_accessor(*ATTRS)
 
     # Deletes the current object from the array.
@@ -11461,6 +12394,19 @@ class HPXML < Object
     return XMLHelper.get_attribute_value(element, 'idref')
   end
 
+  # Gets the IDREF attribute for all instances of the given element.
+  #
+  # @param parent [Oga::XML::Element] The parent HPXML element
+  # @param element [Oga::XML::Element] The HPXML element
+  # @return [String] The element IDREF attribute
+  def self.get_idrefs(parent, element_name)
+    idrefs = []
+    parent.xpath(element_name).each do |value|
+      idrefs << XMLHelper.get_attribute_value(value, 'idref')
+    end
+    return idrefs
+  end
+
   # Checks whether a given date is valid (e.g., Sep 31 is invalid).
   #
   # @param use_case [String] Name of the use case to include in the error message
@@ -11546,5 +12492,43 @@ class HPXML < Object
         end
       end
     end
+  end
+
+  # Returns attached branch circuits for provided component ID.
+  #
+  # @param component [HPXML::XXX] HPXML component
+  # @param electric_panels [Array<HPXML::ElectricPanel>] List of electric panel objects
+  # @return [Array<HPXML::BranchCircuit>] List of branch circuit objects
+  def self.branch_circuits(id, electric_panels)
+    list = []
+    electric_panels.each do |electric_panel|
+      electric_panel.branch_circuits.each do |branch_circuit|
+        next if branch_circuit.component_idrefs.nil? || branch_circuit.component_idrefs.empty?
+        next unless branch_circuit.component_idrefs.include?(id)
+
+        list << branch_circuit
+      end
+    end
+
+    return list
+  end
+
+  # Returns attached service feeders for provided component ID.
+  #
+  # @param id [String] SystemIdentifier/@id
+  # @param electric_panels [Array<HPXML::ElectricPanel>] List of electric panel objects
+  # @return [Array<HPXML::ServiceFeeder>] List of service feeder objects
+  def self.service_feeders(id, electric_panels)
+    list = []
+    electric_panels.each do |electric_panel|
+      electric_panel.service_feeders.each do |service_feeder|
+        next if service_feeder.component_idrefs.empty?
+        next unless service_feeder.component_idrefs.include?(id)
+
+        list << service_feeder
+      end
+    end
+
+    return list
   end
 end

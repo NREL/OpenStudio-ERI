@@ -13,8 +13,8 @@ class ERIGeneratorTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.sch'))
     @results_paths = []
   end
 
@@ -30,7 +30,7 @@ class ERIGeneratorTest < Minitest::Test
   def test_generator
     hpxml_name = 'base-misc-generators.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_generator(hpxml_bldg, [{ fuel: HPXML::FuelTypeNaturalGas, annual_input: 8500, annual_output: 1200, is_shared: false },
                                       { fuel: HPXML::FuelTypeOil, annual_input: 8500, annual_output: 1200, is_shared: false }])
@@ -43,7 +43,7 @@ class ERIGeneratorTest < Minitest::Test
   def test_generator_shared
     hpxml_name = 'base-bldgtype-mf-unit-shared-generator.xml'
 
-    _test_ruleset(hpxml_name, 'latest').each do |(_run_type, calc_type), hpxml_bldg|
+    _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_generator(hpxml_bldg, [{ fuel: HPXML::FuelTypePropane, annual_input: 85000, annual_output: 12000, is_shared: true, nbeds_served: 18 }])
       else
@@ -52,7 +52,7 @@ class ERIGeneratorTest < Minitest::Test
     end
   end
 
-  def _test_ruleset(hpxml_name, version)
+  def _test_ruleset(hpxml_name, version = 'latest')
     print '.'
 
     designs = []

@@ -59,8 +59,12 @@ hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5
 hvac_gshp_cop																					
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
+hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
 hvac_ac_seer		18	18	18	18	18	18	16	16	16	16	16	14	14	14	14	14	14	14	14	14
 hvac_ashp_seer		18	18	18	18	18	18	16	16	16	16	16	16	16	16	16	16	16	16	16	16
+hvac_ac_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
+hvac_ashp_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	13	13	13	13	13	13	13	13	13
 hvac_gshp_eer																					
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
@@ -97,6 +101,6 @@ infil_air_leakage_ach50	single-family attached	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
 infil_air_leakage_ach50	apartment unit	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
 infil_air_leakage_cfm50_per_sqft																					
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator
-mechanical_ventilation_fan_sre													
+mechanical_ventilation_fan_sre																					
 mechanical_ventilation_fan_asre													0.65	0.65	0.65	0.65	0.65	0.65	0.65	0.65	0.65
 mechanical_ventilation_fan_cfm_per_w		2.9	2.9	2.9	2.9	2.9	2.9	2.9	2.9	2.9	2.9	2.9	1.2	1.2	1.2	1.2	1.2	1.2	1.2	1.2	1.2

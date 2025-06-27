@@ -36,15 +36,18 @@ module XMLHelper
       parent.children.insert(index, added)
     end
     if not value.nil?
-      if datatype == :integer
+      case datatype
+      when :integer
         value = to_integer(value, parent, element_name)
-      elsif datatype == :float
+      when :float
         value = to_float(value, parent, element_name)
-      elsif datatype == :boolean
+      when :boolean
         value = to_boolean(value, parent, element_name)
-      elsif datatype != :string
-        # If value provided, datatype required
-        fail 'Unexpected datatype.'
+      else
+        if datatype != :string
+          # If value provided, datatype required
+          fail 'Unexpected datatype.'
+        end
       end
       added.inner_text = value.to_s
     end
@@ -113,14 +116,17 @@ module XMLHelper
 
     value = element.text
 
-    if datatype == :integer
+    case datatype
+    when :integer
       value = to_integer_or_nil(value, parent, element_name)
-    elsif datatype == :float
+    when :float
       value = to_float_or_nil(value, parent, element_name)
-    elsif datatype == :boolean
+    when :boolean
       value = to_boolean_or_nil(value, parent, element_name)
-    elsif datatype != :string
-      fail 'Unexpected datatype.'
+    else
+      if datatype != :string
+        fail 'Unexpected datatype.'
+      end
     end
 
     return value
@@ -138,14 +144,17 @@ module XMLHelper
     parent.xpath(element_name).each do |value|
       value = value.text
 
-      if datatype == :integer
+      case datatype
+      when :integer
         value = to_integer_or_nil(value, parent, element_name)
-      elsif datatype == :float
+      when :float
         value = to_float_or_nil(value, parent, element_name)
-      elsif datatype == :boolean
+      when :boolean
         value = to_boolean_or_nil(value, parent, element_name)
-      elsif datatype != :string
-        fail 'Unexpected datatype.'
+      else
+        if datatype != :string
+          fail 'Unexpected datatype.'
+        end
       end
 
       values << value
@@ -244,19 +253,22 @@ module XMLHelper
   # Obtains the XML document for the XML file at the specified path.
   #
   # @param hpxml_path [String] Path to the HPXML file
+  # @param hpxml_path [String] Contents of the HPXML file if already available
   # @return [Oga::XML::Document] The XML document
-  def self.parse_file(hpxml_path)
-    file_read = File.read(hpxml_path)
-    hpxml_doc = Oga.parse_xml(file_read)
+  def self.parse_file(hpxml_path, hpxml_contents: nil)
+    if hpxml_contents.nil?
+      hpxml_contents = File.read(hpxml_path)
+    end
+    hpxml_doc = Oga.parse_xml(hpxml_contents)
     return hpxml_doc
   end
 
-  # Writes the XML file for the given XML document.
+  # Returns the final string representation of the XML document -- i.e., one that is
+  # ready to be written to a file.
   #
   # @param doc [Oga::XML::Document] Oga XML Document object
-  # @param hpxml_path [String] Path to the HPXML file
-  # @return [String] The written XML file as a string
-  def self.write_file(doc, hpxml_path)
+  # @return [String] The final string representation
+  def self.finalize_doc_string(doc)
     doc_s = doc.to_xml.delete("\r")
 
     # Manually apply pretty-printing (indentation and newlines)
@@ -296,6 +308,18 @@ module XMLHelper
     doc_s.gsub!(' />', '/>')
     doc_s.gsub!(' ?>', '?>')
     doc_s.gsub!('&quot;', '"')
+
+    return doc_s
+  end
+
+  # Writes the XML file for the given XML document and returns the final
+  # string representation of the XML document.
+  #
+  # @param doc [Oga::XML::Document] Oga XML Document object
+  # @param hpxml_path [String] Path to the HPXML file
+  # @return [String] The final string representation
+  def self.write_file(doc, hpxml_path)
+    doc_s = finalize_doc_string(doc)
 
     # Write XML file
     if not Dir.exist? File.dirname(hpxml_path)
