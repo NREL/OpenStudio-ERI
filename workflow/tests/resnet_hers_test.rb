@@ -99,12 +99,11 @@ class RESNETTest < Minitest::Test
     end
     assert(all_results.size > 0)
 
-    _hvac_energy = _write_hers_hvac_results(all_results, test_results_csv)
+    hvac_energy = _write_hers_hvac_results(all_results, test_results_csv)
 
     # Check result if we have them all
     if all_results.size > 1
-      # FIXME: Temporarily disabled until RESNET updates acceptance criteria for HERS Addendum 82
-      # _check_hvac_test_results(hvac_energy)
+      _check_hvac_test_results(hvac_energy)
     end
   end
 
