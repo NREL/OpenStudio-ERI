@@ -708,7 +708,7 @@ def _check_reference_home_components(results, test_num, version)
 
   # Internal gains
   if version == 'latest'
-    # Includes updated values due to MINHERS Addenda 81 and 90f and provided by Philip on 5/29/25
+    # Includes updated values due to HERS Addenda 81 and 90f and provided by Philip on 5/29/25
     if test_num == 1
       assert_in_epsilon(55037, results['Sensible Internal gains (Btu/day)'], epsilon)
       assert_in_epsilon(13589, results['Latent Internal gains (Btu/day)'], epsilon)

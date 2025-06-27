@@ -3152,7 +3152,7 @@ module ERI_301_Ruleset
   def self.get_hp_compressor_lockout_temp(heat_pump_type, backup_heating_fuel, compressor_type, compressor_lockout_temp = nil)
     return if heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
 
-    # Logic per RESNET MINHERS 82
+    # Logic per RESNET HERS Addendum 82
     if backup_heating_fuel == HPXML::FuelTypeElectricity
       # Use user input if provided
       if not compressor_lockout_temp.nil?
@@ -3178,7 +3178,7 @@ module ERI_301_Ruleset
   end
 
   def self.get_hp_backup_heating_active_during_defrost(heat_pump_type, backup_type)
-    # Logic per RESNET MINHERS 82
+    # Logic per RESNET HERS Addendum 82
     # For the Rated Home, backup heat should be active during defrost only if
     # the system has supplemental heating.
     # For the Reference Home, backup heat should always be active during defrost
