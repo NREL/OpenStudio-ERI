@@ -1025,6 +1025,7 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
     hpxml_bldg.windows.each do |window|
       window.interior_shading_factor_summer = nil
       window.interior_shading_factor_winter = nil
+      window.interior_shading_type = nil
       window.performance_class = HPXML::WindowClassResidential
     end
   elsif hpxml_file.include?('EPA_Tests')
@@ -2525,6 +2526,7 @@ def create_sample_hpxmls
     hpxml_bldg.windows.each do |window|
       window.interior_shading_factor_winter = nil
       window.interior_shading_factor_summer = nil
+      window.interior_shading_type = nil
     end
     hpxml_bldg.cooling_systems.each do |cooling_system|
       cooling_system.primary_system = nil
@@ -2763,6 +2765,15 @@ def create_sample_hpxmls
         dhw_system.first_hour_rating = 56.0
       else
         fail hpxml_path
+      end
+    end
+    hpxml_bldg.hot_water_distributions.each do |hot_water_distribution|
+      if hot_water_distribution.system_type == HPXML::DHWDistTypeStandard
+        hot_water_distribution.standard_piping_length = 50.0 if hot_water_distribution.standard_piping_length.nil?
+      elsif hot_water_distribution.system_type == HPXML::DHWDistTypeRecirc
+        hot_water_distribution.recirculation_piping_loop_length = 50.0 if hot_water_distribution.recirculation_piping_loop_length.nil?
+        hot_water_distribution.recirculation_branch_piping_length = 50.0 if hot_water_distribution.recirculation_branch_piping_length.nil?
+        hot_water_distribution.recirculation_pump_power = 50.0 if hot_water_distribution.recirculation_pump_power.nil?
       end
     end
     zip_map = { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => '80019',
