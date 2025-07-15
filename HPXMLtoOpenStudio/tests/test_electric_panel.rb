@@ -6,6 +6,7 @@ require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
 require_relative '../resources/util.rb'
+require_relative 'util.rb'
 
 class HPXMLtoOpenStudioElectricPanelTest < Minitest::Test
   def setup
@@ -16,15 +17,7 @@ class HPXMLtoOpenStudioElectricPanelTest < Minitest::Test
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    ['csv', 'json'].each do |file_ext|
-      File.delete(File.join(File.dirname(__FILE__), "results_annual.#{file_ext}")) if File.exist? File.join(File.dirname(__FILE__), "results_annual.#{file_ext}")
-      File.delete(File.join(File.dirname(__FILE__), "results_panel.#{file_ext}")) if File.exist? File.join(File.dirname(__FILE__), "results_panel.#{file_ext}")
-      File.delete(File.join(File.dirname(__FILE__), "results_design_load_details.#{file_ext}")) if File.exist? File.join(File.dirname(__FILE__), "results_design_load_details.#{file_ext}")
-    end
-  end
-
-  def sample_files_dir
-    return File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files')
+    cleanup_results_files
   end
 
   def test_ashp_upgrade
@@ -628,7 +621,7 @@ class HPXMLtoOpenStudioElectricPanelTest < Minitest::Test
     _test_occupied_spaces(hpxml_bldg, [HPXML::ElectricPanelLoadTypeWaterHeater], 2)
   end
 
-  def test_clothes_dryer_vented
+  def test_clothes_dryer_conventional
     args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
                   'skip_validation' => true }
 
@@ -640,7 +633,7 @@ class HPXMLtoOpenStudioElectricPanelTest < Minitest::Test
     _test_occupied_spaces(hpxml_bldg, [HPXML::ElectricPanelLoadTypeClothesDryer], 2)
   end
 
-  def test_clothes_dryer_120v_vented
+  def test_clothes_dryer_120v_conventional
     args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
                   'skip_validation' => true }
 
@@ -661,11 +654,45 @@ class HPXMLtoOpenStudioElectricPanelTest < Minitest::Test
     _test_occupied_spaces(hpxml_bldg, [HPXML::ElectricPanelLoadTypeClothesDryer], 4)
   end
 
-  def test_clothes_dryer_heat_pump
+  def test_clothes_dryer_condensing
     args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
                   'skip_validation' => true }
 
     hpxml, _hpxml_bldg = _create_hpxml('base-appliances-modified.xml')
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _model, _hpxml, hpxml_bldg = _test_measure(args_hash)
+
+    _test_service_feeder_power(hpxml_bldg, HPXML::ElectricPanelLoadTypeClothesDryer, 5760)
+    _test_occupied_spaces(hpxml_bldg, [HPXML::ElectricPanelLoadTypeClothesDryer], 2)
+  end
+
+  def test_clothes_dryer_120v_condensing
+    args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
+                  'skip_validation' => true }
+
+    hpxml, hpxml_bldg = _create_hpxml('base-appliances-modified.xml')
+    branch_circuits = hpxml_bldg.electric_panels[0].branch_circuits
+    service_feeders = hpxml_bldg.electric_panels[0].service_feeders
+    branch_circuits.add(id: "BranchCircuit#{branch_circuits.size + 1}",
+                        voltage: HPXML::ElectricPanelVoltage120,
+                        component_idrefs: [hpxml_bldg.clothes_dryers[0].id])
+    service_feeders.add(id: "ServiceFeeder#{service_feeders.size + 1}",
+                        type: HPXML::ElectricPanelLoadTypeClothesDryer,
+                        component_idrefs: [hpxml_bldg.clothes_dryers[0].id])
+
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _model, _hpxml, hpxml_bldg = _test_measure(args_hash)
+
+    _test_service_feeder_power(hpxml_bldg, HPXML::ElectricPanelLoadTypeClothesDryer, 5760)
+    _test_occupied_spaces(hpxml_bldg, [HPXML::ElectricPanelLoadTypeClothesDryer], 1)
+  end
+
+  def test_clothes_dryer_heat_pump
+    args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
+                  'skip_validation' => true }
+
+    hpxml, hpxml_bldg = _create_hpxml('base-appliances-modified.xml')
+    hpxml_bldg.clothes_dryers[0].drying_method = HPXML::DryingMethodHeatPump
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _model, _hpxml, hpxml_bldg = _test_measure(args_hash)
 
@@ -678,6 +705,7 @@ class HPXMLtoOpenStudioElectricPanelTest < Minitest::Test
                   'skip_validation' => true }
 
     hpxml, hpxml_bldg = _create_hpxml('base-appliances-modified.xml')
+    hpxml_bldg.clothes_dryers[0].drying_method = HPXML::DryingMethodHeatPump
     branch_circuits = hpxml_bldg.electric_panels[0].branch_circuits
     service_feeders = hpxml_bldg.electric_panels[0].service_feeders
     branch_circuits.add(id: "BranchCircuit#{branch_circuits.size + 1}",
