@@ -2322,7 +2322,7 @@ module ERI_301_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
                               label_energy_use: Defaults.get_ceiling_fan_power(),
-                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_count(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
@@ -2355,7 +2355,7 @@ module ERI_301_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
                               label_energy_use: avg_w,
-                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_count(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 

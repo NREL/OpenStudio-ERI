@@ -1127,7 +1127,7 @@ module ES_ZERH_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'TargetCeilingFan',
                               efficiency: lookup_reference_value('ceiling_fan_cfm_per_w'),
-                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_count(@nbeds))
   end
 
   def self.set_misc_loads_reference(orig_bldg, new_bldg)
