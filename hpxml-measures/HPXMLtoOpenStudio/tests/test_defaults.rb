@@ -1744,7 +1744,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml_bldg.cooling_systems[0].equipment_type = nil
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_central_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.5, HPXML::HVACFanMotorTypePSC, nil, 0, 0, nil, 11.4, 9.79, 28.0, 1.0, HPXML::HVACEquipmentTypeSplit)
+    _test_default_central_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.5, HPXML::HVACFanMotorTypePSC, nil, 0, 0, nil, 11.4, 9.79, 28.7, 1.0, HPXML::HVACEquipmentTypeSplit)
   end
 
   def test_room_air_conditioners
@@ -1842,13 +1842,13 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml_bldg.cooling_systems[0].cooling_efficiency_eer2 = nil
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mini_split_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.18, HPXML::HVACFanMotorTypeBPM, nil, 0, 0, nil, 18.05, 12.05, 18.6, 1.0)
+    _test_default_mini_split_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.18, HPXML::HVACFanMotorTypeBPM, nil, 0, 0, nil, 18.05, 12.05, 19.4, 1.0)
 
     # Test defaults w/ ductless
     hpxml_bldg.cooling_systems[0].distribution_system.delete
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mini_split_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.07, HPXML::HVACFanMotorTypeBPM, nil, 0, 0, nil, 19.0, 12.34, 12.5, 1.0)
+    _test_default_mini_split_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.07, HPXML::HVACFanMotorTypeBPM, nil, 0, 0, nil, 19.0, 12.34, 13.1, 1.0)
 
     # Test defaults w/ ductless - SEER2/EER
     hpxml_bldg.cooling_systems[0].cooling_efficiency_seer2 = nil
@@ -1857,7 +1857,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml_bldg.cooling_systems[0].cooling_efficiency_eer = 12.0
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
-    _test_default_mini_split_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.07, HPXML::HVACFanMotorTypeBPM, nil, 0, 0, nil, 13.3, 12.0, 12.5, 1.0)
+    _test_default_mini_split_air_conditioner_values(default_hpxml_bldg.cooling_systems[0], 0.07, HPXML::HVACFanMotorTypeBPM, nil, 0, 0, nil, 13.3, 12.0, 13.1, 1.0)
   end
 
   def test_ptac
@@ -3658,6 +3658,7 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     # Test inputs not overridden by defaults -- standard
     hpxml, hpxml_bldg = _create_hpxml('base.xml')
     hpxml_bldg.hot_water_distributions[0].pipe_r_value = 2.5
+    hpxml_bldg.hot_water_distributions[0].standard_piping_length = 50.0
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
     _default_hpxml, default_hpxml_bldg = _test_measure()
     _test_default_standard_distribution_values(default_hpxml_bldg.hot_water_distributions[0], 50.0, 2.5)
@@ -3666,6 +3667,8 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     hpxml, hpxml_bldg = _create_hpxml('base-dhw-recirc-demand.xml')
     hpxml_bldg.hot_water_distributions[0].recirculation_pump_power = 65.0
     hpxml_bldg.hot_water_distributions[0].pipe_r_value = 2.5
+    hpxml_bldg.hot_water_distributions[0].recirculation_piping_loop_length = 50.0
+    hpxml_bldg.hot_water_distributions[0].recirculation_branch_piping_length = 50.0
     hpxml_bldg.hot_water_distributions[0].recirculation_pump_weekday_fractions = ConstantDaySchedule
     hpxml_bldg.hot_water_distributions[0].recirculation_pump_weekend_fractions = ConstantDaySchedule
     hpxml_bldg.hot_water_distributions[0].recirculation_pump_monthly_multipliers = ConstantMonthSchedule
@@ -5110,9 +5113,11 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
 
-    default_hpxml = HPXML.new(hpxml_path: File.join(@tmp_output_path, 'in.xml'))
+    hpxml = HPXML.new(hpxml_path: File.join(@tmp_output_path, 'in.xml'))
 
-    return default_hpxml, default_hpxml.buildings[0]
+    File.delete(File.join(@tmp_output_path, 'in.xml'))
+
+    return hpxml, hpxml.buildings[0]
   end
 
   def _test_default_header_values(hpxml, tstep, sim_begin_month, sim_begin_day, sim_end_month, sim_end_day, sim_calendar_year, temperature_capacitance_multiplier,
@@ -6277,8 +6282,8 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
   end
 
   def _test_default_recirc_distribution_values(hot_water_distribution, piping_length, branch_piping_length, pump_power, pipe_r_value, weekday_sch, weekend_sch, monthly_mults)
-    assert_in_epsilon(piping_length, hot_water_distribution.recirculation_piping_loop_length, 0.01)
-    assert_in_epsilon(branch_piping_length, hot_water_distribution.recirculation_branch_piping_length, 0.01)
+    assert_equal(piping_length, hot_water_distribution.recirculation_piping_loop_length)
+    assert_equal(branch_piping_length, hot_water_distribution.recirculation_branch_piping_length)
     assert_in_epsilon(pump_power, hot_water_distribution.recirculation_pump_power, 0.01)
     assert_equal(pipe_r_value, hot_water_distribution.pipe_r_value)
     if weekday_sch.nil?
