@@ -105,7 +105,7 @@
             <Pitch>6.0</Pitch>
             <Insulation>
               <SystemIdentifier id='Roof1Insulation'/>
-              <AssemblyEffectiveRValue>25.8</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>29.7</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
         </Roofs>
@@ -119,7 +119,7 @@
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>21.8</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
@@ -136,7 +136,7 @@
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
         </Walls>
@@ -197,8 +197,8 @@
             <SystemIdentifier id='Window1'/>
             <Area>108.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -206,8 +206,8 @@
             <SystemIdentifier id='Window2'/>
             <Area>120.0</Area>
             <Azimuth>90</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -215,8 +215,8 @@
             <SystemIdentifier id='Window3'/>
             <Area>108.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -224,8 +224,8 @@
             <SystemIdentifier id='Window4'/>
             <Area>120.0</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <FractionOperable>0.67</FractionOperable>
             <AttachedToWall idref='Wall1'/>
           </Window>
@@ -235,8 +235,8 @@
             <SystemIdentifier id='Skylight1'/>
             <Area>15.0</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.59</UFactor>
+            <SHGC>0.55</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Skylight1InteriorShading'/>
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
@@ -254,8 +254,8 @@
             <SystemIdentifier id='Skylight2'/>
             <Area>15.0</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.59</UFactor>
+            <SHGC>0.55</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Skylight2InteriorShading'/>
               <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
@@ -378,8 +378,8 @@
             <IsSharedSystem>false</IsSharedSystem>
             <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
+            <FirstHourRating>56.0</FirstHourRating>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
