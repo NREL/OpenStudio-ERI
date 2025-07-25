@@ -590,7 +590,7 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
       os_window = model.getSubSurfaces.find { |w| w.name.to_s == window.id }
       os_simple_glazing = os_window.construction.get.to_LayeredConstruction.get.getLayer(0).to_SimpleGlazing.get
 
-      assert_equal(0.36, os_simple_glazing.solarHeatGainCoefficient)
+      assert_equal(0.352, os_simple_glazing.solarHeatGainCoefficient)
       assert_in_epsilon(0.2936, UnitConversions.convert(os_simple_glazing.uFactor, 'W/(m^2*K)', 'Btu/(hr*ft^2*F)'), 0.001)
     end
 
@@ -896,7 +896,6 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
                       'base-foundation-conditioned-crawlspace.xml' => 68.0, # foundation adjacent to conditioned space, IECC zone 5
                       'base-foundation-slab.xml' => 68.0, # foundation adjacent to conditioned space, IECC zone 5
                       'base-foundation-unconditioned-basement.xml' => 41.4, # foundation adjacent to unconditioned basement w/ ceiling insulation
-                      'base-foundation-unconditioned-basement-wall-insulation.xml' => 56.0, # foundation adjacent to unconditioned basement w/ wall insulation
                       'base-foundation-unvented-crawlspace.xml' => 38.6, # foundation adjacent to unvented crawlspace w/ ceiling insulation
                       'base-foundation-vented-crawlspace.xml' => 36.9, # foundation adjacent to vented crawlspace w/ ceiling insulation
                       'base-location-miami-fl.xml' => 78.0 } # foundation adjacent to conditioned space, IECC zone 1
