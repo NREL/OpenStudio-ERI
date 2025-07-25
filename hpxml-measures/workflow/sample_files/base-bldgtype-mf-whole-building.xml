@@ -9,9 +9,6 @@
   <SoftwareInfo>
     <extension>
       <WholeSFAorMFBuildingSimulation>true</WholeSFAorMFBuildingSimulation>
-      <SimulationControl>
-        <Timestep>60</Timestep>
-      </SimulationControl>
       <UtilityBillScenarios>
         <UtilityBillScenario>
           <Name>Bills</Name>
@@ -33,7 +30,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <SiteType>suburban</SiteType>
           <Surroundings>attached on one side</Surroundings>
           <VerticalSurroundings>unit above</VerticalSurroundings>
           <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
@@ -118,7 +114,7 @@
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>21.8</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
           <RimJoist>
@@ -151,7 +147,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -233,7 +229,7 @@
             <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
-              <AssemblyEffectiveRValue>22.84</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.6</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -285,8 +281,8 @@
             <SystemIdentifier id='Window1'/>
             <Area>43.2</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading'/>
               <Type>light curtains</Type>
@@ -298,8 +294,8 @@
             <SystemIdentifier id='Window2'/>
             <Area>43.2</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading'/>
               <Type>light curtains</Type>
@@ -311,8 +307,8 @@
             <SystemIdentifier id='Window3'/>
             <Area>57.6</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading'/>
               <Type>light curtains</Type>
@@ -375,11 +371,8 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>conditioned space</Location>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
@@ -516,7 +509,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <SiteType>suburban</SiteType>
           <Surroundings>attached on one side</Surroundings>
           <VerticalSurroundings>unit above</VerticalSurroundings>
           <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
@@ -601,7 +593,7 @@
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation_2'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>21.8</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
           <RimJoist>
@@ -634,7 +626,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation_2'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -716,7 +708,7 @@
             <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation_2'/>
-              <AssemblyEffectiveRValue>22.84</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.6</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -768,8 +760,8 @@
             <SystemIdentifier id='Window1_2'/>
             <Area>43.2</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading_2'/>
               <Type>light curtains</Type>
@@ -781,8 +773,8 @@
             <SystemIdentifier id='Window2_2'/>
             <Area>43.2</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading_2'/>
               <Type>light curtains</Type>
@@ -794,8 +786,8 @@
             <SystemIdentifier id='Window3_2'/>
             <Area>57.6</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading_2'/>
               <Type>light curtains</Type>
@@ -858,11 +850,8 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>conditioned space</Location>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1_2'/>
@@ -999,7 +988,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <SiteType>suburban</SiteType>
           <Surroundings>attached on one side</Surroundings>
           <VerticalSurroundings>unit above and below</VerticalSurroundings>
           <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
@@ -1082,7 +1070,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation_3'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -1116,7 +1104,7 @@
             <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation_3'/>
-              <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>5.3</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -1142,8 +1130,8 @@
             <SystemIdentifier id='Window1_3'/>
             <Area>43.2</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading_3'/>
               <Type>light curtains</Type>
@@ -1155,8 +1143,8 @@
             <SystemIdentifier id='Window2_3'/>
             <Area>43.2</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading_3'/>
               <Type>light curtains</Type>
@@ -1168,8 +1156,8 @@
             <SystemIdentifier id='Window3_3'/>
             <Area>57.6</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading_3'/>
               <Type>light curtains</Type>
@@ -1232,11 +1220,8 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>conditioned space</Location>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1_3'/>
@@ -1373,7 +1358,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <SiteType>suburban</SiteType>
           <Surroundings>attached on one side</Surroundings>
           <VerticalSurroundings>unit above and below</VerticalSurroundings>
           <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
@@ -1456,7 +1440,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation_4'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -1490,7 +1474,7 @@
             <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation_4'/>
-              <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>5.3</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -1516,8 +1500,8 @@
             <SystemIdentifier id='Window1_4'/>
             <Area>43.2</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading_4'/>
               <Type>light curtains</Type>
@@ -1529,8 +1513,8 @@
             <SystemIdentifier id='Window2_4'/>
             <Area>43.2</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading_4'/>
               <Type>light curtains</Type>
@@ -1542,8 +1526,8 @@
             <SystemIdentifier id='Window3_4'/>
             <Area>57.6</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading_4'/>
               <Type>light curtains</Type>
@@ -1606,11 +1590,8 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>conditioned space</Location>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1_4'/>
@@ -1747,7 +1728,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <SiteType>suburban</SiteType>
           <Surroundings>attached on one side</Surroundings>
           <VerticalSurroundings>unit below</VerticalSurroundings>
           <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
@@ -1855,7 +1835,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation_5'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -1921,7 +1901,7 @@
             <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation_5'/>
-              <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>5.3</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -1938,7 +1918,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation_5'/>
-              <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>39.6</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>
@@ -1947,8 +1927,8 @@
             <SystemIdentifier id='Window1_5'/>
             <Area>43.2</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading_5'/>
               <Type>light curtains</Type>
@@ -1960,8 +1940,8 @@
             <SystemIdentifier id='Window2_5'/>
             <Area>43.2</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading_5'/>
               <Type>light curtains</Type>
@@ -1973,8 +1953,8 @@
             <SystemIdentifier id='Window3_5'/>
             <Area>57.6</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading_5'/>
               <Type>light curtains</Type>
@@ -2037,11 +2017,8 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>conditioned space</Location>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1_5'/>
@@ -2178,7 +2155,6 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <SiteType>suburban</SiteType>
           <Surroundings>attached on one side</Surroundings>
           <VerticalSurroundings>unit below</VerticalSurroundings>
           <AzimuthOfFrontOfHome>180</AzimuthOfFrontOfHome>
@@ -2286,7 +2262,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Wall1Insulation_6'/>
-              <AssemblyEffectiveRValue>23.0</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>22.7</AssemblyEffectiveRValue>
             </Insulation>
           </Wall>
           <Wall>
@@ -2352,7 +2328,7 @@
             <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation_6'/>
-              <AssemblyEffectiveRValue>2.1</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>5.3</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -2369,7 +2345,7 @@
             </InteriorFinish>
             <Insulation>
               <SystemIdentifier id='Floor2Insulation_6'/>
-              <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>39.6</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
         </Floors>
@@ -2378,8 +2354,8 @@
             <SystemIdentifier id='Window1_6'/>
             <Area>43.2</Area>
             <Azimuth>0</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading_6'/>
               <Type>light curtains</Type>
@@ -2391,8 +2367,8 @@
             <SystemIdentifier id='Window2_6'/>
             <Area>43.2</Area>
             <Azimuth>180</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading_6'/>
               <Type>light curtains</Type>
@@ -2404,8 +2380,8 @@
             <SystemIdentifier id='Window3_6'/>
             <Area>57.6</Area>
             <Azimuth>270</Azimuth>
-            <UFactor>0.33</UFactor>
-            <SHGC>0.45</SHGC>
+            <UFactor>0.35</UFactor>
+            <SHGC>0.44</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading_6'/>
               <Type>light curtains</Type>
@@ -2468,11 +2444,8 @@
             <FuelType>electricity</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
             <Location>conditioned space</Location>
-            <TankVolume>40.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <HeatingCapacity>18767.0</HeatingCapacity>
-            <EnergyFactor>0.95</EnergyFactor>
-            <HotWaterTemperature>125.0</HotWaterTemperature>
+            <UniformEnergyFactor>0.94</UniformEnergyFactor>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1_6'/>
