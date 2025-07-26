@@ -499,11 +499,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml_bldg, area: 900, rvalue: 3.1, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
 
       # Check w/ mass floors
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -524,7 +524,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeConcrete)
+      _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeConcrete)
     end
 
     [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|

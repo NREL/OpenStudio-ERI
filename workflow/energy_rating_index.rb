@@ -1016,8 +1016,7 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_fr
     }
   end
   return unless [CalcType::ReferenceHome,
-                 CalcType::IndexAdjReferenceHome,
-                 CalcType::ReferenceHome].include? calc_type
+                 CalcType::IndexAdjReferenceHome].include? calc_type
 
   values = data_hashes.map { |h| calculate_reul(h, load_frac, type, is_dfhp_primary).round(2) }
   json_system_output[-1][:load] = values

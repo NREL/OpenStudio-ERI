@@ -31,7 +31,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 40, ef: 0.92 }])
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
       elsif [CalcType::RatedHome].include? calc_type
@@ -48,7 +48,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-dhw-tank-elec-ef.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 40, ef: 0.92 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.93 }])
@@ -86,7 +86,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-foundation-unconditioned-basement.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementUnconditioned, tank_vol: 40, ef: 0.9172 }])
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 88.5)
       elsif [CalcType::RatedHome].include? calc_type
@@ -103,7 +103,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-dhw-low-flow-fixtures.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_fixtures(hpxml_bldg, low_flow_shower: false, low_flow_faucet: false)
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_fixtures(hpxml_bldg, low_flow_shower: true, low_flow_faucet: true)
@@ -117,7 +117,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-dhw-recirc-demand.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
       elsif [CalcType::RatedHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeRecirc, pipe_r: 3.0, recirc_control: HPXML::DHWRecircControlTypeSensor, recirc_loop_l: 50, recirc_branch_l: 50, recirc_pump_power: 50)
@@ -203,7 +203,7 @@ class ERIWaterHeatingTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 80, ef: 0.8644 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 3.75, fhr: 56 }])
@@ -217,7 +217,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-dhw-tank-heat-pump-ef.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 80, ef: 0.86 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 3.1 }])
@@ -238,7 +238,7 @@ class ERIWaterHeatingTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 40, ef: 0.9172 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationConditionedSpace, uef: 0.98 }])
@@ -252,7 +252,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-dhw-tankless-electric-ef.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 40, ef: 0.9172 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationConditionedSpace, ef: 0.96 }])
@@ -309,7 +309,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base-dhw-multiple.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 125.0, location: HPXML::LocationBasementConditioned, tank_vol: 40, ef: 0.9172 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 0.94, fhr: 56.0 },
@@ -392,7 +392,7 @@ class ERIWaterHeatingTest < Minitest::Test
       else
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.594 }])
       end
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
       elsif [CalcType::RatedHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 93.5)
@@ -427,7 +427,7 @@ class ERIWaterHeatingTest < Minitest::Test
     hpxml_name = 'base.xml'
 
     _test_ruleset(hpxml_name, '2014').each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 120.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.9172 }])
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, setpoint: 120.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 0.94, fhr: 56.0 }])
@@ -452,7 +452,7 @@ class ERIWaterHeatingTest < Minitest::Test
       else
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.59 }])
       end
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
       elsif [CalcType::RatedHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 50, shared_recirc_power: 220, shared_recirc_num_bedrooms_served: 18, shared_recirc_control_type: HPXML::DHWRecircControlTypeTimer)
@@ -477,7 +477,7 @@ class ERIWaterHeatingTest < Minitest::Test
       else
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.59 }])
       end
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 70.0)
       elsif [CalcType::RatedHome].include? calc_type
         _check_hot_water_distribution(hpxml_bldg, disttype: HPXML::DHWDistTypeStandard, pipe_r: 0.0, pipe_l: 50)

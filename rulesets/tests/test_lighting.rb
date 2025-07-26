@@ -31,7 +31,7 @@ class ERILightingTest < Minitest::Test
     hpxml_name = 'base-enclosure-garage.xml'
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_lighting(hpxml_bldg, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_grg_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_grg_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0, f_grg_led: 0.0)
       elsif [CalcType::RatedHome].include? calc_type
         _check_lighting(hpxml_bldg, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_grg_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_grg_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25, f_grg_led: 0.25)
@@ -47,7 +47,7 @@ class ERILightingTest < Minitest::Test
     hpxml_name = 'base.xml'
 
     _test_ruleset(hpxml_name, '2014AE').each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_lighting(hpxml_bldg, f_int_cfl: 0.1, f_ext_cfl: 0.0, f_int_lfl: 0.0, f_ext_lfl: 0.0, f_int_led: 0.0, f_ext_led: 0.0)
       elsif [CalcType::RatedHome].include? calc_type
         _check_lighting(hpxml_bldg, f_int_cfl: 0.4, f_ext_cfl: 0.4, f_int_lfl: 0.1, f_ext_lfl: 0.1, f_int_led: 0.25, f_ext_led: 0.25)
@@ -110,7 +110,7 @@ class ERILightingTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 6)
       elsif [CalcType::RatedHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 30.0, count: 6)
@@ -169,7 +169,7 @@ class ERILightingTest < Minitest::Test
     XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
-      if [CalcType::ReferenceHome, CalcType::ReferenceHome].include? calc_type
+      if [CalcType::ReferenceHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 42.6, count: 6)
       elsif [CalcType::RatedHome].include? calc_type
         _check_ceiling_fans(hpxml_bldg, label_energy_use: 39.0, count: 6)
