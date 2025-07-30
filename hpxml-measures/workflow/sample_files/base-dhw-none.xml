@@ -10,7 +10,7 @@
     <extension>
       <UtilityBillScenarios>
         <UtilityBillScenario>
-          <Name>Bills</Name>
+          <Name>Default</Name>
         </UtilityBillScenario>
       </UtilityBillScenarios>
     </extension>
@@ -400,12 +400,10 @@
       <Appliances>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>
-          <Location>conditioned space</Location>
           <RatedAnnualkWh>650.0</RatedAnnualkWh>
         </Refrigerator>
         <CookingRange>
           <SystemIdentifier id='CookingRange1'/>
-          <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <IsInduction>false</IsInduction>
         </CookingRange>
