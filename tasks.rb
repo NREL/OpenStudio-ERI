@@ -2758,9 +2758,12 @@ def create_sample_hpxmls
     hpxml_bldg.hvac_distributions.each do |hvac_distribution|
       next unless hvac_distribution.number_of_return_registers.nil?
       next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
-      next unless hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
 
-      hvac_distribution.number_of_return_registers = hpxml_bldg.building_construction.number_of_conditioned_floors.ceil
+      if hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
+        hvac_distribution.number_of_return_registers = hpxml_bldg.building_construction.number_of_conditioned_floors.ceil
+      elsif hvac_distribution.air_type != HPXML::AirTypeFanCoil
+        hvac_distribution.number_of_return_registers = 0
+      end
     end
     hpxml_bldg.water_heating_systems.each do |dhw_system|
       next unless dhw_system.tank_volume.nil?
@@ -2798,6 +2801,15 @@ def create_sample_hpxmls
       next unless cooking_range.is_induction.nil?
 
       cooking_range.is_induction = false
+    end
+    (hpxml_bldg.clothes_washers +
+     hpxml_bldg.clothes_dryers +
+     hpxml_bldg.dishwashers +
+     hpxml_bldg.refrigerators +
+     hpxml_bldg.cooking_ranges).each do |appliance|
+      next unless appliance.location.nil?
+
+      appliance.location = HPXML::LocationConditionedSpace
     end
     zip_map = { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => '80019',
                 'USA_OR_Portland.Intl.AP.726980_TMY3.epw' => '97214',
