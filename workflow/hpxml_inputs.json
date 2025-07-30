@@ -804,7 +804,6 @@
     "dehumidifier_rh_setpoint": 0,
     "dehumidifier_fraction_dehumidification_load_served": 0,
     "clothes_washer_present": true,
-    "clothes_washer_location": "conditioned space",
     "clothes_washer_efficiency_type": "IntegratedModifiedEnergyFactor",
     "clothes_washer_efficiency": 1.21,
     "clothes_washer_rated_annual_kwh": 380,
@@ -814,13 +813,11 @@
     "clothes_washer_label_usage": 6,
     "clothes_washer_capacity": 3.2,
     "clothes_dryer_present": true,
-    "clothes_dryer_location": "conditioned space",
     "clothes_dryer_fuel_type": "electricity",
     "clothes_dryer_efficiency_type": "CombinedEnergyFactor",
     "clothes_dryer_efficiency": 3.73,
     "clothes_dryer_drying_method": "conventional",
     "dishwasher_present": true,
-    "dishwasher_location": "conditioned space",
     "dishwasher_efficiency_type": "RatedAnnualkWh",
     "dishwasher_efficiency": 307,
     "dishwasher_label_electric_rate": 0.12,
@@ -829,12 +826,10 @@
     "dishwasher_label_usage": 4,
     "dishwasher_place_setting_capacity": 12,
     "refrigerator_present": true,
-    "refrigerator_location": "conditioned space",
     "refrigerator_rated_annual_kwh": 650,
     "extra_refrigerator_present": false,
     "freezer_present": false,
     "cooking_range_oven_present": true,
-    "cooking_range_oven_location": "conditioned space",
     "cooking_range_oven_fuel_type": "electricity",
     "cooking_range_oven_is_induction": false,
     "cooking_range_oven_is_convection": false,
@@ -852,7 +847,7 @@
     "pool_heater_type": "none",
     "permanent_spa_present": false,
     "permanent_spa_heater_type": "none",
-    "utility_bill_scenario_names": "Bills",
+    "utility_bill_scenario_names": "Default",
     "combine_like_surfaces": true
   },
   "sample_files/base-appliances-coal.xml": {
@@ -952,8 +947,8 @@
     "geometry_unit_num_floors_above_grade": 2,
     "geometry_unit_cfa": 3600,
     "geometry_attic_type": "ConditionedAttic",
-    "ducts_supply_leakage_to_outside_value": 27,
-    "ducts_return_leakage_to_outside_value": 9,
+    "ducts_supply_leakage_to_outside_value": 18,
+    "ducts_return_leakage_to_outside_value": 18,
     "ducts_supply_insulation_r": 0,
     "ducts_return_insulation_r": 0,
     "ducts_supply_location": "conditioned space",
@@ -1017,7 +1012,6 @@
     "vehicle_type": "BatteryElectricVehicle",
     "vehicle_battery_capacity": 100,
     "vehicle_battery_usable_capacity": 80,
-    "vehicle_miles_driven_per_year": 10000,
     "vehicle_fuel_economy_combined": 0.25,
     "vehicle_fuel_economy_units": "kWh/mile"
   },
@@ -1056,6 +1050,9 @@
   },
   "sample_files/base-vehicle-ev-charger-undercharged.xml": {
     "parent_hpxml": "sample_files/base-vehicle-ev-charger.xml",
+    "vehicle_battery_capacity": null,
+    "vehicle_battery_usable_capacity": 53.503,
+    "vehicle_fuel_economy_combined": 0.267513,
     "schedules_filepaths": "../../HPXMLtoOpenStudio/resources/schedule_files/vehicle-ev-undercharged.csv"
   },
   "sample_files/base-vehicle-ev-charger-plug-load-ev.xml": {
@@ -1076,7 +1073,6 @@
     "vehicle_type": "BatteryElectricVehicle",
     "vehicle_battery_capacity": 100,
     "vehicle_battery_usable_capacity": 80,
-    "vehicle_miles_driven_per_year": 10000,
     "vehicle_fuel_economy_combined": 0.25,
     "vehicle_fuel_economy_units": "kWh/mile",
     "vehicle_fraction_charged_home": 0.75,
@@ -1953,10 +1949,10 @@
     "window_area_left": 20,
     "window_area_right": 20,
     "ducts_leakage_units": "Percent",
-    "ducts_supply_leakage_to_outside_value": 0.15,
+    "ducts_supply_leakage_to_outside_value": 0.1,
     "ducts_supply_location": "manufactured home belly",
     "ducts_supply_insulation_r": 0,
-    "ducts_return_leakage_to_outside_value": 0.05,
+    "ducts_return_leakage_to_outside_value": 0.1,
     "ducts_return_location": "manufactured home belly",
     "ducts_return_insulation_r": 0
   },
@@ -2126,7 +2122,7 @@
     "electric_panel_service_voltage": "240",
     "electric_panel_service_max_current_rating": 100,
     "electric_panel_breaker_spaces_headroom": 5,
-    "electric_panel_load_cooling_system_power_rating": 3542,
+    "electric_panel_load_heat_pump_power_rating": 3542,
     "electric_panel_load_other_power_rating": 559
   },
   "sample_files/base-hvac-air-to-air-heat-pump-1-speed-detailed-performance.xml": {
@@ -2265,8 +2261,8 @@
   },
   "sample_files/base-hvac-air-to-air-heat-pump-var-speed-backup-furnace.xml": {
     "parent_hpxml": "sample_files/base-hvac-air-to-air-heat-pump-var-speed-backup-boiler.xml",
-    "ducts_supply_leakage_to_outside_value": 40.5,
-    "ducts_return_leakage_to_outside_value": 13.5
+    "ducts_supply_leakage_to_outside_value": 27.0,
+    "ducts_return_leakage_to_outside_value": 27.0
   },
   "sample_files/base-hvac-air-to-air-heat-pump-var-speed-backup-furnace-autosize-factor.xml": {
     "parent_hpxml": "sample_files/base-hvac-air-to-air-heat-pump-var-speed-backup-furnace.xml",
@@ -2300,8 +2296,8 @@
   },
   "sample_files/base-hvac-air-to-air-heat-pump-var-speed-max-power-ratio-schedule-two-systems.xml": {
     "parent_hpxml": "sample_files/base-hvac-air-to-air-heat-pump-var-speed.xml",
-    "ducts_supply_leakage_to_outside_value": 40.5,
-    "ducts_return_leakage_to_outside_value": 13.5,
+    "ducts_supply_leakage_to_outside_value": 27.0,
+    "ducts_return_leakage_to_outside_value": 27.0,
     "schedules_filepaths": "../../HPXMLtoOpenStudio/resources/schedule_files/hvac-variable-system-maximum-power-ratios-varied.csv"
   },
   "sample_files/base-hvac-air-to-air-heat-pump-var-speed-max-power-ratio-schedule-10-mins.xml": {
@@ -2535,8 +2531,8 @@
   "sample_files/base-hvac-ducts-leakage-percent.xml": {
     "parent_hpxml": "sample_files/base.xml",
     "ducts_leakage_units": "Percent",
-    "ducts_supply_leakage_to_outside_value": 0.112,
-    "ducts_return_leakage_to_outside_value": 0.038
+    "ducts_supply_leakage_to_outside_value": 0.075,
+    "ducts_return_leakage_to_outside_value": 0.075
   },
   "sample_files/base-hvac-ducts-areas.xml": {
     "parent_hpxml": "sample_files/base.xml",
@@ -3151,10 +3147,10 @@
     "cooling_system_cooling_efficiency_type": "EER",
     "cooling_system_cooling_efficiency": 8.5
   },
-  "sample_files/base-hvac-room-ac-only-33percent.xml": {
+  "sample_files/base-hvac-room-ac-only-partial-conditioning.xml": {
     "parent_hpxml": "sample_files/base-hvac-room-ac-only.xml",
     "cooling_system_cooling_capacity": 9000,
-    "cooling_system_fraction_cool_load_served": 0.33
+    "cooling_system_fraction_cool_load_served": 0.35
   },
   "sample_files/base-hvac-room-ac-only-ceer.xml": {
     "parent_hpxml": "sample_files/base-hvac-room-ac-only.xml",
@@ -3230,8 +3226,8 @@
     "parent_hpxml": "sample_files/base.xml",
     "heating_system_heating_capacity": 5000,
     "cooling_system_cooling_capacity": 6000,
-    "ducts_supply_leakage_to_outside_value": 40.5,
-    "ducts_return_leakage_to_outside_value": 13.5
+    "ducts_supply_leakage_to_outside_value": 27.0,
+    "ducts_return_leakage_to_outside_value": 27.0
   },
   "sample_files/base-hvac-undersized-allow-increased-fixed-capacities.xml": {
     "parent_hpxml": "sample_files/base-hvac-undersized.xml"
@@ -3264,8 +3260,7 @@
     "holiday_lighting_period": "Nov 24 - Jan 6"
   },
   "sample_files/base-lighting-kwh-per-year.xml": {
-    "parent_hpxml": "sample_files/base.xml",
-    "lighting_interior_usage_multiplier": 1.5
+    "parent_hpxml": "sample_files/base.xml"
   },
   "sample_files/base-lighting-mixed.xml": {
     "parent_hpxml": "sample_files/base.xml"
@@ -3472,8 +3467,8 @@
   },
   "sample_files/base-mechvent-multiple.xml": {
     "parent_hpxml": "sample_files/base-mechvent-bath-kitchen-fans.xml",
-    "ducts_supply_leakage_to_outside_value": 40.5,
-    "ducts_return_leakage_to_outside_value": 13.5
+    "ducts_supply_leakage_to_outside_value": 27.0,
+    "ducts_return_leakage_to_outside_value": 27.0
   },
   "sample_files/base-mechvent-supply.xml": {
     "parent_hpxml": "sample_files/base.xml",
@@ -3495,6 +3490,7 @@
   },
   "sample_files/base-misc-bills.xml": {
     "parent_hpxml": "sample_files/base.xml",
+    "utility_bill_scenario_names": "Custom",
     "utility_bill_electricity_fixed_charges": 12,
     "utility_bill_natural_gas_fixed_charges": 12,
     "utility_bill_electricity_marginal_rates": 0.12,
@@ -3502,13 +3498,13 @@
   },
   "sample_files/base-misc-bills-detailed-only.xml": {
     "parent_hpxml": "sample_files/base.xml",
-    "utility_bill_scenario_names": "Tiered, TOU, Tiered and TOU, Real-Time Pricing",
-    "utility_bill_electricity_filepaths": "../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Time-of-Use Rate High Peak.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Real-Time Pricing Rate.json"
+    "utility_bill_scenario_names": "Tiered, Tiered and TOU, Real-Time Pricing",
+    "utility_bill_electricity_filepaths": "../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Real-Time Pricing Rate.json"
   },
   "sample_files/base-misc-bills-battery-scheduled-detailed-only.xml": {
     "parent_hpxml": "sample_files/base-battery-scheduled.xml",
-    "utility_bill_scenario_names": "Tiered, TOU, Tiered and TOU, Real-Time Pricing",
-    "utility_bill_electricity_filepaths": "../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Time-of-Use Rate High Peak.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Real-Time Pricing Rate.json"
+    "utility_bill_scenario_names": "Tiered, Tiered and TOU, Real-Time Pricing",
+    "utility_bill_electricity_filepaths": "../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Real-Time Pricing Rate.json"
   },
   "sample_files/base-misc-bills-pv.xml": {
     "parent_hpxml": "sample_files/base-pv.xml",
@@ -3527,12 +3523,12 @@
   },
   "sample_files/base-misc-bills-pv-detailed-only.xml": {
     "parent_hpxml": "sample_files/base-pv.xml",
-    "utility_bill_scenario_names": "Tiered, TOU, Tiered and TOU, Real-Time Pricing",
-    "utility_bill_electricity_filepaths": "../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Real-Time Pricing Rate.json"
+    "utility_bill_scenario_names": "Tiered,  Tiered and TOU, Real-Time Pricing",
+    "utility_bill_electricity_filepaths": "../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Time-of-Use Rate.json, ../../ReportUtilityBills/resources/detailed_rates/Sample Real-Time Pricing Rate.json"
   },
   "sample_files/base-misc-bills-pv-mixed.xml": {
     "parent_hpxml": "sample_files/base-pv.xml",
-    "utility_bill_scenario_names": "Simple, Detailed",
+    "utility_bill_scenario_names": "Default, Tiered",
     "utility_bill_electricity_filepaths": "NA, ../../ReportUtilityBills/resources/detailed_rates/Sample Tiered Rate.json"
   },
   "sample_files/base-misc-defaults.xml": {
@@ -3556,7 +3552,6 @@
     "hvac_control_cooling_weekend_setpoint": null,
     "ducts_supply_location": null,
     "ducts_return_location": null,
-    "ducts_number_of_return_registers": 2,
     "mech_vent_fan_type": "exhaust only",
     "mech_vent_total_recovery_efficiency": 0,
     "mech_vent_sensible_recovery_efficiency": 0,
@@ -3582,7 +3577,6 @@
     "battery_present": true,
     "vehicle_type": "BatteryElectricVehicle",
     "ev_charger_present": true,
-    "clothes_washer_location": null,
     "clothes_washer_efficiency": null,
     "clothes_washer_rated_annual_kwh": null,
     "clothes_washer_label_electric_rate": null,
@@ -3590,19 +3584,15 @@
     "clothes_washer_label_annual_gas_cost": null,
     "clothes_washer_label_usage": null,
     "clothes_washer_capacity": null,
-    "clothes_dryer_location": null,
     "clothes_dryer_efficiency": null,
     "clothes_dryer_drying_method": null,
-    "dishwasher_location": null,
     "dishwasher_efficiency": null,
     "dishwasher_label_electric_rate": null,
     "dishwasher_label_gas_rate": null,
     "dishwasher_label_annual_gas_cost": null,
     "dishwasher_label_usage": null,
     "dishwasher_place_setting_capacity": null,
-    "refrigerator_location": null,
     "refrigerator_rated_annual_kwh": null,
-    "cooking_range_oven_location": null,
     "cooking_range_oven_is_induction": null,
     "cooking_range_oven_is_convection": null,
     "ceiling_fan_present": true,
@@ -3647,7 +3637,6 @@
     "extra_refrigerator_present": true,
     "extra_refrigerator_rated_annual_kwh": 748,
     "freezer_present": true,
-    "freezer_location": "conditioned space",
     "freezer_rated_annual_kwh": 354,
     "misc_plug_loads_other_annual_kwh": 2457,
     "misc_plug_loads_other_frac_sensible": 0.855,
@@ -3717,41 +3706,58 @@
   "sample_files/base-misc-usage-multiplier.xml": {
     "parent_hpxml": "sample_files/base.xml",
     "general_water_use_usage_multiplier": 0.9,
-    "water_fixtures_usage_multiplier": 0.9,
-    "lighting_interior_usage_multiplier": 0.9,
-    "lighting_exterior_usage_multiplier": 0.9,
-    "lighting_garage_usage_multiplier": 0.9,
-    "clothes_washer_usage_multiplier": 0.9,
-    "clothes_dryer_usage_multiplier": 0.9,
-    "dishwasher_usage_multiplier": 0.9,
+    "water_fixtures_usage_multiplier": 0.75,
+    "lighting_interior_fraction_cfl": 0.0,
+    "lighting_interior_fraction_lfl": 0.0,
+    "lighting_interior_fraction_led": 0.25,
+    "lighting_exterior_fraction_cfl": 0.0,
+    "lighting_exterior_fraction_lfl": 0.0,
+    "lighting_exterior_fraction_led": 0.25,
+    "lighting_garage_fraction_cfl": 0.0,
+    "lighting_garage_fraction_lfl": 0.0,
+    "lighting_garage_fraction_led": 0.25,
+    "lighting_interior_usage_multiplier": 0.75,
+    "lighting_exterior_usage_multiplier": 0.75,
+    "lighting_garage_usage_multiplier": 0.75,
+    "clothes_washer_usage_multiplier": 0.75,
+    "clothes_dryer_usage_multiplier": 0.75,
+    "dishwasher_usage_multiplier": 0.75,
     "refrigerator_usage_multiplier": 0.9,
     "freezer_present": true,
-    "freezer_location": "conditioned space",
     "freezer_rated_annual_kwh": 354,
     "freezer_usage_multiplier": 0.9,
-    "cooking_range_oven_usage_multiplier": 0.9,
-    "misc_plug_loads_television_usage_multiplier": 0.9,
-    "misc_plug_loads_other_usage_multiplier": 0.9,
+    "cooking_range_oven_usage_multiplier": 0.75,
+    "misc_plug_loads_television_usage_multiplier": 0.75,
+    "misc_plug_loads_other_usage_multiplier": 0.75,
     "misc_fuel_loads_grill_present": true,
     "misc_fuel_loads_grill_fuel_type": "propane",
-    "misc_fuel_loads_grill_usage_multiplier": 0.9,
+    "misc_fuel_loads_grill_usage_multiplier": 0.75,
     "misc_fuel_loads_lighting_present": true,
-    "misc_fuel_loads_lighting_usage_multiplier": 0.9,
+    "misc_fuel_loads_lighting_usage_multiplier": 0.75,
     "misc_fuel_loads_fireplace_present": true,
     "misc_fuel_loads_fireplace_fuel_type": "wood",
-    "misc_fuel_loads_fireplace_usage_multiplier": 0.9,
+    "misc_fuel_loads_fireplace_usage_multiplier": 0.75,
     "pool_present": true,
-    "pool_pump_annual_kwh": 2700,
-    "pool_pump_usage_multiplier": 0.9,
+    "pool_pump_annual_kwh": null,
+    "pool_pump_usage_multiplier": 0.75,
     "pool_heater_type": "gas fired",
-    "pool_heater_annual_therm": 500,
-    "pool_heater_usage_multiplier": 0.9,
+    "pool_heater_annual_therm": null,
+    "pool_heater_usage_multiplier": 0.75,
     "permanent_spa_present": true,
-    "permanent_spa_pump_annual_kwh": 1000,
-    "permanent_spa_pump_usage_multiplier": 0.9,
+    "permanent_spa_pump_annual_kwh": null,
+    "permanent_spa_pump_usage_multiplier": 0.75,
     "permanent_spa_heater_type": "electric resistance",
-    "permanent_spa_heater_annual_kwh": 1300,
-    "permanent_spa_heater_usage_multiplier": 0.9
+    "permanent_spa_heater_annual_kwh": null,
+    "permanent_spa_heater_usage_multiplier": 0.75,
+    "vehicle_type": "BatteryElectricVehicle",
+    "vehicle_battery_usable_capacity": 41.978,
+    "vehicle_fuel_economy_combined": 0.219174,
+    "vehicle_fuel_economy_units": "kWh/mile",
+    "vehicle_fraction_charged_home": 0.75,
+    "vehicle_fraction_charged_home": 0.5,
+    "ev_charger_present": true,
+    "ev_charger_level": 1,
+    "ev_charger_power": 1600
   },
   "sample_files/base-bldgtype-mf-whole-building.xml": {
     "parent_hpxml": "sample_files/base.xml",
@@ -3917,7 +3923,6 @@
     "vehicle_type": "BatteryElectricVehicle",
     "vehicle_battery_capacity": 100,
     "vehicle_battery_usable_capacity": 80,
-    "vehicle_miles_driven_per_year": 10000,
     "vehicle_fuel_economy_combined": 0.25,
     "vehicle_fuel_economy_units": "kWh/mile",
     "vehicle_fraction_charged_home": 0.75,
