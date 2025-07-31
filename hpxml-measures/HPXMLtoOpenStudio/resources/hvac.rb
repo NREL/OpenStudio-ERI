@@ -825,6 +825,11 @@ module HVAC
     plant_loop.addDemandBranchForComponent(htg_coil)
     plant_loop.addDemandBranchForComponent(clg_coil)
 
+    # FIXME: Workaround for https://github.com/NREL/OpenStudio/issues/5458
+    # Set the fluid type again because plant_loop.addSupplyBranchForComponent(ground_heat_exch_vert) resets it to Water
+    # Remove the following line if the above issue is addressed
+    plant_loop.setFluidType(hp_ap.fluid_type)
+
     sizing_plant = plant_loop.sizingPlant
     sizing_plant.setLoopType('Condenser')
     sizing_plant.setDesignLoopExitTemperature(UnitConversions.convert(hp_ap.design_chw, 'F', 'C'))
@@ -4312,9 +4317,10 @@ module HVAC
       # Program
       temp_override_program = Model.add_ems_program(
         model,
-        name: "#{heating_sch.name} program"
+        name: "#{heating_sch.name} max heating temp program"
       )
-      temp_override_program.addLine("If #{tout_db_sensor.name} > #{UnitConversions.convert(max_heating_temp, 'F', 'C')}")
+      temp_override_program.addLine("Set max_heating_temp = #{UnitConversions.convert(max_heating_temp, 'F', 'C')}")
+      temp_override_program.addLine("If #{tout_db_sensor.name} > max_heating_temp")
       temp_override_program.addLine("  Set #{actuator.name} = 0")
       temp_override_program.addLine('Else')
       temp_override_program.addLine("  Set #{actuator.name} = NULL") # Allow normal operation

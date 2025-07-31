@@ -1858,12 +1858,12 @@ module ERI_301_Ruleset
                                          shared_recirculation_control_type: hot_water_distribution.shared_recirculation_control_type)
 
     # New water fixtures
-    orig_bldg.water_fixtures.each do |orig_water_fixture|
-      next unless [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? orig_water_fixture.water_fixture_type
-
+    orig_water_fixtures = orig_bldg.water_fixtures.select { |f| [HPXML::WaterFixtureTypeShowerhead, HPXML::WaterFixtureTypeFaucet].include? f.water_fixture_type }
+    all_low_flow = orig_water_fixtures.all? { |f| f.low_flow }
+    orig_water_fixtures.each do |orig_water_fixture|
       new_bldg.water_fixtures.add(id: orig_water_fixture.id,
                                   water_fixture_type: orig_water_fixture.water_fixture_type,
-                                  low_flow: orig_water_fixture.low_flow)
+                                  low_flow: all_low_flow)
     end
   end
 
@@ -2322,7 +2322,7 @@ module ERI_301_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
                               label_energy_use: Defaults.get_ceiling_fan_power(),
-                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_count(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 
@@ -2355,7 +2355,7 @@ module ERI_301_Ruleset
 
     new_bldg.ceiling_fans.add(id: 'CeilingFans',
                               label_energy_use: avg_w,
-                              count: Defaults.get_ceiling_fan_quantity(@nbeds))
+                              count: Defaults.get_ceiling_fan_count(@nbeds))
     new_bldg.hvac_controls[0].ceiling_fan_cooling_setpoint_temp_offset = 0.5
   end
 

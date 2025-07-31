@@ -1025,6 +1025,7 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
     hpxml_bldg.windows.each do |window|
       window.interior_shading_factor_summer = nil
       window.interior_shading_factor_winter = nil
+      window.interior_shading_type = nil
       window.performance_class = HPXML::WindowClassResidential
     end
   elsif hpxml_file.include?('EPA_Tests')
@@ -2291,11 +2292,11 @@ def create_sample_hpxmls
                   'base-dhw-recirc-demand.xml',
                   'base-dhw-solar-fraction.xml',
                   'base-dhw-solar-indirect-flat-plate.xml',
-                  'base-dhw-tank-elec-uef.xml',
-                  'base-dhw-tank-gas-uef.xml',
-                  'base-dhw-tank-heat-pump-uef.xml',
-                  'base-dhw-tankless-electric-uef.xml',
-                  'base-dhw-tankless-gas-uef.xml',
+                  'base-dhw-tank-elec-ef.xml',
+                  'base-dhw-tank-gas-ef.xml',
+                  'base-dhw-tank-heat-pump-ef.xml',
+                  'base-dhw-tankless-electric-ef.xml',
+                  'base-dhw-tankless-gas-ef.xml',
                   'base-dhw-tankless-propane.xml',
                   'base-dhw-tank-oil.xml',
                   'base-dhw-tank-wood.xml',
@@ -2475,6 +2476,9 @@ def create_sample_hpxmls
       roof.roof_type = nil
       roof.interior_finish_type = nil
       roof.interior_finish_thickness = nil
+      if roof.radiant_barrier && roof.radiant_barrier_grade.nil?
+        roof.radiant_barrier_grade = 2
+      end
     end
     (hpxml_bldg.rim_joists + hpxml_bldg.walls).each do |wall_or_rim_joist|
       wall_or_rim_joist.siding = nil
@@ -2522,9 +2526,18 @@ def create_sample_hpxmls
         end
       end
     end
+    hpxml_bldg.slabs.each do |slab|
+      if slab.carpet_fraction.nil?
+        slab.carpet_fraction = 0.0
+      end
+      if slab.carpet_r_value.nil?
+        slab.carpet_r_value = 0.0
+      end
+    end
     hpxml_bldg.windows.each do |window|
       window.interior_shading_factor_winter = nil
       window.interior_shading_factor_summer = nil
+      window.interior_shading_type = nil
     end
     hpxml_bldg.cooling_systems.each do |cooling_system|
       cooling_system.primary_system = nil
@@ -2745,9 +2758,27 @@ def create_sample_hpxmls
     hpxml_bldg.hvac_distributions.each do |hvac_distribution|
       next unless hvac_distribution.number_of_return_registers.nil?
       next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
-      next unless hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
 
-      hvac_distribution.number_of_return_registers = hpxml_bldg.building_construction.number_of_conditioned_floors.ceil
+      if hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
+        hvac_distribution.number_of_return_registers = hpxml_bldg.building_construction.number_of_conditioned_floors.ceil
+      elsif hvac_distribution.air_type != HPXML::AirTypeFanCoil
+        hvac_distribution.number_of_return_registers = 0
+      end
+    end
+    hpxml_bldg.water_heating_systems.each do |dhw_system|
+      next unless dhw_system.tank_volume.nil?
+
+      if dhw_system.water_heater_type == HPXML::WaterHeaterTypeStorage
+        if dhw_system.fuel_type == HPXML::FuelTypeElectricity
+          dhw_system.tank_volume = 40
+        else
+          dhw_system.tank_volume = 30
+        end
+      elsif dhw_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        dhw_system.tank_volume = 80
+      elsif dhw_system.water_heater_type == HPXML::WaterHeaterTypeCombiStorage
+        dhw_system.tank_volume = 50
+      end
     end
     # TODO: Allow UsageBin in 301validator and remove code below
     hpxml_bldg.water_heating_systems.each do |dhw_system|
@@ -2755,15 +2786,30 @@ def create_sample_hpxmls
       next unless [HPXML::WaterHeaterTypeStorage, HPXML::WaterHeaterTypeHeatPump].include? dhw_system.water_heater_type
       next unless dhw_system.first_hour_rating.nil?
 
-      if dhw_system.usage_bin == HPXML::WaterHeaterUsageBinLow
-        dhw_system.usage_bin = nil
-        dhw_system.first_hour_rating = 46.0
-      elsif dhw_system.usage_bin == HPXML::WaterHeaterUsageBinMedium
-        dhw_system.usage_bin = nil
-        dhw_system.first_hour_rating = 56.0
-      else
-        fail hpxml_path
+      dhw_system.first_hour_rating = 56.0
+    end
+    hpxml_bldg.hot_water_distributions.each do |hot_water_distribution|
+      if hot_water_distribution.system_type == HPXML::DHWDistTypeStandard
+        hot_water_distribution.standard_piping_length = 50.0 if hot_water_distribution.standard_piping_length.nil?
+      elsif hot_water_distribution.system_type == HPXML::DHWDistTypeRecirc
+        hot_water_distribution.recirculation_piping_loop_length = 50.0 if hot_water_distribution.recirculation_piping_loop_length.nil?
+        hot_water_distribution.recirculation_branch_piping_length = 50.0 if hot_water_distribution.recirculation_branch_piping_length.nil?
+        hot_water_distribution.recirculation_pump_power = 50.0 if hot_water_distribution.recirculation_pump_power.nil?
       end
+    end
+    hpxml_bldg.cooking_ranges.each do |cooking_range|
+      next unless cooking_range.is_induction.nil?
+
+      cooking_range.is_induction = false
+    end
+    (hpxml_bldg.clothes_washers +
+     hpxml_bldg.clothes_dryers +
+     hpxml_bldg.dishwashers +
+     hpxml_bldg.refrigerators +
+     hpxml_bldg.cooking_ranges).each do |appliance|
+      next unless appliance.location.nil?
+
+      appliance.location = HPXML::LocationConditionedSpace
     end
     zip_map = { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => '80019',
                 'USA_OR_Portland.Intl.AP.726980_TMY3.epw' => '97214',
