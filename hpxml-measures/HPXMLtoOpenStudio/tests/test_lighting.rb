@@ -6,15 +6,18 @@ require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
 require_relative '../resources/util.rb'
+require_relative 'util.rb'
 
 class HPXMLtoOpenStudioLightingTest < Minitest::Test
-  def teardown
-    File.delete(File.join(File.dirname(__FILE__), 'results_annual.csv')) if File.exist? File.join(File.dirname(__FILE__), 'results_annual.csv')
-    File.delete(File.join(File.dirname(__FILE__), 'results_design_load_details.csv')) if File.exist? File.join(File.dirname(__FILE__), 'results_design_load_details.csv')
+  def setup
+    @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
+    @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
+    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
   end
 
-  def sample_files_dir
-    return File.join(File.dirname(__FILE__), '..', '..', 'workflow', 'sample_files')
+  def teardown
+    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
+    cleanup_results_files
   end
 
   def get_kwh_per_year(model, name)
@@ -44,7 +47,7 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
 
   def test_lighting
     args_hash = {}
-    args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, 'base.xml'))
+    args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, 'base.xml'))
     model, _hpxml, _hpxml_bldg = _test_measure(args_hash)
 
     # Check interior lighting
@@ -56,7 +59,7 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
 
   def test_lighting_garage
     args_hash = {}
-    args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, 'base-enclosure-2stories-garage.xml'))
+    args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, 'base-enclosure-2stories-garage.xml'))
     model, _hpxml, _hpxml_bldg = _test_measure(args_hash)
 
     # Check interior lighting
@@ -74,7 +77,7 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
      'base-misc-defaults.xml',
      'base-lighting-holiday.xml'].each do |hpxml_name|
       args_hash = {}
-      args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, hpxml_name))
+      args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, hpxml_name))
       model, _hpxml, hpxml_bldg = _test_measure(args_hash)
 
       if hpxml_name == 'base-lighting-holiday.xml'
@@ -88,7 +91,7 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
 
   def test_lighting_kwh_per_year
     args_hash = {}
-    args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, 'base-lighting-kwh-per-year.xml'))
+    args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, 'base-lighting-kwh-per-year.xml'))
     model, _hpxml, hpxml_bldg = _test_measure(args_hash)
 
     # Check interior lighting
@@ -104,7 +107,7 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
 
   def test_lighting_none
     args_hash = {}
-    args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, 'base-lighting-none.xml'))
+    args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, 'base-lighting-none.xml'))
     model, _hpxml, _hpxml_bldg = _test_measure(args_hash)
 
     # Check interior lighting
@@ -120,17 +123,38 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
   def test_ceiling_fan
     # Efficiency
     args_hash = {}
-    args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, 'base-lighting-ceiling-fans.xml'))
+    args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, 'base-lighting-ceiling-fans.xml'))
     model, _hpxml, _hpxml_bldg = _test_measure(args_hash)
 
     assert_in_delta(154, get_kwh_per_year(model, Constants::ObjectTypeCeilingFan), 1.0)
 
     # Label energy use
     args_hash = {}
-    args_hash['hpxml_path'] = File.absolute_path(File.join(sample_files_dir, 'base-lighting-ceiling-fans-label-energy-use.xml'))
+    args_hash['hpxml_path'] = File.absolute_path(File.join(@sample_files_path, 'base-lighting-ceiling-fans-label-energy-use.xml'))
     model, _hpxml, _hpxml_bldg = _test_measure(args_hash)
 
     assert_in_delta(200, get_kwh_per_year(model, Constants::ObjectTypeCeilingFan), 1.0)
+  end
+
+  def test_operational_0_occupants
+    args_hash = {}
+    args_hash['hpxml_path'] = @tmp_hpxml_path
+    hpxml, hpxml_bldg = _create_hpxml('base-residents-0.xml')
+    hpxml_bldg.ceiling_fans.add(id: "CeilingFan#{hpxml_bldg.ceiling_fans.size + 1}")
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    model, _hpxml, _hpxml_bldg = _test_measure(args_hash)
+
+    # Check interior lighting
+    assert_equal(0.0, get_kwh_per_year(model, Constants::ObjectTypeLightingInterior))
+
+    # Check garage lighting
+    assert_equal(0.0, get_kwh_per_year(model, Constants::ObjectTypeLightingGarage))
+
+    # Check exterior lighting
+    assert_equal(0.0, get_kwh_per_year(model, Constants::ObjectTypeLightingExterior))
+
+    # Check ceiling fan
+    assert_equal(0.0, get_kwh_per_year(model, Constants::ObjectTypeCeilingFan))
   end
 
   def _test_measure(args_hash)
@@ -164,10 +188,15 @@ class HPXMLtoOpenStudioLightingTest < Minitest::Test
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
 
-    hpxml = HPXML.new(hpxml_path: args_hash['hpxml_path'])
+    hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), 'in.xml'))
 
     File.delete(File.join(File.dirname(__FILE__), 'in.xml'))
 
     return model, hpxml, hpxml.buildings[0]
+  end
+
+  def _create_hpxml(hpxml_name)
+    hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, hpxml_name))
+    return hpxml, hpxml.buildings[0]
   end
 end

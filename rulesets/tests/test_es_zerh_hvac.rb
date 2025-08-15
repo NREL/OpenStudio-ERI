@@ -13,8 +13,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.sch'))
     @results_paths = []
   end
 
@@ -27,7 +27,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     puts
   end
 
-  def get_es_zerh_duct_leakage(program_version, value)
+  def get_duct_leakage(program_version, value)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::SFFloridaVer3_1,
         ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
         ZERH::SFVer2, ZERH::MFVer2].include? program_version
@@ -42,7 +42,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_central_ac_seer_cz5(program_version)
+  def get_central_ac_seer_cz5(program_version)
     if [ES::SFPacificVer3_0].include? program_version
       return 14.5
     elsif [ES::SFFloridaVer3_1].include? program_version
@@ -56,7 +56,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_ashp_seer_cz5(program_version)
+  def get_ashp_seer_cz5(program_version)
     if [ES::SFNationalVer3_1, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2,
         ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
       return 15.0
@@ -73,7 +73,24 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_ashp_seer_cz7(program_version)
+  def get_ashp_eer_cz5(program_version)
+    if [ES::SFNationalVer3_1, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2,
+        ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
+      return 12.5
+    elsif [ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
+      return 12.1
+    elsif [ZERH::Ver1].include? program_version
+      return 13.0
+    elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
+           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
+           ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      return 16.0
+    else
+      fail "Unhandled program version: #{program_version}"
+    end
+  end
+
+  def get_ashp_seer_cz7(program_version)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
         ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
         ZERH::SFVer2, ZERH::MFVer2].include? program_version
@@ -83,7 +100,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_ashp_hspf_cz5(program_version)
+  def get_ashp_hspf_cz5(program_version)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_0,
         ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
       return 9.25
@@ -102,7 +119,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_ashp_hspf_cz7(program_version)
+  def get_ashp_hspf_cz7(program_version)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_2,
         ES::MFNationalVer1_1, ES::MFNationalVer1_2].include? program_version
       return 9.20
@@ -114,7 +131,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_gshp_cop_cz5(program_version)
+  def get_gshp_cop_cz5(program_version)
     if [ES::MFNationalVer1_2, ES::MFNationalVer1_1, ES::MFNationalVer1_0].include? program_version
       return 2.7
     elsif [ES::SFNationalVer3_3, ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
@@ -124,7 +141,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_gshp_eer_cz5(program_version)
+  def get_gshp_eer_cz5(program_version)
     if [ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
       return 14.0
     elsif [ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
@@ -136,7 +153,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_gshp_cop_cz7(program_version)
+  def get_gshp_cop_cz7(program_version)
     if [ES::SFNationalVer3_1, ZERH::Ver1].include? program_version
       return 3.6
     elsif [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_0].include? program_version
@@ -152,7 +169,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_gshp_eer_cz7(program_version)
+  def get_gshp_eer_cz7(program_version)
     if [ES::SFNationalVer3_1, ES::MFNationalVer1_1, ZERH::Ver1].include? program_version
       return 17.1
     elsif [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_0].include? program_version
@@ -166,7 +183,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_gas_boiler_afue_cz5(program_version)
+  def get_gas_boiler_afue_cz5(program_version)
     if [ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
       return 0.90
     elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
@@ -182,7 +199,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_gas_furnace_afue_cz5(program_version)
+  def get_gas_furnace_afue_cz5(program_version)
     if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::SFOregonWashingtonVer3_2,
         ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ES::MFOregonWashingtonVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
       return 0.95
@@ -197,7 +214,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_es_zerh_oil_furnace_afue_cz5(program_version)
+  def get_oil_furnace_afue_cz5(program_version)
     if [ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
       return 0.85
     elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
@@ -238,6 +255,23 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     end
   end
 
+  def get_eer_from_seer(seer)
+    return { 13.0 => 11.3,
+             14.0 => 11.9,
+             14.5 => 12.2,
+             15.0 => 12.4,
+             16.0 => 13.0,
+             18.0 => 13.8 }[seer]
+  end
+
+  def get_compressor_type_from_seer(seer)
+    if seer <= 15
+      return HPXML::HVACCompressorTypeSingleStage
+    else
+      return HPXML::HVACCompressorTypeTwoStage
+    end
+  end
+
   def test_none
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-hvac-none.xml', program_version)
@@ -258,7 +292,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -275,8 +309,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -284,7 +318,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-hvac-boiler-gas-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_boiler_afue_cz5(program_version), frac_load: 1.0 }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_boiler_afue_cz5(program_version), frac_load: 1.0 }])
       _check_cooling_system(hpxml_bldg)
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
@@ -300,7 +334,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -317,8 +351,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -327,7 +361,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh('base-hvac-furnace-gas-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml_bldg)
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
@@ -346,8 +380,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -356,7 +390,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh('base-hvac-stove-wood-pellets-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_cooling_system(hpxml_bldg)
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
@@ -375,8 +409,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -387,7 +421,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -404,8 +438,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -416,7 +450,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -433,8 +467,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless [*ES::NationalVersions, *ZERH::AllVersions].include?(program_version)
 
@@ -453,11 +487,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
           ZERH::SFVer2, ZERH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0,
              ZERH::Ver1].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 80, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz7(program_version), eer: get_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 80, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -477,8 +511,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -490,7 +524,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
           _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -507,8 +541,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         else
           fail "Unhandled program version: #{program_version}"
         end
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
         next unless [*ES::NationalVersions, *ZERH::AllVersions].include?(program_version)
 
@@ -525,11 +559,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
         if [ES::SFNationalVer3_0, ES::MFNationalVer1_0, ZERH::Ver1].include? program_version
-          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 80, **hvac_iq_values }])
+          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz7(program_version), eer: get_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_iq_values }])
         elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
                ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
                ZERH::SFVer2, ZERH::MFVer2].include? program_version
-          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         else
           fail "Unhandled program version: #{program_version}"
         end
@@ -549,8 +583,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         else
           fail "Unhandled program version: #{program_version}"
         end
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       end
     end
   end
@@ -562,7 +596,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -579,8 +613,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -591,7 +625,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -608,23 +642,23 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
   def test_ground_source_heat_pump
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump.xml', program_version)
+      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump-1-speed.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [*ES::MFVersions, ZERH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz5(program_version), eer: get_es_zerh_gshp_eer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 80, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz5(program_version), eer: get_gshp_eer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ZERH::Ver1, ZERH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -644,13 +678,13 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless [*ES::NationalVersions, *ZERH::AllVersions].include?(program_version)
 
       # Test in climate zone 7
-      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump.xml', program_version)
+      _convert_to_es_zerh('base-hvac-ground-to-air-heat-pump-1-speed.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '7'
@@ -662,11 +696,11 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [ES::SFNationalVer3_0, *ES::MFVersions, ZERH::Ver1, ZERH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz7(program_version), eer: get_es_zerh_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, pump_w_per_ton: 80, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz7(program_version), eer: get_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
              ZERH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -686,8 +720,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -698,7 +732,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: get_es_zerh_gas_furnace_afue_cz5(program_version), backup_heating_switchover_temp: 30, shr: 0.73, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: get_gas_furnace_afue_cz5(program_version), **hvac_iq_values }])
+
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -715,8 +750,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -727,7 +762,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         hpxml_bldg = _test_ruleset(program_version)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
-        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
         _check_heat_pump(hpxml_bldg)
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -745,8 +780,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         else
           fail "Unhandled program version: #{program_version}"
         end
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       end
     end
   end
@@ -762,7 +797,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         hpxml_bldg = _test_ruleset(program_version)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
-        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
+        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
         _check_heat_pump(hpxml_bldg)
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -780,8 +815,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         else
           fail "Unhandled program version: #{program_version}"
         end
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       end
     end
   end
@@ -797,7 +832,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.65, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
           _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -814,8 +849,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         else
           fail "Unhandled program version: #{program_version}"
         end
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       end
     end
   end
@@ -827,8 +862,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh(hpxml_name, program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.65, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -846,8 +881,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }] * 2)
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }] * 2)
     end
   end
 
@@ -862,7 +897,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.65, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
           _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -879,8 +914,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         else
           fail "Unhandled program version: #{program_version}"
         end
-        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+        _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                         { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
       end
     end
   end
@@ -891,7 +926,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -909,8 +944,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -920,7 +955,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -938,8 +973,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -949,7 +984,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -967,8 +1002,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -977,8 +1012,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _convert_to_es_zerh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -996,14 +1031,14 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       _convert_to_es_zerh('base-foundation-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1022,14 +1057,14 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       _convert_to_es_zerh('base-foundation-ambient.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1048,15 +1083,15 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # Test w/ 2 stories
       _convert_to_es_zerh('base-enclosure-2stories.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1079,8 +1114,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 81.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # Test w/ 2 stories
       _convert_to_es_zerh('base-foundation-multiple.xml', program_version)
@@ -1091,8 +1126,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1115,8 +1150,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # Test w/ 2 stories
       _convert_to_es_zerh('base-foundation-ambient.xml', program_version)
@@ -1127,8 +1162,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 1.0, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1151,8 +1186,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 27.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1164,38 +1199,38 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       if [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
           ZERH::SFVer2, ZERH::MFVer2].include? program_version
-        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_boiler_afue_cz5(program_version), frac_load: 0.1 },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values }])
+        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_boiler_afue_cz5(program_version), frac_load: 0.1 },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
              ZERH::Ver1].include? program_version
-        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_boiler_afue_cz5(program_version), frac_load: 0.1 },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeOil, eff: get_es_zerh_oil_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values }])
+        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_boiler_afue_cz5(program_version), frac_load: 0.1 },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeOil, eff: get_oil_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 0.1333, shr: 0.73, **hvac_iq_values },
-                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 0.1333, shr: 0.65, **hvac_iq_values },
-                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 0.1333, shr: 0.65, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.1333, **hvac_iq_values },
+                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.1333, **hvac_iq_values },
+                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.1333, **hvac_iq_values }])
       if [*ES::MFVersions, ZERH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_es_zerh_gshp_cop_cz5(program_version), eer: get_es_zerh_gshp_eer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, pump_w_per_ton: 80, is_shared_system: false, shr: 0.73, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz5(program_version), eer: get_gshp_eer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, pump_w_per_ton: 80, is_shared_system: false, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ZERH::Ver1, ZERH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -1213,8 +1248,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_es_zerh_gas_furnace_afue_cz5(program_version), frac_load: 0.2, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_es_zerh_central_ac_seer_cz5(program_version), frac_load: 0.3, shr: 0.73, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.2, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.3, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1232,8 +1267,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 54.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1326,8 +1361,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # test with heating capacity less than 300,000 Btuh
       _convert_to_es_zerh(hpxml_name, program_version)
@@ -1367,8 +1402,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1405,8 +1440,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # test with heating capacity less than 300,000 Btuh
       _convert_to_es_zerh(hpxml_name, program_version)
@@ -1446,8 +1481,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1494,8 +1529,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       # test w/ heating capacity less than 300,000 Btuh
       _convert_to_es_zerh(hpxml_name, program_version)
@@ -1545,8 +1580,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1605,8 +1640,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1641,8 +1676,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1687,8 +1722,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1723,8 +1758,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1737,10 +1772,10 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [*ES::MFVersions, ZERH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_zerh_gshp_eer_cz5(program_version), cop: get_es_zerh_gshp_cop_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_gshp_eer_cz5(program_version), cop: get_gshp_cop_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ZERH::Ver1, ZERH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz5(program_version), seer: get_es_zerh_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -1757,8 +1792,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
 
       next unless [*ES::NationalVersions, *ZERH::AllVersions].include?(program_version)
 
@@ -1775,10 +1810,10 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [ES::SFNationalVer3_0, *ES::MFVersions, ZERH::Ver1, ZERH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_es_zerh_gshp_eer_cz7(program_version), cop: get_es_zerh_gshp_cop_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shr: 0.73, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_gshp_eer_cz7(program_version), cop: get_gshp_cop_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ZERH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_es_zerh_ashp_hspf_cz7(program_version), seer: get_es_zerh_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, shr: 0.73, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -1795,8 +1830,8 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
-                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_es_zerh_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
+      _check_duct_leakage(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside },
+                                       { duct_type: HPXML::DuctTypeReturn, duct_leakage_units: HPXML::UnitsCFM25, duct_leakage_value: get_duct_leakage(program_version, 18.0), duct_leakage_total_or_to_outside: HPXML::DuctLeakageToOutside }])
     end
   end
 
@@ -1929,14 +1964,25 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         assert_nil(heat_pump.heating_efficiency_cop)
       end
       if not expected_values[:seer].nil?
-        assert_equal(expected_values[:seer], heat_pump.cooling_efficiency_seer)
+        if not heat_pump.cooling_efficiency_seer2.nil?
+          assert_in_delta(expected_values[:seer], HVAC.calc_seer_from_seer2(heat_pump), 0.1)
+        else
+          assert_in_delta(expected_values[:seer], heat_pump.cooling_efficiency_seer, 0.1)
+        end
+        assert_in_delta(get_eer_from_seer(expected_values[:seer]), heat_pump.cooling_efficiency_eer, 0.1)
+        assert_equal(get_compressor_type_from_seer(expected_values[:seer]), heat_pump.compressor_type)
       else
         assert_nil(heat_pump.cooling_efficiency_seer)
+        assert_nil(heat_pump.compressor_type)
       end
       if not expected_values[:eer].nil?
-        assert_equal(expected_values[:eer], heat_pump.cooling_efficiency_eer)
-      else
-        assert_nil(heat_pump.cooling_efficiency_eer)
+        if not heat_pump.cooling_efficiency_eer2.nil?
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(heat_pump), 0.1)
+        elsif not heat_pump.cooling_efficiency_ceer.nil?
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_ceer(heat_pump), 0.1)
+        else
+          assert_in_delta(expected_values[:eer], heat_pump.cooling_efficiency_eer, 0.1)
+        end
       end
       if not expected_values[:frac_load_heat].nil?
         assert_equal(expected_values[:frac_load_heat], heat_pump.fraction_heat_load_served)
@@ -1956,11 +2002,6 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         assert_equal(expected_values[:dse], dist_system.annual_heating_dse)
         assert_equal(expected_values[:dse], dist_system.annual_cooling_dse)
       end
-      if expected_values[:shr].nil?
-        assert_nil(heat_pump.cooling_shr)
-      else
-        assert_equal(expected_values[:shr], heat_pump.cooling_shr)
-      end
       if expected_values[:backup_fuel].nil?
         assert_nil(heat_pump.backup_heating_fuel)
       else
@@ -1973,21 +2014,6 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       else
         assert_equal(expected_values[:backup_eff], heat_pump.backup_heating_efficiency_percent.to_f + heat_pump.backup_heating_efficiency_afue.to_f)
         assert_equal(HPXML::HeatPumpBackupTypeIntegrated, heat_pump.backup_type)
-      end
-      if expected_values[:compressor_lockout_temp].nil?
-        assert_nil(heat_pump.compressor_lockout_temp)
-      else
-        assert_equal(expected_values[:compressor_lockout_temp], heat_pump.compressor_lockout_temp)
-      end
-      if expected_values[:backup_heating_switchover_temp].nil?
-        assert_nil(heat_pump.backup_heating_switchover_temp)
-      else
-        assert_equal(expected_values[:backup_heating_switchover_temp], heat_pump.backup_heating_switchover_temp)
-      end
-      if expected_values[:backup_heating_lockout_temp].nil?
-        assert_nil(heat_pump.backup_heating_lockout_temp)
-      else
-        assert_equal(expected_values[:backup_heating_lockout_temp], heat_pump.backup_heating_lockout_temp)
       end
       if expected_values[:pump_w_per_ton].nil?
         assert_nil(heat_pump.pump_watts_per_ton)
@@ -2031,14 +2057,29 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
       assert_equal(expected_values[:systype], cooling_system.cooling_system_type)
       assert_equal(expected_values[:fuel], cooling_system.cooling_system_fuel)
       if not expected_values[:seer].nil?
-        assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.01)
+        if not cooling_system.cooling_efficiency_seer2.nil?
+          assert_in_epsilon(expected_values[:seer], HVAC.calc_seer_from_seer2(cooling_system), 0.1)
+        else
+          assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.1)
+        end
+        assert_in_delta(get_eer_from_seer(expected_values[:seer]), cooling_system.cooling_efficiency_eer, 0.1)
+        assert_equal(get_compressor_type_from_seer(expected_values[:seer]), cooling_system.compressor_type)
       else
         assert_nil(cooling_system.cooling_efficiency_seer)
+        assert_nil(cooling_system.compressor_type)
       end
       if not expected_values[:eer].nil?
-        assert_equal(expected_values[:eer], cooling_system.cooling_efficiency_eer)
+        if not cooling_system.cooling_efficiency_eer2.nil?
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(cooling_system), 0.1)
+        elsif not cooling_system.cooling_efficiency_ceer.nil?
+          assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_ceer(cooling_system), 0.1)
+        else
+          assert_in_delta(expected_values[:eer], cooling_system.cooling_efficiency_eer, 0.1)
+        end
+      elsif not expected_values[:ceer].nil?
+        assert_in_delta(expected_values[:ceer], cooling_system.cooling_efficiency_ceer, 0.1)
       else
-        assert_nil(cooling_system.cooling_efficiency_eer)
+        assert_nil(cooling_system.cooling_efficiency_ceer)
       end
       if not expected_values[:kw_per_ton].nil?
         assert_equal(expected_values[:kw_per_ton], cooling_system.cooling_efficiency_kw_per_ton)
@@ -2055,11 +2096,6 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
         assert(dist_system.nil? || dist_system.annual_cooling_dse.nil?)
       else
         assert_equal(expected_values[:dse], dist_system.annual_cooling_dse)
-      end
-      if expected_values[:shr].nil?
-        assert_nil(cooling_system.cooling_shr)
-      else
-        assert_equal(expected_values[:shr], cooling_system.cooling_shr)
       end
       if expected_values[:fan_watts_per_cfm].nil?
         assert_nil(cooling_system.fan_watts_per_cfm)

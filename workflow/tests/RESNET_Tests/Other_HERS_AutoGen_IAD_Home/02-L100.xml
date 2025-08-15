@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -105,7 +105,6 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
-            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -119,7 +118,6 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
-            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -139,7 +137,6 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>0</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -160,7 +157,6 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>90</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -181,7 +177,6 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>180</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -202,7 +197,6 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>270</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -224,7 +218,6 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>90</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -242,7 +235,6 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>270</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -482,7 +474,9 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>-1.0</HeatingCapacity>
+              <HeatingCapacity17F>-1.0</HeatingCapacity17F>
               <CoolingCapacity>-1.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -495,6 +489,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>12.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>10.3</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>

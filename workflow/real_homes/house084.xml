@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -800,12 +800,16 @@
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>35200.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionCoolLoadServed>0.444</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>18.0</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>1.0</SensibleHeatFraction>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>12.0</Value>
+              </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
@@ -818,12 +822,16 @@
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>22000.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionCoolLoadServed>0.278</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>18.0</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>1.0</SensibleHeatFraction>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>12.0</Value>
+              </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>
@@ -836,12 +844,16 @@
               <CoolingSystemType>mini-split</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>22000.0</CoolingCapacity>
+              <CompressorType>variable speed</CompressorType>
               <FractionCoolLoadServed>0.278</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>18.0</Value>
               </AnnualCoolingEfficiency>
-              <SensibleHeatFraction>1.0</SensibleHeatFraction>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>12.0</Value>
+              </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
                 <ChargeDefectRatio>-0.25</ChargeDefectRatio>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -9,7 +9,7 @@
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>latest</Version>
+        <Version>2022CE</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -312,9 +312,10 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>31000.0</HeatingCapacity>
+              <HeatingCapacity17F>18290.0</HeatingCapacity17F>
               <CoolingCapacity>25000.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
               <CompressorLockoutTemperature>0.0</CompressorLockoutTemperature>
-              <CoolingSensibleHeatFraction>0.7</CoolingSensibleHeatFraction>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -322,12 +323,15 @@
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
               <BackupHeatingCapacity>-1.0</BackupHeatingCapacity>
-              <BackupHeatingLockoutTemperature>40.0</BackupHeatingLockoutTemperature>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>15.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>12.4</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -414,7 +418,7 @@
             <SystemIdentifier id='HotWaterDstribution1'/>
             <SystemType>
               <Standard>
-                <PipingLength>89.282</PipingLength>
+                <PipingLength>89.28</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>

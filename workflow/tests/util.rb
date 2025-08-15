@@ -22,8 +22,8 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
 
-  eri_versions = hpxml.header.eri_calculation_versions.map { |v| v == 'latest' ? Constants::ERIVersions[-1] : v }
-  co2_versions = hpxml.header.co2index_calculation_versions.map { |v| v == 'latest' ? Constants::ERIVersions[-1] : v }
+  eri_versions = hpxml.header.eri_calculation_versions
+  co2_versions = hpxml.header.co2index_calculation_versions
   iecc_versions = hpxml.header.iecc_eri_calculation_versions
   es_versions = hpxml.header.energystar_calculation_versions
   zerh_versions = hpxml.header.zerh_calculation_versions
@@ -322,6 +322,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
       end
     end
+    new_hpxml_bldg.heat_pumps[0].backup_heating_lockout_temp = nil unless new_hpxml_bldg.heat_pumps.empty?
     XMLHelper.write_file(new_hpxml.to_doc, hpxmls[:ref])
 
     _rundir, _hpxmls, csvs = _run_workflow(hpxmls[:ref], test_name)
@@ -706,7 +707,22 @@ def _check_reference_home_components(results, test_num, version)
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2022C'
+  if version == 'latest'
+    # Includes updated values due to HERS Addenda 81 and 90f and provided by Philip on 5/29/25
+    if test_num == 1
+      assert_in_epsilon(55037, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13589, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 2
+      assert_in_epsilon(52367, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12519, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 3
+      assert_in_epsilon(47826, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9146, results['Latent Internal gains (Btu/day)'], epsilon)
+    else
+      assert_in_epsilon(82522, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17646, results['Latent Internal gains (Btu/day)'], epsilon)
+    end
+  elsif version == '2022C'
     # Pub 002-2024
     if test_num == 1
       assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
@@ -978,7 +994,7 @@ def _get_infiltration(hpxml_bldg)
   ach50 = air_infil.air_leakage
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   infil_volume = air_infil.infiltration_volume
-  sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
+  sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_volume / cfa)
   return sla, ach50
 end
 
@@ -1006,7 +1022,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   cooking_range = hpxml_bldg.cooking_ranges[0]
   cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
   oven = hpxml_bldg.ovens[0]
-  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, nbeds, cooking_range, oven)
+  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, hpxml_bldg, cooking_range, oven)
   btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cr_frac_sens * btu)
   xml_appl_lat += (cr_frac_lat * btu)
@@ -1022,7 +1038,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Dishwasher
   dishwasher = hpxml_bldg.dishwashers[0]
   dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
-  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, nbeds, dishwasher)
+  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, hpxml_bldg, dishwasher)
   btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (dw_frac_sens * btu)
   xml_appl_lat += (dw_frac_lat * btu)
@@ -1030,7 +1046,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesWasher
   clothes_washer = hpxml_bldg.clothes_washers[0]
   clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
-  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, nbeds, clothes_washer)
+  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, hpxml_bldg, clothes_washer)
   btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (cw_frac_sens * btu)
   xml_appl_lat += (cw_frac_lat * btu)
@@ -1038,7 +1054,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesDryer
   clothes_dryer = hpxml_bldg.clothes_dryers[0]
   clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
-  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, nbeds, clothes_dryer, clothes_washer)
+  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, hpxml_bldg, clothes_dryer, clothes_washer)
   btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cd_frac_sens * btu)
   xml_appl_lat += (cd_frac_lat * btu)
@@ -1046,7 +1062,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
   # Water Use
-  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds)
+  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds, nil, nil)
   s += "#{xml_water_sens} #{xml_water_lat}\n"
 
   # Occupants
@@ -1094,16 +1110,27 @@ def _get_hvac(hpxml_bldg)
     num_afue += 1
   end
   hpxml_bldg.cooling_systems.each do |cooling_system|
-    seer += cooling_system.cooling_efficiency_seer
-    num_seer += 1
+    if not cooling_system.cooling_efficiency_seer.nil?
+      seer += cooling_system.cooling_efficiency_seer
+      num_seer += 1
+    elsif not cooling_system.cooling_efficiency_seer2.nil?
+      seer += HVAC.calc_seer_from_seer2(cooling_system)
+      num_seer += 1
+    end
   end
   hpxml_bldg.heat_pumps.each do |heat_pump|
     if not heat_pump.heating_efficiency_hspf.nil?
       hspf += heat_pump.heating_efficiency_hspf
       num_hspf += 1
+    elsif not heat_pump.heating_efficiency_hspf2.nil?
+      hspf += HVAC.calc_hspf_from_hspf2(heat_pump)
+      num_hspf += 1
     end
     if not heat_pump.cooling_efficiency_seer.nil?
       seer += heat_pump.cooling_efficiency_seer
+      num_seer += 1
+    elsif not heat_pump.cooling_efficiency_seer2.nil?
+      seer += HVAC.calc_seer_from_seer2(heat_pump)
       num_seer += 1
     end
   end
@@ -1113,7 +1140,7 @@ def _get_hvac(hpxml_bldg)
     dse += hvac_distribution.annual_cooling_dse
     num_dse += 1
   end
-  return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
+  return (afue / num_afue).round(2), (hspf / num_hspf).round(1), (seer / num_seer).round(1), (dse / num_dse).round(2)
 end
 
 def _get_tstat(eri_version, hpxml_bldg)

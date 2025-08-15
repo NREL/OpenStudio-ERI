@@ -13,8 +13,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @schema_validator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.xml'))
-    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.xml'))
+    @epvalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'hpxml-measures', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+    @erivalidator = XMLValidator.get_xml_validator(File.join(@root_path, 'rulesets', 'resources', '301validator.sch'))
     @results_paths = []
   end
 
@@ -326,7 +326,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
-          type = nil
+          type = HPXML::FoundationWallTypeSolidConcrete
         end
         _check_foundation_walls(hpxml_bldg, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
@@ -357,7 +357,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
         else
-          type = nil
+          type = HPXML::FoundationWallTypeSolidConcrete
         end
         _check_foundation_walls(hpxml_bldg, area: 1200, assembly_rvalue: assembly_rvalue, ins_interior_rvalue: ins_interior_rvalue, ins_bottom: 8, height: 8, depth_bg: 7, type: type)
       end
@@ -366,14 +366,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7)
+      _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
 
       hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                      'base-foundation-vented-crawlspace.xml']
       hpxml_names.each do |name|
         _convert_to_es_zerh(name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
-        _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3)
+        _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
       end
     end
   end
@@ -499,11 +499,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
       _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml_bldg, area: 900, rvalue: 3.1, floor_type: HPXML::FloorTypeWoodFrame)
 
       _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
 
       # Check w/ mass floors
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -524,7 +524,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_floors(hpxml_bldg, area: 900, rvalue: (2.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeConcrete)
+      _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeConcrete)
     end
 
     [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|

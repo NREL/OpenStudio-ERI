@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -184,7 +184,9 @@
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
               <HeatingCapacity>-1.0</HeatingCapacity>
+              <HeatingCapacity17F>-1.0</HeatingCapacity17F>
               <CoolingCapacity>-1.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -197,6 +199,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>16.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>13.0</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -283,7 +289,7 @@
             <SystemIdentifier id='HotWaterDstribution1'/>
             <SystemType>
               <Standard>
-                <PipingLength>79.282</PipingLength>
+                <PipingLength>79.28</PipingLength>
               </Standard>
             </SystemType>
             <PipeInsulation>

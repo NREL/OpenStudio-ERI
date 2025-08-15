@@ -51,7 +51,7 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_reference_home_auto_generation
-    version = '2022C'
+    version = '2022C' # Latest version that caused changes to results
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_4.2_HERS_AutoGen_Reference_Home',
                                                                    'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home',
                                                                    version)
@@ -64,13 +64,14 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_method
+    version = '2019A' # Latest version that caused changes to results
     all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
                                            'RESNET_Tests/4.3_HERS_Method')
 
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, '2019A')
+      _check_method_results(results, test_num, test_num == 2, version)
     end
   end
 

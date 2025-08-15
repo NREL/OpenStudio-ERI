@@ -18,7 +18,7 @@ jobs:
   run-ruleset-tests:
     runs-on: ubuntu-22.04
     container:
-      image: docker://nrel/openstudio:3.9.0
+      image: docker://nrel/openstudio:3.10.0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -70,7 +70,7 @@ jobs:
   run-sample-files1-tests:
     runs-on: ubuntu-22.04
     container:
-      image: docker://nrel/openstudio:3.9.0
+      image: docker://nrel/openstudio:3.10.0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,7 +93,7 @@ jobs:
   run-sample-files2-tests:
     runs-on: ubuntu-22.04
     container:
-      image: docker://nrel/openstudio:3.9.0
+      image: docker://nrel/openstudio:3.10.0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -116,7 +116,7 @@ jobs:
   run-real-home-tests:
     runs-on: ubuntu-22.04
     container:
-      image: docker://nrel/openstudio:3.9.0
+      image: docker://nrel/openstudio:3.10.0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -139,7 +139,7 @@ jobs:
   run-other-tests:
     runs-on: ubuntu-22.04
     container:
-      image: docker://nrel/openstudio:3.9.0
+      image: docker://nrel/openstudio:3.10.0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -168,8 +168,8 @@ jobs:
       - name: Install software and run test
         shell: pwsh
         run: |
-          $env:OS_VERSION="3.9.0"
-          $env:OS_SHA="c77fbb9569"
+          $env:OS_VERSION="3.10.0"
+          $env:OS_SHA="86d7e215a1"
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
@@ -247,12 +247,12 @@ jobs:
           cp -r base_results/*.csv workflow/tests/base_results
           mkdir workflow/tests/test_results
           cp -r test_results/*.csv workflow/tests/test_results
-          
+
           pip install numpy
           pip install pandas
           pip install plotly
           pip install kaleido
-          
+
           python hpxml-measures/workflow/tests/compare.py -a results
           python hpxml-measures/workflow/tests/compare.py -a visualize
 
@@ -277,7 +277,7 @@ jobs:
           name: test_results
 
       - name: Commit latest results
-        shell: bash        
+        shell: bash
         run: |
           branch_name="${{ github.head_ref }}"
           git pull origin $branch_name
