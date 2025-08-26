@@ -127,6 +127,9 @@ def create_test_hpxmls
     'RESNET_Tests/4.7_Multi_Climate/11_NoMechVent_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
     'RESNET_Tests/4.7_Multi_Climate/12_NoMechVentDuctsInAttic_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ4A_BaltimoreMD.xml',
     'RESNET_Tests/4.7_Multi_Climate/13_HeatPump_CZ4A_BaltimoreMD.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/13_HeatPump_CZ4A_BaltimoreMD_VSHP.xml' => 'RESNET_Tests/4.7_Multi_Climate/13_HeatPump_CZ4A_BaltimoreMD.xml',
+    'RESNET_Tests/4.7_Multi_Climate/14_HeatPump_CZ7_DuluthMN.xml' => 'RESNET_Tests/4.7_Multi_Climate/03_BaseCase_CZ7_DuluthMN.xml',
+    'RESNET_Tests/4.7_Multi_Climate/14_HeatPump_CZ7_DuluthMN_VSHP.xml' => 'RESNET_Tests/4.7_Multi_Climate/14_HeatPump_CZ7_DuluthMN.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/01-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/01-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/02-L100.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/02-L100.xml',
     'RESNET_Tests/Other_HERS_AutoGen_IAD_Home/03-L304.xml' => 'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home/03-L304.xml',
@@ -1886,24 +1889,48 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               charge_defect_ratio: charge_defect_ratio)
   elsif hpxml_file.include?('Multi_Climate') && hpxml_file.include?('HeatPump')
     hpxml_bldg.heat_pumps.clear
+    if hpxml_file.include?('BaltimoreMD')
+      cooling_capacity = 25000
+      heating_capacity = 31000
+    elsif hpxml_file.include?('DuluthMN')
+      cooling_capacity = 36000
+      heating_capacity = 42000
+    else
+      fail 'unknown Multi_Climate HeatPump configuration'
+    end
+    if hpxml_file.include?('VSHP')
+      # Variable speed ASHP
+      compressor_type = HPXML::HVACCompressorTypeVariableSpeed
+      heating_efficiency_hspf = 10.0
+      cooling_efficiency_seer = 22.0
+      heating_capacity_17F = heating_capacity * (0.0329 * heating_efficiency_hspf + 0.3996)
+      cooling_efficiency_eer = 13.3
+    else
+      # Single speed ASHP
+      compressor_type = HPXML::HVACCompressorTypeSingleStage
+      heating_efficiency_hspf = 8.2
+      cooling_efficiency_seer = 15.0
+      heating_capacity_17F = 0.59 * heating_capacity    
+      cooling_efficiency_eer = 12.4
+    end
     hpxml_bldg.heat_pumps.add(id: "HeatPump#{hpxml_bldg.heat_pumps.size + 1}",
                               distribution_system_idref: 'HVACDistribution1',
                               heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
-                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
+                              compressor_type: compressor_type,
                               compressor_lockout_temp: 0,
-                              cooling_capacity: 25000,
-                              heating_capacity: 31000,
-                              heating_capacity_17F: 18290,
+                              cooling_capacity: cooling_capacity,
+                              heating_capacity: heating_capacity,
+                              heating_capacity_17F: heating_capacity_17F,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
                               backup_heating_efficiency_percent: 1.0,
                               fraction_heat_load_served: 1,
                               fraction_cool_load_served: 1,
-                              heating_efficiency_hspf: 8.2,
-                              cooling_efficiency_seer: 15,
-                              cooling_efficiency_eer: 12.4,
+                              heating_efficiency_hspf: heating_efficiency_hspf,
+                              cooling_efficiency_seer: cooling_efficiency_seer,
+                              cooling_efficiency_eer: cooling_efficiency_eer,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
                               charge_defect_ratio: -0.25)
