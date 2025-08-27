@@ -4454,7 +4454,9 @@ module HPXMLFile
       args[:geometry_foundation_height] = 0.0
       args[:geometry_foundation_height_above_grade] = 0.0
       args[:geometry_rim_joist_height] = 0.0
-    elsif (args[:geometry_foundation_type] == HPXML::FoundationTypeAmbient) || args[:geometry_foundation_type].start_with?(HPXML::FoundationTypeBellyAndWing)
+    elsif [HPXML::FoundationTypeAmbient, HPXML::FoundationTypeAboveApartment].include? args[:geometry_foundation_type]
+      args[:geometry_rim_joist_height] = 0.0
+    elsif args[:geometry_foundation_type].start_with? HPXML::FoundationTypeBellyAndWing
       args[:geometry_rim_joist_height] = 0.0
     end
 
@@ -4967,7 +4969,7 @@ module HPXMLFile
                         elevation: args[:site_elevation],
                         latitude: args[:site_latitude],
                         longitude: args[:site_longitude],
-                        dst_enabled: args[:simulation_control_daylight_saving_enabled],
+                        dst_observed: args[:simulation_control_daylight_saving_enabled],
                         dst_begin_month: dst_begin_month,
                         dst_begin_day: dst_begin_day,
                         dst_end_month: dst_end_month,
@@ -5252,9 +5254,14 @@ module HPXMLFile
                            area: UnitConversions.convert(surface.grossArea, 'm^2', 'ft^2'),
                            roof_type: args[:roof_material_type],
                            roof_color: args[:roof_color],
-                           pitch: args[:geometry_roof_pitch],
-                           insulation_assembly_r_value: args[:roof_assembly_r])
+                           pitch: args[:geometry_roof_pitch])
       @surface_ids[surface.name.to_s] = hpxml_bldg.roofs[-1].id
+
+      if hpxml_bldg.roofs[-1].interior_adjacent_to != HPXML::LocationGarage
+        hpxml_bldg.roofs[-1].insulation_assembly_r_value = args[:roof_assembly_r]
+      else
+        hpxml_bldg.roofs[-1].insulation_assembly_r_value = 2.3 # Uninsulated
+      end
 
       next unless [HPXML::RadiantBarrierLocationAtticRoofOnly, HPXML::RadiantBarrierLocationAtticRoofAndGableWalls].include?(args[:radiant_barrier_attic_location].to_s)
       next unless [HPXML::LocationAtticUnvented, HPXML::LocationAtticVented].include?(hpxml_bldg.roofs[-1].interior_adjacent_to)
@@ -5690,19 +5697,19 @@ module HPXMLFile
       sub_surface_height = Geometry.get_surface_height(sub_surface)
       sub_surface_facade = Geometry.get_surface_facade(sub_surface)
 
-      if (sub_surface_facade == Constants::FacadeFront) && ((args[:overhangs_front_depth] > 0) || args[:overhangs_front_distance_to_top_of_window] > 0)
+      if (sub_surface_facade == Constants::FacadeFront) && (args[:overhangs_front_depth] > 0)
         overhangs_depth = args[:overhangs_front_depth]
         overhangs_distance_to_top_of_window = args[:overhangs_front_distance_to_top_of_window]
         overhangs_distance_to_bottom_of_window = args[:overhangs_front_distance_to_bottom_of_window]
-      elsif (sub_surface_facade == Constants::FacadeBack) && ((args[:overhangs_back_depth] > 0) || args[:overhangs_back_distance_to_top_of_window] > 0)
+      elsif (sub_surface_facade == Constants::FacadeBack) && (args[:overhangs_back_depth] > 0)
         overhangs_depth = args[:overhangs_back_depth]
         overhangs_distance_to_top_of_window = args[:overhangs_back_distance_to_top_of_window]
         overhangs_distance_to_bottom_of_window = args[:overhangs_back_distance_to_bottom_of_window]
-      elsif (sub_surface_facade == Constants::FacadeLeft) && ((args[:overhangs_left_depth] > 0) || args[:overhangs_left_distance_to_top_of_window] > 0)
+      elsif (sub_surface_facade == Constants::FacadeLeft) && (args[:overhangs_left_depth] > 0)
         overhangs_depth = args[:overhangs_left_depth]
         overhangs_distance_to_top_of_window = args[:overhangs_left_distance_to_top_of_window]
         overhangs_distance_to_bottom_of_window = args[:overhangs_left_distance_to_bottom_of_window]
-      elsif (sub_surface_facade == Constants::FacadeRight) && ((args[:overhangs_right_depth] > 0) || args[:overhangs_right_distance_to_top_of_window] > 0)
+      elsif (sub_surface_facade == Constants::FacadeRight) && (args[:overhangs_right_depth] > 0)
         overhangs_depth = args[:overhangs_right_depth]
         overhangs_distance_to_top_of_window = args[:overhangs_right_distance_to_top_of_window]
         overhangs_distance_to_bottom_of_window = args[:overhangs_right_distance_to_bottom_of_window]
@@ -6208,6 +6215,8 @@ module HPXMLFile
       cooling_efficiency_seer2 = args[:heat_pump_cooling_efficiency]
     when HPXML::UnitsEER
       cooling_efficiency_eer = args[:heat_pump_cooling_efficiency]
+    when HPXML::UnitsCEER
+      cooling_efficiency_ceer = args[:heat_pump_cooling_efficiency]
     end
 
     if [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpGroundToAir].include?(heat_pump_type) || ([HPXML::HVACTypeHeatPumpMiniSplit].include?(heat_pump_type) && (args[:heat_pump_is_ducted]))
@@ -6253,6 +6262,7 @@ module HPXMLFile
                               cooling_efficiency_seer2: cooling_efficiency_seer2,
                               heating_efficiency_cop: heating_efficiency_cop,
                               cooling_efficiency_eer: cooling_efficiency_eer,
+                              cooling_efficiency_ceer: cooling_efficiency_ceer,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: args[:heat_pump_charge_defect_ratio],
                               crankcase_heater_watts: heat_pump_crankcase_heater_watts,
@@ -6492,10 +6502,20 @@ module HPXMLFile
   # @param args [Hash] Map of :argument_name => value
   # @return [nil]
   def self.set_hvac_distribution(hpxml_bldg, args)
+    # FanCoil?
+    fan_coil_distribution_systems = []
+    hpxml_bldg.heating_systems.each do |heating_system|
+      next unless heating_system.primary_system
+
+      if args[:heating_system_type].include?('Fan Coil')
+        fan_coil_distribution_systems << heating_system
+      end
+    end
+
     # HydronicDistribution?
     hpxml_bldg.heating_systems.each do |heating_system|
       next unless [heating_system.heating_system_type].include?(HPXML::HVACTypeBoiler)
-      next if args[:heating_system_type].include?('Fan Coil')
+      next if fan_coil_distribution_systems.include? heating_system
 
       hpxml_bldg.hvac_distributions.add(id: "HVACDistribution#{hpxml_bldg.hvac_distributions.size + 1}",
                                         distribution_system_type: HPXML::HVACDistributionTypeHydronic,
@@ -6525,16 +6545,6 @@ module HPXMLFile
         air_distribution_systems << heat_pump
       when HPXML::HVACTypeHeatPumpMiniSplit
         air_distribution_systems << heat_pump if args[:heat_pump_is_ducted]
-      end
-    end
-
-    # FanCoil?
-    fan_coil_distribution_systems = []
-    hpxml_bldg.heating_systems.each do |heating_system|
-      next unless heating_system.primary_system
-
-      if args[:heating_system_type].include?('Fan Coil')
-        fan_coil_distribution_systems << heating_system
       end
     end
 
@@ -6787,7 +6797,7 @@ module HPXMLFile
   def self.set_hvac_control(hpxml, hpxml_bldg, args, weather)
     return if (args[:heating_system_type] == Constants::None) && (args[:cooling_system_type] == Constants::None) && (args[:heat_pump_type] == Constants::None)
 
-    latitude = Defaults.get_latitude(args[:site_latitude], weather) unless weather.nil?
+    latitude = Defaults.get_latitude(args[:site_latitude], weather, args[:site_zip_code]) unless weather.nil?
 
     # Heating
     if hpxml_bldg.total_fraction_heat_load_served > 0
@@ -7241,7 +7251,7 @@ module HPXMLFile
       collector_loop_type = args[:solar_thermal_collector_loop_type]
       collector_type = args[:solar_thermal_collector_type]
       collector_azimuth = args[:solar_thermal_collector_azimuth]
-      latitude = Defaults.get_latitude(args[:site_latitude], weather) unless weather.nil?
+      latitude = Defaults.get_latitude(args[:site_latitude], weather, args[:site_zip_code]) unless weather.nil?
       collector_tilt = Geometry.get_absolute_tilt(tilt_str: args[:solar_thermal_collector_tilt], roof_pitch: args[:geometry_roof_pitch], latitude: latitude)
       collector_rated_optical_efficiency = args[:solar_thermal_collector_rated_optical_efficiency]
       collector_rated_thermal_losses = args[:solar_thermal_collector_rated_thermal_losses]
@@ -7291,7 +7301,7 @@ module HPXMLFile
       end
     end
 
-    latitude = Defaults.get_latitude(args[:site_latitude], weather) unless weather.nil?
+    latitude = Defaults.get_latitude(args[:site_latitude], weather, args[:site_zip_code]) unless weather.nil?
 
     hpxml_bldg.pv_systems.add(id: "PVSystem#{hpxml_bldg.pv_systems.size + 1}",
                               location: args[:pv_system_location],
@@ -7317,11 +7327,13 @@ module HPXMLFile
                                 number_of_bedrooms_served: number_of_bedrooms_served)
     end
 
-    # Add inverter efficiency; assume a single inverter even if multiple PV arrays
-    hpxml_bldg.inverters.add(id: "Inverter#{hpxml_bldg.inverters.size + 1}",
-                             inverter_efficiency: args[:pv_system_inverter_efficiency])
-    hpxml_bldg.pv_systems.each do |pv_system|
-      pv_system.inverter_idref = hpxml_bldg.inverters[-1].id
+    if not args[:pv_system_inverter_efficiency].nil?
+      # Add inverter efficiency; assume a single inverter even if multiple PV arrays
+      hpxml_bldg.inverters.add(id: "Inverter#{hpxml_bldg.inverters.size + 1}",
+                               inverter_efficiency: args[:pv_system_inverter_efficiency])
+      hpxml_bldg.pv_systems.each do |pv_system|
+        pv_system.inverter_idref = hpxml_bldg.inverters[-1].id
+      end
     end
   end
 
@@ -7648,7 +7660,7 @@ module HPXMLFile
     if args[:ev_charger_present]
       charger_id = "EVCharger#{hpxml_bldg.ev_chargers.size + 1}"
       hpxml_bldg.ev_chargers.add(id: charger_id,
-                                 charging_level: args[:ev_charger_level],
+                                 charging_level: (Integer(args[:ev_charger_level]) rescue nil),
                                  charging_power: args[:ev_charger_power])
     end
 
