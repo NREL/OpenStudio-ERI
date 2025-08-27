@@ -122,7 +122,7 @@
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>21.8</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>13.9</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
@@ -396,12 +396,12 @@
               <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>0.1333</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Units>SEER2</Units>
+                <Value>13.4</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>11.0</Value>
+                <Units>EER2</Units>
+                <Value>11.3</Value>
               </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -416,8 +416,8 @@
               <CoolingCapacity>9600.0</CoolingCapacity>
               <FractionCoolLoadServed>0.1333</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>8.5</Value>
+                <Units>CEER</Units>
+                <Value>8.4</Value>
               </AnnualCoolingEfficiency>
             </CoolingSystem>
             <CoolingSystem>
@@ -450,16 +450,16 @@
               <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Units>SEER2</Units>
+                <Value>13.4</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>11.0</Value>
+                <Units>EER2</Units>
+                <Value>11.3</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
-                <Units>HSPF</Units>
-                <Value>7.7</Value>
+                <Units>HSPF2</Units>
+                <Value>7.0</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -517,16 +517,16 @@
               <FractionHeatLoadServed>0.1</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.2</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
+                <Units>SEER2</Units>
                 <Value>19.0</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
+                <Units>EER2</Units>
                 <Value>12.3</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
-                <Units>HSPF</Units>
-                <Value>10.0</Value>
+                <Units>HSPF2</Units>
+                <Value>9.0</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>0.0</AirflowDefectRatio>
