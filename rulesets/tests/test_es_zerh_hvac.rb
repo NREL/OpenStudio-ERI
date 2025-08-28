@@ -517,7 +517,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   end
 
   def test_air_source_heat_pump
-    ['base-hvac-air-to-air-heat-pump-1-speed.xml', 'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml'].each do |hpxml_name|
+    ['base-hvac-air-to-air-heat-pump-1-speed.xml', 'base-hvac-air-to-air-heat-pump-1-speed-seer-hspf.xml'].each do |hpxml_name|
       [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
         _convert_to_es_zerh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
@@ -756,7 +756,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
   end
 
   def test_central_air_conditioner
-    ['base-hvac-central-ac-only-1-speed.xml', 'base-hvac-central-ac-only-1-speed-seer2.xml'].each do |hpxml_name|
+    ['base-hvac-central-ac-only-1-speed.xml', 'base-hvac-central-ac-only-1-speed-seer.xml'].each do |hpxml_name|
       [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
         _convert_to_es_zerh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
@@ -788,7 +788,7 @@ class EnergyStarZeroEnergyReadyHomeHVACtest < Minitest::Test
 
   def test_room_air_conditioner_and_ptac
     hpxml_names = ['base-hvac-room-ac-only.xml',
-                   'base-hvac-room-ac-only-ceer.xml',
+                   'base-hvac-room-ac-only-eer.xml',
                    'base-hvac-ptac.xml']
 
     hpxml_names.each do |hpxml_name|

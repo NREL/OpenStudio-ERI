@@ -217,7 +217,7 @@ module ERI_301_Ruleset
     new_bldg.event_type = orig_bldg.event_type
     new_bldg.state_code = orig_bldg.state_code
     new_bldg.zip_code = orig_bldg.zip_code
-    new_bldg.dst_enabled = false
+    new_bldg.dst_observed = false
     new_bldg.header.allow_increased_fixed_capacities = true
     new_bldg.header.heat_pump_sizing_methodology = HPXML::HeatPumpSizingHERS
     new_bldg.header.natvent_days_per_week = 7
@@ -1377,6 +1377,7 @@ module ERI_301_Ruleset
                               cooling_efficiency_seer2: orig_heat_pump.cooling_efficiency_seer2,
                               cooling_efficiency_eer: orig_heat_pump.cooling_efficiency_eer,
                               cooling_efficiency_eer2: orig_heat_pump.cooling_efficiency_eer2,
+                              cooling_efficiency_ceer: orig_heat_pump.cooling_efficiency_ceer,
                               heating_efficiency_hspf: orig_heat_pump.heating_efficiency_hspf,
                               heating_efficiency_hspf2: orig_heat_pump.heating_efficiency_hspf2,
                               heating_efficiency_cop: orig_heat_pump.heating_efficiency_cop,
