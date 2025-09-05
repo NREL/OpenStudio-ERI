@@ -2768,8 +2768,8 @@ def create_sample_hpxmls
   # Copy files we're interested in
   include_list = ['base.xml',
                   'base-appliances-dehumidifier.xml',
-                  'base-appliances-dehumidifier-ief-portable.xml',
-                  'base-appliances-dehumidifier-ief-whole-home.xml',
+                  'base-appliances-dehumidifier-ef-portable.xml',
+                  'base-appliances-dehumidifier-ef-whole-home.xml',
                   'base-appliances-dehumidifier-multiple.xml',
                   'base-appliances-gas.xml',
                   'base-appliances-modified.xml',
@@ -2864,8 +2864,7 @@ def create_sample_hpxmls
                   'base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
-                  'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml',
-                  'base-hvac-air-to-air-heat-pump-1-speed-space-constrained.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-seer-hspf.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-boiler-elec-only.xml',
@@ -2873,8 +2872,7 @@ def create_sample_hpxmls
                   'base-hvac-boiler-oil-only.xml',
                   'base-hvac-boiler-propane-only.xml',
                   'base-hvac-central-ac-only-1-speed.xml',
-                  'base-hvac-central-ac-only-1-speed-seer2.xml',
-                  'base-hvac-central-ac-only-1-speed-space-constrained.xml',
+                  'base-hvac-central-ac-only-1-speed-seer.xml',
                   'base-hvac-central-ac-only-2-speed.xml',
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
@@ -2914,7 +2912,7 @@ def create_sample_hpxmls
                   'base-hvac-ptac-with-heating-natural-gas.xml',
                   'base-hvac-pthp.xml',
                   'base-hvac-room-ac-only.xml',
-                  'base-hvac-room-ac-only-ceer.xml',
+                  'base-hvac-room-ac-only-eer.xml',
                   'base-hvac-room-ac-with-heating.xml',
                   'base-hvac-room-ac-with-reverse-cycle.xml',
                   'base-hvac-stove-wood-pellets-only.xml',
@@ -3241,19 +3239,18 @@ def create_sample_hpxmls
       heating_system.heating_capacity = 300000
     end
     (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).each do |hvac_system|
-      next unless hvac_system.cooling_efficiency_eer.nil?
-
-      if hvac_system.is_a?(HPXML::HeatPump) && (not [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit].include? hvac_system.heat_pump_type)
-        next
-      elsif hvac_system.is_a?(HPXML::CoolingSystem) && (not [HPXML::HVACTypeCentralAirConditioner, HPXML::HVACTypeMiniSplitAirConditioner].include? hvac_system.cooling_system_type)
-        next
-      end
+      next unless hvac_system.cooling_efficiency_eer.nil? && hvac_system.cooling_efficiency_eer2.nil?
+      next if hvac_system.cooling_efficiency_seer.nil? && hvac_system.cooling_efficiency_seer2.nil?
 
       orig_equipment_type = hvac_system.equipment_type
       hvac_system.equipment_type = HPXML::HVACEquipmentTypeSplit
       hvac_system.cooling_efficiency_eer2 = Defaults.get_hvac_eer2(hvac_system)
-      hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(1)
-      hvac_system.cooling_efficiency_eer2 = nil
+      if not hvac_system.cooling_efficiency_seer.nil? # Specify EER instead of EER2
+        hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(1)
+        hvac_system.cooling_efficiency_eer2 = nil
+      else
+        hvac_system.cooling_efficiency_eer2 = hvac_system.cooling_efficiency_eer2.round(1)
+      end
       hvac_system.equipment_type = orig_equipment_type
     end
     hpxml_bldg.pv_systems.each do |pv_system|
@@ -3262,6 +3259,12 @@ def create_sample_hpxmls
       pv_system.module_type = HPXML::PVModuleTypeStandard if pv_system.module_type.nil?
       pv_system.tracking = HPXML::PVTrackingTypeFixed if pv_system.tracking.nil?
       pv_system.system_losses_fraction = 0.14 if pv_system.system_losses_fraction.nil?
+      if pv_system.inverter.nil?
+        if hpxml_bldg.inverters.empty?
+          hpxml_bldg.inverters.add(id: 'Inverter1')
+        end
+        pv_system.inverter_idref = hpxml_bldg.inverters[0].id
+      end
       pv_system.inverter.inverter_efficiency = 0.96 if pv_system.inverter.inverter_efficiency.nil?
     end
     hpxml_bldg.generators.each do |generator|

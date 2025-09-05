@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.11.0
+
+__Bugfixes__
+- Fixes possibility of "Sum of energy consumptions ... do not match total" error when there are multiple HVAC/DHW systems whose load fractions don't sum to 1.
+
 ## OpenStudio-ERI v1.10.0
 
 __New Features__

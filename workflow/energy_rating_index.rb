@@ -574,6 +574,12 @@ def get_rated_systems(bldg_systems, type)
       systems[rated_sys] = rated_sys.fraction_dhw_load_served
     end
   end
+
+  # Re-normalize load fractions to sum to 1
+  systems.each do |sys, load_frac|
+    systems[sys] = load_frac / systems.values.sum
+  end
+
   return systems
 end
 

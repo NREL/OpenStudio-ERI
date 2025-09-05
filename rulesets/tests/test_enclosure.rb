@@ -379,7 +379,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_rim_joists(hpxml_bldg, area: 116, rvalue: 21.8, sabs: 0.7, emit: 0.92)
+        _check_rim_joists(hpxml_bldg, area: 116, rvalue: 13.9, sabs: 0.7, emit: 0.92)
       elsif [CalcType::ReferenceHome].include? calc_type
         _check_rim_joists(hpxml_bldg, area: 116, rvalue: 16.67, sabs: 0.75, emit: 0.9)
       else
