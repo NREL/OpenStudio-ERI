@@ -577,12 +577,12 @@
               <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Units>SEER2</Units>
+                <Value>13.4</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>11.0</Value>
+                <Units>EER2</Units>
+                <Value>11.3</Value>
               </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>

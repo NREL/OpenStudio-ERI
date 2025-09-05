@@ -126,7 +126,7 @@
             <Emittance>0.92</Emittance>
             <Insulation>
               <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>21.8</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>13.9</AssemblyEffectiveRValue>
             </Insulation>
           </RimJoist>
         </RimJoists>
@@ -306,8 +306,23 @@
         <HVAC>
           <HVACPlant>
             <PrimarySystems>
+              <PrimaryHeatingSystem idref='HeatingSystem1'/>
               <PrimaryCoolingSystem idref='CoolingSystem1'/>
             </PrimarySystems>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>35000.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+            </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
               <DistributionSystem idref='HVACDistribution1'/>
@@ -317,16 +332,14 @@
               <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>13.0</Value>
+                <Units>SEER2</Units>
+                <Value>13.4</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <EquipmentType>space constrained system</EquipmentType>
-              </extension>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>
             <SystemIdentifier id='HVACControl1'/>
+            <SetpointTempHeatingSeason>68.0</SetpointTempHeatingSeason>
             <SetpointTempCoolingSeason>78.0</SetpointTempCoolingSeason>
           </HVACControl>
           <HVACDistribution>
@@ -412,6 +425,31 @@
             <LowFlow>false</LowFlow>
           </WaterFixture>
         </WaterHeating>
+        <Photovoltaics>
+          <PVSystem>
+            <SystemIdentifier id='PVSystem1'/>
+            <ArrayAzimuth>180</ArrayAzimuth>
+            <ArrayTilt>20.0</ArrayTilt>
+            <MaxPowerOutput>4000.0</MaxPowerOutput>
+            <AttachedToInverter idref='Inverter1'/>
+          </PVSystem>
+          <PVSystem>
+            <SystemIdentifier id='PVSystem2'/>
+            <ModuleType>premium</ModuleType>
+            <ArrayAzimuth>90</ArrayAzimuth>
+            <ArrayTilt>20.0</ArrayTilt>
+            <MaxPowerOutput>1500.0</MaxPowerOutput>
+            <AttachedToInverter idref='Inverter2'/>
+          </PVSystem>
+          <Inverter>
+            <SystemIdentifier id='Inverter1'/>
+            <InverterEfficiency>0.96</InverterEfficiency>
+          </Inverter>
+          <Inverter>
+            <SystemIdentifier id='Inverter2'/>
+            <InverterEfficiency>0.94</InverterEfficiency>
+          </Inverter>
+        </Photovoltaics>
       </Systems>
       <Appliances>
         <ClothesWasher>
