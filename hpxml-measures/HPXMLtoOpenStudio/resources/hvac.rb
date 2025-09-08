@@ -4846,7 +4846,7 @@ module HVAC
     program.addLine('  Set fraction_compressor_htg = 1.0 - F_defrost')
     # Steady state compressor runtime fraction including heating cycle and defrost cycle
     program.addLine("  Set fraction_compressor_ss = #{htg_coil_rtf_sensor.name} * #{frost_cap_multiplier_act.name} / fraction_compressor_htg")
-    program.addLine('  Set fraction_defrost = F_defrost * (@Max 1.0 fraction_compressor_ss)')
+    program.addLine('  Set fraction_defrost = F_defrost * (@Min 1.0 fraction_compressor_ss)')
     program.addLine("  If #{htg_coil_rtf_sensor.name} > 0")
     program.addLine("    Set q_dot_defrost = (fraction_compressor_htg * (#{htg_coil_htg_rate_sensor.name} / #{frost_cap_multiplier_act.name}) - #{htg_coil_htg_rate_sensor.name}) / #{unit_multiplier} / fraction_defrost")
     #program.addLine("    Set q_heating_load = @Max #{predicted_load_sensor.name} 0.0")
@@ -4856,9 +4856,10 @@ module HVAC
     program.addLine('  EndIf')
     program.addLine("  Set supp_capacity = #{supp_sys_capacity}")
     program.addLine("  Set supp_efficiency = #{supp_sys_efficiency}")
+    program.addLine('  Set supp_delivered_htg = @Min q_dot_defrost supp_capacity')
     #program.addLine('  Set supp_delivered_htg = @Min (q_dot_defrost + q_heating_load) supp_capacity')
     #program.addLine('  Set supp_delivered_htg = supp_capacity')
-    program.addLine('  Set supp_delivered_htg = 0')
+    #program.addLine('  Set supp_delivered_htg = 0')
     program.addLine('  If supp_efficiency > 0.0')
     program.addLine('    Set supp_design_level = supp_delivered_htg / supp_efficiency') # Assume perfect tempering
     program.addLine('  Else')
