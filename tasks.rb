@@ -1892,9 +1892,11 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
     if hpxml_file.include?('BaltimoreMD')
       cooling_capacity = 25000
       heating_capacity = 31000
+      compressor_lockout_temp = 0
     elsif hpxml_file.include?('DuluthMN')
-      cooling_capacity = 36000
-      heating_capacity = 42000
+      cooling_capacity = 54000
+      heating_capacity = 60000
+      compressor_lockout_temp = -20
     else
       fail 'unknown Multi_Climate HeatPump configuration'
     end
@@ -1918,7 +1920,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               compressor_type: compressor_type,
-                              compressor_lockout_temp: 0,
+                              compressor_lockout_temp: compressor_lockout_temp,
                               cooling_capacity: cooling_capacity,
                               heating_capacity: heating_capacity,
                               heating_capacity_17F: heating_capacity_17F,
