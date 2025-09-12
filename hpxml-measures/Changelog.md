@@ -3,7 +3,9 @@
 __New Features__
 - Updates to HPXML v4.2-rc3.
 - Allows optional `UsageMultiplier` for electric vehicles described using `Vehicles`.
-- Improves water heater tank losses when using `EnergyFactor` as the metric; now consistent with how `UniformEnergyFactor` is handled.
+- Water heater improvements:
+  - Improves tank losses when using `EnergyFactor` as the metric; now consistent with how `UniformEnergyFactor` is handled.
+  - Improves HPWH tank volume defaulting, particularly when `NumberofResidents` is provided.
 - Updated site defaults:
   - `Address/CityMunicipality`, `Address/StateCode`, `GeoLocation/Latitude`, `GeoLocation/Longitude`, and `TimeZone/UTCOffset` now default based on zip code if available.
   - `TimeZone/DSTObserved` now defaults to false if `Address/StateCode` is 'AZ' or 'HI'.
@@ -15,6 +17,8 @@ __Bugfixes__
 - Fixes ground-source heat pump plant loop fluid type (workaround for OpenStudio bug).
 - Fixes default hours driven per week for electric vehicles (8.88 -> 9.5).
 - Fixes empty TimeDST/TimeUTC columns in JSON timeseries data.
+- Fixes zero mech vent fan energy when CFIS system w/ `AdditionalRuntimeOperatingMode="air handler fan"` has the airflow rate set to zero.
+- Fixes requested EnergyPlus timeseries output variables/meters not displayed in DView if they don't have units.
 
 ## OpenStudio-HPXML v1.10.0
 
