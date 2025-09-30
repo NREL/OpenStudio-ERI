@@ -1,9 +1,13 @@
 ## OpenStudio-ERI v1.11.0
 
 __New Features__
+- Updates to HPXML v4.2.
 - Updates shared pump power for ground-source heat pumps on a shared recirculation loop to cycle with heating/cooling load rather than operate continuously per RESNET HERS Addendum 94.
+- Improves electric water heater tank losses when using `EnergyFactor` as the metric; now consistent with how `UniformEnergyFactor` is handled.
+- Allows multiple inverters with different efficiencies and use a weighted-average efficiency in the model (previously threw an error)
 
 __Bugfixes__
+- Fixes an EMS bug in heat pump defrost models that over-estimates defrost fractions.
 - Fixes possibility of "Sum of energy consumptions ... do not match total" error when there are multiple HVAC/DHW systems whose load fractions don't sum to 1.
 
 ## OpenStudio-ERI v1.10.0
