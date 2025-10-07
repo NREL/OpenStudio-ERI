@@ -4,7 +4,8 @@ __New Features__
 - Updates to HPXML v4.2.
 - Updates shared pump power for ground-source heat pumps on a shared recirculation loop to cycle with heating/cooling load rather than operate continuously per RESNET HERS Addendum 94.
 - Improves electric water heater tank losses when using `EnergyFactor` as the metric; now consistent with how `UniformEnergyFactor` is handled.
-- Allows multiple inverters with different efficiencies and use a weighted-average efficiency in the model (previously threw an error)
+- Allows multiple PV inverters with different efficiencies and use a weighted-average efficiency in the model (previously threw an error).
+- Updated DX heat pump and air conditioner models per latest draft of RESNET HERS Addendum 82.
 
 __Bugfixes__
 - Fixes an EMS bug in heat pump defrost models that over-estimates defrost fractions.
