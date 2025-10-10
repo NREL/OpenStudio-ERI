@@ -494,6 +494,7 @@ module ES_ZERH_Ruleset
       subtype = orig_floor.floor_type == HPXML::FloorTypeConcrete ? 'mass' : 'wood'
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
+      floor_ufactor = orig_floor.insulation_assembly_r_value if floor_ufactor.nil?  # the same as the Rated Unit
 
       if orig_floor.is_thermal_boundary && (not [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace].include?(orig_floor.exterior_adjacent_to))
         # This is meant to apply to floors over unconditioned spaces, non-freezing spaces, multifamily buffer boundaries, or the outdoor environment
@@ -1037,8 +1038,21 @@ module ES_ZERH_Ruleset
       location = refrigerator.location.gsub('unvented', 'vented')
     end
 
+    if @nbeds <= 2
+      subtype = '1-2 bedrooms'
+    elsif @nbeds <= 4
+      subtype = '3-4 bedrooms'
+    else
+      subtype = '5+ bedrooms'
+    end
+
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
+    rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh', subtype) if rated_annual_kwh.nil?
     rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh] if rated_annual_kwh.nil?
+
+    if (orig_bldg.refrigerators.empty?) && ([ES::SFNationalVer3_3, ZERH::SFVer2, ZERH::MFVer2].include? @program_version)
+      rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh]
+    end
 
     new_bldg.refrigerators.add(id: id,
                                location: location,

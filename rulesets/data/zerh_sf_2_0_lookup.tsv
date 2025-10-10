@@ -24,7 +24,9 @@ lighting_tier1_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-refrigerator_rated_annual_kwh		450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
+refrigerator_rated_annual_kwh	1-2 bedrooms	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
+refrigerator_rated_annual_kwh	3-4 bedrooms	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600
+refrigerator_rated_annual_kwh	5+ bedrooms	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650
 clothes_washer_imef	clothes washer present	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
 clothes_washer_ler	clothes washer present	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284
 clothes_washer_elec_rate	clothes washer present	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12

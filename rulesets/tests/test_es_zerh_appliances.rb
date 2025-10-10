@@ -43,9 +43,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
       if [ES::SFNationalVer3_2,
-          ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
+      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+        _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
@@ -86,9 +87,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
       if [ES::SFNationalVer3_2,
-          ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
+      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+        _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
@@ -120,9 +122,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
       if [ES::SFNationalVer3_2,
-          ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
+      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+        _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
@@ -163,10 +166,9 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       _convert_to_es_zerh('base-appliances-none.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_2,
-          ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
-      elsif program_version == ES::SFNationalVer3_3
+      elsif [ES::SFNationalVer3_3, ZERH::SFVer2, ZERH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
@@ -219,9 +221,10 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
       if [ES::SFNationalVer3_2,
-          ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
+      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+        _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
