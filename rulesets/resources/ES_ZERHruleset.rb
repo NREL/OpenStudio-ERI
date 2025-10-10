@@ -1036,23 +1036,18 @@ module ES_ZERH_Ruleset
       refrigerator = orig_bldg.refrigerators[0]
       id = refrigerator.id
       location = refrigerator.location.gsub('unvented', 'vented')
-    end
-
-    if @nbeds <= 2
-      subtype = '1-2 bedrooms'
-    elsif @nbeds <= 4
-      subtype = '3-4 bedrooms'
-    else
-      subtype = '5+ bedrooms'
+      if @nbeds <= 2
+        subtype = '1-2 bedrooms, refrigerator present'
+      elsif @nbeds <= 4
+        subtype = '3-4 bedrooms, refrigerator present'
+      else
+        subtype = '5+ bedrooms, refrigerator present'
+      end
     end
 
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh', subtype) if rated_annual_kwh.nil?
     rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh] if rated_annual_kwh.nil?
-
-    if (orig_bldg.refrigerators.empty?) && ([ES::SFNationalVer3_3, ZERH::SFVer2, ZERH::MFVer2].include? @program_version)
-      rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh]
-    end
 
     new_bldg.refrigerators.add(id: id,
                                location: location,
