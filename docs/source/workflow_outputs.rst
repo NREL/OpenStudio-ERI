@@ -17,15 +17,15 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 
 Output directories will reflect the requested :ref:`hpxml_calculations`:
 
-  ================  ===============
-  Calculation       Output dir name
-  ================  ===============
-  CO2e Index        CO2e_<Version>
-  ERI               ERI_<Version>
-  IECC ERI          IECC_<Version>
-  ENERGY STAR       ES_<Version>
-  ZERH              ZERH_<Version>
-  ================  ===============
+  ====================  ===============
+  Calculation           Output dir name
+  ====================  ===============
+  CO2e Index            CO2e_<Version>
+  ERI                   ERI_<Version>
+  IECC ERI              IECC_<Version>
+  ENERGY STAR           ES_<Version>
+  DENH (formerly ZERH)  DENH_<Version>
+  ====================  ===============
 
 All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
 
@@ -40,15 +40,15 @@ Summary Outputs (CSV)
 
 Based on which :ref:`hpxml_calculations` were requested, summary output files will be found at ``results/results.csv`` directory.
 
-  ================  =======================
-  Calculation       File                   
-  ================  =======================
-  CO2e Index        :ref:`co2e_results_csv`
-  ERI               :ref:`eri_results_csv` 
-  IECC ERI          :ref:`eri_results_csv` 
-  ENERGY STAR       :ref:`es_results_csv`  
-  ZERH              :ref:`zerh_results_csv`
-  ================  =======================
+  ====================  =======================
+  Calculation           File                   
+  ====================  =======================
+  CO2e Index            :ref:`co2e_results_csv`
+  ERI                   :ref:`eri_results_csv` 
+  IECC ERI              :ref:`eri_results_csv` 
+  ENERGY STAR           :ref:`es_results_csv`  
+  DENH (formerly ZERH)  :ref:`denh_results_csv`
+  ====================  =======================
 
 .. _co2e_results_csv:
 
@@ -154,23 +154,23 @@ A ``ES_<Version>/results/results.csv`` file will be produced when requesting the
   ENERGY STAR Certification             PASS or FAIL
   ====================================  =====
 
-.. _zerh_results_csv:
+.. _denh_results_csv:
 
-ZERH results.csv
+DENH results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``ZERH_<Version>/results/results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
+A ``DENH_<Version>/results/results.csv`` file will be produced when requesting the DENHCalculation; see :ref:`hpxml_calculations`.
 
-  ====================================  =====
-  Output                                Notes
-  ====================================  =====
-  Reference Home ERI                    ERI of the ZERH Reference Home
-  SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
-  SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
-  Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
-  Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
-  Zero Energy Ready Home Certification  PASS or FAIL
-  ====================================  =====
+  ==========================================================  =====
+  Output                                                      Notes
+  ==========================================================  =====
+  Reference Home ERI                                          ERI of the DENH (formerly ZERH) Reference Home
+  SAF (Size Adjustment Factor)                                Can only be less than 1 for some programs/versions
+  SAF Adjusted ERI Target                                     Reference Home ERI multiplied by SAF
+  Rated Home ERI                                              ERI of the Rated Home including OPP as allowed by the program/version
+  Rated Home ERI w/o OPP                                      ERI of the Rated Home excluding any on-site power production (OPP)
+  DOE Efficient New Homes (formerly Zero Energy Ready Homes)  Certification  PASS or FAIL
+  ==========================================================  =====
 
 .. _home_annual_outputs_csv:
 
@@ -202,14 +202,14 @@ Based on which calculations were requested in the HPXML file, CSV annual output 
   ENERGY STAR       TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
   ENERGY STAR       TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ENERGY STAR Reference Design.
   ENERGY STAR       TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
-  ZERH              RatedHome/results/RatedHome.csv                      ERI Rated Home for the ZERH rated home.
-  ZERH              RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the ZERH rated home.
-  ZERH              RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the ZERH rated home.
-  ZERH              RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the ZERH rated home.
-  ZERH              TargetHome/results/RatedHome.csv                     ERI Rated Home for the ZERH Target Home.
-  ZERH              TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ZERH Target Home.
-  ZERH              TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ZERH Target Home.
-  ZERH              TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ZERH Target Home.
+  DENH              RatedHome/results/RatedHome.csv                      ERI Rated Home for the DENH (formerly ZERH) rated home.
+  DENH              RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the DENH (formerly ZERH) rated home.
+  DENH              RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the DENH (formerly ZERH) rated home.
+  DENH              RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the DENH (formerly ZERH) rated home.
+  DENH              TargetHome/results/RatedHome.csv                     ERI Rated Home for the DENH (formerly ZERH) Target Home.
+  DENH              TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the DENH (formerly ZERH) Target Home.
+  DENH              TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the DENH (formerly ZERH) Target Home.
+  DENH              TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the DENH (formerly ZERH) Target Home.
   ================  ===================================================  =========
 
 Each CSV file includes the following sections of output.

@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../workflow/design'
 
-class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
+class EnergyStarDOEEfficientNewHomeMiscTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
@@ -27,19 +27,11 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
     puts
   end
 
-  def test_pv
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-pv.xml', program_version)
+  def test_misc
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_pv(hpxml_bldg)
-    end
-  end
-
-  def test_pv_batteries
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-pv-battery.xml', program_version)
-      hpxml_bldg = _test_ruleset(program_version)
-      _check_battery(hpxml_bldg)
+      _check_misc(hpxml_bldg)
     end
   end
 
@@ -48,8 +40,8 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
 
     if ES::AllVersions.include? program_version
       run_type = RunType::ES
-    elsif ZERH::AllVersions.include? program_version
-      run_type = RunType::ZERH
+    elsif DENH::AllVersions.include? program_version
+      run_type = RunType::DENH
     end
     designs = [Design.new(run_type: run_type,
                           init_calc_type: InitCalcType::TargetHome,
@@ -76,11 +68,7 @@ class EnergyStarZeroEnergyReadyHomePVTest < Minitest::Test
     return hpxml_bldgs.values[0]
   end
 
-  def _check_pv(hpxml_bldg)
-    assert_equal(0, hpxml_bldg.pv_systems.size)
-  end
-
-  def _check_battery(hpxml_bldg)
-    assert_equal(0, hpxml_bldg.batteries.size)
+  def _check_misc(hpxml_bldg)
+    assert_equal(0, hpxml_bldg.plug_loads.size)
   end
 end

@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../workflow/design'
 
-class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
+class EnergyStarDOEEfficientNewHomeApplianceTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
@@ -28,16 +28,16 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_electric
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -45,13 +45,13 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       if [ES::SFNationalVer3_2,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
-      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -62,7 +62,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 240.0, cap: 12, elec_rate: 0.14, gas_rate: 1.21, agc: 24.00, label_usage: 4, location: HPXML::LocationConditionedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 270.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.23, label_usage: 4, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -72,16 +72,16 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_modified
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-appliances-modified.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-appliances-modified.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -89,13 +89,13 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       if [ES::SFNationalVer3_2,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
-      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -107,16 +107,16 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_gas
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-appliances-gas.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-appliances-gas.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationConditionedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -124,13 +124,13 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       if [ES::SFNationalVer3_2,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
-      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -140,7 +140,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 240.0, cap: 12, elec_rate: 0.14, gas_rate: 1.21, agc: 24.00, label_usage: 4, location: HPXML::LocationConditionedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 270.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.23, label_usage: 4, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -150,8 +150,8 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_basement
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       assert_equal(HPXML::LocationBasementUnconditioned, hpxml_bldg.clothes_washers[0].location)
       assert_equal(HPXML::LocationBasementUnconditioned, hpxml_bldg.clothes_dryers[0].location)
@@ -162,17 +162,17 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_none
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-appliances-none.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-appliances-none.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_2,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
-      elsif [ES::SFNationalVer3_3, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [ES::SFNationalVer3_3, DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -183,7 +183,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 240.0, cap: 12, elec_rate: 0.14, gas_rate: 1.21, agc: 24.00, label_usage: 4, location: HPXML::LocationConditionedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 270.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.23, label_usage: 4, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -193,12 +193,12 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_appliances_dehumidifier
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_dehumidifiers(hpxml_bldg)
 
-      _convert_to_es_zerh('base-appliances-dehumidifier-multiple.xml', program_version)
+      _convert_to_es_denh('base-appliances-dehumidifier-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_dehumidifiers(hpxml_bldg, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.04, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationConditionedSpace },
                                         { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 0.95, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationConditionedSpace }])
@@ -206,16 +206,16 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
   end
 
   def test_shared_clothes_washers_dryers
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-mf-unit-shared-laundry-room.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-bldgtype-mf-unit-shared-laundry-room.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.57, annual_kwh: 284, elec_rate: 0.12, gas_rate: 1.09, agc: 18, cap: 4.2, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_clothes_washer(hpxml_bldg, mef: nil, imef: 1.0, annual_kwh: 400, elec_rate: 0.12, gas_rate: 1.09, agc: 27, cap: 3.0, label_usage: 6, location: HPXML::LocationOtherHeatedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -223,13 +223,13 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
       if [ES::SFNationalVer3_2,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 450.0, location: HPXML::LocationConditionedSpace)
-      elsif [ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 600.0, location: HPXML::LocationConditionedSpace)
       elsif program_version == ES::SFNationalVer3_3
         _check_refrigerator(hpxml_bldg, annual_kwh: 691.0, location: HPXML::LocationConditionedSpace)  # Same as Energy Rating Reference Home, as defined by ANSI/RESNET/ICC 301
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         _check_refrigerator(hpxml_bldg, annual_kwh: 423.0, location: HPXML::LocationConditionedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -239,7 +239,7 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 240.0, cap: 12, elec_rate: 0.14, gas_rate: 1.21, agc: 24.00, label_usage: 4, location: HPXML::LocationOtherHeatedSpace)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_dishwasher(hpxml_bldg, ef: nil, annual_kwh: 270.0, cap: 12, elec_rate: 0.12, gas_rate: 1.09, agc: 22.23, label_usage: 4, location: HPXML::LocationOtherHeatedSpace)
       else
         fail "Unhandled program version: #{program_version}"
@@ -253,8 +253,8 @@ class EnergyStarZeroEnergyReadyHomeApplianceTest < Minitest::Test
 
     if ES::AllVersions.include? program_version
       run_type = RunType::ES
-    elsif ZERH::AllVersions.include? program_version
-      run_type = RunType::ZERH
+    elsif DENH::AllVersions.include? program_version
+      run_type = RunType::DENH
     end
     designs = [Design.new(run_type: run_type,
                           init_calc_type: InitCalcType::TargetHome,

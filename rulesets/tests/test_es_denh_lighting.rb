@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../workflow/design'
 
-class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
+class EnergyStarDOEEfficientNewHomeLightingTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
@@ -28,14 +28,14 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_lighting
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, ZERH::Ver1].include? program_version
+      if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, DENH::Ver1].include? program_version
         _check_lighting(hpxml_bldg, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
       elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::SFVer2, DENH::MFVer2].include? program_version
         _check_lighting(hpxml_bldg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
       elsif [ES::SFOregonWashingtonVer3_2, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
@@ -47,24 +47,24 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
   end
 
   def test_ceiling_fans_none
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg)
     end
   end
 
   def test_ceiling_fans
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-lighting-ceiling-fans.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_ceiling_fans(hpxml_bldg, cfm_per_w: 122.0, count: 4)
     end
   end
 
   def test_ceiling_fans_nbeds_5
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-lighting-ceiling-fans.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-lighting-ceiling-fans.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.building_construction.number_of_bedrooms = 5
@@ -79,8 +79,8 @@ class EnergyStarZeroEnergyReadyHomeLightingTest < Minitest::Test
 
     if ES::AllVersions.include? program_version
       run_type = RunType::ES
-    elsif ZERH::AllVersions.include? program_version
-      run_type = RunType::ZERH
+    elsif DENH::AllVersions.include? program_version
+      run_type = RunType::DENH
     end
     designs = [Design.new(run_type: run_type,
                           init_calc_type: InitCalcType::TargetHome,

@@ -5,7 +5,7 @@ module RunType
   CO2e = 'CO2e'
   IECC = 'IECC'
   ES = 'ES'
-  ZERH = 'ZERH'
+  DENH = 'DENH'
 end
 
 module CalcType
@@ -43,7 +43,7 @@ module ES
   AllVersions = SFVersions + MFVersions
 end
 
-module ZERH
+module DENH
   Ver1 = '1.0'
   SFVer2 = 'SF_2.0'
   MFVer2 = 'MF_2.0'

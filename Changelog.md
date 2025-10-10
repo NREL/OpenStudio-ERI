@@ -34,7 +34,7 @@ __Bugfixes__
 - Fixes 301validator schematron file extension (.sch, not .xml).
 - Fixes U-factor for floors over 'other multifamily buffer space' per ENERGY STAR MFNC Rev 05.
 - Fixes modeling of 0.3 ACHnatural infiltration minimum for MF dwelling units where Aext < 0.5 and the mechanical ventilation system is solely exhaust-only.
-- Fixes ZERH Target Home and ESRD so that dual-fuel heat pumps are preserved.
+- Fixes DENH (formerly ZERH) Target Home and ESRD so that dual-fuel heat pumps are preserved.
 - Fixes battery charging/discharging not being included in peak electricity outputs.
 - Fixes error if there's a vented attic with zero roof pitch.
 
@@ -49,7 +49,7 @@ __New Features__
 - Improves eGrid/Cambium region lookup by zipcode when an exact match is not found.
 
 __Bugfixes__
-- Fixes ZERH Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
+- Fixes DENH (formerly ZERH) Target Home and ESRD so that operable window fraction (for natural ventilation) from the Rated Home is preserved.
 - Fixes possible error if there's a surface w/ interior unconditioned space and exterior "other housing unit".
 
 ## OpenStudio-ERI v1.9.3
@@ -65,7 +65,7 @@ __New Features__
 ## OpenStudio-ERI v1.9.1
 
 __Bugfixes__
-- Fixes clothes washer configurations for ZERH v2 and ENERGY STAR SFNH 3.2/MFNC 1.2 programs when the rated home does not include a clothes washer.
+- Fixes clothes washer configurations for DENH (formerly ZERH) v2 and ENERGY STAR SFNH 3.2/MFNC 1.2 programs when the rated home does not include a clothes washer.
 
 ## OpenStudio-ERI v1.9.0
 
@@ -81,7 +81,7 @@ __New Features__
   - Adds optional `CFISControls/extension/SupplementalFanRunsWithAirHandlerFan` input for CFIS systems.
 - Adds inputs for modeling skylight curbs and/or shafts.
 - Relaxes IECC climate zone requirements.
-  - IECC climate zone years other than 2006 are now always optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+  - IECC climate zone years other than 2006 are now always optional; for programs that use specific IECC climate zone years (e.g., 2021 for DENH (formerly ZERH) SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
   - See [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-climate-zones) for more information.
 - Updates HERS Diagnostic Output to v0.3.0.
 
@@ -148,8 +148,8 @@ __New Features__
   - `SolarAbsorptance` and `Emittance` now only required for *exterior* walls & rim joists (i.e., ExteriorAdjacentTo=outside).
   - `Window/PerformanceClass` no longer required (defaults to "residential").
   - Allows above-grade basements/crawlspaces defined solely with Wall (not FoundationWall) elements.
-- Adds ZERH Multifamily v2.
-- Updates to ZERH Single Family v2 windows SHGC in climate zone 4 through 8.
+- Adds DENH (formerly ZERH) Multifamily v2.
+- Updates to DENH (formerly ZERH) Single Family v2 windows SHGC in climate zone 4 through 8.
 - Allow JSON output files instead of CSV via a new `--output-format JSON` commandline argument.
 
 __Bugfixes__
@@ -175,7 +175,7 @@ __Bugfixes__
 ## OpenStudio-ERI v1.6.1
 
 __Bugfixes__
-- Fixes ZERH Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
+- Fixes DENH (formerly ZERH) Single Family v2 mechanical ventilation fan efficiency to use ASRE instead of SRE.
 - Fixes error if describing a wall with `WallType/StructuralInsulatedPanel`.
 
 ## OpenStudio-ERI v1.6.0
@@ -217,16 +217,16 @@ __Bugfixes__
 ## OpenStudio-ERI v1.5.2
 
 __New Features__
-- Adds support for ZERH Single Family v2.
+- Adds support for DENH (formerly ZERH) Single Family v2.
 - Updates to ENERGY STAR SFNH Rev 12 and MFNC Rev 03.
 - `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
 - Weather cache file (\*-cache.csv) is now optional; if not provided, it will be generated on the fly. Provide the cache file for fastest runtime.
-- Provide two decimal places in ENERGY STARS/ZERH CSV output files to better prevent user confusion.
+- Provide two decimal places in ENERGY STARS/DENH (formerly ZERH) CSV output files to better prevent user confusion.
 - Uses the same `Floor/FloorType` in the Reference Design as the Rated Home for ENERGY STAR MFNC, as per EPA's request.
 - Changes the windows SHGC in CZ4-8 from 0.40 to 0.30 for ENERGY STAR SFNH National v3.2 and MFNC National v1.2 as per EPA's request.
 
 __Bugfixes__
-- Bugfixes for ENERGY STAR and ZERH programs.
+- Bugfixes for ENERGY STAR and DENH (formerly ZERH) programs.
 
 ## OpenStudio-ERI v1.5.1
 
@@ -250,7 +250,7 @@ __New Features__
 - **Breaking change**: Now performs full HPXML XSD schema validation (previously just limited checks); yields runtime speed improvements.
 - Adds ENERGY STAR ERI calculation for SF National v3.2 and MF National v1.2.
 - Adds IECC ERI pathway calculation (2015, 2018, 2021).
-- Adds Zero Energy Ready Homes calculation for v1.
+- Adds DOE Efficient New Homes (formerly Zero Energy Ready Homes) calculation for v1.
 - Allows SEER2/HSPF2 efficiency types for central air conditioners and heat pumps.
 - Allows calculating all programs (e.g., ERI, ENERGY STAR, IECC, etc.) simultaneously while avoiding duplicate EnergyPlus simulations.
   - **Breaking change**: Deprecates energy_star.rb script; energy_rating_index.rb will now run all programs specified in the HPXML.
@@ -261,7 +261,7 @@ __New Features__
   - All runs must include a 2006 IECC climate zone.
   - IECC ERI pathway runs must include an IECC climate zone of the same year.
   - ENERGY STAR ERI runs for SF National v3.2 and MF National v1.2 must include a 2021 IECC climate zone.
-  - Zero Energy Ready Homes v1 runs must include a 2015 IECC climate zone.
+  - DOE Efficient New Homes (formerly Zero Energy Ready Homes) v1 runs must include a 2015 IECC climate zone.
 - Allows modeling room air conditioners with heating or reverse cycle.
 - Allows shared dishwasher/clothes washer to be attached to a hot water distribution system instead of a single water heater.
 - Adds HVAC capacities, design loads, and design temperatures to csv output files.

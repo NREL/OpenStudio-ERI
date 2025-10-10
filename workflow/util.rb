@@ -2,7 +2,7 @@
 
 def get_saf(results, program_version, hpxml_obj_or_path)
   if [HPXML::ResidentialTypeSFD, HPXML::ResidentialTypeSFA].include? results[:rated_facility_type] # For condos and apartments in multi-family buildings the SAF shall always equal 1.0.
-    if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ZERH::Ver1].include? program_version
+    if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, DENH::Ver1].include? program_version
       return calc_saf(results, hpxml_obj_or_path)
     end
   end
@@ -60,17 +60,17 @@ end
 
 def calc_opp_eri_limit(rd_eri, saf, program_version)
   # Calculates the limit, in ERI points, for On-site Power Production per
-  # ENERGY STAR and ZERH Program Requirements
+  # ENERGY STAR and DENH Program Requirements
 
-  if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ZERH::Ver1].include? program_version
-    # on-site power generation may only be used to meet the ENERGY STAR and ZERH ERI Target for homes
+  if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, DENH::Ver1].include? program_version
+    # on-site power generation may only be used to meet the ENERGY STAR and DENH ERI Target for homes
     # that are larger than the Benchmark Home and only for the incremental change in the ENERGY
-    # STAR and ZERH ERI Target caused by the Size Adjustment Factor
+    # STAR and DENH ERI Target caused by the Size Adjustment Factor
     orig_eri = rd_eri.round(0)
     saf_eri = (rd_eri * saf).round(0)
     return orig_eri - saf_eri
   else
-    # on-site power generation may not be used to meet the ENERGY STAR/ZERH ERI Target
+    # on-site power generation may not be used to meet the ENERGY STAR/DENH ERI Target
     return 0.0
   end
 end

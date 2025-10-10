@@ -102,7 +102,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
         else
           fail "Unhandled IECC version: #{design.version}."
         end
-      elsif [RunType::ES, RunType::ZERH].include? design.run_type
+      elsif [RunType::ES, RunType::DENH].include? design.run_type
         # Use latest ANSI version/addenda
         eri_version = Constants::ERIVersions[-2]
       elsif [RunType::ERI, RunType::CO2e].include? design.run_type
@@ -126,13 +126,13 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       if not design.init_calc_type.nil?
         if design.run_type == RunType::ES
           lookup_program = 'es_' + design.version.gsub('.', '_').downcase
-        elsif design.run_type == RunType::ZERH
-          lookup_program = 'zerh_' + design.version.gsub('.', '_').downcase
+        elsif design.run_type == RunType::DENH
+          lookup_program = 'denh_' + design.version.gsub('.', '_').downcase
         end
         if (not lookup_program.nil?) && lookup_program_data[lookup_program].nil?
           lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
         end
-        new_hpxml = ES_ZERH_Ruleset.apply_ruleset(new_hpxml, design.init_calc_type, design.version, eri_version, lookup_program_data[lookup_program])
+        new_hpxml = ES_DENH_Ruleset.apply_ruleset(new_hpxml, design.init_calc_type, design.version, eri_version, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file

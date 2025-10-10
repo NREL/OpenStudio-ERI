@@ -2845,12 +2845,12 @@ def create_sample_hpxmls
                                                                zone: '3A')
     end
 
-    # Handle different inputs for ENERGY STAR/ZERH
+    # Handle different inputs for ENERGY STAR/DENH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_versions = [ZERH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.denh_calculation_versions = [DENH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_versions = [ZERH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.denh_calculation_versions = [DENH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
       hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
@@ -2906,7 +2906,7 @@ def create_sample_hpxmls
   hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
   hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
   hpxml.header.energystar_calculation_versions = ES::SFVersions.select { |v| ES::NationalVersions.include?(v) }
-  hpxml.header.zerh_calculation_versions = ZERH::SFVersions
+  hpxml.header.denh_calculation_versions = DENH::SFVersions
   hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-sf.xml')
 
@@ -2917,7 +2917,7 @@ def create_sample_hpxmls
   hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
   hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
   hpxml.header.energystar_calculation_versions = ES::MFVersions.select { |v| ES::NationalVersions.include?(v) }
-  hpxml.header.zerh_calculation_versions = ZERH::MFVersions
+  hpxml.header.denh_calculation_versions = DENH::MFVersions
   hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-mf.xml')
 
@@ -2939,10 +2939,10 @@ def create_sample_hpxmls
     hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
     hpxml_bldg = hpxml.buildings[0]
     if hpxml_bldg.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
-      hpxml.header.zerh_calculation_versions = [ZERH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.denh_calculation_versions = [DENH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
       hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_versions = [ZERH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.denh_calculation_versions = [DENH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
       hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)

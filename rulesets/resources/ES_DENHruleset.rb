@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-module ES_ZERH_Ruleset
+module ES_DENH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, program_version, eri_version, lookup_program_data)
     @eri_version = eri_version
     hpxml.header.eri_calculation_versions = [@eri_version]
     hpxml.header.co2index_calculation_versions = nil
     hpxml.header.iecc_eri_calculation_versions = nil
     hpxml.header.energystar_calculation_versions = nil
-    hpxml.header.zerh_calculation_versions = nil
+    hpxml.header.denh_calculation_versions = nil
 
     @program_version = program_version
 
     if [ES::SFNationalVer3_3, ES::SFNationalVer3_2, ES::MFNationalVer1_3,
-        ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version
+        ES::MFNationalVer1_2, DENH::SFVer2, DENH::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif [ZERH::Ver1].include? @program_version
+    elsif [DENH::Ver1].include? @program_version
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
     elsif [ES::SFNationalVer3_1, ES::MFNationalVer1_1, ES::SFOregonWashingtonVer3_2,

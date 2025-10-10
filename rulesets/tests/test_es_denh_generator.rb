@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../workflow/design'
 
-class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
+class EnergyStarDOEEfficientNewHomeGeneratorTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
@@ -27,11 +27,11 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
     puts
   end
 
-  def test_misc
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+  def test_generator
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-misc-generators.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_misc(hpxml_bldg)
+      _check_generator(hpxml_bldg)
     end
   end
 
@@ -40,8 +40,8 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
 
     if ES::AllVersions.include? program_version
       run_type = RunType::ES
-    elsif ZERH::AllVersions.include? program_version
-      run_type = RunType::ZERH
+    elsif DENH::AllVersions.include? program_version
+      run_type = RunType::DENH
     end
     designs = [Design.new(run_type: run_type,
                           init_calc_type: InitCalcType::TargetHome,
@@ -68,7 +68,7 @@ class EnergyStarZeroEnergyReadyHomeMiscTest < Minitest::Test
     return hpxml_bldgs.values[0]
   end
 
-  def _check_misc(hpxml_bldg)
-    assert_equal(0, hpxml_bldg.plug_loads.size)
+  def _check_generator(hpxml_bldg)
+    assert_equal(0, hpxml_bldg.generators.size)
   end
 end
