@@ -466,31 +466,39 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
   def test_enclosure_floors
     [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      if [ES::SFNationalVer3_1, ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2, ES::SFNationalVer3_0, ES::MFNationalVer1_0,
+
+
+      ['base-foundation-unconditioned-basement.xml',
+       'base-foundation-unconditioned-basement-wall-insulation.xml'].each do |hpxml_name|
+        if [ES::SFNationalVer3_1, ZERH::Ver1, ZERH::SFVer2, ES::SFNationalVer3_0, ES::MFNationalVer1_0,
           ES::MFNationalVer1_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
-        rvalue = 1.0 / 0.033
-      elsif program_version == ES::SFPacificVer3_0
-        rvalue = 1.0 / 0.257
-      elsif program_version == ES::SFFloridaVer3_1
-        rvalue = 1.0 / 0.064
-      elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
-        rvalue = 1.0 / 0.028
-      else
-        fail "Unhandled program version: #{program_version}"
+          rvalue = 1.0 / 0.033
+        elsif program_version == ZERH::MFVer2
+          if hpxml_name.include? 'wall-insulation'
+            rvalue = 5.3  # Same as Rated Home R-value
+          else
+            rvalue = 19.4  # Same as Rated Home R-value
+          end
+        elsif program_version == ES::SFPacificVer3_0
+          rvalue = 1.0 / 0.257
+        elsif program_version == ES::SFFloridaVer3_1
+          rvalue = 1.0 / 0.064
+        elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
+          rvalue = 1.0 / 0.028
+        else
+          fail "Unhandled program version: #{program_version}"
+        end
+        _convert_to_es_zerh(hpxml_name, program_version)
+        hpxml_bldg = _test_ruleset(program_version)
+        _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       end
-
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
-      hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
-
-      _convert_to_es_zerh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
-      hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
     end
 
     [*ES::MFVersions, *ZERH::MFVersions].each do |program_version|
-      if [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::Ver1, ZERH::MFVer2].include? program_version
+      if [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::Ver1].include? program_version
         rvalue = 1.0 / 0.033
+      elsif program_version == ZERH::MFVer2
+        rvalue = 18.7  # Same as Rated Home R-value
       elsif program_version == ES::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.028
       else
@@ -515,10 +523,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
+      elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         rvalue = 1.0 / 0.051
       elsif program_version == ZERH::Ver1
         rvalue = 1.0 / 0.033  # Assembly R-value of non-mass floor
+      elsif program_version == ZERH::MFVer2
+        rvalue = 18.7  # Same as Rated Home R-value
       elsif program_version == ES::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.028  # Assembly R-value of non-mass floor
       else
@@ -534,12 +544,13 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1.0 / 0.066
       elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             ZERH::Ver1, ZERH::SFVer2].include? program_version
         rvalue = 1.0 / 0.064
+      elsif program_version == ZERH::MFVer2
+        rvalue = 19.4  # Same as Rated Home R-value
       else
         fail "Unhandled program version: #{program_version}"
       end
-
       _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
