@@ -1,4 +1,4 @@
-.. |nbsp| unicode:: 0xA0 
+.. |nbsp| unicode:: 0xA0
    :trim:
 
 .. _outputs:
@@ -41,12 +41,12 @@ Summary Outputs (CSV)
 Based on which :ref:`hpxml_calculations` were requested, summary output files will be found at ``results/results.csv`` directory.
 
   ================  =======================
-  Calculation       File                   
+  Calculation       File
   ================  =======================
   CO2e Index        :ref:`co2e_results_csv`
-  ERI               :ref:`eri_results_csv` 
-  IECC ERI          :ref:`eri_results_csv` 
-  ENERGY STAR       :ref:`es_results_csv`  
+  ERI               :ref:`eri_results_csv`
+  IECC ERI          :ref:`eri_results_csv`
+  ENERGY STAR       :ref:`es_results_csv`
   ZERH              :ref:`zerh_results_csv`
   ================  =======================
 
@@ -239,7 +239,7 @@ Fuel uses are listed below.
   Fuel Use: Natural Gas: Total (MBtu)
   Fuel Use: Fuel Oil: Total (MBtu)
   Fuel Use: Propane: Total (MBtu)
-  Fuel Use: Wood Cord: Total (MBtu)         
+  Fuel Use: Wood Cord: Total (MBtu)
   Fuel Use: Wood Pellets: Total (MBtu)
   Fuel Use: Coal: Total (MBtu)          Not used by OS-ERI
   ====================================  ===========================
@@ -503,7 +503,7 @@ Component loads represent the estimated contribution of different building compo
 The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
 
 Component loads disaggregated by Heating/Cooling are listed below.
-   
+
   =================================================  =========================================================================================================
   Type                                               Notes
   =================================================  =========================================================================================================
@@ -540,7 +540,7 @@ Annual hot water uses are listed below.
   Hot Water: Clothes Washer (gal)
   Hot Water: Dishwasher (gal)
   Hot Water: Fixtures (gal)            Showers and faucets.
-  Hot Water: Distribution Waste (gal) 
+  Hot Water: Distribution Waste (gal)
   ===================================  ====================
 
 .. note::
@@ -658,6 +658,7 @@ Depending on the outputs requested, CSV files may include:
   Component Loads          ``componentloads``   Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
   Unmet Hours              ``unmethours``       Heating and cooling unmet hours.
   Zone Temperatures        ``temperatures``     Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+  Zone Conditions          ``conditions``       Zone conditions (humidity ratio and relative humidity and dewpoint, radiant, and operative temperatures)
   Airflows                 ``airflows``         Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
   Weather                  ``weather``          Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
   =======================  ===================  ================================================================================================================================================
@@ -694,10 +695,10 @@ Home EnergyPlus Files
 
 In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``RatedHome``, ``ReferenceHome``, etc. directories).
 
-.. warning:: 
+.. warning::
 
-  It is highly discouraged for software tools to read the raw EnergyPlus output files. 
-  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
+  It is highly discouraged for software tools to read the raw EnergyPlus output files.
+  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created.
   If there are additional outputs of interest that are not available in the annual/timeseries output files, please send us a request.
 
 .. _hers_diagnostic_output:
