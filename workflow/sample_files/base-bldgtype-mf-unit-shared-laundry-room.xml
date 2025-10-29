@@ -289,6 +289,7 @@
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
             <extension>
               <NumberofBedroomsServed>18</NumberofBedroomsServed>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
             </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>

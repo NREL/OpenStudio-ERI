@@ -2089,22 +2089,24 @@ Heat Pump
 
 Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
 
-  =============================================  =======  ============  ======================  ========  ========  ==========================================
-  Element                                        Type     Units         Constraints             Required  Default   Notes
-  =============================================  =======  ============  ======================  ========  ========  ==========================================
-  ``SystemIdentifier``                           id                                             Yes                 Unique identifier
-  ``FuelType``                                   string                 electricity             Yes                 Fuel type
-  ``WaterHeaterType``                            string                 heat pump water heater  Yes                 Type of water heater
-  ``Location``                                   string                 See [#]_                Yes                 Water heater location
-  ``IsSharedSystem``                             boolean                                        Yes                 Whether it serves multiple dwelling units or shared laundry room
-  ``TankVolume``                                 double   gal           > 0                     Yes                 Nominal tank volume
-  ``FractionDHWLoadServed``                      double   frac          >= 0, <= 1 [#]_         Yes                 Fraction of hot water load served [#]_
-  ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          > 1, <= 5               Yes                 EnergyGuide label rated efficiency
-  ``FirstHourRating``                            double   gal/hr        > 0                     See [#]_            EnergyGuide label first hour rating
-  ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0                    No        0         R-value of additional tank insulation wrap
-  ``UsesDesuperheater``                          boolean                                        No        false     Presence of desuperheater? [#]_
-  ``extension/NumberofBedroomsServed``           integer                > NumberofBedrooms      See [#]_            Number of bedrooms served directly or indirectly
-  =============================================  =======  ============  ======================  ========  ========  ==========================================
+  ===================================================  =======  ============  ======================  ========  ========  ==========================================
+  Element                                              Type     Units         Constraints             Required  Default   Notes
+  ===================================================  =======  ============  ======================  ========  ========  ==========================================
+  ``SystemIdentifier``                                 id                                             Yes                 Unique identifier
+  ``FuelType``                                         string                 electricity             Yes                 Fuel type
+  ``WaterHeaterType``                                  string                 heat pump water heater  Yes                 Type of water heater
+  ``Location``                                         string                 See [#]_                Yes                 Water heater location
+  ``IsSharedSystem``                                   boolean                                        Yes                 Whether it serves multiple dwelling units or shared laundry room
+  ``TankVolume``                                       double   gal           > 0                     Yes                 Nominal tank volume
+  ``FractionDHWLoadServed``                            double   frac          >= 0, <= 1 [#]_         Yes                 Fraction of hot water load served [#]_
+  ``UniformEnergyFactor`` or ``EnergyFactor``          double   frac          > 1, <= 5               Yes                 EnergyGuide label rated efficiency
+  ``FirstHourRating``                                  double   gal/hr        > 0                     See [#]_            EnergyGuide label first hour rating
+  ``WaterHeaterInsulation/Jacket/JacketRValue``        double   F-ft2-hr/Btu  >= 0                    No        0         R-value of additional tank insulation wrap
+  ``UsesDesuperheater``                                boolean                                        No        false     Presence of desuperheater? [#]_
+  ``extension/NumberofBedroomsServed``                 integer                > NumberofBedrooms      See [#]_            Number of bedrooms served directly or indirectly
+  ``extension/HPWHInConfinedSpaceWithoutMitigation``   boolean                                        No        false     Whether HPWH is installed in confined space without mitigation [#]_
+  ``extension/HPWHContainmentVolume``                  double   ft3           > 0                     See [#]_            Containment volume of the space where HPWH is installed
+  ===================================================  =======  ============  ======================  ========  ========  ==========================================
 
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
@@ -2116,6 +2118,9 @@ Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Sy
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          Tank losses will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the water heating system per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
          Each dwelling unit w/zero bedrooms should be counted as 1 bedroom -- e.g., a value of 3 should be entered for a shared system serving 3 studio (zero bedroom) apartments.
+  .. [#] Mitigation approaches include sufficient enclosed volume or connection to conditioned space with, e.g, ducting, grills, door undercuts, or louvers per `RESNET HERS Addendum 77 <https://www.resnet.us/about/standards/hers/draft-pds-03-hers-addendum-77-integrated-heat-pump-water-heaters-ihpwh/>`_.
+         If true, a COP adjustment based on ``extension/HPWHContainmentVolume`` will be applied.
+  .. [#] HPWHContainmentVolume only required if HPWHInConfinedSpaceWithoutMitigation is true.
 
 .. _water_heater_combi_storage:
 

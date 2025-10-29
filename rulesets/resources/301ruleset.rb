@@ -1795,6 +1795,8 @@ module ERI_301_Ruleset
                                          related_hvac_idref: orig_water_heater.related_hvac_idref,
                                          standby_loss_units: orig_water_heater.standby_loss_units,
                                          standby_loss_value: orig_water_heater.standby_loss_value,
+                                         hpwh_confined_space_without_mitigation: orig_water_heater.hpwh_confined_space_without_mitigation,
+                                         hpwh_containment_volume: orig_water_heater.hpwh_containment_volume,
                                          temperature: Defaults.get_water_heater_temperature(@eri_version))
     end
 

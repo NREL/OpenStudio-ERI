@@ -371,6 +371,9 @@
             <FirstHourRating>56.0</FirstHourRating>
             <UsesDesuperheater>true</UsesDesuperheater>
             <RelatedHVACSystem idref='CoolingSystem1'/>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

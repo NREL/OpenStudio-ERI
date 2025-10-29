@@ -318,6 +318,9 @@
               <Value>1.0</Value>
             </StandbyLoss>
             <RelatedHVACSystem idref='HeatingSystem1'/>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

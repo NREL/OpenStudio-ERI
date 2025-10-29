@@ -1369,6 +1369,15 @@
       <sch:assert role='ERROR' test='number(h:EnergyFactor) &gt; 1 or not(h:EnergyFactor)'>Expected EnergyFactor to be greater than 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:WaterHeaterInsulation/h:Jacket/h:JacketRValue) &lt;= 1'>Expected 0 or 1 element(s) for xpath: WaterHeaterInsulation/Jacket/JacketRValue</sch:assert>
       <sch:assert role='ERROR' test='count(h:UsesDesuperheater) &lt;= 1'>Expected 0 or 1 element(s) for xpath: UsesDesuperheater</sch:assert> <!-- See [Desuperheater] -->
+      <sch:assert role='ERROR' test='count(h:extension/h:HPWHInConfinedSpaceWithoutMitigation) = 1'>Expected 1 element(s) for xpath: HPWHInConfinedSpaceWithoutMitigation</sch:assert> <!-- See [HPWHInConfinedSpaceWithoutMitigation] -->
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[HPWHInConfinedSpaceWithoutMitigation]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterHeatingSystem/h:extension[h:HPWHInConfinedSpaceWithoutMitigation="true"]'>
+      <sch:assert role='ERROR' test='count(h:HPWHContainmentVolume) = 1'>Expected 1 element(s) for xpath: HPWHContainmentVolume</sch:assert>
+      <sch:assert role='ERROR' test='number(h:HPWHContainmentVolume) &gt; 0 or not(h:HPWHContainmentVolume)'>Expected HPWHContainmentVolume to be greater than 0</sch:assert>
     </sch:rule>
   </sch:pattern>
 

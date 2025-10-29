@@ -289,6 +289,7 @@
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
             <extension>
               <NumberofBedroomsServed>9</NumberofBedroomsServed>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
             </extension>
           </WaterHeatingSystem>
           <WaterHeatingSystem>
@@ -304,6 +305,7 @@
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
             <extension>
               <NumberofBedroomsServed>9</NumberofBedroomsServed>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
             </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>

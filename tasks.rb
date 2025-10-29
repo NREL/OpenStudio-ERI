@@ -2295,6 +2295,7 @@ def create_sample_hpxmls
                   'base-dhw-tank-elec-ef.xml',
                   'base-dhw-tank-gas-ef.xml',
                   'base-dhw-tank-heat-pump-ef.xml',
+                  'base-dhw-tank-heat-pump-containment-volume.xml',
                   'base-dhw-tankless-electric-ef.xml',
                   'base-dhw-tankless-gas-ef.xml',
                   'base-dhw-tankless-propane.xml',
@@ -2561,9 +2562,8 @@ def create_sample_hpxmls
     end
     hpxml_bldg.water_heating_systems.each do |water_heating_system|
       water_heating_system.temperature = nil
-      next unless water_heating_system.is_shared_system.nil?
-
-      water_heating_system.is_shared_system = false
+      water_heating_system.is_shared_system = false if water_heating_system.is_shared_system.nil?
+      water_heating_system.hpwh_confined_space_without_mitigation = false if water_heating_system.hpwh_confined_space_without_mitigation.nil?
     end
     hpxml_bldg.water_fixtures.each do |water_fixture|
       water_fixture.count = nil

@@ -319,6 +319,9 @@
               </Jacket>
             </WaterHeaterInsulation>
             <RelatedHVACSystem idref='HeatingSystem1'/>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

@@ -276,21 +276,39 @@
       <Systems>
         <HVAC>
           <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='HeatingSystem1'/>
+              <DistributionSystem idref='HVACDistribution1'/>
+              <HeatingSystemType>
+                <Furnace/>
+              </HeatingSystemType>
+              <HeatingSystemFuel>natural gas</HeatingSystemFuel>
+              <HeatingCapacity>35000.0</HeatingCapacity>
+              <AnnualHeatingEfficiency>
+                <Units>AFUE</Units>
+                <Value>0.92</Value>
+              </AnnualHeatingEfficiency>
+              <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
+              <extension>
+                <FanPowerWattsPerCFM>0.58</FanPowerWattsPerCFM>
+                <AirflowDefectRatio>-0.25</AirflowDefectRatio>
+              </extension>
+            </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
               <DistributionSystem idref='HVACDistribution1'/>
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>24000.0</CoolingCapacity>
-              <CompressorType>two stage</CompressorType>
+              <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
                 <Units>SEER2</Units>
-                <Value>17.0</Value>
+                <Value>13.4</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
                 <Units>EER2</Units>
-                <Value>13.1</Value>
+                <Value>11.3</Value>
               </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -362,15 +380,16 @@
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem1'/>
             <FuelType>electricity</FuelType>
-            <WaterHeaterType>storage water heater</WaterHeaterType>
+            <WaterHeaterType>heat pump water heater</WaterHeaterType>
             <Location>conditioned space</Location>
             <IsSharedSystem>false</IsSharedSystem>
-            <TankVolume>40.0</TankVolume>
+            <TankVolume>80.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
-            <UniformEnergyFactor>0.94</UniformEnergyFactor>
+            <UniformEnergyFactor>3.5</UniformEnergyFactor>
             <FirstHourRating>56.0</FirstHourRating>
             <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+              <HPWHInConfinedSpaceWithoutMitigation>true</HPWHInConfinedSpaceWithoutMitigation>
+              <HPWHContainmentVolume>453.0</HPWHContainmentVolume>
             </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
