@@ -1011,6 +1011,9 @@
               </Jacket>
             </WaterHeaterInsulation>
             <UsesDesuperheater>false</UsesDesuperheater>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

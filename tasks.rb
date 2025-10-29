@@ -1902,6 +1902,9 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
                                            first_hour_rating: first_hour_rating)
     end
   end
+  if hpxml_bldg.water_heating_systems[0].water_heater_type == HPXML::WaterHeaterTypeHeatPump
+    hpxml_bldg.water_heating_systems[0].hpwh_confined_space_without_mitigation = false
+  end
 end
 
 def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
