@@ -838,6 +838,9 @@ module ES_ZERH_Ruleset
                                          energy_factor: ef,
                                          uniform_energy_factor: uef,
                                          first_hour_rating: fhr)
+      if new_bldg.water_heating_systems[-1].water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        new_bldg.water_heating_systems[-1].hpwh_confined_space_without_mitigation = false
+      end
     end
   end
 
