@@ -2104,7 +2104,7 @@ Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Sy
   ``WaterHeaterInsulation/Jacket/JacketRValue``        double   F-ft2-hr/Btu  >= 0                    No        0         R-value of additional tank insulation wrap
   ``UsesDesuperheater``                                boolean                                        No        false     Presence of desuperheater? [#]_
   ``extension/NumberofBedroomsServed``                 integer                > NumberofBedrooms      See [#]_            Number of bedrooms served directly or indirectly
-  ``extension/HPWHInConfinedSpaceWithoutMitigation``   boolean                                        No        false     Whether HPWH is installed in confined space without mitigation [#]_
+  ``extension/HPWHInConfinedSpaceWithoutMitigation``   boolean                                        Yes                 Whether HPWH is installed in confined space without mitigation [#]_
   ``extension/HPWHContainmentVolume``                  double   ft3           > 0                     See [#]_            Containment volume of the space where HPWH is installed
   ===================================================  =======  ============  ======================  ========  ========  ==========================================
 
