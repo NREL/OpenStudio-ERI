@@ -7,9 +7,9 @@ The building description is provided in an `HPXML file <https://hpxml.nrel.gov/>
 The project supports:
 
 - ANSI/RESNET/ICC 301© Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
-- ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path
-- IECC Energy Rating Index Compliance Alternative (Section R406)
-- DOE Efficient New Homes (formerly Zero Energy Ready Homes) System for Homes Using an Energy Rating Index-Based Compliance Path
+- ENERGY STAR Certification System for Homes and Apartments Using an ERI Compliance Path
+- IECC ERI Compliance Alternative (Section R406)
+- DOE Efficient New Homes (formerly Zero Energy Ready Homes) Certification Using an ERI Compliance Path
 
 License
 -------
@@ -19,7 +19,7 @@ This workflow is available under a BSD-3-like license, which is a free, open-sou
 Disclaimer
 ----------
 
-Downloading and using this software from this website does not constitute accreditation of the final software product by RESNET. 
+Downloading and using this software from this website does not constitute accreditation of the final software product by RESNET.
 If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
 
 Any reference herein to RESNET, its activities, products, or services, or any linkages from this website to RESNET's website, does not constitute or imply the endorsement, recommendation, or favoring of the U.S. Government, the Alliance for Sustainable Energy, or any of their employees or contractors acting on their behalf.

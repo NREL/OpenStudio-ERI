@@ -56,7 +56,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   ``CO2IndexCalculation/Version``    string             See [#]_     No        <none>   Version(s) to perform CO2e Index calculation; multiple allowed
   ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version(s) to perform IECC ERI calculation; multiple allowed
   ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version(s) to perform ENERGY STAR ERI calculation; multiple allowed
-  ``DENHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE DENH (formerly ZERH) ERI calculation; multiple allowed
+  ``DENHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE Efficient New Homes ERI calculation; multiple allowed
   =================================  ========  =======  ===========  ========  =======  ==================================
 
   .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
@@ -68,6 +68,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
   .. [#] DENHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
+         DOE Efficient New Homes (DENH) was formerly known as Zero Energy Ready Homes (ZERH).
 
 .. warning::
 
@@ -78,8 +79,8 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
 
 .. warning::
 
-  For the ENERGY STAR and DOE Efficient New Homes (formerly Zero Energy Ready Homes) ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ENERGY STAR and DOE Efficient New Homes (formerly Zero Energy Ready Homes) ERI Target.
-  For example, it does not check that the home meets all ENERGY STAR and DOE Efficient New Homes (formerly Zero Energy Ready Homes) Mandatory Requirements.
+  For the ENERGY STAR and DOE Efficient New Homes ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ERI Target.
+  For example, it does not check that the home meets all ENERGY STAR and DOE Efficient New Homes Mandatory Requirements.
   It is the software tool's responsibility to perform these additional steps.
 
 HPXML Building Site
@@ -147,7 +148,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR and DENH (formerly ZERH), "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
+         For ENERGY STAR and DENH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
 
 .. _weather_station:
 
@@ -182,16 +183,16 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
 
   .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, 2021, or 2024.
   .. [#] The IECC climate zone for 2006 is always required.
-         IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for DENH (formerly ZERH) SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+         IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for DENH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
          See below for the list of climate zone years used by different programs:
 
          \- **ENERGY STAR SF_National_3.3, SF_National_3.2, MF_National_1.3, MF_National_1.2**: 2021
 
          \- **ENERGY STAR SF_National_3.1, MF_National_1.1, SF_OregonWashington_3.2, MF_OregonWashington_1.2**: 2012
 
-         \- **DENH (formerly ZERH) SF_2.0, MF_2.0**: 2021
+         \- **DENH SF_2.0, MF_2.0**: 2021
 
-         \- **DENH (formerly ZERH) 1.0**: 2015
+         \- **DENH 1.0**: 2015
 
          \- **IECC ERI 20XX**: 20XX
 
