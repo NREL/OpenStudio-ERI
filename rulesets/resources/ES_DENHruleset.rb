@@ -494,7 +494,6 @@ module ES_DENH_Ruleset
       subtype = orig_floor.floor_type == HPXML::FloorTypeConcrete ? 'mass' : 'wood'
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
-      floor_ufactor = 1 / orig_floor.insulation_assembly_r_value if floor_ufactor.nil?  # the same as the Rated Unit
 
       if orig_floor.is_thermal_boundary && (not [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace].include?(orig_floor.exterior_adjacent_to))
         # This is meant to apply to floors over unconditioned spaces, non-freezing spaces, multifamily buffer boundaries, or the outdoor environment
