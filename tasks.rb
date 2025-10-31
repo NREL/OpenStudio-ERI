@@ -2298,7 +2298,7 @@ def create_sample_hpxmls
                   'base-dhw-tank-elec-ef.xml',
                   'base-dhw-tank-gas-ef.xml',
                   'base-dhw-tank-heat-pump-ef.xml',
-                  'base-dhw-tank-heat-pump-containment-volume.xml',
+                  'base-dhw-tank-heat-pump-confined-space.xml',
                   'base-dhw-tankless-electric-ef.xml',
                   'base-dhw-tankless-gas-ef.xml',
                   'base-dhw-tankless-propane.xml',

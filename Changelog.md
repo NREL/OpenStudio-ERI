@@ -6,7 +6,7 @@ __New Features__
 - Improves electric water heater tank losses when using `EnergyFactor` as the metric; now consistent with how `UniformEnergyFactor` is handled.
 - Allows multiple PV inverters with different efficiencies and uses a weighted-average efficiency in the model (previously threw an error).
 - Updated DX heat pump and air conditioner models per latest draft of RESNET HERS Addendum 82.
-- **Breaking change**: Adds RESNET HERS Addendum 77 to adjust HPWH performance when installed in confined space.
+- **Breaking change**: Adds RESNET HERS Addendum 77 to adjust HPWH performance when installed in confined space, used when ERI version is "latest".
   - A new `extension/HPWHInConfinedSpaceWithoutMitigation` input is now required for HPWHs; when true, `extension/HPWHContainmentVolume` is also required.
 
 __Bugfixes__
