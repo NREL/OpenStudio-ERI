@@ -495,8 +495,12 @@ module ES_DENH_Ruleset
       floor_ufactor = lookup_reference_value('floors_ufactor', subtype)
       floor_ufactor = lookup_reference_value('floors_ufactor') if floor_ufactor.nil?
 
-      if orig_floor.is_thermal_boundary && (not [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace].include?(orig_floor.exterior_adjacent_to))
-        # This is meant to apply to floors over unconditioned spaces, non-freezing spaces, multifamily buffer boundaries, or the outdoor environment
+      subtype = orig_floor.exterior_adjacent_to
+      floor_insulated = lookup_reference_value('floors_insulated', subtype)
+      floor_insulated = true if floor_insulated.nil?
+
+      if orig_floor.is_thermal_boundary && floor_insulated
+        # This is meant to apply to floors over unconditioned spaces, non-freezing spaces, unrated heated spaces, multifamily buffer boundaries, or the outdoor environment
         insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
       else
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
