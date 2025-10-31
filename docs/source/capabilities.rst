@@ -25,7 +25,7 @@ The following IECC ERI versions are supported:
 - 2021
 - 2024
 
-The following DOE DENH (formerly ZERH) versions are supported:
+The following DOE Efficient New Homes (formerly Zero Energy Ready Homes) versions are supported:
 
 - 1.0
 - Single Family, 2.0
