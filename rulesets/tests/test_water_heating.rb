@@ -305,7 +305,7 @@ class ERIWaterHeatingTest < Minitest::Test
       elsif [CalcType::RatedHome].include? calc_type
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, uef: 0.94, fhr: 56.0 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.59 },
-                                         { whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 2.3 },
+                                         { whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 2.3, hpwh_confined: false, hpwh_volume: nil },
                                          { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, setpoint: 125.0, location: HPXML::LocationConditionedSpace, ef: 0.99 },
                                          { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, setpoint: 125.0, location: HPXML::LocationConditionedSpace, ef: 0.82 },
                                          { whtype: HPXML::WaterHeaterTypeCombiStorage, frac_load: 0.1, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 50, standby_loss_value: 0.843 }])
@@ -595,7 +595,11 @@ class ERIWaterHeatingTest < Minitest::Test
       end
       if expected_values[:whtype] == HPXML::WaterHeaterTypeHeatPump
         assert_equal(expected_values[:hpwh_confined], water_heater.hpwh_confined_space_without_mitigation)
-        assert_equal(expected_values[:hpwh_volume], water_heater.hpwh_containment_volume)
+        if expected_values[:hpwh_volume].nil?
+          assert_nil(water_heater.hpwh_containment_volume)
+        else
+          assert_equal(expected_values[:hpwh_volume], water_heater.hpwh_containment_volume)
+        end
       else
         assert_nil(water_heater.hpwh_confined_space_without_mitigation)
         assert_nil(water_heater.hpwh_containment_volume)
