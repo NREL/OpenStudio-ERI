@@ -387,9 +387,6 @@
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <EnergyFactor>0.59</EnergyFactor>
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
-            <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
-            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

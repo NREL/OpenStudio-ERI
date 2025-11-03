@@ -2566,7 +2566,9 @@ def create_sample_hpxmls
     hpxml_bldg.water_heating_systems.each do |water_heating_system|
       water_heating_system.temperature = nil
       water_heating_system.is_shared_system = false if water_heating_system.is_shared_system.nil?
-      water_heating_system.hpwh_confined_space_without_mitigation = false if water_heating_system.hpwh_confined_space_without_mitigation.nil?
+      if water_heating_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        water_heating_system.hpwh_confined_space_without_mitigation = false if water_heating_system.hpwh_confined_space_without_mitigation.nil?
+      end
     end
     hpxml_bldg.water_fixtures.each do |water_fixture|
       water_fixture.count = nil

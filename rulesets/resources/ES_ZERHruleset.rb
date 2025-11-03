@@ -923,7 +923,7 @@ module ES_ZERH_Ruleset
 
     if not solar_fraction.nil?
       new_bldg.solar_thermal_systems.add(id: 'TargetSolarThermalSystem',
-                                         system_type: 'hot water',
+                                         system_type: HPXML::SolarThermalSystemTypeHotWater,
                                          solar_fraction: solar_fraction)
     end
   end

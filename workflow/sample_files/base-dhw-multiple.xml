@@ -316,9 +316,6 @@
             <FractionDHWLoadServed>0.2</FractionDHWLoadServed>
             <UniformEnergyFactor>0.94</UniformEnergyFactor>
             <FirstHourRating>56.0</FirstHourRating>
-            <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
-            </extension>
           </WaterHeatingSystem>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem2'/>
@@ -331,9 +328,6 @@
             <HeatingCapacity>40000.0</HeatingCapacity>
             <EnergyFactor>0.59</EnergyFactor>
             <RecoveryEfficiency>0.76</RecoveryEfficiency>
-            <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
-            </extension>
           </WaterHeatingSystem>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem3'/>
@@ -356,9 +350,6 @@
             <IsSharedSystem>false</IsSharedSystem>
             <FractionDHWLoadServed>0.2</FractionDHWLoadServed>
             <EnergyFactor>0.99</EnergyFactor>
-            <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
-            </extension>
           </WaterHeatingSystem>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem5'/>
@@ -368,9 +359,6 @@
             <IsSharedSystem>false</IsSharedSystem>
             <FractionDHWLoadServed>0.1</FractionDHWLoadServed>
             <EnergyFactor>0.82</EnergyFactor>
-            <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
-            </extension>
           </WaterHeatingSystem>
           <WaterHeatingSystem>
             <SystemIdentifier id='WaterHeatingSystem6'/>
@@ -380,9 +368,6 @@
             <TankVolume>50.0</TankVolume>
             <FractionDHWLoadServed>0.1</FractionDHWLoadServed>
             <RelatedHVACSystem idref='HeatingSystem1'/>
-            <extension>
-              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
-            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
