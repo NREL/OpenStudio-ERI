@@ -1775,6 +1775,11 @@ module ERI_301_Ruleset
       uses_desuperheater = orig_water_heater.uses_desuperheater
       uses_desuperheater = false if uses_desuperheater.nil?
 
+      if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('latest') # FIXME: Change from 'latest' when incorporated in 301 standard
+        hpwh_confined_space_without_mitigation = orig_water_heater.hpwh_confined_space_without_mitigation
+        hpwh_containment_volume = orig_water_heater.hpwh_containment_volume
+      end
+
       # New water heater
       new_bldg.water_heating_systems.add(id: orig_water_heater.id,
                                          is_shared_system: orig_water_heater.is_shared_system,
@@ -1795,6 +1800,8 @@ module ERI_301_Ruleset
                                          related_hvac_idref: orig_water_heater.related_hvac_idref,
                                          standby_loss_units: orig_water_heater.standby_loss_units,
                                          standby_loss_value: orig_water_heater.standby_loss_value,
+                                         hpwh_confined_space_without_mitigation: hpwh_confined_space_without_mitigation,
+                                         hpwh_containment_volume: hpwh_containment_volume,
                                          temperature: Defaults.get_water_heater_temperature(@eri_version))
     end
 

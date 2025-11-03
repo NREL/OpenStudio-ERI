@@ -1902,6 +1902,9 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
                                            first_hour_rating: first_hour_rating)
     end
   end
+  if hpxml_bldg.water_heating_systems[0].water_heater_type == HPXML::WaterHeaterTypeHeatPump
+    hpxml_bldg.water_heating_systems[0].hpwh_confined_space_without_mitigation = false
+  end
 end
 
 def set_hpxml_hot_water_distribution(hpxml_file, hpxml_bldg)
@@ -2295,6 +2298,7 @@ def create_sample_hpxmls
                   'base-dhw-tank-elec-ef.xml',
                   'base-dhw-tank-gas-ef.xml',
                   'base-dhw-tank-heat-pump-ef.xml',
+                  'base-dhw-tank-heat-pump-confined-space.xml',
                   'base-dhw-tankless-electric-ef.xml',
                   'base-dhw-tankless-gas-ef.xml',
                   'base-dhw-tankless-propane.xml',
@@ -2561,9 +2565,10 @@ def create_sample_hpxmls
     end
     hpxml_bldg.water_heating_systems.each do |water_heating_system|
       water_heating_system.temperature = nil
-      next unless water_heating_system.is_shared_system.nil?
-
-      water_heating_system.is_shared_system = false
+      water_heating_system.is_shared_system = false if water_heating_system.is_shared_system.nil?
+      if water_heating_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        water_heating_system.hpwh_confined_space_without_mitigation = false if water_heating_system.hpwh_confined_space_without_mitigation.nil?
+      end
     end
     hpxml_bldg.water_fixtures.each do |water_fixture|
       water_fixture.count = nil

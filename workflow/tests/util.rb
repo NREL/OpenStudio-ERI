@@ -18,7 +18,7 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false, skip_simulation: false,
-                  rated_home_only: false, output_format: 'csv', diagnostic_output: false)
+                  rated_home_only: false, output_format: 'csv', diagnostic_output: false, debug: false)
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
 
@@ -47,10 +47,13 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     # ERI required to generate diagnostic output
     flags += ' --diagnostic-output'
   end
+  if debug
+    flags += ' --debug'
+  end
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format}"
   system(command)
 
   hpxmls = {}

@@ -363,6 +363,9 @@
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <UniformEnergyFactor>2.2</UniformEnergyFactor>
             <FirstHourRating>40.0</FirstHourRating>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDstribution1'/>
