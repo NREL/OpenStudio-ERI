@@ -1303,7 +1303,7 @@ module ES_DENH_Ruleset
       next unless orig_floor.is_floor
       next unless orig_floor.interior_adjacent_to == HPXML::LocationConditionedSpace
 
-      if [HPXML::LocationOtherHousingUnit].include? orig_floor.exterior_adjacent_to
+      if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to
         floor_areas['adiabatic'] += orig_floor.area
       elsif [HPXML::LocationOutside].include? orig_floor.exterior_adjacent_to
         floor_areas['ambient'] += orig_floor.area

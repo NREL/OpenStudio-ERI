@@ -486,6 +486,22 @@ class EnergyStarDOEEfficientNewHomeEnclosureTest < Minitest::Test
       _convert_to_es_denh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+
+      # Check w/ single family attached
+      next unless [*ES::SFVersions, *DENH::SFVersions].include? program_version
+      _convert_to_es_denh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      hpxml_bldg = _test_ruleset(program_version)
+      if [*ES::SFVersions, *DENH::SFVersions, DENH::Ver1].include? program_version
+        _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif program_version == DENH::MFVer2
+        _check_floors(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      else
+        fail "Unhandled program version: #{program_version}"
+      end
     end
 
     [*ES::MFVersions, *DENH::MFVersions].each do |program_version|
