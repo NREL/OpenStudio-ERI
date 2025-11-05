@@ -26,7 +26,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   co2_versions = hpxml.header.co2index_calculation_versions
   iecc_versions = hpxml.header.iecc_eri_calculation_versions
   es_versions = hpxml.header.energystar_calculation_versions
-  zerh_versions = hpxml.header.zerh_calculation_versions
+  denh_versions = hpxml.header.denh_calculation_versions
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
@@ -139,35 +139,35 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         outputs[:esref_timeseries_results] = File.join(target_results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
-    # ZERH
-    zerh_versions.each do |zerh_version|
-      top_results_dir = File.join(rundir, "ZERH_#{zerh_version}", 'results')
-      target_results_dir = File.join(rundir, "ZERH_#{zerh_version}", 'TargetHome', 'results')
-      rated_results_dir = File.join(rundir, "ZERH_#{zerh_version}", 'RatedHome', 'results')
-      hpxmls[:zerhrref] = File.join(top_results_dir, 'TargetHome.xml')
-      hpxmls[:zerhrat] = File.join(top_results_dir, 'RatedHome.xml')
-      hpxmls[:zerhrref_ref] = File.join(target_results_dir, 'ReferenceHome.xml')
-      hpxmls[:zerhrref_rated] = File.join(target_results_dir, 'RatedHome.xml')
-      hpxmls[:zerhrref_iad] = File.join(target_results_dir, 'IndexAdjustmentHome.xml')
-      hpxmls[:zerhrref_iadref] = File.join(target_results_dir, 'IndexAdjustmentReferenceHome.xml')
-      hpxmls[:zerhrat_ref] = File.join(rated_results_dir, 'ReferenceHome.xml')
-      hpxmls[:zerhrat_rated] = File.join(rated_results_dir, 'RatedHome.xml')
-      hpxmls[:zerhrat_iad] = File.join(rated_results_dir, 'IndexAdjustmentHome.xml')
-      hpxmls[:zerhrat_iadref] = File.join(rated_results_dir, 'IndexAdjustmentReferenceHome.xml')
-      outputs[:zerh_results] = File.join(top_results_dir, "results.#{output_format}")
-      outputs[:zerhrref_eri_results] = File.join(target_results_dir, "results.#{output_format}")
-      outputs[:zerhrat_eri_results] = File.join(rated_results_dir, "results.#{output_format}")
-      outputs[:zerhrref_rated_results] = File.join(target_results_dir, "RatedHome.#{output_format}")
-      outputs[:zerhrref_ref_results] = File.join(target_results_dir, "ReferenceHome.#{output_format}")
-      outputs[:zerhrref_iad_results] = File.join(target_results_dir, "IndexAdjustmentHome.#{output_format}")
-      outputs[:zerhrref_iadref_results] = File.join(target_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
-      outputs[:zerhrat_rated_results] = File.join(rated_results_dir, "RatedHome.#{output_format}")
-      outputs[:zerhrat_ref_results] = File.join(rated_results_dir, "ReferenceHome.#{output_format}")
-      outputs[:zerhrat_iad_results] = File.join(rated_results_dir, "IndexAdjustmentHome.#{output_format}")
-      outputs[:zerhrat_iadref_results] = File.join(rated_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
+    # DENH
+    denh_versions.each do |denh_version|
+      top_results_dir = File.join(rundir, "DENH_#{denh_version}", 'results')
+      target_results_dir = File.join(rundir, "DENH_#{denh_version}", 'TargetHome', 'results')
+      rated_results_dir = File.join(rundir, "DENH_#{denh_version}", 'RatedHome', 'results')
+      hpxmls[:denhrref] = File.join(top_results_dir, 'TargetHome.xml')
+      hpxmls[:denhrat] = File.join(top_results_dir, 'RatedHome.xml')
+      hpxmls[:denhrref_ref] = File.join(target_results_dir, 'ReferenceHome.xml')
+      hpxmls[:denhrref_rated] = File.join(target_results_dir, 'RatedHome.xml')
+      hpxmls[:denhrref_iad] = File.join(target_results_dir, 'IndexAdjustmentHome.xml')
+      hpxmls[:denhrref_iadref] = File.join(target_results_dir, 'IndexAdjustmentReferenceHome.xml')
+      hpxmls[:denhrat_ref] = File.join(rated_results_dir, 'ReferenceHome.xml')
+      hpxmls[:denhrat_rated] = File.join(rated_results_dir, 'RatedHome.xml')
+      hpxmls[:denhrat_iad] = File.join(rated_results_dir, 'IndexAdjustmentHome.xml')
+      hpxmls[:denhrat_iadref] = File.join(rated_results_dir, 'IndexAdjustmentReferenceHome.xml')
+      outputs[:denh_results] = File.join(top_results_dir, "results.#{output_format}")
+      outputs[:denhrref_eri_results] = File.join(target_results_dir, "results.#{output_format}")
+      outputs[:denhrat_eri_results] = File.join(rated_results_dir, "results.#{output_format}")
+      outputs[:denhrref_rated_results] = File.join(target_results_dir, "RatedHome.#{output_format}")
+      outputs[:denhrref_ref_results] = File.join(target_results_dir, "ReferenceHome.#{output_format}")
+      outputs[:denhrref_iad_results] = File.join(target_results_dir, "IndexAdjustmentHome.#{output_format}")
+      outputs[:denhrref_iadref_results] = File.join(target_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:denhrat_rated_results] = File.join(rated_results_dir, "RatedHome.#{output_format}")
+      outputs[:denhrat_ref_results] = File.join(rated_results_dir, "ReferenceHome.#{output_format}")
+      outputs[:denhrat_iad_results] = File.join(rated_results_dir, "IndexAdjustmentHome.#{output_format}")
+      outputs[:denhrat_iadref_results] = File.join(rated_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        outputs[:zerhrat_timeseries_results] = File.join(rated_results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
-        outputs[:zerhrref_timeseries_results] = File.join(target_results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:denhrat_timeseries_results] = File.join(rated_results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:denhrref_timeseries_results] = File.join(target_results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
   end
@@ -267,8 +267,8 @@ def _get_csv_results(csvs)
         key = "IECC #{key}" unless key.start_with?('IECC ')
       elsif csv.include? 'ES_'
         key = "ES #{key}" unless key.start_with?('ES ')
-      elsif csv.include? 'ZERH_'
-        key = "ZERH #{key}" unless key.start_with?('ZERH ')
+      elsif csv.include? 'DENH_'
+        key = "DENH #{key}" unless key.start_with?('DENH ')
       elsif csv.include? 'CO2e_'
         key = "CO2e #{key}" unless key.start_with?('CO2e ')
       end

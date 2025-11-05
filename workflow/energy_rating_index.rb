@@ -36,7 +36,7 @@ def get_program_versions(hpxml_doc, print_output: true)
     'CO2IndexCalculation/Version' => Constants::ERIVersions,
     'EnergyStarCalculation/Version' => ES::AllVersions,
     'IECCERICalculation/Version' => IECC::AllVersions,
-    'ZERHCalculation/Version' => ZERH::AllVersions }.each do |xpath, all_versions|
+    'DENHCalculation/Version' => DENH::AllVersions }.each do |xpath, all_versions|
     versions = []
     xml_versions = XMLHelper.get_values(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string).uniq
     xml_versions.each do |version|
@@ -974,7 +974,7 @@ def write_co2_results(results, output_format)
   end
 end
 
-def write_es_zerh_results(program_name, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
+def write_es_denh_results(program_name, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
   # Even though pass/fail is calculated based on rounded integer ERIs,
   # we provide two decimal places here so that there's less possibility
   # for user confusion when comparing the actual/target ERIs.
@@ -1276,7 +1276,7 @@ def main(options)
 
   puts "HPXML: #{options[:hpxml]}"
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
-  eri_versions, co2_versions, es_versions, iecc_versions, zerh_versions = get_program_versions(hpxml_doc)
+  eri_versions, co2_versions, es_versions, iecc_versions, denh_versions = get_program_versions(hpxml_doc)
 
   if options[:diagnostic_output]
     if eri_versions.size != 1
@@ -1333,16 +1333,16 @@ def main(options)
     designs << Design.new(run_type: RunType::IECC, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: iecc_version)
   end
 
-  # ZERH designs
-  zerh_versions.each do |zerh_version|
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
-    designs << Design.new(run_type: RunType::ZERH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: zerh_version)
+  # DENH designs
+  denh_versions.each do |denh_version|
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
   end
 
   # Clean up existing dirs
@@ -1446,25 +1446,25 @@ def main(options)
       # Calculate ES Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results('ENERGY STAR', esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_denh_results('ENERGY STAR', esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "ENERGY STAR (#{es_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
 
-    # Calculate ZERH
-    zerh_versions.each do |zerh_version|
-      # Calculate ZERH Reference ERI
-      zerhrref_eri_designs = designs.select { |d| d.run_type == RunType::ZERH && d.init_calc_type == InitCalcType::TargetHome && d.version == zerh_version }
-      zerhrref_eri_outputs = retrieve_design_outputs(zerhrref_eri_designs)
-      zerhrref_eri_results = calculate_eri(zerhrref_eri_outputs, options[:output_format])
+    # Calculate DENH
+    denh_versions.each do |denh_version|
+      # Calculate DENH Reference ERI
+      denhrref_eri_designs = designs.select { |d| d.run_type == RunType::DENH && d.init_calc_type == InitCalcType::TargetHome && d.version == denh_version }
+      denhrref_eri_outputs = retrieve_design_outputs(denhrref_eri_designs)
+      denhrref_eri_results = calculate_eri(denhrref_eri_outputs, options[:output_format])
 
-      # Calculate Size-Adjusted ERI for ZERH Reference Homes
-      saf = get_saf(zerhrref_eri_results, zerh_version, options[:hpxml])
-      target_eri = zerhrref_eri_results[:eri] * saf
+      # Calculate Size-Adjusted ERI for DENH Reference Homes
+      saf = get_saf(denhrref_eri_results, denh_version, options[:hpxml])
+      target_eri = denhrref_eri_results[:eri] * saf
 
-      # Calculate ZERH Rated ERI
-      opp_reduction_limit = calc_opp_eri_limit(zerhrref_eri_results[:eri], saf, zerh_version)
-      rated_eri_designs = designs.select { |d| d.run_type == RunType::ZERH && d.init_calc_type == InitCalcType::RatedHome && d.version == zerh_version }
+      # Calculate DENH Rated ERI
+      opp_reduction_limit = calc_opp_eri_limit(denhrref_eri_results[:eri], saf, denh_version)
+      rated_eri_designs = designs.select { |d| d.run_type == RunType::DENH && d.init_calc_type == InitCalcType::RatedHome && d.version == denh_version }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
       rated_eri_results = calculate_eri(rated_eri_outputs, options[:output_format], opp_reduction_limit: opp_reduction_limit)
 
@@ -1474,12 +1474,12 @@ def main(options)
         passes = false
       end
 
-      # Calculate ZERH Rated ERI w/o OPP for extra information
+      # Calculate DENH Rated ERI w/o OPP for extra information
       rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results('Zero Energy Ready Home', zerhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_denh_results('DOE Efficient New Home', denhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
-      puts "ZERH (#{zerh_version}): #{passes ? 'PASS' : 'FAIL'}"
+      puts "DENH (#{denh_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
 
     if options[:diagnostic_output]

@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-module ES_ZERH_Ruleset
+module ES_DENH_Ruleset
   def self.apply_ruleset(hpxml, calc_type, program_version, eri_version, lookup_program_data)
     @eri_version = eri_version
     hpxml.header.eri_calculation_versions = [@eri_version]
     hpxml.header.co2index_calculation_versions = nil
     hpxml.header.iecc_eri_calculation_versions = nil
     hpxml.header.energystar_calculation_versions = nil
-    hpxml.header.zerh_calculation_versions = nil
+    hpxml.header.denh_calculation_versions = nil
 
     @program_version = program_version
 
     if [ES::SFNationalVer3_3, ES::SFNationalVer3_2, ES::MFNationalVer1_3,
-        ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? @program_version
+        ES::MFNationalVer1_2, DENH::SFVer2, DENH::MFVer2].include? @program_version
       # Use Year=2021 for Reference Home configuration
       iecc_climate_zone_year = 2021
-    elsif [ZERH::Ver1].include? @program_version
+    elsif [DENH::Ver1].include? @program_version
       # Use Year=2015 for Reference Home configuration
       iecc_climate_zone_year = 2015
     elsif [ES::SFNationalVer3_1, ES::MFNationalVer1_1, ES::SFOregonWashingtonVer3_2,
@@ -492,11 +492,14 @@ module ES_ZERH_Ruleset
       next unless orig_floor.is_floor
 
       subtype = orig_floor.floor_type == HPXML::FloorTypeConcrete ? 'mass' : 'wood'
-      floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor', subtype)
-      floor_ufactor = lookup_reference_value('floors_over_uncond_spc_ufactor') if floor_ufactor.nil?
+      floor_ufactor = lookup_reference_value('floors_ufactor', subtype)
+      floor_ufactor = lookup_reference_value('floors_ufactor') if floor_ufactor.nil?
 
-      if orig_floor.is_thermal_boundary && (not [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherHeatedSpace].include?(orig_floor.exterior_adjacent_to))
-        # This is meant to apply to floors over unconditioned spaces, non-freezing spaces, multifamily buffer boundaries, or the outdoor environment
+      subtype = orig_floor.exterior_adjacent_to
+      floor_insulated = lookup_reference_value('floors_insulated', subtype)
+      floor_insulated = true if floor_insulated.nil?
+
+      if orig_floor.is_thermal_boundary && floor_insulated
         insulation_assembly_r_value = (1.0 / floor_ufactor).round(3)
       else
         insulation_assembly_r_value = [orig_floor.insulation_assembly_r_value, 3.1].min # uninsulated
@@ -1038,9 +1041,17 @@ module ES_ZERH_Ruleset
       refrigerator = orig_bldg.refrigerators[0]
       id = refrigerator.id
       location = refrigerator.location.gsub('unvented', 'vented')
+      if @nbeds <= 2
+        subtype = '1-2 bedrooms, refrigerator present'
+      elsif @nbeds <= 4
+        subtype = '3-4 bedrooms, refrigerator present'
+      else
+        subtype = '5+ bedrooms, refrigerator present'
+      end
     end
 
     rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh')
+    rated_annual_kwh = lookup_reference_value('refrigerator_rated_annual_kwh', subtype) if rated_annual_kwh.nil?
     rated_annual_kwh = Defaults.get_refrigerator_values(@nbeds)[:rated_annual_kwh] if rated_annual_kwh.nil?
 
     new_bldg.refrigerators.add(id: id,
@@ -1295,7 +1306,7 @@ module ES_ZERH_Ruleset
       next unless orig_floor.is_floor
       next unless orig_floor.interior_adjacent_to == HPXML::LocationConditionedSpace
 
-      if [HPXML::LocationOtherHousingUnit].include? orig_floor.exterior_adjacent_to
+      if [HPXML::LocationOtherHousingUnit, HPXML::LocationOtherNonFreezingSpace, HPXML::LocationOtherHeatedSpace, HPXML::LocationOtherMultifamilyBufferSpace].include? orig_floor.exterior_adjacent_to
         floor_areas['adiabatic'] += orig_floor.area
       elsif [HPXML::LocationOutside].include? orig_floor.exterior_adjacent_to
         floor_areas['ambient'] += orig_floor.area

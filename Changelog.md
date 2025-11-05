@@ -8,6 +8,9 @@ __New Features__
 - Updated DX heat pump and air conditioner models per latest draft of RESNET HERS Addendum 82.
 - **Breaking change**: Adds RESNET HERS Addendum 77 to adjust HPWH performance when installed in confined space, used when ERI version is "latest".
   - A new `extension/HPWHInConfinedSpaceWithoutMitigation` input is now required for HPWHs; when true, `extension/HPWHContainmentVolume` is also required.
+- Updates to DOE Efficient New Homes program
+  - Updates Single Family Version 2 to Rev 3 and Multifamily Version 2 to Rev 2.
+  - **Breaking change**: Replaces all references to "ZERH" with "DENH" (e.g., renames `ZERHCalculation` to `DENHCalculation` and renames various output products).
 
 __Bugfixes__
 - Fixes an EMS bug in heat pump defrost models that over-estimates defrost fractions.

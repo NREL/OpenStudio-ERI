@@ -7,7 +7,7 @@ require 'fileutils'
 require_relative 'util.rb'
 require_relative '../../workflow/design'
 
-class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
+class EnergyStarDOEEfficientNewHomeEnclosureTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
@@ -28,7 +28,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_infiltration
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       if program_version == ES::SFNationalVer3_0
         value, units = 4.0, 'ACH'
       elsif [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -41,71 +41,71 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         value, units = 1564.8, 'CFM'
       elsif program_version == ES::MFNationalVer1_3
         value, units = 1408.2, 'CFM'
-      elsif program_version == ZERH::MFVer2
+      elsif program_version == DENH::MFVer2
         value, units = 1303.9, 'CFM'
-      elsif [ZERH::Ver1, ZERH::SFVer2].include? program_version
+      elsif [DENH::Ver1, DENH::SFVer2].include? program_version
         value, units = 2.0, 'ACH'
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_infiltration(hpxml_bldg, value, units)
     end
 
-    [*ES::MFVersions, *ZERH::MFVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+    [*ES::MFVersions, *DENH::MFVersions].each do |program_version|
+      _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      if program_version == ZERH::Ver1
+      if program_version == DENH::Ver1
         _check_infiltration(hpxml_bldg, 3.0, 'ACH')
-      elsif program_version == ZERH::MFVer2
+      elsif program_version == DENH::MFVer2
         _check_infiltration(hpxml_bldg, 695.0, 'CFM')
       elsif program_version == ES::MFNationalVer1_3
         _check_infiltration(hpxml_bldg, 750.5, 'CFM')
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2,
-             ZERH::SFVer2].include? program_version
+             DENH::SFVer2].include? program_version
         _check_infiltration(hpxml_bldg, 834.0, 'CFM')
       else
         fail "Unhandled program version: #{program_version}"
       end
     end
 
-    [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::NationalVersions, *DENH::AllVersions].each do |program_version|
       if program_version == ES::SFNationalVer3_0
         value, units = 6.0, 'ACH'
       elsif program_version == ES::SFNationalVer3_1
         value, units = 4.0, 'ACH'
-      elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3, ZERH::Ver1].include? program_version
+      elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3, DENH::Ver1].include? program_version
         value, units = 3.0, 'ACH'
-      elsif program_version == ZERH::SFVer2
+      elsif program_version == DENH::SFVer2
         value, units = 2.75, 'ACH'
       elsif [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2].include? program_version
         value, units = 1170.0, 'CFM'
       elsif program_version == ES::MFNationalVer1_3
         value, units = 1053.0, 'CFM'
-      elsif program_version == ZERH::MFVer2
+      elsif program_version == DENH::MFVer2
         value, units = 975.0, 'CFM'
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-location-miami-fl.xml', program_version)
+      _convert_to_es_denh('base-location-miami-fl.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_infiltration(hpxml_bldg, value, units)
     end
   end
 
   def test_enclosure_roofs
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       next if program_version == ES::SFPacificVer3_0
 
       if [ES::SFFloridaVer3_1].include? program_version
         rb_grade = 1
       elsif [ES::SFOregonWashingtonVer3_2, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         rb_grade = nil
       else
         fail "Unhandled program version: #{program_version}"
@@ -113,16 +113,16 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       adjacent_to = HPXML::LocationAtticVented
       rvalue = 2.3
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
-      if [ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
+      if [ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
         # Ducts remain in conditioned space, so no need to transition roof to vented attic
         adjacent_to = HPXML::LocationConditionedSpace
         if program_version == ES::MFNationalVer1_1
           rvalue = 1.0 / 0.021
-        elsif [ES::MFNationalVer1_2, ZERH::MFVer2].include? program_version
+        elsif [ES::MFNationalVer1_2, DENH::MFVer2].include? program_version
           rvalue = 1.0 / 0.024
         elsif program_version == ES::MFNationalVer1_3
           rvalue = 1.0 / 0.026
@@ -131,24 +131,24 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         end
       end
 
-      _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
+      _convert_to_es_denh('base-atticroof-cathedral.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
 
-      _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
+      _convert_to_es_denh('base-atticroof-flat.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_roofs(hpxml_bldg, area: 1350, rvalue: rvalue, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: adjacent_to)
     end
 
-    [*ES::MFVersions, *ZERH::MFVersions].each do |program_version|
-      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+    [*ES::MFVersions, *DENH::MFVersions].each do |program_version|
+      _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_roofs(hpxml_bldg)
     end
 
     # Radiant barrier: In climate zones 1-3, if > 10 linear ft. of ductwork are located in unconditioned attic
-    [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::NationalVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
@@ -160,7 +160,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rb_grade = 1
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         rb_grade = nil
       else
         fail "Unhandled program version: #{program_version}"
@@ -177,22 +177,22 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
 
       # In both HI and GU, if > 10 linear ft. of ductwork are located in unconditioned attic, place radiant barrier
-      _convert_to_es_zerh('base.xml', ES::SFPacificVer3_0, state_code)
+      _convert_to_es_denh('base.xml', ES::SFPacificVer3_0, state_code)
       hpxml_bldg = _test_ruleset(ES::SFPacificVer3_0)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: 1, adjacent_to: HPXML::LocationAtticVented)
 
-      _convert_to_es_zerh('base-atticroof-cathedral.xml', ES::SFPacificVer3_0, state_code)
+      _convert_to_es_denh('base-atticroof-cathedral.xml', ES::SFPacificVer3_0, state_code)
       hpxml_bldg = _test_ruleset(ES::SFPacificVer3_0)
       _check_roofs(hpxml_bldg, area: 1510, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
 
-      _convert_to_es_zerh('base-atticroof-flat.xml', ES::SFPacificVer3_0, state_code)
+      _convert_to_es_denh('base-atticroof-flat.xml', ES::SFPacificVer3_0, state_code)
       hpxml_bldg = _test_ruleset(ES::SFPacificVer3_0)
       _check_roofs(hpxml_bldg, area: 1350, rvalue: 2.3, sabs: 0.92, emit: 0.9, rb_grade: rb_grade, adjacent_to: HPXML::LocationAtticVented)
     end
   end
 
   def test_enclosure_walls
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       next if program_version == ES::SFPacificVer3_0
 
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
@@ -201,11 +201,11 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1.0 / 0.082
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.056
-      elsif [ZERH::Ver1].include? program_version
+      elsif [DENH::Ver1].include? program_version
         rvalue = 1.0 / 0.060
       elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::SFVer2, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.045
       elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1].include? program_version
         rvalue = 1.0 / 0.057
@@ -213,37 +213,37 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_walls(hpxml_bldg, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
+      _convert_to_es_denh('base-atticroof-conditioned.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_walls(hpxml_bldg, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-enclosure-garage.xml', program_version)
+      _convert_to_es_denh('base-enclosure-garage.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_walls(hpxml_bldg, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
 
-    [*ES::MFVersions, *ZERH::MFVersions].each do |program_version|
+    [*ES::MFVersions, *DENH::MFVersions].each do |program_version|
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
+      elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.045
       elsif program_version == ES::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.056
-      elsif [ZERH::Ver1].include? program_version
+      elsif [DENH::Ver1].include? program_version
         rvalue = 1.0 / 0.060
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_walls(hpxml_bldg, area: 980, rvalue: (rvalue * 686 + 4.0 * 294) / 980, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+      _convert_to_es_denh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_walls(hpxml_bldg, area: 1086, rvalue: (rvalue * 686 + 4.0 * 400) / 1086, sabs: 0.75, emit: 0.9)
     end
@@ -256,31 +256,31 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1 / 0.401
       end
 
-      _convert_to_es_zerh('base.xml', ES::SFPacificVer3_0, state_code)
+      _convert_to_es_denh('base.xml', ES::SFPacificVer3_0, state_code)
       hpxml_bldg = _test_ruleset(ES::SFPacificVer3_0)
       _check_walls(hpxml_bldg, area: 1425, rvalue: (rvalue * 1200 + 4.0 * 225) / 1425, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-atticroof-conditioned.xml', ES::SFPacificVer3_0, state_code)
+      _convert_to_es_denh('base-atticroof-conditioned.xml', ES::SFPacificVer3_0, state_code)
       hpxml_bldg = _test_ruleset(ES::SFPacificVer3_0)
       _check_walls(hpxml_bldg, area: 1806, rvalue: (rvalue * 1756 + 4.0 * 50) / 1806, sabs: 0.75, emit: 0.9)
 
-      _convert_to_es_zerh('base-enclosure-garage.xml', ES::SFPacificVer3_0, state_code)
+      _convert_to_es_denh('base-enclosure-garage.xml', ES::SFPacificVer3_0, state_code)
       hpxml_bldg = _test_ruleset(ES::SFPacificVer3_0)
       _check_walls(hpxml_bldg, area: 2098, rvalue: (rvalue * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
     end
   end
 
   def test_enclosure_rim_joists
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
       elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
         rvalue = 1.0 / 0.082
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
         rvalue = 1.0 / 0.056
-      elsif [ZERH::Ver1].include? program_version
+      elsif [DENH::Ver1].include? program_version
         rvalue = 1.0 / 0.060
-      elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::SFVer2, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.045
       elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1].include? program_version
         rvalue = 1.0 / 0.057
@@ -288,23 +288,23 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_rim_joists(hpxml_bldg, area: 116, rvalue: rvalue, sabs: 0.75, emit: 0.90)
 
-      _convert_to_es_zerh('base-foundation-multiple.xml', program_version)
+      _convert_to_es_denh('base-foundation-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_rim_joists(hpxml_bldg, area: 197, rvalue: 4.0, sabs: 0.75, emit: 0.90)
     end
   end
 
   def test_enclosure_foundation_walls
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       if program_version == ES::SFNationalVer3_0
         assembly_rvalue = 1.0 / 0.059
       elsif [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         assembly_rvalue = 1.0 / 0.050
       elsif [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         ins_interior_rvalue = 7.5
@@ -321,7 +321,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       hpxml_names = ['base.xml',
                      'base-foundation-conditioned-basement-wall-insulation.xml']
       hpxml_names.each do |hpxml_name|
-        _convert_to_es_zerh(hpxml_name, program_version)
+        _convert_to_es_denh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
         if hpxml_name == 'base-foundation-conditioned-basement-wall-insulation.xml'
           type = HPXML::FoundationWallTypeConcreteBlockFoamCore
@@ -332,12 +332,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
     end
 
-    [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::NationalVersions, *DENH::AllVersions].each do |program_version|
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         ins_interior_rvalue = 0.0
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         assembly_rvalue = 1.0 / 0.360
       else
         fail "Unhandled program version: #{program_version}"
@@ -346,7 +346,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       hpxml_names = ['base.xml',
                      'base-foundation-conditioned-basement-wall-insulation.xml']
       hpxml_names.each do |hpxml_name|
-        _convert_to_es_zerh(hpxml_name, program_version)
+        _convert_to_es_denh(hpxml_name, program_version)
         hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
         hpxml_bldg = hpxml.buildings[0]
         hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
@@ -363,15 +363,15 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       end
     end
 
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_foundation_walls(hpxml_bldg, area: 1200, height: 8, depth_bg: 7, type: HPXML::FoundationWallTypeSolidConcrete)
 
       hpxml_names = ['base-foundation-unvented-crawlspace.xml',
                      'base-foundation-vented-crawlspace.xml']
       hpxml_names.each do |name|
-        _convert_to_es_zerh(name, program_version)
+        _convert_to_es_denh(name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
         _check_foundation_walls(hpxml_bldg, area: 600, height: 4, depth_bg: 3, type: HPXML::FoundationWallTypeSolidConcrete)
       end
@@ -379,12 +379,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_ceilings
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       if program_version == ES::SFNationalVer3_0
         rvalue = 1.0 / 0.030
       elsif [ES::SFNationalVer3_1, ES::SFNationalVer3_3, ES::SFOregonWashingtonVer3_2,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         rvalue = 1.0 / 0.026
       elsif program_version == ES::MFNationalVer1_0
         rvalue = 1.0 / 0.027
@@ -392,58 +392,58 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         rvalue = 1.0 / 0.021
       elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
         rvalue = 1.0 / 0.035
-      elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2, DENH::SFVer2, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.024
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_ceilings(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-enclosure-garage.xml', program_version)
+      _convert_to_es_denh('base-enclosure-garage.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_ceilings(hpxml_bldg, area: 1950, rvalue: (rvalue * 1350 + 2.1 * 600) / 1950, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
+      _convert_to_es_denh('base-atticroof-cathedral.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      if [ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
+      if [ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
         _check_ceilings(hpxml_bldg)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0,
-             ZERH::Ver1, ZERH::SFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2].include? program_version
         _check_ceilings(hpxml_bldg, area: (1510 * Math.cos(Math.atan(6.0 / 12.0))), rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
+      _convert_to_es_denh('base-atticroof-conditioned.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_ceilings(hpxml_bldg, area: 450, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-atticroof-flat.xml', program_version)
+      _convert_to_es_denh('base-atticroof-flat.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      if [ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
+      if [ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
         _check_ceilings(hpxml_bldg)
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0,
-             ZERH::Ver1, ZERH::SFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2].include? program_version
         _check_ceilings(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      if [*ES::SFVersions, ZERH::SFVer2].include? program_version
-        _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      if [*ES::SFVersions, DENH::SFVer2].include? program_version
+        _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
         hpxml_bldg = _test_ruleset(program_version)
         _check_ceilings(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
-      elsif [*ES::MFVersions, *ZERH::MFVersions].include? program_version
-        _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      elsif [*ES::MFVersions, *DENH::MFVersions].include? program_version
+        _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
         hpxml_bldg = _test_ruleset(program_version)
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
-        _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+        _convert_to_es_denh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
         hpxml_bldg = _test_ruleset(program_version)
         _check_ceilings(hpxml_bldg, area: 900, rvalue: 2.1, floor_type: HPXML::FloorTypeWoodFrame)
 
@@ -465,8 +465,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_floors
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      if [ES::SFNationalVer3_1, ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2, ES::SFNationalVer3_0, ES::MFNationalVer1_0,
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      if [ES::SFNationalVer3_1, DENH::Ver1, DENH::SFVer2, DENH::MFVer2, ES::SFNationalVer3_0, ES::MFNationalVer1_0,
           ES::MFNationalVer1_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3].include? program_version
         rvalue = 1.0 / 0.033
       elsif program_version == ES::SFPacificVer3_0
@@ -479,17 +479,34 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
+      _convert_to_es_denh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
+      _convert_to_es_denh('base-foundation-unconditioned-basement-wall-insulation.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_floors(hpxml_bldg, area: 1350, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+
+      # Check w/ single family attached
+      next unless [*ES::SFVersions, *DENH::SFVersions].include? program_version
+
+      _convert_to_es_denh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+      hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
+      hpxml_bldg = hpxml.buildings[0]
+      hpxml_bldg.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      hpxml_bldg = _test_ruleset(program_version)
+      if [*ES::SFVersions, *DENH::SFVersions, DENH::Ver1].include? program_version
+        _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif program_version == DENH::MFVer2
+        _check_floors(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      else
+        fail "Unhandled program version: #{program_version}"
+      end
     end
 
-    [*ES::MFVersions, *ZERH::MFVersions].each do |program_version|
-      if [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::Ver1, ZERH::MFVer2].include? program_version
+    [*ES::MFVersions, *DENH::MFVersions].each do |program_version|
+      if [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::Ver1, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.033
       elsif program_version == ES::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.028
@@ -497,13 +514,19 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_floors(hpxml_bldg, area: 900, rvalue: 3.1, floor_type: HPXML::FloorTypeWoodFrame)
 
-      _convert_to_es_zerh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
+      _convert_to_es_denh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      if [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ES::MFOregonWashingtonVer1_2, DENH::Ver1].include? program_version
+        _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeWoodFrame)
+      elsif program_version == DENH::MFVer2
+        _check_floors(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeWoodFrame)
+      else
+        fail "Unhandled program version: #{program_version}"
+      end
 
       # Check w/ mass floors
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
@@ -515,32 +538,38 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         rvalue = 1.0 / 0.064
-      elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_3, ZERH::MFVer2].include? program_version
+      elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.051
-      elsif program_version == ZERH::Ver1
+      elsif program_version == DENH::Ver1
         rvalue = 1.0 / 0.033  # Assembly R-value of non-mass floor
       elsif program_version == ES::MFOregonWashingtonVer1_2
         rvalue = 1.0 / 0.028  # Assembly R-value of non-mass floor
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeConcrete)
+      if [ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ES::MFOregonWashingtonVer1_2, DENH::Ver1].include? program_version
+        _check_floors(hpxml_bldg, area: 900, rvalue: (3.1 * 150 + rvalue * 750) / 900, floor_type: HPXML::FloorTypeConcrete)
+      elsif program_version == DENH::MFVer2
+        _check_floors(hpxml_bldg, area: 900, rvalue: rvalue, floor_type: HPXML::FloorTypeConcrete)
+      else
+        fail "Unhandled program version: #{program_version}"
+      end
     end
 
-    [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::NationalVersions, *DENH::AllVersions].each do |program_version|
       if program_version == ES::MFNationalVer1_0
         rvalue = 1.0 / 0.282
       elsif program_version == ES::MFNationalVer1_1
         rvalue = 1.0 / 0.066
       elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-             ZERH::Ver1, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+             DENH::Ver1, DENH::SFVer2, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.064
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
+      _convert_to_es_denh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
@@ -553,8 +582,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_slabs
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
       if [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
@@ -567,7 +596,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         perim_ins_r = 10
         under_ins_width = 999
         under_ins_r = 10
-      elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2, ZERH::MFVer2].include? program_version
+      elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2, DENH::SFVer2, DENH::MFVer2].include? program_version
         perim_ins_depth = 4
         perim_ins_r = 10
         under_ins_width = 0
@@ -579,7 +608,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         under_ins_r = 0
       elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         perim_ins_depth = 2
         perim_ins_r = 10
         under_ins_width = 0
@@ -588,18 +617,18 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base-foundation-slab.xml', program_version)
+      _convert_to_es_denh('base-foundation-slab.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150, perim_ins_depth: perim_ins_depth, perim_ins_r: perim_ins_r,
                                under_ins_width: under_ins_width, under_ins_r: under_ins_r)
     end
 
-    [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base.xml', program_version)
+    [*ES::NationalVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_slabs(hpxml_bldg, area: 1350, exp_perim: 150)
 
-      _convert_to_es_zerh('base-foundation-slab.xml', program_version)
+      _convert_to_es_denh('base-foundation-slab.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
@@ -613,12 +642,12 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
   def test_enclosure_windows
     # SF tests
-    [*ES::SFVersions, *ZERH::SFVersions].each do |program_version|
+    [*ES::SFVersions, *DENH::SFVersions].each do |program_version|
       if program_version == ES::SFNationalVer3_0
         ufactor, shgc = 0.30, 0.40
-      elsif [ES::SFNationalVer3_1, ZERH::Ver1].include? program_version
+      elsif [ES::SFNationalVer3_1, DENH::Ver1].include? program_version
         ufactor, shgc = 0.27, 0.40
-      elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2, ZERH::SFVer2].include? program_version
+      elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2, DENH::SFVer2].include? program_version
         ufactor, shgc = 0.27, 0.30
       elsif program_version == ES::SFPacificVer3_0
         ufactor, shgc = 0.60, 0.27
@@ -632,7 +661,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_windows(hpxml_bldg, frac_operable: 0.67,
                                  values_by_azimuth: { 0 => { area: 74.55, ufactor: ufactor, shgc: shgc },
@@ -640,7 +669,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                                                       90 => { area: 74.55, ufactor: ufactor, shgc: shgc },
                                                       270 => { area: 74.55, ufactor: ufactor, shgc: shgc } })
 
-      _convert_to_es_zerh('base-foundation-unconditioned-basement.xml', program_version)
+      _convert_to_es_denh('base-foundation-unconditioned-basement.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_windows(hpxml_bldg, frac_operable: 0.67,
                                  values_by_azimuth: { 0 => { area: 50.63, ufactor: ufactor, shgc: shgc },
@@ -648,7 +677,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                                                       90 => { area: 50.63, ufactor: ufactor, shgc: shgc },
                                                       270 => { area: 50.63, ufactor: ufactor, shgc: shgc } })
 
-      _convert_to_es_zerh('base-atticroof-cathedral.xml', program_version)
+      _convert_to_es_denh('base-atticroof-cathedral.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_windows(hpxml_bldg, frac_operable: 0.67,
                                  values_by_azimuth: { 0 => { area: 77.95, ufactor: ufactor, shgc: shgc },
@@ -656,7 +685,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
                                                       90 => { area: 77.95, ufactor: ufactor, shgc: shgc },
                                                       270 => { area: 77.95, ufactor: ufactor, shgc: shgc } })
 
-      _convert_to_es_zerh('base-atticroof-conditioned.xml', program_version)
+      _convert_to_es_denh('base-atticroof-conditioned.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_windows(hpxml_bldg, frac_operable: 0.57,
                                  values_by_azimuth: { 0 => { area: 107.17, ufactor: ufactor, shgc: shgc },
@@ -672,7 +701,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
         ufactor, shgc = 0.30, 0.40
       elsif program_version == ES::MFNationalVer1_1
         ufactor, shgc = 0.27, 0.40
-      elsif [ES::MFNationalVer1_2, ZERH::MFVer2].include? program_version
+      elsif [ES::MFNationalVer1_2, DENH::MFVer2].include? program_version
         ufactor, shgc = 0.27, 0.30
       elsif program_version == ES::MFOregonWashingtonVer1_2
         ufactor, shgc = 0.27, 0.30
@@ -681,7 +710,7 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _convert_to_es_zerh('base-bldgtype-mf-unit.xml', program_version)
+      _convert_to_es_denh('base-bldgtype-mf-unit.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_windows(hpxml_bldg, frac_operable: 0.67,
                                  values_by_azimuth: { 0 => { area: 33.34, ufactor: ufactor, shgc: shgc },
@@ -738,17 +767,17 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
     end
 
     # Test in Climate Zone 1A
-    [*ES::NationalVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::NationalVersions, *DENH::AllVersions].each do |program_version|
       if program_version == ES::SFNationalVer3_0
         ufactor, shgc = 0.60, 0.27
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ZERH::Ver1].include? program_version
+      elsif [ES::SFNationalVer3_1, ES::SFNationalVer3_2, DENH::Ver1].include? program_version
         ufactor, shgc = 0.40, 0.25
         areas = [74.55, 74.55, 74.55, 74.55]
       elsif program_version == ES::SFNationalVer3_3
         ufactor, shgc = 0.32, 0.23
         areas = [74.55, 74.55, 74.55, 74.55]
-      elsif program_version == ZERH::SFVer2
+      elsif program_version == DENH::SFVer2
         ufactor, shgc = 0.40, 0.23
         areas = [74.55, 74.55, 74.55, 74.55]
       elsif program_version == ES::MFNationalVer1_0
@@ -760,14 +789,14 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
       elsif program_version == ES::MFNationalVer1_3
         ufactor, shgc = 0.32, 0.23
         areas = [89.46, 89.46, 59.64, 59.64]
-      elsif program_version == ZERH::MFVer2
+      elsif program_version == DENH::MFVer2
         ufactor, shgc = 0.40, 0.23
         areas = [89.46, 89.46, 59.64, 59.64]
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]
       hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '1A'
@@ -784,36 +813,36 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
   end
 
   def test_enclosure_skylights
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-enclosure-skylights.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-enclosure-skylights.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_skylights(hpxml_bldg)
     end
   end
 
   def test_enclosure_overhangs
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
-      _convert_to_es_zerh('base-enclosure-overhangs.xml', program_version)
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
+      _convert_to_es_denh('base-enclosure-overhangs.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_overhangs(hpxml_bldg)
     end
   end
 
   def test_enclosure_doors
-    [*ES::AllVersions, *ZERH::AllVersions].each do |program_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::SFOregonWashingtonVer3_2,
           ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ES::MFOregonWashingtonVer1_2,
-          ZERH::SFVer2, ZERH::MFVer2].include? program_version
+          DENH::SFVer2, DENH::MFVer2].include? program_version
         rvalue = 1.0 / 0.17
       elsif [ES::SFFloridaVer3_1, ES::SFPacificVer3_0, ES::SFNationalVer3_0,
              ES::MFNationalVer1_0,
-             ZERH::Ver1].include? program_version
+             DENH::Ver1].include? program_version
         rvalue = 1.0 / 0.21
       else
         fail "Unhandled program version: #{program_version}"
       end
 
-      _convert_to_es_zerh('base.xml', program_version)
+      _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       _check_doors(hpxml_bldg, values_by_azimuth: { 180 => { area: 40, rvalue: rvalue } })
     end
@@ -824,8 +853,8 @@ class EnergyStarZeroEnergyReadyHomeEnclosureTest < Minitest::Test
 
     if ES::AllVersions.include? program_version
       run_type = RunType::ES
-    elsif ZERH::AllVersions.include? program_version
-      run_type = RunType::ZERH
+    elsif DENH::AllVersions.include? program_version
+      run_type = RunType::DENH
     end
     designs = [Design.new(run_type: run_type,
                           init_calc_type: InitCalcType::TargetHome,

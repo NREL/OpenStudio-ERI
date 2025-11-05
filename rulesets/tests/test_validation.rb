@@ -116,7 +116,7 @@ class ERI301ValidationTest < Minitest::Test
         hpxml, hpxml_bldg = _create_hpxml('base.xml')
         hpxml.header.energystar_calculation_versions = [version]
         hpxml.header.iecc_eri_calculation_versions = nil
-        hpxml.header.zerh_calculation_versions = nil
+        hpxml.header.denh_calculation_versions = nil
         hpxml_bldg.building_construction.residential_facility_type = bldg_type
         if bldg_type == HPXML::ResidentialTypeApartment
           hpxml_bldg.walls[-1].exterior_adjacent_to = HPXML::LocationOtherHousingUnit

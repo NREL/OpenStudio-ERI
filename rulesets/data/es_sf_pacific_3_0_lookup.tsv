@@ -5,7 +5,10 @@ slab_perimeter_ins_depth		0	0	0
 slab_perimeter_ins_rvalue		0	0	0
 slab_under_ins_width		0	0	0
 slab_under_ins_rvalue		0	0	0
-floors_over_uncond_spc_ufactor		0.257	0.257	0.257
+floors_ufactor		0.257	0.257	0.257
+floors_insulated	other heated space	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+floors_insulated	other multifamily buffer space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+floors_insulated	other non-freezing space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
 walls_ufactor	HI	0.082	0.082	0.082
 walls_ufactor	GU	0.401	0.401	0.401
 walls_ufactor	MP	0.401	0.401	0.401
