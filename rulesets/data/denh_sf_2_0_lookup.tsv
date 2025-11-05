@@ -5,22 +5,20 @@ slab_perimeter_ins_depth		0	0	0	0	0	0	2	2	2	4	4	4	4	4	4	4	4	4	4	4
 slab_perimeter_ins_rvalue		0	0	0	0	0	0	10	10	10	10	10	10	10	10	10	10	10	10	10	10
 slab_under_ins_width		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 slab_under_ins_rvalue		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-floors_over_uncond_spc_ufactor	wood	0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
-floors_over_uncond_spc_ufactor	mass	0.322	0.322	0.322	0.087	0.087	0.087	0.074	0.074	0.074	0.051	0.051	0.051	0.051	0.051	0.051	0.051	0.051	0.051	0.042	0.038
+floors_ufactor		0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
+floors_insulated	other heated space	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+floors_insulated	other multifamily buffer space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+floors_insulated	other non-freezing space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
 walls_ufactor		0.084	0.084	0.084	0.084	0.084	0.084	0.06	0.06	0.06	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045
 walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
 walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 door_ufactor		0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17	0.17
-window_area		0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F	0.15 x CFA x FA x F
-window_ufactor	residential	0.4	0.4	0.4	0.4	0.4	0.4	0.3	0.3	0.3	0.3	0.3	0.27	0.27	0.27	0.27	0.25	0.25	0.25	0.25	0.25
-window_ufactor	"architectural, operable"	0.59	0.59	0.59	0.57	0.57	0.57	0.51	0.51	0.51	0.43	0.43	0.43	0.43	0.43	0.43	0.4	0.4	0.4	0.34	0.3
-window_ufactor	"architectural, fixed"	0.48	0.48	0.48	0.43	0.43	0.43	0.4	0.4	0.4	0.34	0.34	0.34	0.34	0.34	0.34	0.32	0.32	0.32	0.28	0.27
-window_shgc	residential	0.23	0.23	0.23	0.23	0.23	0.23	0.25	0.25	0.25	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
-window_shgc	"architectural, operable"	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
-window_shgc	"architectural, fixed"	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
+window_area		"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"	"same as rated, with exceptions"
+window_ufactor		0.4	0.4	0.4	0.4	0.4	0.4	0.3	0.3	0.3	0.3	0.3	0.27	0.27	0.27	0.27	0.25	0.25	0.25	0.25	0.25
+window_shgc		0.23	0.23	0.23	0.23	0.23	0.23	0.25	0.25	0.25	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3	0.3
 ceiling_ufactor		0.035	0.035	0.035	0.026	0.026	0.026	0.026	0.026	0.026	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024	0.024
 radiant_barrier		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
-vented_attic		if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location	if has attic or duct location
+vented_attic		always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always	always
 roof_solar_abs		0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92	0.92
 roof_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
 lighting_tier1_int		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -29,7 +27,9 @@ lighting_tier1_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-refrigerator_rated_annual_kwh		450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
+refrigerator_rated_annual_kwh	1-2 bedrooms, refrigerator present	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
+refrigerator_rated_annual_kwh	3-4 bedrooms, refrigerator present	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600
+refrigerator_rated_annual_kwh	5+ bedrooms, refrigerator present	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650
 clothes_washer_imef	clothes washer present	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
 clothes_washer_ler	clothes washer present	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284
 clothes_washer_elec_rate	clothes washer present	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
@@ -54,16 +54,15 @@ ceiling_fan_cfm_per_w		122	122	122	122	122	122	122	122	122	122	122	122	122	122	1
 hvac_heating_fuel	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 hvac_heating_fuel	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 hvac_heating_fuel	fuel oil	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
-hvac_boiler_afue	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
-hvac_boiler_afue	fuel oil	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
+hvac_boiler_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.92	0.92	0.92	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
+hvac_boiler_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.92	0.92	0.92	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_central_boiler_et		0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.86	0.86	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_central_boiler_wlhp_et		0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.89	0.89	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
-hvac_furnace_afue	natural gas	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
-hvac_furnace_afue	fuel oil	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
-hvac_hp_type	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air	ground-to-air
+hvac_furnace_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.92	0.92	0.92	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
+hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.92	0.92	0.92	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5
-hvac_gshp_cop		2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8
+hvac_gshp_cop																					
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
 hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
 hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
@@ -71,16 +70,15 @@ hvac_ac_seer		18	18	18	18	18	18	16	16	16	16	16	14	14	14	14	14	14	14	14	14
 hvac_ashp_seer		18	18	18	18	18	18	16	16	16	16	16	16	16	16	16	16	16	16	16	16
 hvac_ac_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
 hvac_ashp_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	13	13	13	13	13	13	13	13	13
-hvac_gshp_eer		16	16	16	16	16	16	14	14	14	14	14	14	14	14	14	14	14	14	14	14
+hvac_gshp_eer																					
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
 hvac_charge_defect_ratio		-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25	-0.25
 hvac_airflow_defect_ratio		-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075	-0.075
 hvac_fan_watts_per_cfm		0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45	0.45
 shared_motor_efficiency		0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85	0.85
-hot_water_distribution_pipe_r_value	shared water heater	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
-hot_water_distribution_pipe_r_value	in-unit water heater	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-hot_water_distribution_low_flow		TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+hot_water_distribution_pipe_r_value		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+hot_water_distribution_low_flow		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
 water_heater_fuel_type	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity	electricity
 water_heater_fuel_type	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
 water_heater_fuel_type	fuel oil	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas	natural gas
@@ -88,7 +86,7 @@ water_heater_type	electricity	heat pump water heater	heat pump water heater	heat
 water_heater_type	natural gas	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater
 water_heater_type	fuel oil	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater	instantaneous water heater
 water_heater_eff_units		UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF	UEF
-water_heater_eff_fixed	electricity	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95	1.95
+water_heater_eff_fixed	electricity	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57	2.57
 water_heater_eff_fixed	natural gas	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 water_heater_eff_fixed	fuel oil	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 water_heater_eff_variable	electricity	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -103,8 +101,10 @@ duct_unconditioned_r_value	other
 duct_lto_cfm25_per_100sqft		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_lto_cfm25_min		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 duct_location_fractions		conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0	conditioned=1.0
-infil_air_leakage_ach50																					
-infil_air_leakage_cfm50_per_sqft		0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25	0.25
+infil_air_leakage_ach50	single-family detached	2.75	2.75	2.75	2.75	2.75	2.75	2.25	2.25	2.25	2.25	2.25	2	2	2	2	2	2	2	2	1.5
+infil_air_leakage_ach50	single-family attached	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_ach50	apartment unit	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3	3
+infil_air_leakage_cfm50_per_sqft																					
 mechanical_ventilation_fan_type		supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	supply only	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator	heat recovery ventilator
 mechanical_ventilation_fan_sre																					
 mechanical_ventilation_fan_asre													0.65	0.65	0.65	0.65	0.65	0.65	0.65	0.65	0.65

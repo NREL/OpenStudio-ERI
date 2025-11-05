@@ -25,14 +25,14 @@ All RESNET HERS tests can be run using:
 
 | ``openstudio resnet_hers_test.rb``
 
-All EPA ENERGY STAR & Zero Energy Ready Homes tests can be run using:
+All EPA ENERGY STAR & DOE Efficient New Homes (formerly Zero Energy Ready Homes) tests can be run using:
 
-| ``openstudio es_zerh_test.rb``
+| ``openstudio es_denh_test.rb``
 
 Or individual tests can be run by specifying the name of the test. A couple examples:
 
 | ``openstudio resnet_hers_test.rb --name=test_resnet_ashrae_140``
-| ``openstudio es_zerh_test.rb --name=test_epa``
+| ``openstudio es_denh_test.rb --name=test_epa``
 
 Test results in CSV format are created at ``workflow/tests/test_results`` and can be used to populate RESNET Excel spreadsheet forms.
 RESNET acceptance criteria are also implemented as part of the tests to check for test failures.

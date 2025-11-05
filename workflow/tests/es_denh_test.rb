@@ -8,7 +8,7 @@ require 'csv'
 require_relative 'util.rb'
 require_relative '../util.rb'
 
-class ESZERHTest < Minitest::Test
+class ESDENHTest < Minitest::Test
   def setup
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
@@ -65,13 +65,13 @@ class ESZERHTest < Minitest::Test
                rated_nbr: hpxml_bldg.building_construction.number_of_bedrooms }
     end
 
-    saf_affected_versions = [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ZERH::Ver1]
+    saf_affected_versions = [ES::SFNationalVer3_0, ES::SFPacificVer3_0, DENH::Ver1]
 
     # Single-family detached
     hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-foundation-slab.xml'))
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.building_construction.conditioned_floor_area *= 2.0
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       if saf_affected_versions.include? es_version
         assert_in_epsilon(0.95, get_saf(results, es_version, hpxml_bldg), 0.001)
@@ -85,7 +85,7 @@ class ESZERHTest < Minitest::Test
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.building_construction.conditioned_floor_area *= 2.0
     hpxml_bldg.building_construction.number_of_bedrooms = 2
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       if saf_affected_versions.include? es_version
         assert_in_epsilon(0.877, get_saf(results, es_version, hpxml_bldg), 0.001)
@@ -99,7 +99,7 @@ class ESZERHTest < Minitest::Test
     hpxml_bldg = hpxml.buildings[0]
     hpxml_bldg.building_construction.conditioned_floor_area *= 2.0
     hpxml_bldg.building_construction.number_of_bedrooms = 5
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
@@ -107,7 +107,7 @@ class ESZERHTest < Minitest::Test
     # Single-family detached, conditioned basement below grade
     hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base.xml'))
     hpxml_bldg = hpxml.buildings[0]
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
@@ -118,7 +118,7 @@ class ESZERHTest < Minitest::Test
     hpxml_bldg.foundation_walls.each do |fwall|
       fwall.depth_below_grade = fwall.depth_below_grade / 2.0 - 0.5
     end
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       if saf_affected_versions.include? es_version
         assert_in_epsilon(0.95, get_saf(results, es_version, hpxml_bldg), 0.001)
@@ -130,7 +130,7 @@ class ESZERHTest < Minitest::Test
     # Single-family attached
     hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-bldgtype-sfa-unit.xml'))
     hpxml_bldg = hpxml.buildings[0]
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
@@ -138,17 +138,17 @@ class ESZERHTest < Minitest::Test
     # Apartment unit
     hpxml = HPXML.new(hpxml_path: File.join(@sample_files_path, 'base-bldgtype-mf-unit.xml'))
     hpxml_bldg = hpxml.buildings[0]
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       results = get_results_hash(hpxml_bldg)
       assert_equal(1.0, get_saf(results, es_version, hpxml_bldg))
     end
   end
 
   def test_opp_limit
-    opp_limit_affected_versions = [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ZERH::Ver1]
+    opp_limit_affected_versions = [ES::SFNationalVer3_0, ES::SFPacificVer3_0, DENH::Ver1]
 
     # On-site Power Production limit
-    [*ES::AllVersions, *ZERH::AllVersions].each do |es_version|
+    [*ES::AllVersions, *DENH::AllVersions].each do |es_version|
       if opp_limit_affected_versions.include? es_version
         assert_equal(5.0, calc_opp_eri_limit(94.5, 0.95, es_version))
       else

@@ -36,7 +36,7 @@ class SampleFilesTest1 < Minitest::Test
       all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],
                                                           csvs[:co2e_results],
                                                           csvs[:es_results],
-                                                          csvs[:zerh_results],
+                                                          csvs[:denh_results],
                                                           csvs[:iecc_eri_results]])
 
       _rm_path(rundir)

@@ -1,5 +1,10 @@
 ## OpenStudio-ERI v1.11.0
 
+__New Features__
+- Updates to DOE Efficient New Homes program
+  - Updates Single Family Version 2 to Rev 3 and Multifamily Version 2 to Rev 2.
+  - **Breaking change**: Replaces all references to "ZERH" with "DENH" (e.g., renames `ZERHCalculation` to `DENHCalculation` and renames various output products).
+
 __Bugfixes__
 - Fixes possibility of "Sum of energy consumptions ... do not match total" error when there are multiple HVAC/DHW systems whose load fractions don't sum to 1.
 
