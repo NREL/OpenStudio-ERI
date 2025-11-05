@@ -6,8 +6,8 @@ __New Features__
 - Improves electric water heater tank losses when using `EnergyFactor` as the metric; now consistent with how `UniformEnergyFactor` is handled.
 - Allows multiple PV inverters with different efficiencies and uses a weighted-average efficiency in the model (previously threw an error).
 - Updated DX heat pump and air conditioner models per latest draft of RESNET HERS Addendum 82.
-- **Breaking change**: Adds RESNET HERS Addendum 77 to adjust HPWH performance when installed in confined space, used when ERI version is "latest".
-  - A new `extension/HPWHInConfinedSpaceWithoutMitigation` input is now required for HPWHs; when true, `extension/HPWHContainmentVolume` is also required.
+- Adds RESNET HERS Addendum 77 to adjust HPWH performance when installed in confined space, used when ERI version is "latest".
+  - **Breaking change**: A new `extension/HPWHInConfinedSpaceWithoutMitigation` input is now required for HPWHs; when true, `extension/HPWHContainmentVolume` is also required.
 - Updates to DOE Efficient New Homes program
   - Updates Single Family Version 2 to Rev 3 and Multifamily Version 2 to Rev 2.
   - **Breaking change**: Replaces all references to "ZERH" with "DENH" (e.g., renames `ZERHCalculation` to `DENHCalculation` and renames various output products).
