@@ -40,15 +40,15 @@ Summary Outputs (CSV)
 
 Based on which :ref:`hpxml_calculations` were requested, summary output files will be found at ``results/results.csv`` directory.
 
-  ====================  =======================
-  Calculation           File
-  ====================  =======================
-  CO2e Index            :ref:`co2e_results_csv`
-  ERI                   :ref:`eri_results_csv`
-  IECC ERI              :ref:`eri_results_csv`
-  ENERGY STAR           :ref:`es_results_csv`
-  DENH                  :ref:`denh_results_csv`
-  ====================  =======================
+  ================  =======================
+  Calculation       File
+  ================  =======================
+  CO2e Index        :ref:`co2e_results_csv`
+  ERI               :ref:`eri_results_csv`
+  IECC ERI          :ref:`eri_results_csv`
+  ENERGY STAR       :ref:`es_results_csv`
+  DENH              :ref:`denh_results_csv`
+  ================  =======================
 
 .. _co2e_results_csv:
 
@@ -658,6 +658,7 @@ Depending on the outputs requested, CSV files may include:
   Component Loads          ``componentloads``   Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
   Unmet Hours              ``unmethours``       Heating and cooling unmet hours.
   Zone Temperatures        ``temperatures``     Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+  Zone Conditions          ``conditions``       Zone conditions (humidity ratio and relative humidity and dewpoint, radiant, and operative temperatures)
   Airflows                 ``airflows``         Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
   Weather                  ``weather``          Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
   =======================  ===================  ================================================================================================================================================

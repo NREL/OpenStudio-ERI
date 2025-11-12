@@ -64,7 +64,7 @@ class EnergyStarDOEEfficientNewHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.95 }])
       elsif program_version == ES::SFPacificVer3_0
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.90 }])
-        _check_solar_thermal_system(hpxml_bldg, [{ system_type: 'hot water', solar_fraction: 0.90 }])
+        _check_solar_thermal_system(hpxml_bldg, [{ system_type: HPXML::SolarThermalSystemTypeHotWater, solar_fraction: 0.90 }])
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 2.50 }])
       elsif [DENH::Ver1].include? program_version
@@ -180,27 +180,27 @@ class EnergyStarDOEEfficientNewHomeWaterHeatingTest < Minitest::Test
 
   def test_water_heating_tank_heat_pump
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
-      _convert_to_es_denh('base-dhw-tank-heat-pump-ef.xml', program_version)
+      _convert_to_es_denh('base-dhw-tank-heat-pump-confined-space.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 0.95 }])
       elsif program_version == ES::SFPacificVer3_0
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 0.90 }])
-        _check_solar_thermal_system(hpxml_bldg, [{ system_type: 'hot water', solar_fraction: 0.90 }])
+        _check_solar_thermal_system(hpxml_bldg, [{ system_type: HPXML::SolarThermalSystemTypeHotWater, solar_fraction: 0.90 }])
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 2.50 }])
       elsif [DENH::Ver1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 2.00 }])
       elsif [DENH::SFVer2].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 2.57, fhr: 63 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 2.57, fhr: 56 }])
       elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 2.20, fhr: 63 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 2.20, fhr: 56 }])
       elsif program_version == ES::MFNationalVer1_2
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 1.49, fhr: 63 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 1.49, fhr: 56 }])
       elsif program_version == ES::MFNationalVer1_3
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 2.50, fhr: 63 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 2.50, fhr: 56 }])
       elsif program_version == DENH::MFVer2
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 1.95, fhr: 63 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, location: HPXML::LocationConditionedSpace, tank_vol: 80, uef: 1.95, fhr: 56 }])
       elsif [ES::SFFloridaVer3_1, ES::SFNationalVer3_0, ES::SFNationalVer3_1].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 80, ef: 0.89 }])
       else
@@ -220,7 +220,7 @@ class EnergyStarDOEEfficientNewHomeWaterHeatingTest < Minitest::Test
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 0.95 }])
       elsif program_version == ES::SFPacificVer3_0
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.90 }])
-        _check_solar_thermal_system(hpxml_bldg, [{ system_type: 'hot water', solar_fraction: 0.90 }])
+        _check_solar_thermal_system(hpxml_bldg, [{ system_type: HPXML::SolarThermalSystemTypeHotWater, solar_fraction: 0.90 }])
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 2.50 }])
       elsif [DENH::Ver1].include? program_version
@@ -291,7 +291,7 @@ class EnergyStarDOEEfficientNewHomeWaterHeatingTest < Minitest::Test
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.90 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.80 },
                                          { whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, location: HPXML::LocationConditionedSpace, tank_vol: 50, ef: 0.80 }])
-        _check_solar_thermal_system(hpxml_bldg, [{ system_type: 'hot water', solar_fraction: 0.90 }])
+        _check_solar_thermal_system(hpxml_bldg, [{ system_type: HPXML::SolarThermalSystemTypeHotWater, solar_fraction: 0.90 }])
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeHeatPump, fuel: HPXML::FuelTypeElectricity, frac_load: 0.2, location: HPXML::LocationConditionedSpace, tank_vol: 60, ef: 2.50 },
                                          { whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.2, location: HPXML::LocationConditionedSpace, ef: 0.91 },
@@ -570,6 +570,12 @@ class EnergyStarDOEEfficientNewHomeWaterHeatingTest < Minitest::Test
         assert_nil(water_heater.first_hour_rating)
       else
         assert_equal(expected_values[:fhr], water_heater.first_hour_rating)
+      end
+      if expected_values[:whtype] == HPXML::WaterHeaterTypeHeatPump
+        assert_equal(false, water_heater.hpwh_confined_space_without_mitigation)
+      else
+        assert_nil(water_heater.hpwh_confined_space_without_mitigation)
+        assert_nil(water_heater.hpwh_containment_volume)
       end
     end
   end

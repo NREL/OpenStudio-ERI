@@ -841,6 +841,9 @@ module ES_DENH_Ruleset
                                          energy_factor: ef,
                                          uniform_energy_factor: uef,
                                          first_hour_rating: fhr)
+      if new_bldg.water_heating_systems[-1].water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        new_bldg.water_heating_systems[-1].hpwh_confined_space_without_mitigation = false
+      end
     end
   end
 
@@ -923,7 +926,7 @@ module ES_DENH_Ruleset
 
     if not solar_fraction.nil?
       new_bldg.solar_thermal_systems.add(id: 'TargetSolarThermalSystem',
-                                         system_type: 'hot water',
+                                         system_type: HPXML::SolarThermalSystemTypeHotWater,
                                          solar_fraction: solar_fraction)
     end
   end

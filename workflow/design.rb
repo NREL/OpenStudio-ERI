@@ -65,6 +65,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_component_loads'] = timeseries_outputs.include? 'componentloads'
   args['include_timeseries_unmet_hours'] = timeseries_outputs.include? 'unmethours'
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
+  args['include_timeseries_zone_conditions'] = timeseries_outputs.include? 'conditions'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
   args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path))

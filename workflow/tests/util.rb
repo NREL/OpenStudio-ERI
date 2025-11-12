@@ -50,7 +50,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug" # We use --debug so that schema/schematron validation is performed
   system(command)
 
   hpxmls = {}
@@ -209,6 +209,20 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       next if log_line.include?('OS Message: Error removing temporary directory at')
 
       flunk "Unexpected warning found in #{log_path} run.log: #{log_line}"
+    end
+  end
+
+  # Delete large files to prevent issue with CI running out of space
+  ['eplusout.json',
+   'eplusout.sql',
+   'eplusout.mtr',
+   'eplusmtr.csv',
+   'eplusout.eso',
+   'eplusout.csv',
+   'eplusout_hourly.json',
+   'eplusout_hourly.msgpack'].each do |out_type|
+    Dir["#{rundir}/**/#{out_type}"].each do |out_path|
+      File.delete(out_path)
     end
   end
 

@@ -489,6 +489,7 @@ class EnergyStarDOEEfficientNewHomeEnclosureTest < Minitest::Test
 
       # Check w/ single family attached
       next unless [*ES::SFVersions, *DENH::SFVersions].include? program_version
+
       _convert_to_es_denh('base-bldgtype-mf-unit-adjacent-to-multiple.xml', program_version)
       hpxml = HPXML.new(hpxml_path: @tmp_hpxml_path)
       hpxml_bldg = hpxml.buildings[0]

@@ -288,6 +288,7 @@
             <FirstHourRating>56.0</FirstHourRating>
             <extension>
               <NumberofBedroomsServed>18</NumberofBedroomsServed>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
             </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>

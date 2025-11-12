@@ -976,6 +976,22 @@ module Waterheater
 
     cop = water_heating_system.additional_properties.cop
 
+    # Adjust COP based on RESNET HERS Addendum 77
+    if not water_heating_system.hpwh_containment_volume.nil?
+      if not water_heating_system.hpwh_confined_space_without_mitigation
+        if water_heating_system.hpwh_containment_volume < 1000.0
+          runner.registerWarning("HPWH COP adjustment based on HPWHContainmentVolume will not be applied to #{water_heating_system.id} because HPWHInConfinedSpaceWithoutMitigation is not 'true'.")
+        end
+      else
+        # FUTURE: apply for 120V HPWH and other system types that the correction may not be accurate for
+        if water_heating_system.hpwh_containment_volume < 450.0 && (water_heating_system.backup_heating_capacity == 0.0)
+          runner.registerWarning("Heat pump water heater: #{water_heating_system.id} has no backup electric resistance element, COP adjustment for confined space may not be accurate when the containment space volume is below 450 cubic feet.")
+        end
+        rv = [water_heating_system.hpwh_containment_volume / 1500.0, 1.0].min
+        cop = (cop - 0.92) * (1 - (1.009 * Math.exp(-5.492 * rv))) + 0.92
+      end
+    end
+
     coil = OpenStudio::Model::CoilWaterHeatingAirToWaterHeatPumpWrapped.new(model)
     coil.setName("#{obj_name} coil")
     coil.setRatedHeatingCapacity(cap)
@@ -993,40 +1009,6 @@ module Waterheater
     coil.additionalProperties.setFeature('HPXML_ID', water_heating_system.id) # Used by reporting measure
 
     return coil
-  end
-
-  # Get the HPWH compressor COP and set it as an additional property.
-  #
-  # @param water_heating_system [HPXML::WaterHeatingSystem] The HPXML water heating system of interest
-  # @return [nil]
-  def self.set_heat_pump_cop(water_heating_system)
-    cop = get_heat_pump_cop(water_heating_system)
-    water_heating_system.additional_properties.cop = cop
-  end
-
-  # Calculates the HPWH compressor COP based on UEF regressions.
-  #
-  # @param water_heating_system [HPXML::WaterHeatingSystem] The HPXML water heating system of interest
-  # return [Double] COP of the HPWH compressor
-  def self.get_heat_pump_cop(water_heating_system)
-    # Calculate the COP based on EF
-    if not water_heating_system.energy_factor.nil?
-      uef = (0.60522 + water_heating_system.energy_factor) / 1.2101
-      cop = 1.174536058 * uef # Based on simulation of the UEF test procedure at varying COPs
-    elsif not water_heating_system.uniform_energy_factor.nil?
-      uef = water_heating_system.uniform_energy_factor
-      case water_heating_system.usage_bin
-      when HPXML::WaterHeaterUsageBinVerySmall
-        fail 'It is unlikely that a heat pump water heater falls into the very small bin of the First Hour Rating (FHR) test. Double check input.'
-      when HPXML::WaterHeaterUsageBinLow
-        cop = 1.0005 * uef - 0.0789
-      when HPXML::WaterHeaterUsageBinMedium
-        cop = 1.0909 * uef - 0.0868
-      when HPXML::WaterHeaterUsageBinHigh
-        cop = 1.1022 * uef - 0.0877
-      end
-    end
-    return cop
   end
 
   # Returns the heating input capacity, calculated as the heating rated (output) capacity divided by the rated efficiency.
