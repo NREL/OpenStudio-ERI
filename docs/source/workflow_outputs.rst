@@ -1,4 +1,4 @@
-.. |nbsp| unicode:: 0xA0 
+.. |nbsp| unicode:: 0xA0
    :trim:
 
 .. _outputs:
@@ -17,15 +17,15 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 
 Output directories will reflect the requested :ref:`hpxml_calculations`:
 
-  ================  ===============
-  Calculation       Output dir name
-  ================  ===============
-  CO2e Index        CO2e_<Version>
-  ERI               ERI_<Version>
-  IECC ERI          IECC_<Version>
-  ENERGY STAR       ES_<Version>
-  ZERH              ZERH_<Version>
-  ================  ===============
+  ====================  ===============
+  Calculation           Output dir name
+  ====================  ===============
+  CO2e Index            CO2e_<Version>
+  ERI                   ERI_<Version>
+  IECC ERI              IECC_<Version>
+  ENERGY STAR           ES_<Version>
+  DENH                  DENH_<Version>
+  ====================  ===============
 
 All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
 
@@ -41,13 +41,13 @@ Summary Outputs (CSV)
 Based on which :ref:`hpxml_calculations` were requested, summary output files will be found at ``results/results.csv`` directory.
 
   ================  =======================
-  Calculation       File                   
+  Calculation       File
   ================  =======================
   CO2e Index        :ref:`co2e_results_csv`
-  ERI               :ref:`eri_results_csv` 
-  IECC ERI          :ref:`eri_results_csv` 
-  ENERGY STAR       :ref:`es_results_csv`  
-  ZERH              :ref:`zerh_results_csv`
+  ERI               :ref:`eri_results_csv`
+  IECC ERI          :ref:`eri_results_csv`
+  ENERGY STAR       :ref:`es_results_csv`
+  DENH              :ref:`denh_results_csv`
   ================  =======================
 
 .. _co2e_results_csv:
@@ -141,7 +141,7 @@ Refer to the ANSI 301 Standard for details on how the Energy Rating Index is cal
 ES results.csv
 ~~~~~~~~~~~~~~
 
-A ``ES_<Version>/results/results.csv`` file will be produced when requesting the EnergyStarCalculation; see :ref:`hpxml_calculations`.
+A ``ES_<Version>/results/results.csv`` file will be produced when requesting an ENERGY STAR calculation (``EnergyStarCalculation``); see :ref:`hpxml_calculations`.
 
   ====================================  =====
   Output                                Notes
@@ -154,23 +154,23 @@ A ``ES_<Version>/results/results.csv`` file will be produced when requesting the
   ENERGY STAR Certification             PASS or FAIL
   ====================================  =====
 
-.. _zerh_results_csv:
+.. _denh_results_csv:
 
-ZERH results.csv
+DENH results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``ZERH_<Version>/results/results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
+A ``DENH_<Version>/results/results.csv`` file will be produced when requesting a DOE Efficient New Homes (formerly Zero Energy Ready Homes) calculation (``DENHCalculation``); see :ref:`hpxml_calculations`.
 
-  ====================================  =====
-  Output                                Notes
-  ====================================  =====
-  Reference Home ERI                    ERI of the ZERH Reference Home
-  SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
-  SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
-  Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
-  Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
-  Zero Energy Ready Home Certification  PASS or FAIL
-  ====================================  =====
+  =====================================  =====
+  Output                                 Notes
+  =====================================  =====
+  Reference Home ERI                     ERI of the DENH Reference Home
+  SAF (Size Adjustment Factor)           Can only be less than 1 for some programs/versions
+  SAF Adjusted ERI Target                Reference Home ERI multiplied by SAF
+  Rated Home ERI                         ERI of the Rated Home including OPP as allowed by the program/version
+  Rated Home ERI w/o OPP                 ERI of the Rated Home excluding any on-site power production (OPP)
+  DOE Efficient New Homes Certification  PASS or FAIL
+  =====================================  =====
 
 .. _home_annual_outputs_csv:
 
@@ -202,14 +202,14 @@ Based on which calculations were requested in the HPXML file, CSV annual output 
   ENERGY STAR       TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
   ENERGY STAR       TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ENERGY STAR Reference Design.
   ENERGY STAR       TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
-  ZERH              RatedHome/results/RatedHome.csv                      ERI Rated Home for the ZERH rated home.
-  ZERH              RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the ZERH rated home.
-  ZERH              RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the ZERH rated home.
-  ZERH              RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the ZERH rated home.
-  ZERH              TargetHome/results/RatedHome.csv                     ERI Rated Home for the ZERH Target Home.
-  ZERH              TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ZERH Target Home.
-  ZERH              TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ZERH Target Home.
-  ZERH              TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ZERH Target Home.
+  DENH              RatedHome/results/RatedHome.csv                      ERI Rated Home for the DENH rated home.
+  DENH              RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the DENH rated home.
+  DENH              RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the DENH rated home.
+  DENH              RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the DENH rated home.
+  DENH              TargetHome/results/RatedHome.csv                     ERI Rated Home for the DENH Target Home.
+  DENH              TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the DENH Target Home.
+  DENH              TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the DENH Target Home.
+  DENH              TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the DENH Target Home.
   ================  ===================================================  =========
 
 Each CSV file includes the following sections of output.
@@ -239,7 +239,7 @@ Fuel uses are listed below.
   Fuel Use: Natural Gas: Total (MBtu)
   Fuel Use: Fuel Oil: Total (MBtu)
   Fuel Use: Propane: Total (MBtu)
-  Fuel Use: Wood Cord: Total (MBtu)         
+  Fuel Use: Wood Cord: Total (MBtu)
   Fuel Use: Wood Pellets: Total (MBtu)
   Fuel Use: Coal: Total (MBtu)          Not used by OS-ERI
   ====================================  ===========================
@@ -503,7 +503,7 @@ Component loads represent the estimated contribution of different building compo
 The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
 
 Component loads disaggregated by Heating/Cooling are listed below.
-   
+
   =================================================  =========================================================================================================
   Type                                               Notes
   =================================================  =========================================================================================================
@@ -540,7 +540,7 @@ Annual hot water uses are listed below.
   Hot Water: Clothes Washer (gal)
   Hot Water: Dishwasher (gal)
   Hot Water: Fixtures (gal)            Showers and faucets.
-  Hot Water: Distribution Waste (gal) 
+  Hot Water: Distribution Waste (gal)
   ===================================  ====================
 
 .. note::
@@ -658,6 +658,7 @@ Depending on the outputs requested, CSV files may include:
   Component Loads          ``componentloads``   Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
   Unmet Hours              ``unmethours``       Heating and cooling unmet hours.
   Zone Temperatures        ``temperatures``     Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+  Zone Conditions          ``conditions``       Zone conditions (humidity ratio and relative humidity and dewpoint, radiant, and operative temperatures)
   Airflows                 ``airflows``         Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
   Weather                  ``weather``          Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
   =======================  ===================  ================================================================================================================================================
@@ -694,10 +695,10 @@ Home EnergyPlus Files
 
 In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``RatedHome``, ``ReferenceHome``, etc. directories).
 
-.. warning:: 
+.. warning::
 
-  It is highly discouraged for software tools to read the raw EnergyPlus output files. 
-  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
+  It is highly discouraged for software tools to read the raw EnergyPlus output files.
+  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created.
   If there are additional outputs of interest that are not available in the annual/timeseries output files, please send us a request.
 
 .. _hers_diagnostic_output:

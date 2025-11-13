@@ -56,7 +56,7 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   ``CO2IndexCalculation/Version``    string             See [#]_     No        <none>   Version(s) to perform CO2e Index calculation; multiple allowed
   ``IECCERICalculation/Version``     string             See [#]_     No        <none>   Version(s) to perform IECC ERI calculation; multiple allowed
   ``EnergyStarCalculation/Version``  string             See [#]_     No        <none>   Version(s) to perform ENERGY STAR ERI calculation; multiple allowed
-  ``ZERHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE ZERH ERI calculation; multiple allowed
+  ``DENHCalculation/Version``        string             See [#]_     No        <none>   Version(s) to perform DOE Efficient New Homes ERI calculation; multiple allowed
   =================================  ========  =======  ===========  ========  =======  ==================================
 
   .. [#] ERICalculation/Version choices are "latest", "2022CE", "2022C", "2022", "2019ABCD", "2019ABC", "2019AB", "2019A", "2019", "2014AEG", "2014AE", "2014A", or "2014".
@@ -67,7 +67,8 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
          If :ref:`hers_diagnostic_output` is requested, a single CO2IndexCalculation/Version and a single ERICalculation/Version must be provided and use the same version.
   .. [#] IECCERICalculation/Version choices are "2024", "2021", "2018", or "2015".
   .. [#] EnergyStarCalculation/Version choices are "SF_National_3.3", "SF_National_3.2", "SF_National_3.1", "SF_National_3.0", "SF_Pacific_3.0", "SF_Florida_3.1", "SF_OregonWashington_3.2", "MF_National_1.3", "MF_National_1.2", "MF_National_1.1", "MF_National_1.0", or "MF_OregonWashington_1.2".
-  .. [#] ZERHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
+  .. [#] DENHCalculation/Version choices are "SF_2.0", "MF_2.0" or "1.0".
+         DOE Efficient New Homes (DENH) was formerly known as Zero Energy Ready Homes (ZERH).
 
 .. warning::
 
@@ -78,8 +79,8 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
 
 .. warning::
 
-  For the ENERGY STAR and Zero Energy Ready Home ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ENERGY STAR and Zero Energy Ready Home ERI Target.
-  For example, it does not check that the home meets all ENERGY STAR and Zero Energy Ready Home Mandatory Requirements.
+  For the ENERGY STAR and DOE Efficient New Homes ERI calculation, OpenStudio-ERI does not perform additional compliance checks beyond comparing the ERI to the ERI Target.
+  For example, it does not check that the home meets all ENERGY STAR and DOE Efficient New Homes Mandatory Requirements.
   It is the software tool's responsibility to perform these additional steps.
 
 HPXML Building Site
@@ -147,7 +148,7 @@ Building construction is entered in ``/HPXML/Building/BuildingDetails/BuildingSu
   =============================================================  ========  =========  =================================  ========  ========  =======================================================================
 
   .. [#] ResidentialFacilityType choices are "single-family detached", "single-family attached", or "apartment unit".
-         For ENERGY STAR and ZERH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
+         For ENERGY STAR and DENH, "single-family detached" and "single-family attached" may only be used for SF versions and "apartment unit" may only be used for MF versions.
 
 .. _weather_station:
 
@@ -182,16 +183,16 @@ One or more IECC climate zones are each entered as a ``/HPXML/Building/BuildingD
 
   .. [#] Year choices are 2003, 2006, 2009, 2012, 2015, 2018, 2021, or 2024.
   .. [#] The IECC climate zone for 2006 is always required.
-         IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for ZERH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
+         IECC climate zone years other than 2006 are optional; for programs that use specific IECC climate zone years (e.g., 2021 for DENH SF 2.0), that year is used if provided, otherwise the next earliest provided year will be used with the assumption that the climate zone has not changed across the years.
          See below for the list of climate zone years used by different programs:
 
          \- **ENERGY STAR SF_National_3.3, SF_National_3.2, MF_National_1.3, MF_National_1.2**: 2021
 
          \- **ENERGY STAR SF_National_3.1, MF_National_1.1, SF_OregonWashington_3.2, MF_OregonWashington_1.2**: 2012
 
-         \- **ZERH SF_2.0, MF_2.0**: 2021
+         \- **DENH SF_2.0, MF_2.0**: 2021
 
-         \- **ZERH 1.0**: 2015
+         \- **DENH 1.0**: 2015
 
          \- **IECC ERI 20XX**: 20XX
 
@@ -2089,22 +2090,24 @@ Heat Pump
 
 Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
 
-  =============================================  =======  ============  ======================  ========  ========  ==========================================
-  Element                                        Type     Units         Constraints             Required  Default   Notes
-  =============================================  =======  ============  ======================  ========  ========  ==========================================
-  ``SystemIdentifier``                           id                                             Yes                 Unique identifier
-  ``FuelType``                                   string                 electricity             Yes                 Fuel type
-  ``WaterHeaterType``                            string                 heat pump water heater  Yes                 Type of water heater
-  ``Location``                                   string                 See [#]_                Yes                 Water heater location
-  ``IsSharedSystem``                             boolean                                        Yes                 Whether it serves multiple dwelling units or shared laundry room
-  ``TankVolume``                                 double   gal           > 0                     Yes                 Nominal tank volume
-  ``FractionDHWLoadServed``                      double   frac          >= 0, <= 1 [#]_         Yes                 Fraction of hot water load served [#]_
-  ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          > 1, <= 5               Yes                 EnergyGuide label rated efficiency
-  ``FirstHourRating``                            double   gal/hr        > 0                     See [#]_            EnergyGuide label first hour rating
-  ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0                    No        0         R-value of additional tank insulation wrap
-  ``UsesDesuperheater``                          boolean                                        No        false     Presence of desuperheater? [#]_
-  ``extension/NumberofBedroomsServed``           integer                > NumberofBedrooms      See [#]_            Number of bedrooms served directly or indirectly
-  =============================================  =======  ============  ======================  ========  ========  ==========================================
+  ===================================================  =======  ============  ======================  ========  ========  ==========================================
+  Element                                              Type     Units         Constraints             Required  Default   Notes
+  ===================================================  =======  ============  ======================  ========  ========  ==========================================
+  ``SystemIdentifier``                                 id                                             Yes                 Unique identifier
+  ``FuelType``                                         string                 electricity             Yes                 Fuel type
+  ``WaterHeaterType``                                  string                 heat pump water heater  Yes                 Type of water heater
+  ``Location``                                         string                 See [#]_                Yes                 Water heater location
+  ``IsSharedSystem``                                   boolean                                        Yes                 Whether it serves multiple dwelling units or shared laundry room
+  ``TankVolume``                                       double   gal           > 0                     Yes                 Nominal tank volume
+  ``FractionDHWLoadServed``                            double   frac          >= 0, <= 1 [#]_         Yes                 Fraction of hot water load served [#]_
+  ``UniformEnergyFactor`` or ``EnergyFactor``          double   frac          > 1, <= 5               Yes                 EnergyGuide label rated efficiency
+  ``FirstHourRating``                                  double   gal/hr        > 0                     See [#]_            EnergyGuide label first hour rating
+  ``WaterHeaterInsulation/Jacket/JacketRValue``        double   F-ft2-hr/Btu  >= 0                    No        0         R-value of additional tank insulation wrap
+  ``UsesDesuperheater``                                boolean                                        No        false     Presence of desuperheater? [#]_
+  ``extension/NumberofBedroomsServed``                 integer                > NumberofBedrooms      See [#]_            Number of bedrooms served directly or indirectly
+  ``extension/HPWHInConfinedSpaceWithoutMitigation``   boolean                                        Yes                 Whether HPWH is installed in confined space without mitigation [#]_
+  ``extension/HPWHContainmentVolume``                  double   ft3           > 0                     See [#]_            Containment volume of the space where HPWH is installed
+  ===================================================  =======  ============  ======================  ========  ========  ==========================================
 
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxmllocations` for descriptions.
@@ -2116,6 +2119,9 @@ Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Sy
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          Tank losses will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the water heating system per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
          Each dwelling unit w/zero bedrooms should be counted as 1 bedroom -- e.g., a value of 3 should be entered for a shared system serving 3 studio (zero bedroom) apartments.
+  .. [#] Mitigation approaches include sufficient enclosed volume or connection to conditioned space with, e.g, ducting, grills, door undercuts, or louvers per `RESNET HERS Addendum 77 <https://www.resnet.us/about/standards/hers/draft-pds-03-hers-addendum-77-integrated-heat-pump-water-heaters-ihpwh/>`_.
+         If true, a COP adjustment based on ``extension/HPWHContainmentVolume`` will be applied.
+  .. [#] HPWHContainmentVolume only required if HPWHInConfinedSpaceWithoutMitigation is true.
 
 .. _water_heater_combi_storage:
 
@@ -2453,17 +2459,17 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          PV generation will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the PV system per `ANSI/RESNET/ICC 301-2019 <https://codes.iccsafe.org/content/RESNET3012019P1>`_.
 
-In addition, an inverter must be entered as a ``/HPXML/Building/BuildingDetails/Systems/Photovoltaics/Inverter``.
+Each inverter inverter is entered as a ``/HPXML/Building/BuildingDetails/Systems/Photovoltaics/Inverter``.
 
-  =======================================================  =================  ================  ===================  ========  ========  ============================================
-  Element                                                  Type               Units             Constraints          Required  Default   Notes
-  =======================================================  =================  ================  ===================  ========  ========  ============================================
-  ``SystemIdentifier``                                     id                                                        Yes                 Unique identifier
-  ``InverterEfficiency``                                   double             frac              > 0, <= 1 [#]_       Yes                 Inverter efficiency [#]_
-  =======================================================  =================  ================  ===================  ========  ========  ============================================
+  =======================================================  =================  ================  ===============  ========  ========  ============================================
+  Element                                                  Type               Units             Constraints      Required  Default   Notes
+  =======================================================  =================  ================  ===============  ========  ========  ============================================
+  ``SystemIdentifier``                                     id                                                    Yes                 Unique identifier
+  ``InverterEfficiency``                                   double             frac              > 0, <= 1        Yes                 Inverter efficiency [#]_
+  =======================================================  =================  ================  ===============  ========  ========  ============================================
 
-  .. [#] For homes with multiple inverters, all InverterEfficiency elements must have the same value.
-  .. [#] Default from PVWatts is 0.96.
+  .. [#] If there are multiple inverters with different efficiencies, a PV size weighted-average efficiency will be used due to EnergyPlus limitations.
+         The PVWatts default is 0.96.
 
 HPXML Batteries
 ***************

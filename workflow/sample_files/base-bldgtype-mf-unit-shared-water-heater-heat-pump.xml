@@ -20,9 +20,9 @@
       <IECCERICalculation>
         <Version>2024</Version>
       </IECCERICalculation>
-      <ZERHCalculation>
+      <DENHCalculation>
         <Version>MF_2.0</Version>
-      </ZERHCalculation>
+      </DENHCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -288,6 +288,7 @@
             <FirstHourRating>56.0</FirstHourRating>
             <extension>
               <NumberofBedroomsServed>18</NumberofBedroomsServed>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
             </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>

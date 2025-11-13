@@ -10,18 +10,18 @@ def _all_run_calc_types()
           [RunType::CO2e, CalcType::ReferenceHome]]
 end
 
-# Create derivative file for ENERGY STAR and ZERH program testing
-def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
+# Create derivative file for ENERGY STAR and DENH program testing
+def _convert_to_es_denh(hpxml_name, program_version, state_code = nil)
   hpxml = HPXML.new(hpxml_path: File.join(@root_path, 'workflow', 'sample_files', hpxml_name))
   hpxml_bldg = hpxml.buildings[0]
 
-  # Change program version to ENERGY STAR or ZERH
+  # Change program version to ENERGY STAR or DENH
   hpxml.header.energystar_calculation_versions = nil
-  hpxml.header.zerh_calculation_versions = nil
+  hpxml.header.denh_calculation_versions = nil
   if ES::AllVersions.include? program_version
     hpxml.header.energystar_calculation_versions = [program_version]
-  elsif ZERH::AllVersions.include? program_version
-    hpxml.header.zerh_calculation_versions = [program_version]
+  elsif DENH::AllVersions.include? program_version
+    hpxml.header.denh_calculation_versions = [program_version]
   end
 
   # Change weather station for regional ENERGY STAR
@@ -54,7 +54,7 @@ def _convert_to_es_zerh(hpxml_name, program_version, state_code = nil)
   end
 
   # Change building type as needed
-  if [*ES::SFVersions, *ZERH::SFVersions].include? program_version
+  if [*ES::SFVersions, *DENH::SFVersions].include? program_version
     if hpxml_bldg.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
       hpxml_bldg.building_construction.residential_facility_type = HPXML::ResidentialTypeSFA
     end

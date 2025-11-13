@@ -20,9 +20,9 @@
       <IECCERICalculation>
         <Version>2024</Version>
       </IECCERICalculation>
-      <ZERHCalculation>
+      <DENHCalculation>
         <Version>SF_2.0</Version>
-      </ZERHCalculation>
+      </DENHCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -623,6 +623,9 @@
             <TankVolume>59.0</TankVolume>
             <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
             <EnergyFactor>3.87</EnergyFactor>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

@@ -20,9 +20,9 @@
       <IECCERICalculation>
         <Version>2024</Version>
       </IECCERICalculation>
-      <ZERHCalculation>
+      <DENHCalculation>
         <Version>SF_2.0</Version>
-      </ZERHCalculation>
+      </DENHCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -1068,6 +1068,9 @@
                 <JacketRValue>0.0</JacketRValue>
               </Jacket>
             </WaterHeaterInsulation>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>

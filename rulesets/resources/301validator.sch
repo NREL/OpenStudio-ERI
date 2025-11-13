@@ -81,22 +81,22 @@
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ZERHVersion]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version'>
-      <sch:assert role='ERROR' test='text()="1.0" or text()="SF_2.0" or text()="MF_2.0"'>Expected SoftwareInfo/extension/ZERHCalculation/Version to be '1.0' or 'SF_2.0' or 'MF_2.0'</sch:assert> <!-- See [ZERHVersion=SF_2.0] or [ZERHVersion=MF_2.0] -->
+    <sch:title>[DENHVersion]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:DENHCalculation/h:Version'>
+      <sch:assert role='ERROR' test='text()="1.0" or text()="SF_2.0" or text()="MF_2.0"'>Expected SoftwareInfo/extension/DENHCalculation/Version to be '1.0' or 'SF_2.0' or 'MF_2.0'</sch:assert> <!-- See [DENHVersion=SF_2.0] or [DENHVersion=MF_2.0] -->
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ZERHVersion=SF]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version[contains(text(), "SF")]'>
+    <sch:title>[DENHVersion=SF]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:DENHCalculation/h:Version[contains(text(), "SF")]'>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
-    <sch:title>[ZERHVersion=MF]</sch:title>
-    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:ZERHCalculation/h:Version[contains(text(), "MF")]'>
+    <sch:title>[DENHVersion=MF]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:DENHCalculation/h:Version[contains(text(), "MF")]'>
       <sch:assert role='ERROR' test='count(../../../../h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction[h:ResidentialFacilityType[text()="apartment unit"]]) = 1'>Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="apartment unit"]]</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -1369,6 +1369,16 @@
       <sch:assert role='ERROR' test='number(h:EnergyFactor) &gt; 1 or not(h:EnergyFactor)'>Expected EnergyFactor to be greater than 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:WaterHeaterInsulation/h:Jacket/h:JacketRValue) &lt;= 1'>Expected 0 or 1 element(s) for xpath: WaterHeaterInsulation/Jacket/JacketRValue</sch:assert>
       <sch:assert role='ERROR' test='count(h:UsesDesuperheater) &lt;= 1'>Expected 0 or 1 element(s) for xpath: UsesDesuperheater</sch:assert> <!-- See [Desuperheater] -->
+      <sch:assert role='ERROR' test='count(h:extension/h:HPWHInConfinedSpaceWithoutMitigation) = 1'>Expected 1 element(s) for xpath: extension/HPWHInConfinedSpaceWithoutMitigation</sch:assert> <!-- See [HPWHInConfinedSpaceWithoutMitigation] -->
+      <sch:assert role='ERROR' test='h:extension/h:HPWHInConfinedSpaceWithoutMitigation[text()="true" or text()="false"] or not(h:extension/h:HPWHInConfinedSpaceWithoutMitigation)'>Expected extension/HPWHInConfinedSpaceWithoutMitigation to be 'true' or 'false'</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[HPWHInConfinedSpaceWithoutMitigation]</sch:title>
+    <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:WaterHeating/h:WaterHeatingSystem/h:extension[h:HPWHInConfinedSpaceWithoutMitigation="true"]'>
+      <sch:assert role='ERROR' test='count(h:HPWHContainmentVolume) = 1'>Expected 1 element(s) for xpath: HPWHContainmentVolume</sch:assert>
+      <sch:assert role='ERROR' test='number(h:HPWHContainmentVolume) &gt; 0 or not(h:HPWHContainmentVolume)'>Expected HPWHContainmentVolume to be greater than 0</sch:assert>
     </sch:rule>
   </sch:pattern>
 
