@@ -1001,7 +1001,8 @@ module ES_DENH_Ruleset
                                 location: location,
                                 is_shared_appliance: false,
                                 fuel_type: fuel_type,
-                                combined_energy_factor: lookup_reference_value('clothes_dryer_cef'))
+                                combined_energy_factor: lookup_reference_value('clothes_dryer_cef'),
+                                is_vented: true)
   end
 
   def self.set_appliances_dishwasher_reference(orig_bldg, new_bldg)

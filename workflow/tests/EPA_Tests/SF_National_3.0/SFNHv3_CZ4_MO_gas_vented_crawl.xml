@@ -461,6 +461,7 @@
           <Location>conditioned space</Location>
           <FuelType>natural gas</FuelType>
           <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

@@ -659,6 +659,7 @@
           <FuelType>natural gas</FuelType>
           <EnergyFactor>2.67</EnergyFactor>
           <ControlType>timer</ControlType>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

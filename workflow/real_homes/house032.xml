@@ -683,6 +683,7 @@
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>2.62</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

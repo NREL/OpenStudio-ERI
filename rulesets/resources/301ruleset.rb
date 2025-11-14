@@ -2069,7 +2069,7 @@ module ERI_301_Ruleset
                                 combined_energy_factor: reference_values[:combined_energy_factor],
                                 control_type: reference_values[:control_type],
                                 is_vented: true,
-                                vented_flow_rate: 0.0)
+                                vented_flow_rate: 0) # FUTURE: Propose dryer venting for ANSI 301
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_bldg, new_bldg)
@@ -2085,6 +2085,14 @@ module ERI_301_Ruleset
       return
     end
 
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022C')
+      # Vented vs unvented dryers introduced in 301-2022 Addendum C
+      is_vented = clothes_dryer.is_vented
+    else
+      # Dryers previously assumed to be vented (same as Reference Home)
+      is_vented = true
+    end
+
     new_bldg.clothes_dryers.add(id: clothes_dryer.id,
                                 is_shared_appliance: clothes_dryer.is_shared_appliance,
                                 location: clothes_dryer.location,
@@ -2092,8 +2100,8 @@ module ERI_301_Ruleset
                                 energy_factor: clothes_dryer.energy_factor,
                                 combined_energy_factor: clothes_dryer.combined_energy_factor,
                                 control_type: clothes_dryer.control_type,
-                                is_vented: true,
-                                vented_flow_rate: 0.0)
+                                is_vented: is_vented,
+                                vented_flow_rate: 0) # FUTURE: Propose dryer venting for ANSI 301
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_bldg, new_bldg)
