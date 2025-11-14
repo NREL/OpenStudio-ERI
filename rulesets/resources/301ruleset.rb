@@ -2068,7 +2068,8 @@ module ERI_301_Ruleset
                                 fuel_type: fuel_type,
                                 combined_energy_factor: reference_values[:combined_energy_factor],
                                 control_type: reference_values[:control_type],
-                                is_vented: true)
+                                is_vented: true,
+                                vented_flow_rate: 0) # FUTURE: Propose dryer venting for ANSI 301
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_bldg, new_bldg)
@@ -2099,7 +2100,8 @@ module ERI_301_Ruleset
                                 energy_factor: clothes_dryer.energy_factor,
                                 combined_energy_factor: clothes_dryer.combined_energy_factor,
                                 control_type: clothes_dryer.control_type,
-                                is_vented: is_vented)
+                                is_vented: is_vented,
+                                vented_flow_rate: 0) # FUTURE: Propose dryer venting for ANSI 301
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_bldg, new_bldg)

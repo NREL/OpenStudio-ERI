@@ -366,6 +366,7 @@ class ERIApplianceTest < Minitest::Test
       assert_equal(control, clothes_dryer.control_type)
     end
     assert_equal(is_vented, clothes_dryer.is_vented)
+    assert_equal(0.0, clothes_dryer.vented_flow_rate)
     assert_equal('0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.058, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024', clothes_dryer.weekday_fractions)
     assert_equal('0.010, 0.006, 0.004, 0.002, 0.004, 0.006, 0.016, 0.032, 0.048, 0.068, 0.078, 0.081, 0.074, 0.067, 0.058, 0.061, 0.055, 0.054, 0.051, 0.051, 0.052, 0.054, 0.044, 0.024', clothes_dryer.weekend_fractions)
     assert_equal('1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0', clothes_dryer.monthly_multipliers)
