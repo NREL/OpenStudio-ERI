@@ -2046,7 +2046,8 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
                                   location: HPXML::LocationConditionedSpace,
                                   fuel_type: HPXML::FuelTypeNaturalGas,
                                   control_type: default_values[:control_type],
-                                  combined_energy_factor: default_values[:combined_energy_factor])
+                                  combined_energy_factor: default_values[:combined_energy_factor],
+                                  is_vented: true)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2065,7 +2066,8 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
                                   location: HPXML::LocationConditionedSpace,
                                   fuel_type: HPXML::FuelTypeElectricity,
                                   control_type: default_values[:control_type],
-                                  combined_energy_factor: default_values[:combined_energy_factor])
+                                  combined_energy_factor: default_values[:combined_energy_factor],
+                                  is_vented: true)
   end
 end
 
@@ -2587,7 +2589,10 @@ def create_sample_hpxmls
       end
     end
     if not hpxml_bldg.clothes_dryers.empty?
-      hpxml_bldg.clothes_dryers[0].drying_method = nil
+      if hpxml_bldg.clothes_dryers[0].is_vented.nil?
+        hpxml_bldg.clothes_dryers[0].is_vented = (![HPXML::DryingMethodCondensing, HPXML::DryingMethodHeatPump].include? hpxml_bldg.clothes_dryers[0].drying_method)
+        hpxml_bldg.clothes_dryers[0].drying_method = nil
+      end
       if hpxml_bldg.clothes_dryers[0].is_shared_appliance
         hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_dryers[0].count = 2

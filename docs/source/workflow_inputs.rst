@@ -2593,6 +2593,7 @@ A single clothes dryer can be entered as a ``/HPXML/Building/BuildingDetails/App
   ``FuelType``                                  string           See [#]_     Yes                     Fuel type
   ``CombinedEnergyFactor`` or ``EnergyFactor``  double   lb/kWh  > 0          Yes                     EnergyGuide label efficiency [#]_
   ``ControlType``                               string           See [#]_     See [#]_                Type of controls
+  ``Vented``                                    boolean                       Yes                     Whether dryer is vented
   ============================================  =======  ======  ===========  ========  ============  ==============================================
 
   .. [#] For example, a clothes dryer in a shared laundry room of a MF building.

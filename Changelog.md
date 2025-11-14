@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.12.0
+
+__New Features__
+- **Breaking change**: Clothes dryers now require `Vented` (true or false) to be provided per ANSI/RESNET/ICC Standard 301-2022 Addendum C.
+
 ## OpenStudio-ERI v1.11.0
 
 __New Features__

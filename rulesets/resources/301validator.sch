@@ -1640,6 +1640,7 @@
       <sch:assert role='ERROR' test='h:FuelType[text()="natural gas" or text()="fuel oil" or text()="propane" or text()="electricity" or text()="wood" or text()="wood pellets"] or not(h:FuelType)'>Expected FuelType to be 'natural gas' or 'fuel oil' or 'propane' or 'electricity' or 'wood' or 'wood pellets'</sch:assert>
       <sch:assert role='ERROR' test='count(h:CombinedEnergyFactor) + count(h:EnergyFactor) = 1'>Expected 1 element(s) for xpath: CombinedEnergyFactor | EnergyFactor</sch:assert>
       <sch:assert role='ERROR' test='count(h:ControlType[text()="timer" or text()="moisture"]) + count(../../../../h:SoftwareInfo/h:extension[not(h:ERICalculation) or h:ERICalculation/h:Version[not(text()="2019" or contains(text(), "2014"))]]) &gt;= 1'>Expected 1 or more element(s) for xpath: ControlType | ../../../../SoftwareInfo/extension/ERICalculation/Version[text() &lt; 2019A]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:Vented) = 1'>Expected 1 element(s) for xpath: Vented</sch:assert>
     </sch:rule>
   </sch:pattern>
 

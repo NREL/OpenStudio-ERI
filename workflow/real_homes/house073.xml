@@ -1400,6 +1400,7 @@
           <FuelType>propane</FuelType>
           <CombinedEnergyFactor>3.3</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
