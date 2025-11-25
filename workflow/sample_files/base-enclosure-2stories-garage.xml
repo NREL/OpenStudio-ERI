@@ -297,8 +297,8 @@
               </Layer>
             </UnderSlabInsulation>
             <extension>
-              <CarpetFraction>0.0</CarpetFraction>
-              <CarpetRValue>0.0</CarpetRValue>
+              <CarpetFraction>0.8</CarpetFraction>
+              <CarpetRValue>2.0</CarpetRValue>
             </extension>
           </Slab>
         </Slabs>
@@ -345,13 +345,6 @@
             <SystemIdentifier id='Door1'/>
             <AttachedToWall idref='Wall2'/>
             <Area>40.0</Area>
-            <Azimuth>180</Azimuth>
-            <RValue>4.4</RValue>
-          </Door>
-          <Door>
-            <SystemIdentifier id='Door2'/>
-            <AttachedToWall idref='Wall1'/>
-            <Area>70.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>4.4</RValue>
           </Door>

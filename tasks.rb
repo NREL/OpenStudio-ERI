@@ -2457,19 +2457,28 @@ def create_sample_hpxmls
     hpxml_bldg.site.ground_conductivity = nil
     hpxml_bldg.building_construction.number_of_units_in_building = nil
     hpxml_bldg.building_construction.number_of_bathrooms = nil
+    hpxml_bldg.air_infiltration_measurements.each do |measurement|
+      measurement.infiltration_type = nil
+      if measurement.infiltration_volume.nil?
+        measurement.infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
+      end
+    end
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
     hpxml_bldg.building_construction.unit_height_above_grade = nil
-    hpxml_bldg.air_infiltration_measurements.each do |measurement|
-      measurement.infiltration_type = nil
-    end
     hpxml_bldg.attics.each do |attic|
+      if attic.attic_type == HPXML::AtticTypeVented
+        attic.vented_attic_sla = 0.003 if attic.vented_attic_sla.nil?
+      end
       if [HPXML::AtticTypeVented,
           HPXML::AtticTypeUnvented].include? attic.attic_type
         attic.within_infiltration_volume = false if attic.within_infiltration_volume.nil?
       end
     end
     hpxml_bldg.foundations.each do |foundation|
+      if foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
+        foundation.vented_crawlspace_sla = 0.00667 if foundation.vented_crawlspace_sla.nil?
+      end
       next unless [HPXML::FoundationTypeBasementUnconditioned,
                    HPXML::FoundationTypeCrawlspaceUnvented,
                    HPXML::FoundationTypeCrawlspaceVented].include? foundation.foundation_type
@@ -2483,6 +2492,9 @@ def create_sample_hpxmls
       if roof.radiant_barrier && roof.radiant_barrier_grade.nil?
         roof.radiant_barrier_grade = 2
       end
+      roof.roof_color = nil
+      roof.solar_absorptance = 0.7
+      roof.emittance = 0.92
     end
     (hpxml_bldg.rim_joists + hpxml_bldg.walls).each do |wall_or_rim_joist|
       wall_or_rim_joist.siding = nil
