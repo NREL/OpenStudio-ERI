@@ -1,3 +1,8 @@
+## OpenStudio-ERI v1.12.0
+
+__New Features__
+- The `NominalCapacity` input for batteries is no longer used.
+
 ## OpenStudio-ERI v1.11.1
 
 __New Features__

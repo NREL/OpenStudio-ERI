@@ -1562,9 +1562,7 @@
       <sch:assert role='ERROR' test='count(h:BatteryType[text()="Li-ion"]) = 1'>Expected 1 element(s) for xpath: BatteryType[text()="Li-ion"]</sch:assert>
       <sch:assert role='ERROR' test='count(h:Location) &lt;= 1'>Expected 0 or 1 element(s) for xpath: Location</sch:assert>
       <sch:assert role='ERROR' test='h:Location[text()="conditioned space" or text()="basement - conditioned" or text()="basement - unconditioned" or text()="crawlspace - vented" or text()="crawlspace - unvented" or text()="attic - vented" or text()="attic - unvented" or text()="garage" or text()="outside"] or not(h:Location)'>Expected Location to be 'conditioned space' or 'basement - conditioned' or 'basement - unconditioned' or 'crawlspace - vented' or 'crawlspace - unvented' or 'attic - vented' or 'attic - unvented' or 'garage' or 'outside'</sch:assert>
-      <sch:assert role='ERROR' test='count(h:NominalCapacity[h:Units="kWh"]/h:Value) = 1'>Expected 1 element(s) for xpath: NominalCapacity[Units="kWh"]/Value</sch:assert>
       <sch:assert role='ERROR' test='count(h:UsableCapacity[h:Units="kWh"]/h:Value) = 1'>Expected 1 element(s) for xpath: UsableCapacity[Units="kWh"]/Value</sch:assert>
-      <sch:assert role='ERROR' test='number(h:UsableCapacity[h:Units="kWh"]/h:Value) &lt; number(h:NominalCapacity[h:Units="kWh"]/h:Value) or not(h:UsableCapacity[h:Units="kWh"]/h:Value) or not(h:NominalCapacity[h:Units="kWh"]/h:Value)'>Expected UsableCapacity to be less than NominalCapacity</sch:assert>
       <sch:assert role='ERROR' test='count(h:RatedPowerOutput) = 1'>Expected 1 element(s) for xpath: RatedPowerOutput</sch:assert>
       <sch:assert role='ERROR' test='count(h:RoundTripEfficiency) = 1'>Expected 1 element(s) for xpath: RoundTripEfficiency</sch:assert>
       <!-- Warnings -->
