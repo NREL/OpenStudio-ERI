@@ -163,7 +163,7 @@ def create_test_hpxmls
       hpxml.buildings.add(building_id: 'MyBuilding')
       hpxml_files.each do |hpxml_file|
         if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file))
+          hpxml = get_standard_140_hpxml(File.join(tests_dir, hpxml_file))
           next
         end
         hpxml_bldg = hpxml.buildings[0]
@@ -251,6 +251,11 @@ end
 
 def get_standard_140_hpxml(hpxml_path)
   hpxml = HPXML.new(hpxml_path: hpxml_path)
+
+  hpxml_bldg = hpxml.buildings[0]
+  if hpxml_bldg.air_infiltration_measurements[0].infiltration_volume.nil?
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
+  end
 
   return hpxml
 end
