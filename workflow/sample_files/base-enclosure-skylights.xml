@@ -270,11 +270,6 @@
             <Azimuth>180</Azimuth>
             <UFactor>0.59</UFactor>
             <SHGC>0.55</SHGC>
-            <InteriorShading>
-              <SystemIdentifier id='Skylight1InteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
-            </InteriorShading>
             <AttachedToRoof idref='Roof1'/>
             <AttachedToFloor idref='Floor1'/>
             <extension>
@@ -290,11 +285,6 @@
             <Azimuth>0</Azimuth>
             <UFactor>0.59</UFactor>
             <SHGC>0.55</SHGC>
-            <InteriorShading>
-              <SystemIdentifier id='Skylight2InteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
-            </InteriorShading>
             <AttachedToRoof idref='Roof1'/>
             <AttachedToFloor idref='Floor1'/>
             <extension>
