@@ -29,7 +29,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       schema_validator = XMLValidator.get_xml_validator(schema_path)
     end
     if schematron_validator.nil?
-      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.xml')
+      schematron_path = File.join(File.dirname(__FILE__), 'resources', '301validator.sch')
       schematron_validator = XMLValidator.get_xml_validator(schematron_path)
     end
     orig_hpxml = HPXML.new(hpxml_path: hpxml_input_path, schema_validator: schema_validator, schematron_validator: schematron_validator)
@@ -65,66 +65,94 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     # Obtain weather object
     weather = WeatherFile.new(epw_path: epw_path, runner: nil)
 
-    eri_version = orig_hpxml.header.eri_calculation_version
-    eri_version = orig_hpxml.header.co2index_calculation_version if eri_version.nil?
-    eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
     zip_code = orig_hpxml_bldg.zip_code
-    if not eri_version.nil?
-      # Obtain egrid subregion & cambium gea region
-      egrid_subregion = get_epa_egrid_subregion(zip_code)
-      if egrid_subregion.nil?
-        warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
-      end
-      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019ABCD')
-        cambium_gea = get_cambium_gea_region(zip_code)
-        if cambium_gea.nil?
-          warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
-        end
-      end
+    egrid_subregion = get_epa_egrid_subregion(zip_code)
+    if egrid_subregion.nil?
+      warnings << "Could not look up eGRID subregion for zip code: '#{zip_code}'. Emissions will not be calculated."
+    end
+    cambium_gea = get_cambium_gea_region(zip_code)
+    if cambium_gea.nil?
+      warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
     end
 
     lookup_program_data = {}
+    init_hpxmls_written = []
 
     create_time = Time.now.strftime('%Y-%m-%dT%H:%M:%S%:z')
 
-    last_hpxml = nil
+    new_hpxml_blgs = {}
     hpxml_strings = {}
     designs.each do |design|
       # Ensure we don't modify the original HPXML
       new_hpxml = Marshal.load(Marshal.dump(orig_hpxml))
 
+      # Determine 301 version for ERI calculations
+      iecc_version = nil
+      if [RunType::IECC].include? design.run_type
+        iecc_version = design.version
+        if ['2015', '2018'].include? design.version
+          # Use 2014 w/ all addenda
+          eri_version = Constants::ERIVersions.select { |v| v.include? '2014' }[-1]
+        elsif ['2021'].include? design.version
+          # Use 2019 w/ all addenda
+          eri_version = Constants::ERIVersions.select { |v| v.include? '2019' }[-1]
+        elsif ['2024'].include? design.version
+          # Use 2022 w/ all addenda
+          eri_version = Constants::ERIVersions.select { |v| v.include? '2022' }[-1]
+        else
+          fail "Unhandled IECC version: #{design.version}."
+        end
+      elsif [RunType::ES, RunType::DENH].include? design.run_type
+        # Use latest ANSI version/addenda
+        eri_version = Constants::ERIVersions[-2]
+      elsif [RunType::ERI, RunType::CO2e].include? design.run_type
+        eri_version = design.version
+      else
+        fail 'Unexpected design run type.'
+      end
+      if eri_version.nil?
+        fail 'Unexpected error; ERI version not set.'
+      end
+
+      # Set egrid subregion & cambium gea region
+      design_egrid_subregion = egrid_subregion
+      if (not eri_version.nil?) && (Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019ABCD'))
+        design_cambium_gea = cambium_gea
+      else
+        design_cambium_gea = nil
+      end
+
       # Apply initial ruleset on HPXML object
-      if [ESConstants::CalcTypeEnergyStarReference,
-          ESConstants::CalcTypeEnergyStarRated,
-          ZERHConstants::CalcTypeZERHReference,
-          ZERHConstants::CalcTypeZERHRated].include? design.init_calc_type
-        if design.init_calc_type == ESConstants::CalcTypeEnergyStarReference
-          lookup_program = 'es_' + new_hpxml.header.energystar_calculation_version.gsub('.', '_').downcase
-        elsif design.init_calc_type == ZERHConstants::CalcTypeZERHReference
-          lookup_program = 'zerh_' + new_hpxml.header.zerh_calculation_version.gsub('.', '_').downcase
+      if not design.init_calc_type.nil?
+        if design.run_type == RunType::ES
+          lookup_program = 'es_' + design.version.gsub('.', '_').downcase
+        elsif design.run_type == RunType::DENH
+          lookup_program = 'denh_' + design.version.gsub('.', '_').downcase
         end
         if (not lookup_program.nil?) && lookup_program_data[lookup_program].nil?
           lookup_program_data[lookup_program] = CSV.read(File.join(File.dirname(__FILE__), "data/#{lookup_program}_lookup.tsv"), headers: true, col_sep: "\t")
         end
-        new_hpxml = ES_ZERH_Ruleset.apply_ruleset(new_hpxml, design.init_calc_type, lookup_program_data[lookup_program])
+        new_hpxml = ES_DENH_Ruleset.apply_ruleset(new_hpxml, design.init_calc_type, design.version, eri_version, lookup_program_data[lookup_program])
       end
 
       # Write initial HPXML file
       if not design.init_hpxml_output_path.nil?
-        if not File.exist? design.init_hpxml_output_path
+        if not init_hpxmls_written.include?(design.init_hpxml_output_path)
           XMLHelper.write_file(new_hpxml.to_doc, design.init_hpxml_output_path)
+          init_hpxmls_written << design.init_hpxml_output_path
         end
       end
 
       # Apply 301 ruleset on HPXML object
       if not design.calc_type.nil?
-        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.calc_type, weather, design.iecc_version, egrid_subregion, cambium_gea, create_time)
+        new_hpxml = ERI_301_Ruleset.apply_ruleset(new_hpxml, design.run_type, design.calc_type, weather, eri_version, iecc_version, design_egrid_subregion, design_cambium_gea, create_time)
       end
-      last_hpxml = new_hpxml
+      new_hpxml_blgs[[design.run_type, design.calc_type]] = new_hpxml.buildings[0]
 
       # Write final HPXML file
       if (not design.hpxml_output_path.nil?) && (not design.calc_type.nil?)
         hpxml_strings[design.hpxml_output_path] = XMLHelper.write_file(new_hpxml.to_doc, design.hpxml_output_path)
+        fail 'Unexpected error.' unless hpxml_strings[design.hpxml_output_path].is_a?(String)
       end
     end
   rescue Exception => e
@@ -167,7 +195,7 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
     warnings << 'Autosized HVAC equipment (e.g., Capacity=-1) found in the HPXML. This should only be used for research purposes or to run tests. It should *not* be used for a real home.'
   end
 
-  return true, errors, warnings, duplicates, last_hpxml
+  return true, errors, warnings, duplicates, new_hpxml_blgs
 end
 
 def get_epa_egrid_subregion(zip_code)
@@ -182,23 +210,34 @@ def get_cambium_gea_region(zip_code)
   return cambium_gea
 end
 
-def lookup_region_from_zip(zip_code, zip_filepath, zip_column_index, output_column_index)
-  return if zip_code.nil?
+def lookup_region_from_zip(zipcode, zip_filepath, zip_column_index, output_column_index)
+  return if zipcode.nil?
 
-  if zip_code.include? '-'
-    zip_code = zip_code.split('-')[0]
+  # Gets the region for the specified zipcode. If the exact zipcode is not found, we
+  # find the closest zipcode that shares the first 3 digits.
+  begin
+    zipcode3 = zipcode[0, 3]
+    zipcode_int = Integer(Float(zipcode[0, 5])) # Convert to 5-digit integer
+  rescue
+    fail "Unexpected zip code: #{zipcode}."
   end
-  zip_code = zip_code.rjust(5, '0')
-
-  fail "Zip code in #{zip_filepath} needs to be 5 digits." if zip_code.size != 5
 
   # Note: We don't use the CSV library here because it's slow for large files
+  zip_distance = 99999 # init
+  region = nil
   File.foreach(zip_filepath) do |row|
     row = row.strip.split(',')
-    next unless row[zip_column_index] == zip_code
+    next unless row[zip_column_index].start_with?(zipcode3) # Only allow match if first 3 digits are the same
 
-    return row[output_column_index]
+    distance = (Integer(Float(row[0])) - zipcode_int).abs() # Find closest zip code
+    if distance < zip_distance
+      zip_distance = distance
+      region = row[output_column_index]
+    end
+    if distance == 0
+      return region # Exact match
+    end
   end
 
-  return
+  return region
 end

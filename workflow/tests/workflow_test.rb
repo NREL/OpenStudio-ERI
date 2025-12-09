@@ -31,9 +31,9 @@ class WorkflowTest < Minitest::Test
       assert_equal(n_lines + 2, File.read(csvs[:rated_timeseries_results]).each_line.count)
       assert_equal(n_lines + 2, File.read(csvs[:ref_timeseries_results]).each_line.count)
       assert(File.exist?(csvs[:esrat_timeseries_results]))
-      assert(File.exist?(csvs[:esrd_timeseries_results]))
+      assert(File.exist?(csvs[:esref_timeseries_results]))
       assert_equal(n_lines + 2, File.read(csvs[:esrat_timeseries_results]).each_line.count)
-      assert_equal(n_lines + 2, File.read(csvs[:esrd_timeseries_results]).each_line.count)
+      assert_equal(n_lines + 2, File.read(csvs[:esref_timeseries_results]).each_line.count)
     end
   end
 
@@ -45,8 +45,8 @@ class WorkflowTest < Minitest::Test
     rundir, _hpxmls, _outputs = _run_workflow(xml, test_name, timeseries_frequency: 'monthly', output_format: 'json')
 
     # Check for only JSON files, no CSV files, in the output dir
-    assert_operator(Dir["#{rundir}/results/*.json"].size, :>, 0)
-    assert_equal(0, Dir["#{rundir}/results/*.csv"].size)
+    assert_operator(Dir["#{rundir}/**/results/*.json"].size, :>, 0)
+    assert_equal(0, Dir["#{rundir}/**/results/*.csv"].size)
   end
 
   def test_component_loads
@@ -132,8 +132,8 @@ class WorkflowTest < Minitest::Test
 
       # Test energy_rating_index.rb
       command = "\"#{OpenStudio.getOpenStudioCLI}\" OpenStudio-ERI/workflow/energy_rating_index.rb -x OpenStudio-ERI/workflow/sample_files/base.xml"
-      system(command)
-      assert(File.exist? 'OpenStudio-ERI/workflow/results/ERI_Results.csv')
+      success = system(command)
+      assert(success)
 
       # Test RESNET HERS tests
       command = "\"#{OpenStudio.getOpenStudioCLI}\" OpenStudio-ERI/workflow/tests/resnet_hers_test.rb --name=test_resnet_hers_method"

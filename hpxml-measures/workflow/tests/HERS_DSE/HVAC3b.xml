@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -9,6 +9,9 @@
   <SoftwareInfo>
     <extension>
       <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
+      <ERICalculation>
+        <Version>2022CE</Version>
+      </ERICalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -52,7 +55,6 @@
               <UnitofMeasure>ACHnatural</UnitofMeasure>
               <AirLeakage>0.67</AirLeakage>
             </BuildingAirLeakage>
-            <InfiltrationVolume>12312.0</InfiltrationVolume>
           </AirInfiltrationMeasurement>
         </AirInfiltration>
         <Attics>
@@ -80,7 +82,6 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
-            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -94,7 +95,6 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
-            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -111,7 +111,6 @@
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Area>42.7</Area>
             <Azimuth>0</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -125,7 +124,6 @@
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Area>20.3</Area>
             <Azimuth>90</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -139,7 +137,6 @@
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Area>42.7</Area>
             <Azimuth>180</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -153,7 +150,6 @@
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Area>20.3</Area>
             <Azimuth>270</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -172,7 +168,6 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>0</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -193,7 +188,6 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>90</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -214,7 +208,6 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>180</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -235,7 +228,6 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>270</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -257,7 +249,6 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>90</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -275,7 +266,6 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>270</Azimuth>
-            <Siding>wood siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -289,6 +279,7 @@
             <SystemIdentifier id='FoundationWall1'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
+            <Type>solid concrete</Type>
             <Height>7.25</Height>
             <Area>413.2</Area>
             <Azimuth>0</Azimuth>
@@ -313,6 +304,7 @@
             <SystemIdentifier id='FoundationWall2'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
+            <Type>solid concrete</Type>
             <Height>7.25</Height>
             <Area>195.8</Area>
             <Azimuth>90</Azimuth>
@@ -337,6 +329,7 @@
             <SystemIdentifier id='FoundationWall3'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
+            <Type>solid concrete</Type>
             <Height>7.25</Height>
             <Area>413.2</Area>
             <Azimuth>180</Azimuth>
@@ -361,6 +354,7 @@
             <SystemIdentifier id='FoundationWall4'/>
             <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
+            <Type>solid concrete</Type>
             <Height>7.25</Height>
             <Area>195.8</Area>
             <Azimuth>270</Azimuth>
@@ -421,7 +415,6 @@
             <SystemIdentifier id='Slab1'/>
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Area>1539.0</Area>
-            <Thickness>4.0</Thickness>
             <ExposedPerimeter>168.0</ExposedPerimeter>
             <PerimeterInsulation>
               <SystemIdentifier id='Slab1PerimeterInsulation'/>
@@ -437,10 +430,6 @@
                 <InsulationWidth>0.0</InsulationWidth>
               </Layer>
             </UnderSlabInsulation>
-            <extension>
-              <CarpetFraction>0.0</CarpetFraction>
-              <CarpetRValue>0.0</CarpetRValue>
-            </extension>
           </Slab>
         </Slabs>
         <Windows>
@@ -452,8 +441,7 @@
             <SHGC>0.67</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window1InteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+              <Type>none</Type>
             </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='Wall1'/>
@@ -466,8 +454,7 @@
             <SHGC>0.67</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window2InteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+              <Type>none</Type>
             </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='Wall2'/>
@@ -480,8 +467,7 @@
             <SHGC>0.67</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window3InteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+              <Type>none</Type>
             </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='Wall3'/>
@@ -494,8 +480,7 @@
             <SHGC>0.67</SHGC>
             <InteriorShading>
               <SystemIdentifier id='Window4InteriorShading'/>
-              <SummerShadingCoefficient>1.0</SummerShadingCoefficient>
-              <WinterShadingCoefficient>1.0</WinterShadingCoefficient>
+              <Type>none</Type>
             </InteriorShading>
             <FractionOperable>0.0</FractionOperable>
             <AttachedToWall idref='Wall4'/>
@@ -548,10 +533,11 @@
               <CoolingSystemType>central air conditioner</CoolingSystemType>
               <CoolingSystemFuel>electricity</CoolingSystemFuel>
               <CoolingCapacity>38400.0</CoolingCapacity>
+              <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>10.0</Value>
+                <Units>SEER2</Units>
+                <Value>9.5</Value>
               </AnnualCoolingEfficiency>
               <extension>
                 <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>

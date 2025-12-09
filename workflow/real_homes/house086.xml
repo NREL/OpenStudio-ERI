@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.0'>
+<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -15,14 +15,14 @@
         <Version>latest</Version>
       </CO2IndexCalculation>
       <EnergyStarCalculation>
-        <Version>SF_National_3.2</Version>
+        <Version>SF_National_3.3</Version>
       </EnergyStarCalculation>
       <IECCERICalculation>
         <Version>2024</Version>
       </IECCERICalculation>
-      <ZERHCalculation>
+      <DENHCalculation>
         <Version>SF_2.0</Version>
-      </ZERHCalculation>
+      </DENHCalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -732,6 +732,7 @@
               <HeatingCapacity>24000.0</HeatingCapacity>
               <HeatingCapacity17F>15600.0</HeatingCapacity17F>
               <CoolingCapacity>23800.0</CoolingCapacity>
+              <CompressorType>two stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
               <BackupAnnualHeatingEfficiency>
@@ -744,6 +745,10 @@
               <AnnualCoolingEfficiency>
                 <Units>SEER</Units>
                 <Value>20.0</Value>
+              </AnnualCoolingEfficiency>
+              <AnnualCoolingEfficiency>
+                <Units>EER</Units>
+                <Value>15.1</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
                 <Units>HSPF</Units>
@@ -830,6 +835,9 @@
               </Jacket>
             </WaterHeaterInsulation>
             <UsesDesuperheater>false</UsesDesuperheater>
+            <extension>
+              <HPWHInConfinedSpaceWithoutMitigation>false</HPWHInConfinedSpaceWithoutMitigation>
+            </extension>
           </WaterHeatingSystem>
           <HotWaterDistribution>
             <SystemIdentifier id='HotWaterDistribution1'/>
@@ -874,6 +882,7 @@
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>6.4</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

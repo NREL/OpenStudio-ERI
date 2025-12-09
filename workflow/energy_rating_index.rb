@@ -29,33 +29,32 @@ basedir = File.expand_path(File.dirname(__FILE__))
               HPXML::FuelTypeWoodCord => FT::WoodCord,
               HPXML::FuelTypeWoodPellets => FT::WoodPellets }
 
-def get_program_versions(hpxml_doc)
-  versions = []
+def get_program_versions(hpxml_doc, print_output: true)
+  program_versions = []
 
   { 'ERICalculation/Version' => Constants::ERIVersions,
     'CO2IndexCalculation/Version' => Constants::ERIVersions,
-    'EnergyStarCalculation/Version' => ESConstants::AllVersions,
-    'IECCERICalculation/Version' => IECCConstants::AllVersions,
-    'ZERHCalculation/Version' => ZERHConstants::AllVersions }.each do |xpath, all_versions|
-    version = XMLHelper.get_value(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string)
-    if version == 'latest'
-      version = all_versions[-1]
-    end
+    'EnergyStarCalculation/Version' => ES::AllVersions,
+    'IECCERICalculation/Version' => IECC::AllVersions,
+    'DENHCalculation/Version' => DENH::AllVersions }.each do |xpath, all_versions|
+    versions = []
+    xml_versions = XMLHelper.get_values(hpxml_doc, "/HPXML/SoftwareInfo/extension/#{xpath}", :string).uniq
+    xml_versions.each do |version|
+      if (not version.nil?) && (not all_versions.include? version)
+        puts "Unexpected #{xpath}: '#{version}'"
+        exit!
+      end
 
-    if (not version.nil?) && (not all_versions.include? version)
-      puts "Unexpected #{xpath}: '#{version}'"
-      exit!
-    end
-    if not version.nil?
-      puts "#{xpath}: #{version}"
-    else
-      puts "#{xpath}: None"
-    end
+      if print_output
+        puts "#{xpath}: #{version.nil? ? 'None' : version}"
+      end
 
-    versions << version
+      versions << version
+    end
+    program_versions << versions
   end
 
-  return versions
+  return program_versions
 end
 
 def apply_rulesets_and_generate_hpxmls(designs, options)
@@ -89,13 +88,19 @@ def run_simulations(designs, options, duplicates)
 
   puts "Running #{unique_designs.size} Simulations..."
 
+  if options[:num_proc].nil?
+    num_proc = unique_designs.size
+  else
+    num_proc = options[:num_proc]
+  end
+
   # Run simulations
   if Process.respond_to?(:fork) # e.g., most Unix systems
 
     # Code runs in forked child processes and makes direct calls. This is the fastest
     # approach but isn't available on, e.g., Windows.
 
-    Parallel.map(unique_designs, in_processes: unique_designs.size) do |design|
+    Parallel.map(unique_designs, in_processes: num_proc) do |design|
       designdir = run_design_direct(design, options)
       if not File.exist? File.join(designdir, 'eplusout.end')
         raise Parallel::Kill
@@ -108,7 +113,7 @@ def run_simulations(designs, options, duplicates)
     # multiple processors.
 
     stop_procs = false
-    Parallel.map(unique_designs, in_threads: unique_designs.size) do |design|
+    Parallel.map(unique_designs, in_threads: num_proc) do |design|
       next if stop_procs
 
       designdir = run_design_spawn(design, options)
@@ -120,7 +125,7 @@ def run_simulations(designs, options, duplicates)
   end
 end
 
-def duplicate_output_files(duplicates, designs, resultsdir)
+def duplicate_output_files(duplicates, designs, options)
   duplicates.each do |dest_hpxml_path, source_hpxml_path|
     source_design = designs.find { |d| d.hpxml_output_path == source_hpxml_path }
     dest_design = designs.find { |d| d.hpxml_output_path == dest_hpxml_path }
@@ -130,13 +135,22 @@ def duplicate_output_files(duplicates, designs, resultsdir)
     # Duplicate E+ output directory
     FileUtils.cp_r(source_design.design_dir, dest_design.design_dir)
 
-    # Duplicate results files
-    source_filename = File.basename(source_design.hpxml_output_path, '.xml')
-    dest_filename = File.basename(dest_design.hpxml_output_path, '.xml')
-    Dir["#{resultsdir}/*.*"].each do |results_file|
-      next unless File.basename(results_file).start_with? source_filename
+    # Duplicate annual results files
+    FileUtils.cp(source_design.hpxml_output_path, dest_design.hpxml_output_path)
+    FileUtils.cp(source_design.annual_output_path, dest_design.annual_output_path)
 
-      FileUtils.cp(results_file, results_file.gsub(source_filename, dest_filename))
+    # Duplicate timeseries results files
+    source_design_timeseries_output_path = source_design.annual_output_path.gsub(".#{options[:output_format]}", "_#{options[:timeseries_output_freq].capitalize}.#{options[:output_format]}")
+    dest_design_timeseries_output_path = dest_design.annual_output_path.gsub(".#{options[:output_format]}", "_#{options[:timeseries_output_freq].capitalize}.#{options[:output_format]}")
+    if File.exist?(source_design_timeseries_output_path)
+      FileUtils.cp(source_design_timeseries_output_path, dest_design_timeseries_output_path)
+    end
+
+    # Duplicate diagnostic results files
+    next unless options[:diagnostic_output]
+
+    if (not source_design.diag_output_path.nil?) && (not dest_design.diag_output_path.nil?) && File.exist?(source_design.diag_output_path)
+      FileUtils.cp(source_design.diag_output_path, dest_design.diag_output_path)
     end
   end
 end
@@ -159,9 +173,10 @@ def run_design_spawn(design, options)
   cli_path = OpenStudio.getOpenStudioCLI
   command = "\"#{cli_path}\" "
   command += "\"#{File.join(File.dirname(__FILE__), 'design.rb')}\" "
+  command += "\"#{design.run_type}\" "
   command += "\"#{design.calc_type}\" "
   command += "\"#{design.init_calc_type}\" "
-  command += "\"#{design.iecc_version}\" "
+  command += "\"#{design.version}\" "
   command += "\"#{design.output_dir}\" "
   command += "\"#{options[:debug]}\" "
   command += "\"#{options[:timeseries_output_freq]}\" "
@@ -190,8 +205,9 @@ def retrieve_design_outputs(designs)
     design_outputs[calc_type] = {}
 
     hpxml = HPXML.new(hpxml_path: design.hpxml_output_path)
-    HVAC.apply_shared_systems(hpxml.buildings[0])
+    Defaults.apply_shared_systems(hpxml.buildings[0])
     design_outputs[calc_type]['HPXML'] = hpxml
+    design_outputs[calc_type]['OUTPUT_DIR'] = File.dirname(design.annual_output_path)
 
     if design.annual_output_path.end_with? '.csv'
       CSV.foreach(design.annual_output_path) do |row|
@@ -225,6 +241,7 @@ def _calculate_eri(rated_output, ref_output, results_iad: nil,
   ref_bldg = ref_output['HPXML'].buildings[0]
 
   results = {}
+  results[:output_dir] = rated_output['OUTPUT_DIR']
 
   # ======== #
   # Building #
@@ -450,9 +467,7 @@ end
 
 def get_system_eec(system, type, is_dfhp_primary = nil)
   numerator = { 'HSPF' => 3.413,
-                'HSPF2' => 3.413,
                 'SEER' => 3.413,
-                'SEER2' => 3.413,
                 'EER' => 3.413,
                 'CEER' => 3.413,
                 'AFUE' => 1.0,
@@ -476,7 +491,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
       elsif system.respond_to?(:heating_efficiency_hspf) && (not system.heating_efficiency_hspf.nil?)
         return numerator['HSPF'] / system.heating_efficiency_hspf
       elsif system.respond_to?(:heating_efficiency_hspf2) && (not system.heating_efficiency_hspf2.nil?)
-        return numerator['HSPF2'] / system.heating_efficiency_hspf2
+        return numerator['HSPF'] / HVAC.calc_hspf_from_hspf2(system)
       elsif system.respond_to?(:heating_efficiency_cop) && (not system.heating_efficiency_cop.nil?)
         return numerator['COP'] / system.heating_efficiency_cop
       end
@@ -485,7 +500,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
     if system.respond_to?(:cooling_efficiency_seer) && (not system.cooling_efficiency_seer.nil?)
       return numerator['SEER'] / system.cooling_efficiency_seer
     elsif system.respond_to?(:cooling_efficiency_seer2) && (not system.cooling_efficiency_seer2.nil?)
-      return numerator['SEER2'] / system.cooling_efficiency_seer2
+      return numerator['SEER'] / HVAC.calc_seer_from_seer2(system)
     elsif system.respond_to?(:cooling_efficiency_eer) && (not system.cooling_efficiency_eer.nil?)
       return numerator['EER'] / system.cooling_efficiency_eer
     elsif system.respond_to?(:cooling_efficiency_ceer) && (not system.cooling_efficiency_ceer.nil?)
@@ -511,7 +526,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
 
         act_vol = Waterheater.calc_storage_tank_actual_vol(system.tank_volume, nil)
         a_side = Waterheater.calc_tank_areas(act_vol)[1]
-        ua = Waterheater.calc_indirect_ua_with_standbyloss(act_vol, system, a_side, 0.0)
+        ua = Waterheater.calc_combi_tank_losses(act_vol, system, a_side, 0.0)
 
         volume_drawn = 64.3 # gal/day
         density = 8.2938 # lb/gal
@@ -559,6 +574,12 @@ def get_rated_systems(bldg_systems, type)
       systems[rated_sys] = rated_sys.fraction_dhw_load_served
     end
   end
+
+  # Re-normalize load fractions to sum to 1
+  systems.each do |sys, load_frac|
+    systems[sys] = load_frac / systems.values.sum
+  end
+
   return systems
 end
 
@@ -786,6 +807,7 @@ def _calculate_co2e_index(rated_output, ref_output, results_iad)
   rated_bldg = rated_output['HPXML'].buildings[0]
 
   results = {}
+  results[:output_dir] = rated_output['OUTPUT_DIR']
 
   results[:rated_cfa] = rated_bldg.building_construction.conditioned_floor_area
   results[:rated_nbr] = rated_bldg.building_construction.number_of_bedrooms
@@ -814,48 +836,46 @@ def _calculate_co2e_index(rated_output, ref_output, results_iad)
   return results
 end
 
-def calculate_eri(design_outputs, resultsdir, output_format, output_filename_prefix: nil, opp_reduction_limit: nil,
+def calculate_eri(design_outputs, output_format, opp_reduction_limit: nil,
                   renewable_energy_limit: nil, skip_csv: false)
-  if design_outputs.keys.include? Constants::CalcTypeERIIndexAdjustmentDesign
-    results_iad = _calculate_eri(design_outputs[Constants::CalcTypeERIIndexAdjustmentDesign],
-                                 design_outputs[Constants::CalcTypeERIIndexAdjustmentReferenceHome])
+  if design_outputs.keys.include? CalcType::IndexAdjHome
+    results_iad = _calculate_eri(design_outputs[CalcType::IndexAdjHome],
+                                 design_outputs[CalcType::IndexAdjReferenceHome])
   else
     results_iad = nil
   end
 
-  results = _calculate_eri(design_outputs[Constants::CalcTypeERIRatedHome],
-                           design_outputs[Constants::CalcTypeERIReferenceHome],
+  results = _calculate_eri(design_outputs[CalcType::RatedHome],
+                           design_outputs[CalcType::ReferenceHome],
                            results_iad: results_iad,
                            opp_reduction_limit: opp_reduction_limit,
                            renewable_energy_limit: renewable_energy_limit)
 
   if not skip_csv
-    write_eri_results(results, resultsdir, results_iad, output_filename_prefix, output_format)
+    write_eri_results(results, results_iad, output_format)
   end
 
   return results
 end
 
-def calculate_co2_index(design_outputs, resultsdir, output_format)
-  results_iad = _calculate_eri(design_outputs[Constants::CalcTypeERIIndexAdjustmentDesign],
-                               design_outputs[Constants::CalcTypeERIIndexAdjustmentReferenceHome])
+def calculate_co2_index(design_outputs, output_format)
+  results_iad = _calculate_eri(design_outputs[CalcType::IndexAdjHome],
+                               design_outputs[CalcType::IndexAdjReferenceHome])
 
-  if design_outputs.keys.include? Constants::CalcTypeCO2eRatedHome
-    results = _calculate_co2e_index(design_outputs[Constants::CalcTypeCO2eRatedHome],
-                                    design_outputs[Constants::CalcTypeCO2eReferenceHome],
+  if design_outputs.keys.include? CalcType::RatedHome
+    results = _calculate_co2e_index(design_outputs[CalcType::RatedHome],
+                                    design_outputs[CalcType::ReferenceHome],
                                     results_iad)
   end
 
-  write_co2_results(results, resultsdir, output_format)
+  write_co2_results(results, output_format)
 
   return results
 end
 
-def write_eri_results(results, resultsdir, results_iad, output_filename_prefix, output_format)
-  output_filename_prefix = "#{output_filename_prefix}_" unless output_filename_prefix.nil?
-
+def write_eri_results(results, results_iad, output_format)
   # ERI Results file
-  results_csv = File.join(resultsdir, "#{output_filename_prefix}ERI_Results.#{output_format}")
+  results_csv = File.join(results[:output_dir], "results.#{output_format}")
   results_out = []
   results_out << ['ERI', results[:eri].round(2)]
 
@@ -877,49 +897,49 @@ def write_eri_results(results, resultsdir, results_iad, output_filename_prefix, 
 
   # Reference Home
   results_out << [nil] if output_format == 'csv' # line break
-  results_out << ['REUL Heating (MBtu)', results[:eri_heat].map { |c| c.reul.round(2) }.join(',')]
-  results_out << ['REUL Cooling (MBtu)', results[:eri_cool].map { |c| c.reul.round(2) }.join(',')]
-  results_out << ['REUL Hot Water (MBtu)', results[:eri_dhw].map { |c| c.reul.round(2) }.join(',')]
-  results_out << ['EC_r Heating (MBtu)', results[:eri_heat].map { |c| c.ec_r.round(2) }.join(',')]
-  results_out << ['EC_r Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_r.round(2) }.join(',')]
-  results_out << ['EC_r Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_r.round(2) }.join(',')]
-  results_out << ['EC_r L&A (MBtu)', results[:reul_la].round(2)]
-  results_out << ['EC_r Vent (MBtu)', results[:reul_mv].round(2)]
-  results_out << ['EC_r Dehumid (MBtu)', results[:reul_dh].round(2)]
-  results_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(4) }.join(',')]
-  results_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(4) }.join(',')]
-  results_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(4) }.join(',')]
-  results_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(4) }.join(',')]
-  results_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(4) }.join(',')]
-  results_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(4) }.join(',')]
+  results_out << ['REUL Heating (MBtu)', results[:eri_heat].map { |c| c.reul.round(3) }.join(',')]
+  results_out << ['REUL Cooling (MBtu)', results[:eri_cool].map { |c| c.reul.round(3) }.join(',')]
+  results_out << ['REUL Hot Water (MBtu)', results[:eri_dhw].map { |c| c.reul.round(3) }.join(',')]
+  results_out << ['EC_r Heating (MBtu)', results[:eri_heat].map { |c| c.ec_r.round(3) }.join(',')]
+  results_out << ['EC_r Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_r.round(3) }.join(',')]
+  results_out << ['EC_r Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_r.round(3) }.join(',')]
+  results_out << ['EC_r L&A (MBtu)', results[:reul_la].round(3)]
+  results_out << ['EC_r Vent (MBtu)', results[:reul_mv].round(3)]
+  results_out << ['EC_r Dehumid (MBtu)', results[:reul_dh].round(3)]
+  results_out << ['DSE_r Heating', results[:eri_heat].map { |c| c.dse_r.round(3) }.join(',')]
+  results_out << ['DSE_r Cooling', results[:eri_cool].map { |c| c.dse_r.round(3) }.join(',')]
+  results_out << ['DSE_r Hot Water', results[:eri_dhw].map { |c| c.dse_r.round(3) }.join(',')]
+  results_out << ['EEC_r Heating', results[:eri_heat].map { |c| c.eec_r.round(3) }.join(',')]
+  results_out << ['EEC_r Cooling', results[:eri_cool].map { |c| c.eec_r.round(3) }.join(',')]
+  results_out << ['EEC_r Hot Water', results[:eri_dhw].map { |c| c.eec_r.round(3) }.join(',')]
 
   # Rated Home
   results_out << [nil] if output_format == 'csv' # line break
-  results_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(4) }.join(',')]
-  results_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(4) }.join(',')]
-  results_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(4) }.join(',')]
+  results_out << ['nMEUL Heating', results[:eri_heat].map { |c| c.nmeul.round(3) }.join(',')]
+  results_out << ['nMEUL Cooling', results[:eri_cool].map { |c| c.nmeul.round(3) }.join(',')]
+  results_out << ['nMEUL Hot Water', results[:eri_dhw].map { |c| c.nmeul.round(3) }.join(',')]
   if results[:eri_vent_preheat].empty?
     results_out << ['nMEUL Vent Preheat', 0.0]
   else
-    results_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(4) }.join(',')]
+    results_out << ['nMEUL Vent Preheat', results[:eri_vent_preheat].map { |c| c.nmeul.round(3) }.join(',')]
   end
   if results[:eri_vent_precool].empty?
     results_out << ['nMEUL Vent Precool', 0.0]
   else
-    results_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(4) }.join(',')]
+    results_out << ['nMEUL Vent Precool', results[:eri_vent_precool].map { |c| c.nmeul.round(3) }.join(',')]
   end
-  results_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(4) }.join(',')]
-  results_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(4) }.join(',')]
-  results_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(4) }.join(',')]
-  results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(2) }.join(',')]
-  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(2)]
-  results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(2)]
-  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(2)]
-  results_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(4) }.join(',')]
-  results_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(4) }.join(',')]
-  results_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(4) }.join(',')]
+  results_out << ['nEC_x Heating', results[:eri_heat].map { |c| c.nec_x.round(3) }.join(',')]
+  results_out << ['nEC_x Cooling', results[:eri_cool].map { |c| c.nec_x.round(3) }.join(',')]
+  results_out << ['nEC_x Hot Water', results[:eri_dhw].map { |c| c.nec_x.round(3) }.join(',')]
+  results_out << ['EC_x Heating (MBtu)', results[:eri_heat].map { |c| c.ec_x.round(3) }.join(',')]
+  results_out << ['EC_x Cooling (MBtu)', results[:eri_cool].map { |c| c.ec_x.round(3) }.join(',')]
+  results_out << ['EC_x Hot Water (MBtu)', results[:eri_dhw].map { |c| c.ec_x.round(3) }.join(',')]
+  results_out << ['EC_x L&A (MBtu)', results[:eul_la].round(3)]
+  results_out << ['EC_x Vent (MBtu)', results[:eul_mv].round(3)]
+  results_out << ['EC_x Dehumid (MBtu)', results[:eul_dh].round(3)]
+  results_out << ['EEC_x Heating', results[:eri_heat].map { |c| c.eec_x.round(3) }.join(',')]
+  results_out << ['EEC_x Cooling', results[:eri_cool].map { |c| c.eec_x.round(3) }.join(',')]
+  results_out << ['EEC_x Hot Water', results[:eri_dhw].map { |c| c.eec_x.round(3) }.join(',')]
 
   # Coefficients
   results_out << [nil] if output_format == 'csv' # line break
@@ -937,10 +957,10 @@ def write_eri_results(results, resultsdir, results_iad, output_filename_prefix, 
   end
 end
 
-def write_co2_results(results, resultsdir, output_format)
+def write_co2_results(results, output_format)
   # CO2e Results file
   if not results[:co2eindex].nil?
-    results_csv = File.join(resultsdir, "CO2e_Results.#{output_format}")
+    results_csv = File.join(results[:output_dir], "results.#{output_format}")
     results_out = []
     results_out << ['CO2e Rating Index', results[:co2eindex].round(2)]
     results_out << ['ACO2 (lb CO2e)', results[:aco2e].round(2)]
@@ -954,7 +974,7 @@ def write_co2_results(results, resultsdir, output_format)
   end
 end
 
-def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
+def write_es_denh_results(program_name, rd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, output_format)
   # Even though pass/fail is calculated based on rounded integer ERIs,
   # we provide two decimal places here so that there's less possibility
   # for user confusion when comparing the actual/target ERIs.
@@ -963,30 +983,19 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   rated_eri = rated_eri_results[:eri].round(2)
   rated_wo_opp_eri = rated_eri_results_wo_opp[:eri].round(2)
 
-  if ESConstants::AllVersions.include? ruleset
-    program_abbreviation, program_name = 'ES', 'ENERGY STAR'
-  elsif ZERHConstants::AllVersions.include? ruleset
-    program_abbreviation, program_name = 'ZERH', 'Zero Energy Ready Home'
-  end
-  results_csv = File.join(resultsdir, "#{program_abbreviation}_Results.#{output_format}")
+  output_dir = File.join(rd_eri_results[:output_dir], '..', '..', 'results')
+  FileUtils.mkdir_p(output_dir)
+  results_csv = File.join(output_dir, "results.#{output_format}")
   results_out = []
   results_out << ['Reference Home ERI', rd_eri]
 
-  if saf.nil?
-    results_out << ['SAF (Size Adjustment Factor)', 'N/A']
-  else
-    results_out << ['SAF (Size Adjustment Factor)', saf.round(3)]
-  end
+  results_out << ['SAF (Size Adjustment Factor)', "#{saf.nil? ? 'N/A' : saf.round(3)}"]
   results_out << ['SAF Adjusted ERI Target', target_eri]
   results_out << [nil] if output_format == 'csv' # line break
   results_out << ['Rated Home ERI', rated_eri]
   results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
   results_out << [nil] if output_format == 'csv' # line break
-  if passes
-    results_out << ["#{program_name} Certification", 'PASS']
-  else
-    results_out << ["#{program_name} Certification", 'FAIL']
-  end
+  results_out << ["#{program_name} Certification", "#{passes ? 'PASS' : 'FAIL'}"]
   if output_format == 'csv'
     CSV.open(results_csv, 'wb') { |csv| results_out.to_a.each { |elem| csv << elem } }
   elsif output_format == 'json'
@@ -994,7 +1003,7 @@ def write_es_zerh_results(ruleset, resultsdir, rd_eri_results, rated_eri_results
   end
 end
 
-def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, is_dfhp_primary = nil)
+def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map, is_dfhp_primary = nil)
   primary_hpxml_fuel = get_system_fuel(sys, type, is_dfhp_primary)
   json_system_output << {
     primary_fuel_type: json_fuel_map[primary_hpxml_fuel],
@@ -1012,15 +1021,14 @@ def _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_fr
       energy: values
     }
   end
-  return unless [Constants::CalcTypeERIReferenceHome,
-                 Constants::CalcTypeERIIndexAdjustmentReferenceHome,
-                 Constants::CalcTypeCO2eReferenceHome].include? design_type
+  return unless [CalcType::ReferenceHome,
+                 CalcType::IndexAdjReferenceHome].include? calc_type
 
   values = data_hashes.map { |h| calculate_reul(h, load_frac, type, is_dfhp_primary).round(2) }
   json_system_output[-1][:load] = values
 end
 
-def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, design_type, json_units_map, json_fuel_map)
+def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_systems, bldg_systems, type, calc_type, json_units_map, json_fuel_map)
   rated_systems = get_rated_systems(rated_bldg_systems, type)
   rated_systems.each do |rated_sys, load_frac|
     if bldg_systems == rated_bldg_systems
@@ -1032,15 +1040,15 @@ def _add_diagnostic_systems_outputs(json_system_output, data_hashes, rated_bldg_
 
     if type == 'Heating' && sys.is_a?(HPXML::HeatPump) && sys.is_dual_fuel
       # Dual fuel heat pump; calculate values using two different HVAC systems
-      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, true)
-      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map, false)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map, true)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map, false)
     else
-      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, design_type, json_units_map, json_fuel_map)
+      _add_diagnostic_system_outputs(json_system_output, data_hashes, sys, load_frac, type, calc_type, json_units_map, json_fuel_map)
     end
   end
 end
 
-def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, hpxml_path, resultsdir)
+def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, hpxml_path)
   in_hpxml = HPXML.new(hpxml_path: hpxml_path)
   in_bldg = in_hpxml.buildings[0]
 
@@ -1086,29 +1094,31 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   require 'msgpack'
   design_data_hashes = {} # Array of hashes, where each hash represents an hour of the year
   design_hpxmls = {}
-  all_outputs = eri_outputs.merge(co2_outputs)
-  (eri_designs + co2_designs).uniq.each do |design|
-    design_type = design.calc_type
-    diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
-    diag_data.delete('Time')
+  { RunType::ERI => [eri_designs, eri_outputs],
+    RunType::CO2e => [co2_designs, co2_outputs] }.each do |run_type, (designs, outputs)|
+    designs.each do |design|
+      key = [run_type, design.calc_type]
+      diag_data = MessagePack.unpack(File.read(design.diag_output_path, mode: 'rb'))
+      diag_data.delete('Time')
 
-    hourly_data = Array.new(8760) { Hash.new }
-    diag_data.keys.each do |group|
-      diag_data[group].keys.each do |var|
-        next if group == 'Temperature' && !var.start_with?('Conditioned Space')
-        next if group == 'Weather' && !var.start_with?(WT::DrybulbTemp)
+      hourly_data = Array.new(8760) { Hash.new }
+      diag_data.keys.each do |group|
+        diag_data[group].keys.each do |var|
+          next if group == 'Temperature' && !var.start_with?('Conditioned Space')
+          next if group == 'Weather' && !var.start_with?(WT::DrybulbTemp)
 
-        output_type = "#{group}: #{var}".split(' (')[0].strip # Remove units
-        diag_data[group][var].each_with_index do |val, i|
-          hourly_data[i][output_type] = Float(val)
+          output_type = "#{group}: #{var}".split(' (')[0].strip # Remove units
+          diag_data[group][var].each_with_index do |val, i|
+            hourly_data[i][output_type] = Float(val)
+          end
         end
       end
-    end
-    design_data_hashes[design_type] = hourly_data
+      design_data_hashes[key] = hourly_data
 
-    design_hpxmls[design_type] = all_outputs[design_type]['HPXML']
+      design_hpxmls[key] = outputs[design.calc_type]['HPXML']
+      FileUtils.rm(design.diag_output_path)
+    end
   end
-  FileUtils.rm(Dir[File.join(resultsdir, "*#{Design::DiagnosticFilenameSuffix}")])
 
   # Initial JSON output
   json_output = {
@@ -1150,29 +1160,27 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
                      HPXML::FuelTypeWoodPellets => UnitConversions.convert(1.0, 'kBtu', 'kBtu') }
 
   # Add outputs for each design
-  design_map = { Constants::CalcTypeERIRatedHome => :rated_home_output,
-                 Constants::CalcTypeERIReferenceHome => :hers_reference_home_output,
-                 Constants::CalcTypeERIIndexAdjustmentDesign => :iad_rated_home_output,
-                 Constants::CalcTypeERIIndexAdjustmentReferenceHome => :iad_hers_reference_home_output,
-                 Constants::CalcTypeCO2eReferenceHome => :co2_reference_home_output }
+  design_map = { [RunType::ERI, CalcType::RatedHome] => :rated_home_output,
+                 [RunType::ERI, CalcType::ReferenceHome] => :hers_reference_home_output,
+                 [RunType::ERI, CalcType::IndexAdjHome] => :iad_rated_home_output,
+                 [RunType::ERI, CalcType::IndexAdjReferenceHome] => :iad_hers_reference_home_output,
+                 [RunType::CO2e, CalcType::ReferenceHome] => :co2_reference_home_output }
 
-  design_map.each do |design_type, json_element_name|
-    data_hashes = design_data_hashes[design_type]
-    hpxml_bldg = design_hpxmls[design_type].buildings[0]
+  design_map.each do |key, json_element_name|
+    data_hashes = design_data_hashes[key]
+    hpxml_bldg = design_hpxmls[key].buildings[0]
+    run_type, calc_type = key
 
     # Use rated HPXML to ensure systems across different designs end up in the same order.
-    if [Constants::CalcTypeERIRatedHome, Constants::CalcTypeERIReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[Constants::CalcTypeERIRatedHome]
+    if [CalcType::RatedHome, CalcType::ReferenceHome].include? calc_type
+      rated_hpxml = design_hpxmls[[run_type, CalcType::RatedHome]]
       rated_bldg = rated_hpxml.buildings[0]
-    elsif [Constants::CalcTypeERIIndexAdjustmentDesign, Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[Constants::CalcTypeERIIndexAdjustmentDesign]
-      rated_bldg = rated_hpxml.buildings[0]
-    elsif [Constants::CalcTypeCO2eRatedHome, Constants::CalcTypeCO2eReferenceHome].include? design_type
-      rated_hpxml = design_hpxmls[Constants::CalcTypeCO2eRatedHome]
+    elsif [CalcType::IndexAdjHome, CalcType::IndexAdjReferenceHome].include? calc_type
+      rated_hpxml = design_hpxmls[[run_type, CalcType::IndexAdjHome]]
       rated_bldg = rated_hpxml.buildings[0]
     end
 
-    if design_type == Constants::CalcTypeERIRatedHome
+    if calc_type == CalcType::RatedHome
       if has_co2_results
         scenario = rated_hpxml.header.emissions_scenarios.find { |s| s.emissions_type == 'CO2e' }
         if scenario.elec_units == HPXML::EmissionsScenario::UnitsKgPerMWh
@@ -1204,19 +1212,19 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
     type = 'Heating'
     json_output[json_element_name][:space_heating_system_output] = []
     _add_diagnostic_systems_outputs(json_output[json_element_name][:space_heating_system_output], data_hashes,
-                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, calc_type, json_units_map, json_fuel_map)
 
     # Space Cooling Energy
     type = 'Cooling'
     json_output[json_element_name][:space_cooling_system_output] = []
     _add_diagnostic_systems_outputs(json_output[json_element_name][:space_cooling_system_output], data_hashes,
-                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, design_type, json_units_map, json_fuel_map)
+                                    rated_bldg.hvac_systems, hpxml_bldg.hvac_systems, type, calc_type, json_units_map, json_fuel_map)
 
     # Water Heating Energy
     type = 'Hot Water'
     json_output[json_element_name][:water_heating_system_output] = []
     _add_diagnostic_systems_outputs(json_output[json_element_name][:water_heating_system_output], data_hashes,
-                                    rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, design_type, json_units_map, json_fuel_map)
+                                    rated_bldg.water_heating_systems, hpxml_bldg.water_heating_systems, type, calc_type, json_units_map, json_fuel_map)
 
     # Lighting & appliances
     primary_fuel_types = []
@@ -1253,7 +1261,7 @@ def write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, 
   end
 
   # Write JSON file
-  output_path = File.join(resultsdir, 'HERS_Diagnostic.json')
+  output_path = File.join(eri_results[:output_dir], 'HERS_Diagnostic.json')
   require 'json'
   File.open(output_path, 'w') { |json| json.write(JSON.pretty_generate(json_output)) }
 end
@@ -1265,81 +1273,85 @@ def main(options)
   unless Dir.exist?(options[:output_dir])
     FileUtils.mkdir_p(options[:output_dir])
   end
-  resultsdir = File.join(options[:output_dir], 'results')
-  rm_path(resultsdir)
-  Dir.mkdir(resultsdir)
 
   puts "HPXML: #{options[:hpxml]}"
   hpxml_doc = XMLHelper.parse_file(options[:hpxml])
-  eri_version, co2_version, es_version, iecc_version, zerh_version = get_program_versions(hpxml_doc)
+  eri_versions, co2_versions, es_versions, iecc_versions, denh_versions = get_program_versions(hpxml_doc)
 
   if options[:diagnostic_output]
-    if eri_version.nil?
-      fail 'Diagnostic output generation requires an ERI calculation.'
-    elsif co2_version.nil?
-      fail 'Diagnostic output generation requires a CO2 Index calculation.'
+    if eri_versions.size != 1
+      fail 'Diagnostic output generation requires a single ERI calculation.'
+    elsif co2_versions.size != 1
+      fail 'Diagnostic output generation requires a single CO2 Index calculation.'
+    end
+    if eri_versions[0] != co2_versions[0]
+      fail 'Diagnostic output generation requires the same version for the ERI calculation and the CO2 Index calculation.'
     end
   end
 
   # Create list of designs
   designs = []
-  if not eri_version.nil?
-    # ERI designs
-    designs << Design.new(calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    if not options[:rated_home_only]
-      designs << Design.new(calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
-        # Add IAF designs
-        designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-        designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-      end
-      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019ABCD')
-      end
-    end
-  end
-  if not co2_version.nil?
-    if (not eri_version.nil?) && (eri_version != co2_version)
-      fail 'ERI version and CO2 version must be the same.'
-    end
 
-    # Add CO2e designs
-    designs << Design.new(calc_type: Constants::CalcTypeCO2eRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(calc_type: Constants::CalcTypeCO2eReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+  # ERI designs
+  eri_versions.each do |eri_version|
+    designs << Design.new(run_type: RunType::ERI, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: eri_version)
+    next unless not options[:rated_home_only]
 
-    # Add IAF designs if we didn't already
-    if designs.find { |d| d.calc_type == Constants::CalcTypeERIIndexAdjustmentDesign }.nil?
-      designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-      designs << Design.new(calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    designs << Design.new(run_type: RunType::ERI, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: eri_version)
+    next unless Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
+
+    # Add IAF designs
+    designs << Design.new(run_type: RunType::ERI, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: eri_version)
+    designs << Design.new(run_type: RunType::ERI, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: eri_version)
+  end
+
+  # CO2e designs
+  co2_versions.each do |co2_version|
+    designs << Design.new(run_type: RunType::CO2e, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: co2_version)
+    designs << Design.new(run_type: RunType::CO2e, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: co2_version)
+    designs << Design.new(run_type: RunType::CO2e, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: co2_version)
+    designs << Design.new(run_type: RunType::CO2e, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: co2_version)
+  end
+
+  # ENERGY STAR designs
+  es_versions.each do |es_version|
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+    designs << Design.new(run_type: RunType::ES, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: es_version)
+  end
+
+  # IECC ERI designs
+  iecc_versions.each do |iecc_version|
+    designs << Design.new(run_type: RunType::IECC, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: iecc_version)
+    designs << Design.new(run_type: RunType::IECC, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: iecc_version)
+    designs << Design.new(run_type: RunType::IECC, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: iecc_version)
+    designs << Design.new(run_type: RunType::IECC, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: iecc_version)
+  end
+
+  # DENH designs
+  denh_versions.each do |denh_version|
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::TargetHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::RatedHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::ReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+    designs << Design.new(run_type: RunType::DENH, init_calc_type: InitCalcType::RatedHome, calc_type: CalcType::IndexAdjReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format], version: denh_version)
+  end
+
+  # Clean up existing dirs
+  designs.each do |design|
+    if not design.init_hpxml_output_path.nil?
+      FileUtils.rm_rf(File.dirname(design.init_hpxml_output_path)) if Dir.exist?(File.dirname(design.init_hpxml_output_path))
     end
-  end
-  if not es_version.nil?
-    # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarReference, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ESConstants::CalcTypeEnergyStarRated, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-  end
-  if not iecc_version.nil?
-    # IECC ERI designs
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(iecc_version: iecc_version, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-  end
-  if not zerh_version.nil?
-    # ENERGY STAR designs
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHReference, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIRatedHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIIndexAdjustmentDesign, output_dir: options[:output_dir], output_format: options[:output_format])
-    designs << Design.new(init_calc_type: ZERHConstants::CalcTypeZERHRated, calc_type: Constants::CalcTypeERIIndexAdjustmentReferenceHome, output_dir: options[:output_dir], output_format: options[:output_format])
+    FileUtils.rm_rf(File.dirname(design.hpxml_output_path)) if Dir.exist?(File.dirname(design.hpxml_output_path))
+    FileUtils.rm_rf(design.design_dir) if Dir.exist?(design.design_dir)
   end
 
   if designs.size == 0
@@ -1354,63 +1366,66 @@ def main(options)
     run_simulations(designs, options, duplicates)
 
     # For duplicate designs that weren't simulated, populate their output
-    duplicate_output_files(duplicates, designs, resultsdir)
+    duplicate_output_files(duplicates, designs, options)
 
     puts 'Calculating results...'
 
-    if (not eri_version.nil?) && (not options[:rated_home_only])
-      # Calculate ERI
-      eri_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
+    # Calculate ERI
+    eri_designs, eri_outputs, eri_results = nil, nil, nil
+    eri_versions.each do |eri_version|
+      eri_designs = designs.select { |d| d.run_type == RunType::ERI && d.version == eri_version }
       eri_designs = eri_designs.select { |d|
-        [Constants::CalcTypeERIRatedHome,
-         Constants::CalcTypeERIReferenceHome,
-         Constants::CalcTypeERIIndexAdjustmentDesign,
-         Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? d.calc_type
+        [CalcType::RatedHome,
+         CalcType::ReferenceHome,
+         CalcType::IndexAdjHome,
+         CalcType::IndexAdjReferenceHome].include? d.calc_type
       }
+      next if eri_designs.size == 1
+
       eri_outputs = retrieve_design_outputs(eri_designs)
 
       # Calculate and write results
-      eri_results = calculate_eri(eri_outputs, resultsdir, options[:output_format])
-      puts "ERI: #{eri_results[:eri].round(2)}"
+      eri_results = calculate_eri(eri_outputs, options[:output_format])
+      puts "ERI (#{eri_version}): #{eri_results[:eri].round(2)}"
     end
 
-    if not co2_version.nil?
-      # Calculate CO2e Index
-      co2_designs = designs.select { |d| d.init_calc_type.nil? && d.iecc_version.nil? }
+    # Calculate CO2e Index
+    co2_designs, co2_outputs, co2_results = nil, nil, nil
+    co2_versions.each do |co2_version|
+      co2_designs = designs.select { |d| d.run_type == RunType::CO2e && d.version == co2_version }
       co2_designs = co2_designs.select { |d|
-        [Constants::CalcTypeCO2eRatedHome,
-         Constants::CalcTypeCO2eReferenceHome,
-         Constants::CalcTypeERIIndexAdjustmentDesign,
-         Constants::CalcTypeERIIndexAdjustmentReferenceHome].include? d.calc_type
+        [CalcType::RatedHome,
+         CalcType::ReferenceHome,
+         CalcType::IndexAdjHome,
+         CalcType::IndexAdjReferenceHome].include? d.calc_type
       }
       co2_outputs = retrieve_design_outputs(co2_designs)
 
       # Calculate and write results
-      co2_results = calculate_co2_index(co2_outputs, resultsdir, options[:output_format])
+      co2_results = calculate_co2_index(co2_outputs, options[:output_format])
       if not co2_results[:co2eindex].nil?
-        puts "CO2e Index: #{co2_results[:co2eindex].round(2)}"
+        puts "CO2e Index (#{co2_version}): #{co2_results[:co2eindex].round(2)}"
       end
     end
 
-    if not iecc_version.nil?
-      # Calculate IECC ERI
-      iecc_eri_designs = designs.select { |d| !d.iecc_version.nil? }
+    # Calculate IECC ERI
+    iecc_versions.each do |iecc_version|
+      iecc_eri_designs = designs.select { |d| d.run_type == RunType::IECC && d.version == iecc_version }
       iecc_eri_outputs = retrieve_design_outputs(iecc_eri_designs)
 
       renewable_energy_limit = calc_renewable_energy_limit(iecc_eri_outputs, iecc_version)
 
       # Calculate and write results
-      iecc_eri_results = calculate_eri(iecc_eri_outputs, resultsdir, options[:output_format],
-                                       output_filename_prefix: 'IECC', renewable_energy_limit: renewable_energy_limit)
-      puts "IECC ERI: #{iecc_eri_results[:eri].round(2)}"
+      iecc_eri_results = calculate_eri(iecc_eri_outputs, options[:output_format], renewable_energy_limit: renewable_energy_limit)
+      puts "IECC ERI (#{iecc_version}): #{iecc_eri_results[:eri].round(2)}"
     end
 
-    if not es_version.nil?
+    # Calculate ENERGY STAR
+    es_versions.each do |es_version|
       # Calculate ES Reference ERI
-      esrd_eri_designs = designs.select { |d| d.init_calc_type == ESConstants::CalcTypeEnergyStarReference }
+      esrd_eri_designs = designs.select { |d| d.run_type == RunType::ES && d.init_calc_type == InitCalcType::TargetHome && d.version == es_version }
       esrd_eri_outputs = retrieve_design_outputs(esrd_eri_designs)
-      esrd_eri_results = calculate_eri(esrd_eri_outputs, resultsdir, options[:output_format],
-                                       output_filename_prefix: ESConstants::CalcTypeEnergyStarReference.gsub(' ', ''))
+      esrd_eri_results = calculate_eri(esrd_eri_outputs, options[:output_format])
 
       # Calculate Size-Adjusted ERI for Energy Star Reference Homes
       saf = get_saf(esrd_eri_results, es_version, options[:hpxml])
@@ -1418,10 +1433,9 @@ def main(options)
 
       # Calculate ES Rated ERI, w/ On-site Power Production (OPP) restriction as appropriate
       opp_reduction_limit = calc_opp_eri_limit(esrd_eri_results[:eri], saf, es_version)
-      rated_eri_designs = designs.select { |d| d.init_calc_type == ESConstants::CalcTypeEnergyStarRated }
+      rated_eri_designs = designs.select { |d| d.run_type == RunType::ES && d.init_calc_type == InitCalcType::RatedHome && d.version == es_version }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
-      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format],
-                                        output_filename_prefix: ESConstants::CalcTypeEnergyStarRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
+      rated_eri_results = calculate_eri(rated_eri_outputs, options[:output_format], opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true
@@ -1430,34 +1444,29 @@ def main(options)
       end
 
       # Calculate ES Rated ERI w/o OPP for extra information
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results(es_version, resultsdir, esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_denh_results('ENERGY STAR', esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
-      if passes
-        puts 'ENERGY STAR Certification: PASS'
-      else
-        puts 'ENERGY STAR Certification: FAIL'
-      end
+      puts "ENERGY STAR (#{es_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
 
-    if not zerh_version.nil?
-      # Calculate ZERH Reference ERI
-      zerhrd_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants::CalcTypeZERHReference }
-      zerhrd_eri_outputs = retrieve_design_outputs(zerhrd_eri_designs)
-      zerhrd_eri_results = calculate_eri(zerhrd_eri_outputs, resultsdir, options[:output_format],
-                                         output_filename_prefix: ZERHConstants::CalcTypeZERHReference.gsub(' ', ''))
+    # Calculate DENH
+    denh_versions.each do |denh_version|
+      # Calculate DENH Reference ERI
+      denhrref_eri_designs = designs.select { |d| d.run_type == RunType::DENH && d.init_calc_type == InitCalcType::TargetHome && d.version == denh_version }
+      denhrref_eri_outputs = retrieve_design_outputs(denhrref_eri_designs)
+      denhrref_eri_results = calculate_eri(denhrref_eri_outputs, options[:output_format])
 
-      # Calculate Size-Adjusted ERI for ZERH Reference Homes
-      saf = get_saf(zerhrd_eri_results, zerh_version, options[:hpxml])
-      target_eri = zerhrd_eri_results[:eri] * saf
+      # Calculate Size-Adjusted ERI for DENH Reference Homes
+      saf = get_saf(denhrref_eri_results, denh_version, options[:hpxml])
+      target_eri = denhrref_eri_results[:eri] * saf
 
-      # Calculate ZERH Rated ERI
-      opp_reduction_limit = calc_opp_eri_limit(zerhrd_eri_results[:eri], saf, zerh_version)
-      rated_eri_designs = designs.select { |d| d.init_calc_type == ZERHConstants::CalcTypeZERHRated }
+      # Calculate DENH Rated ERI
+      opp_reduction_limit = calc_opp_eri_limit(denhrref_eri_results[:eri], saf, denh_version)
+      rated_eri_designs = designs.select { |d| d.run_type == RunType::DENH && d.init_calc_type == InitCalcType::RatedHome && d.version == denh_version }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
-      rated_eri_results = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format],
-                                        output_filename_prefix: ZERHConstants::CalcTypeZERHRated.gsub(' ', ''), opp_reduction_limit: opp_reduction_limit)
+      rated_eri_results = calculate_eri(rated_eri_outputs, options[:output_format], opp_reduction_limit: opp_reduction_limit)
 
       if rated_eri_results[:eri].round(0) <= target_eri.round(0)
         passes = true
@@ -1465,28 +1474,20 @@ def main(options)
         passes = false
       end
 
-      # Calculate ZERH Rated ERI w/o OPP for extra information
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, resultsdir, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
+      # Calculate DENH Rated ERI w/o OPP for extra information
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
 
-      write_es_zerh_results(zerh_version, resultsdir, zerhrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
+      write_es_denh_results('DOE Efficient New Home', denhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
-      if passes
-        puts 'Zero Energy Ready Home Certification: PASS'
-      else
-        puts 'Zero Energy Ready Home Certification: FAIL'
-      end
+      puts "DENH (#{denh_version}): #{passes ? 'PASS' : 'FAIL'}"
     end
 
-    if options[:diagnostic_output] && (Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE'))
+    if options[:diagnostic_output]
       # Write HERS diagnostic output?
       puts 'Generating HERS diagnostic output...'
-      write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, options[:hpxml], resultsdir)
+      write_diagnostic_output(eri_results, co2_results, eri_designs, co2_designs, eri_outputs, co2_outputs, options[:hpxml])
     end
 
-  end
-
-  if Dir[resultsdir].length > 1
-    puts "Output files written to #{resultsdir}"
   end
 end
 
@@ -1495,7 +1496,7 @@ Version.check_openstudio_version()
 
 timeseries_types = ['ALL', 'total', 'fuels', 'enduses', 'systemuses', 'emissions', 'emissionfuels',
                     'emissionenduses', 'hotwater', 'loads', 'componentloads',
-                    'unmethours', 'temperatures', 'airflows', 'weather']
+                    'unmethours', 'temperatures', 'conditions', 'airflows', 'weather']
 
 options = {}
 OptionParser.new do |opts|
@@ -1507,6 +1508,10 @@ OptionParser.new do |opts|
 
   opts.on('-o', '--output-dir <DIR>', 'Output directory') do |t|
     options[:output_dir] = t
+  end
+
+  opts.on('-n', '--num-proc <NUM>', 'Number of parallel processors to use') do |t|
+    options[:num_proc] = t
   end
 
   options[:output_format] = 'csv'
@@ -1617,6 +1622,15 @@ if options[:output_dir].nil?
   options[:output_dir] = basedir # default
 end
 options[:output_dir] = File.expand_path(options[:output_dir])
+
+if not options[:num_proc].nil?
+  begin
+    options[:num_proc] = Integer(options[:num_proc])
+  rescue
+    puts "Number of processors requested ('#{options[:num_proc]}') must be an integer."
+    exit!
+  end
+end
 
 main(options)
 

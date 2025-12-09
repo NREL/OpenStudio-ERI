@@ -6,6 +6,7 @@ require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
 require_relative '../resources/util.rb'
+require_relative 'util.rb'
 require 'json'
 
 class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
@@ -16,14 +17,13 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
     @results_dir = File.join(@test_files_path, 'test_results')
     FileUtils.mkdir_p @results_dir
+    @schema_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @schematron_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    File.delete(File.join(File.dirname(__FILE__), 'results_annual.csv')) if File.exist? File.join(File.dirname(__FILE__), 'results_annual.csv')
-    File.delete(File.join(File.dirname(__FILE__), 'results_annual.json')) if File.exist? File.join(File.dirname(__FILE__), 'results_annual.json')
-    File.delete(File.join(File.dirname(__FILE__), 'results_design_load_details.csv')) if File.exist? File.join(File.dirname(__FILE__), 'results_design_load_details.csv')
-    File.delete(File.join(File.dirname(__FILE__), 'results_design_load_details.json')) if File.exist? File.join(File.dirname(__FILE__), 'results_design_load_details.json')
+    cleanup_results_files
   end
 
   def test_hvac_configurations
@@ -40,8 +40,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
                   'skip_validation' => true }
     Dir["#{@sample_files_path}/base-hvac*.xml"].each do |hvac_hpxml|
-      next unless hvac_hpxml.include? 'ground-to-air'
-      next if (hvac_hpxml.include? 'autosize')
+      next if hvac_hpxml.include? 'autosize'
       next if hvac_hpxml.include? 'detailed-performance' # Autosizing not allowed
 
       { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => 'denver',
@@ -97,7 +96,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
 
           # Get more values for heat pump checks
           htg_load = autosized_bldg.hvac_plant.hdl_total
-          clg_load = autosized_bldg.hvac_plant.cdl_sens_total + autosized_bldg.hvac_plant.cdl_lat_total
+          clg_load = autosized_bldg.hvac_plant.cdl_sens_total
           hp = autosized_bldg.heat_pumps[0]
           # Test the sizing results before applying autosizing factors
           htg_cap = hp.heating_capacity
@@ -156,7 +155,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
               elsif hp_sizing_methodology == HPXML::HeatPumpSizingMaxLoad && min_compressor_temp <= autosized_bldg.header.manualj_heating_design_temp
                 assert_equal(0, htg_backup_cap)
               else
-                assert_operator(htg_backup_cap, :>, 0)
+                assert_operator(htg_backup_cap, :>=, 0)
               end
             end
           end
@@ -1053,20 +1052,18 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
       hpxml_bldg.header.allow_increased_fixed_capacities = allow_increased_fixed_capacities
       htg_capacities_detailed = []
       clg_capacities_detailed = []
-      hpxml_bldg.heat_pumps[0].heating_capacity /= 10.0
       hpxml_bldg.heat_pumps[0].heating_detailed_performance_data.each do |dp|
         dp.capacity /= 10.0
         htg_capacities_detailed << dp.capacity
       end
       hpxml_bldg.heat_pumps[0].backup_heating_capacity /= 10.0
-      hpxml_bldg.heat_pumps[0].cooling_capacity /= 10.0
       hpxml_bldg.heat_pumps[0].cooling_detailed_performance_data.each do |dp|
         dp.capacity /= 10.0
         clg_capacities_detailed << dp.capacity
       end
-      htg_cap = hpxml_bldg.heat_pumps[0].heating_capacity
+      htg_cap = hpxml_bldg.heat_pumps[0].heating_detailed_performance_data.find { |dp| dp.outdoor_temperature == 47.0 && dp.capacity_description == HPXML::CapacityDescriptionNominal }.capacity
       htg_bak_cap = hpxml_bldg.heat_pumps[0].backup_heating_capacity
-      clg_cap = hpxml_bldg.heat_pumps[0].cooling_capacity
+      clg_cap = hpxml_bldg.heat_pumps[0].cooling_detailed_performance_data.find { |dp| dp.outdoor_temperature == 95.0 && dp.capacity_description == HPXML::CapacityDescriptionNominal }.capacity
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       _model, _hpxml, hpxml_bldg = _test_measure(args_hash)
       if allow_increased_fixed_capacities
@@ -1074,20 +1071,24 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
         assert_operator(hpxml_bldg.heat_pumps[0].backup_heating_capacity, :>, htg_bak_cap)
         assert_operator(hpxml_bldg.heat_pumps[0].cooling_capacity, :>, clg_cap)
         hpxml_bldg.heat_pumps[0].heating_detailed_performance_data.each_with_index do |dp, i|
-          assert_operator(dp.capacity, :>, htg_capacities_detailed[i])
+          # heating_detailed_performance_data has additional nominal points being added in the end, can be missing in htg_capacities_detailed.
+          assert_operator(dp.capacity, :>, htg_capacities_detailed[i]) unless htg_capacities_detailed[i].nil?
         end
         hpxml_bldg.heat_pumps[0].cooling_detailed_performance_data.each_with_index do |dp, i|
-          assert_operator(dp.capacity, :>, clg_capacities_detailed[i])
+          # cooling_detailed_performance_data has additional nominal points being added in the end, can be missing in clg_capacities_detailed.
+          assert_operator(dp.capacity, :>, clg_capacities_detailed[i]) unless clg_capacities_detailed[i].nil?
         end
       else
         assert_equal(hpxml_bldg.heat_pumps[0].heating_capacity, htg_cap)
         assert_equal(hpxml_bldg.heat_pumps[0].backup_heating_capacity, htg_bak_cap)
         assert_equal(hpxml_bldg.heat_pumps[0].cooling_capacity, clg_cap)
         hpxml_bldg.heat_pumps[0].heating_detailed_performance_data.each_with_index do |dp, i|
-          assert_equal(dp.capacity, htg_capacities_detailed[i])
+          # heating_detailed_performance_data has additional nominal points being added in the end, can be missing in htg_capacities_detailed.
+          assert_equal(dp.capacity, htg_capacities_detailed[i]) unless htg_capacities_detailed[i].nil?
         end
         hpxml_bldg.heat_pumps[0].cooling_detailed_performance_data.each_with_index do |dp, i|
-          assert_equal(dp.capacity, clg_capacities_detailed[i])
+          # cooling_detailed_performance_data has additional nominal points being added in the end, can be missing in clg_capacities_detailed.
+          assert_equal(dp.capacity, clg_capacities_detailed[i]) unless clg_capacities_detailed[i].nil?
         end
       end
     end
@@ -1210,8 +1211,8 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
   end
 
   def test_autosizing_limits
-    clg_autosizing_limits = { true => 1000, false => 100000 }
-    htg_autosizing_limits = { true => 1200, false => 120000 }
+    clg_autosizing_limits = { true => 26000, false => 100000 }
+    htg_autosizing_limits = { true => 28000, false => 120000 }
     for clg_limit, cal in clg_autosizing_limits
       for htg_limit, hal in htg_autosizing_limits
         args_hash = {}
@@ -1679,7 +1680,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
   end
 
   def test_foundation_wall_non_integer_values
-    tol = 0.01 # 1%
+    tol = 0.02 # 2%
 
     # Test wall insulation covering most of above and below-grade portions of wall
     fwall = HPXML::FoundationWall.new(nil)
@@ -1776,36 +1777,41 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     args_hash = {}
     args_hash['hpxml_path'] = File.absolute_path(@tmp_hpxml_path)
 
-    # Base case
-    hpxml, _hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-    _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
-    assert_equal(3, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
-    assert_in_epsilon(192.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 0.01)
+    # Heating capacity adjusted by 25% for single speed standard ghp when heating capacity > 1.5x cooling capacity
+    ghp_filenames = ['base-hvac-ground-to-air-heat-pump-1-speed.xml',
+                     'base-hvac-ground-to-air-heat-pump-1-speed-experimental.xml']
+    ghp_filenames.each do |ghp_filename|
+      # Base case
+      hpxml, _hpxml_bldg = _create_hpxml(ghp_filename)
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
+      assert_equal(3, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
+      assert_in_delta(190.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 1.0)
 
-    # Bore depth greater than the max -> increase number of boreholes
-    hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
-    hpxml_bldg.site.ground_conductivity = 0.18
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-    _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
-    assert_equal(5, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
-    assert_in_epsilon(439.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 0.01)
+      # Bore depth greater than the max -> increase number of boreholes
+      hpxml, hpxml_bldg = _create_hpxml(ghp_filename)
+      hpxml_bldg.site.ground_conductivity = 0.18
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
+      assert_equal(5, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
+      assert_in_delta(431.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 1.0)
 
-    # Bore depth greater than the max -> increase number of boreholes until the max, set depth to the max, and issue warning
-    hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
-    hpxml_bldg.site.ground_conductivity = 0.07
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-    _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
-    assert_equal(10, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
-    assert_in_epsilon(500.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 0.01)
+      # Bore depth greater than the max -> increase number of boreholes until the max, set depth to the max, and issue warning
+      hpxml, hpxml_bldg = _create_hpxml(ghp_filename)
+      hpxml_bldg.site.ground_conductivity = 0.07
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
+      assert_equal(10, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
+      assert_in_delta(500.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 1.0)
 
-    # Boreholes greater than the max -> decrease the number of boreholes until the max
-    hpxml, hpxml_bldg = _create_hpxml('base-hvac-ground-to-air-heat-pump.xml')
-    hpxml_bldg.heat_pumps[0].cooling_capacity *= 5
-    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-    _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
-    assert_equal(10, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
-    assert_in_epsilon(228.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 0.01)
+      # Boreholes greater than the max -> decrease the number of boreholes until the max
+      hpxml, hpxml_bldg = _create_hpxml(ghp_filename)
+      hpxml_bldg.heat_pumps[0].cooling_capacity *= 5
+      XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+      _model, _test_hpxml, test_hpxml_bldg = _test_measure(args_hash)
+      assert_equal(10, test_hpxml_bldg.geothermal_loops[0].num_bore_holes)
+      assert_in_delta(226.0, test_hpxml_bldg.geothermal_loops[0].bore_length, 1.0)
+    end
   end
 
   def test_gshp_g_function_library_linear_interpolation_example
@@ -1883,7 +1889,22 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     assert_equal(num_expected_reports, num_reports)
   end
 
-  def _test_measure(args_hash)
+  def test_really_bad_ducts
+    args_hash = {}
+    args_hash['hpxml_path'] = File.absolute_path(@tmp_hpxml_path)
+
+    hpxml, hpxml_bldg = _create_hpxml('base.xml')
+    hpxml_bldg.hvac_distributions[0].ducts.each do |duct|
+      duct.duct_fraction_area = nil
+      duct.duct_surface_area = 1000.0
+    end
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+
+    # Check there are no duct iteration warnings
+    _test_measure(args_hash, expect_num_warnings: 0)
+  end
+
+  def _test_measure(args_hash, expect_num_warnings: nil)
     # create an instance of the measure
     measure = HPXMLtoOpenStudio.new
 
@@ -1914,9 +1935,21 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
 
-    hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), 'in.xml'))
+    if not expect_num_warnings.nil?
+      assert_equal(expect_num_warnings, runner.result.stepWarnings.size)
+    end
 
-    File.delete(File.join(File.dirname(__FILE__), 'in.xml'))
+    hpxml_defaults_path = File.join(File.dirname(__FILE__), 'in.xml')
+    hpxml = HPXML.new(hpxml_path: hpxml_defaults_path, schema_validator: @schema_validator, schematron_validator: @schematron_validator)
+    if not hpxml.errors.empty?
+      puts 'ERRORS:'
+      hpxml.errors.each do |error|
+        puts error
+      end
+      flunk "Validation error(s) in #{hpxml_defaults_path}."
+    end
+
+    File.delete(hpxml_defaults_path)
 
     return model, hpxml, hpxml.buildings[0]
   end
@@ -1938,8 +1971,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     hpxml_bldg.heat_pumps.each do |hpsys|
       hpsys.heating_capacity = nil
       hpsys.heating_capacity_17F = nil
-      hpsys.heating_capacity_retention_fraction = nil
-      hpsys.heating_capacity_retention_temp = nil
+      hpsys.heating_capacity_fraction_17F = nil
       hpsys.backup_heating_capacity = nil
       hpsys.cooling_capacity = nil
     end

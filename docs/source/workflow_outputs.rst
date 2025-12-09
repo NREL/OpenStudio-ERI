@@ -1,4 +1,4 @@
-.. |nbsp| unicode:: 0xA0 
+.. |nbsp| unicode:: 0xA0
    :trim:
 
 .. _outputs:
@@ -15,6 +15,18 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_energyplus_files`
 - :ref:`hers_diagnostic_output`
 
+Output directories will reflect the requested :ref:`hpxml_calculations`:
+
+  ====================  ===============
+  Calculation           Output dir name
+  ====================  ===============
+  CO2e Index            CO2e_<Version>
+  ERI                   ERI_<Version>
+  IECC ERI              IECC_<Version>
+  ENERGY STAR           ES_<Version>
+  DENH                  DENH_<Version>
+  ====================  ===============
+
 All CSV output files can be alternatively requested in JSON format; see :ref:`running`.
 
 .. note::
@@ -26,24 +38,24 @@ All CSV output files can be alternatively requested in JSON format; see :ref:`ru
 Summary Outputs (CSV)
 ---------------------
 
-Based on which :ref:`hpxml_calculations` were requested, summary output files will be found in the ``results`` directory.
+Based on which :ref:`hpxml_calculations` were requested, summary output files will be found at ``results/results.csv`` directory.
 
-  ================  ===============================================  =========
-  Calculation       File                                             Notes
-  ================  ===============================================  =========
-  ERI               CO2e_Results.csv                                 See :ref:`co2e_results_csv`.
-  ERI               ERI_Results.csv                                  See :ref:`eri_results_csv`.
-  IECC ERI Pathway  IECC_ERI_Results.csv                             See :ref:`eri_results_csv`.
-  ENERGY STAR       ES_Results.csv                                   See :ref:`es_results_csv`.
-  ZERH              ZERH_Results.csv                                 See :ref:`zerh_results_csv`.
-  ================  ===============================================  =========
+  ================  =======================
+  Calculation       File
+  ================  =======================
+  CO2e Index        :ref:`co2e_results_csv`
+  ERI               :ref:`eri_results_csv`
+  IECC ERI          :ref:`eri_results_csv`
+  ENERGY STAR       :ref:`es_results_csv`
+  DENH              :ref:`denh_results_csv`
+  ================  =======================
 
 .. _co2e_results_csv:
 
-CO2e_Results.csv
+CO2e results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``CO2e_Results.csv`` file will be produced when requesting the CO2IndexCalculation; see :ref:`hpxml_calculations`.
+A ``CO2e_<Version>/results/results.csv`` file will be produced when requesting the CO2IndexCalculation; see :ref:`hpxml_calculations`.
 Refer to the ANSI 301 Standard for details on how the CO2e Rating Index is calculated.
 
   =====================  ===============================================
@@ -57,10 +69,10 @@ Refer to the ANSI 301 Standard for details on how the CO2e Rating Index is calcu
 
 .. _eri_results_csv:
 
-ERI_Results.csv
+ERI results.csv
 ~~~~~~~~~~~~~~~
 
-A ``ERI_Results.csv`` (and/or ``IECC_ERI_Results.csv``)  file will be produced when requesting the ERICalculation (and/or IECCERICalculation); see :ref:`hpxml_calculations`.
+A ``ERI_<Version>/results/results.csv`` (and/or ``IECC_<Version>/results/results.csv``)  file will be produced when requesting the ERICalculation (and/or IECCERICalculation); see :ref:`hpxml_calculations`.
 Refer to the ANSI 301 Standard for details on how the Energy Rating Index is calculated.
 
   =====================  ===============================================
@@ -126,10 +138,10 @@ Refer to the ANSI 301 Standard for details on how the Energy Rating Index is cal
 
 .. _es_results_csv:
 
-ES_Results.csv
+ES results.csv
 ~~~~~~~~~~~~~~
 
-A ``ES_Results.csv`` file will be produced when requesting the EnergyStarCalculation; see :ref:`hpxml_calculations`.
+A ``ES_<Version>/results/results.csv`` file will be produced when requesting an ENERGY STAR calculation (``EnergyStarCalculation``); see :ref:`hpxml_calculations`.
 
   ====================================  =====
   Output                                Notes
@@ -142,23 +154,23 @@ A ``ES_Results.csv`` file will be produced when requesting the EnergyStarCalcula
   ENERGY STAR Certification             PASS or FAIL
   ====================================  =====
 
-.. _zerh_results_csv:
+.. _denh_results_csv:
 
-ZERH_Results.csv
+DENH results.csv
 ~~~~~~~~~~~~~~~~
 
-A ``ZERH_Results.csv`` file will be produced when requesting the ZERHCalculation; see :ref:`hpxml_calculations`.
+A ``DENH_<Version>/results/results.csv`` file will be produced when requesting a DOE Efficient New Homes (formerly Zero Energy Ready Homes) calculation (``DENHCalculation``); see :ref:`hpxml_calculations`.
 
-  ====================================  =====
-  Output                                Notes
-  ====================================  =====
-  Reference Home ERI                    ERI of the ZERH Reference Home
-  SAF (Size Adjustment Factor)          Can only be less than 1 for some programs/versions
-  SAF Adjusted ERI Target               Reference Home ERI multiplied by SAF
-  Rated Home ERI                        ERI of the Rated Home including OPP as allowed by the program/version
-  Rated Home ERI w/o OPP                ERI of the Rated Home excluding any on-site power production (OPP)
-  Zero Energy Ready Home Certification  PASS or FAIL
-  ====================================  =====
+  =====================================  =====
+  Output                                 Notes
+  =====================================  =====
+  Reference Home ERI                     ERI of the DENH Reference Home
+  SAF (Size Adjustment Factor)           Can only be less than 1 for some programs/versions
+  SAF Adjusted ERI Target                Reference Home ERI multiplied by SAF
+  Rated Home ERI                         ERI of the Rated Home including OPP as allowed by the program/version
+  Rated Home ERI w/o OPP                 ERI of the Rated Home excluding any on-site power production (OPP)
+  DOE Efficient New Homes Certification  PASS or FAIL
+  =====================================  =====
 
 .. _home_annual_outputs_csv:
 
@@ -167,28 +179,38 @@ Home Annual Outputs (CSV)
 
 Based on which calculations were requested in the HPXML file, CSV annual output files will be found in the ``results`` directory for each simulated home.
 
-  ================  ===============================================  =========
-  Calculation       File                                             Notes
-  ================  ===============================================  =========
-  ERI               CO2eRatedHome.csv                                CO2e Rated Home. Only produced if 301-2019 Addendum D or newer.
-  ERI               CO2eReferenceHome.csv                            CO2e Reference Home. Only produced if 301-2019 Addendum D or newer.
-  ERI               ERIRatedHome.csv                                 ERI Rated Home.
-  ERI               ERIReferenceHome.csv                             ERI Reference Home.
-  ERI               ERIIndexAdjustmentDesign.csv                     ERI Index Adjustment Design. Only produced if 301-2014 Addendum E or newer.
-  ERI               ERIIndexAdjustmentReferenceHome.csv              ERI Index Adjustment Reference Home. Only produced if 301-2014 Addendum E or newer.
-  IECC ERI Pathway  IECC_ERIRatedHome.csv                            IECC ERI Rated Home.
-  IECC ERI Pathway  IECC_ERIReferenceHome.csv                        IECC ERI Reference Home.
-  IECC ERI Pathway  IECC_ERIIndexAdjustmentDesign.csv                IECC ERI Index Adjustment Design.
-  IECC ERI Pathway  IECC_ERIIndexAdjustmentReferenceHome.csv         IECC ERI Index Adjustment Reference Home.
-  ENERGY STAR       ESRated_ERIRatedHome.csv                         ERI Rated Home for the ENERGY STAR rated home.
-  ENERGY STAR       ESRated_ERIReferenceHome.csv                     ERI Reference Home for the ENERGY STAR rated home.
-  ENERGY STAR       ESRated_ERIIndexAdjustmentDesign.csv             ERI Index Adjustment Design for the ENERGY STAR rated home.
-  ENERGY STAR       ESRated_ERIIndexAdjustmentReferenceHome.csv      ERI Index Adjustment Reference Home for the ENERGY STAR rated home.
-  ENERGY STAR       ESReference_ERIRatedHome.csv                     ERI Rated Home for the ENERGY STAR Reference Design.
-  ENERGY STAR       ESReference_ERIReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
-  ENERGY STAR       ESReference_ERIIndexAdjustmentDesign.csv         ERI Index Adjustment Design for the ENERGY STAR Reference Design.
-  ENERGY STAR       ESReference_ERIIndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
-  ================  ===============================================  =========
+  ================  ===================================================  =========
+  Calculation       File                                                 Notes
+  ================  ===================================================  =========
+  CO2e Index        RatedHome.csv                                        CO2e Rated Home. Only produced if 301-2019 Addendum D or newer.
+  CO2e Index        ReferenceHome.csv                                    CO2e Reference Home. Only produced if 301-2019 Addendum D or newer.
+  CO2e Index        IndexAdjustmentHome.csv                              CO2e Index Adjustment Design. Only produced if 301-2019 Addendum D or newer.
+  CO2e Index        IndexAdjustmentReferenceHome.csv                     CO2e Index Adjustment Reference Home. Only produced if 301-2019 Addendum D or newer.
+  ERI               RatedHome.csv                                        ERI Rated Home.
+  ERI               ReferenceHome.csv                                    ERI Reference Home.
+  ERI               IndexAdjustmentHome.csv                              ERI Index Adjustment Design. Only produced if 301-2014 Addendum E or newer.
+  ERI               IndexAdjustmentReferenceHome.csv                     ERI Index Adjustment Reference Home. Only produced if 301-2014 Addendum E or newer.
+  IECC ERI          RatedHome.csv                                        IECC ERI Rated Home.
+  IECC ERI          ReferenceHome.csv                                    IECC ERI Reference Home.
+  IECC ERI          IndexAdjustmentHome.csv                              IECC ERI Index Adjustment Design.
+  IECC ERI          IndexAdjustmentReferenceHome.csv                     IECC ERI Index Adjustment Reference Home.
+  ENERGY STAR       RatedHome/results/RatedHome.csv                      ERI Rated Home for the ENERGY STAR rated home.
+  ENERGY STAR       RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the ENERGY STAR rated home.
+  ENERGY STAR       RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the ENERGY STAR rated home.
+  ENERGY STAR       RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the ENERGY STAR rated home.
+  ENERGY STAR       TargetHome/results/RatedHome.csv                     ERI Rated Home for the ENERGY STAR Reference Design.
+  ENERGY STAR       TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the ENERGY STAR Reference Design.
+  ENERGY STAR       TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the ENERGY STAR Reference Design.
+  ENERGY STAR       TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the ENERGY STAR Reference Design.
+  DENH              RatedHome/results/RatedHome.csv                      ERI Rated Home for the DENH rated home.
+  DENH              RatedHome/results/ReferenceHome.csv                  ERI Reference Home for the DENH rated home.
+  DENH              RatedHome/results/IndexAdjustmentHome.csv            ERI Index Adjustment Design for the DENH rated home.
+  DENH              RatedHome/results/IndexAdjustmentReferenceHome.csv   ERI Index Adjustment Reference Home for the DENH rated home.
+  DENH              TargetHome/results/RatedHome.csv                     ERI Rated Home for the DENH Target Home.
+  DENH              TargetHome/results/ReferenceHome.csv                 ERI Reference Home for the DENH Target Home.
+  DENH              TargetHome/results/IndexAdjustmentHome.csv           ERI Index Adjustment Design for the DENH Target Home.
+  DENH              TargetHome/results/IndexAdjustmentReferenceHome.csv  ERI Index Adjustment Reference Home for the DENH Target Home.
+  ================  ===================================================  =========
 
 Each CSV file includes the following sections of output.
 
@@ -201,7 +223,7 @@ Annual energy outputs are listed below.
   Type                                  Notes
   ====================================  ===========================
   Energy Use: Total (MBtu)              Total energy consumption
-  Energy Use: Net (MBtu)                Subtracts any power produced by PV or generators
+  Energy Use: Net (MBtu)                Total energy consumption minus power produced by PV
   ====================================  ===========================
 
 Annual Energy by Fuel Type
@@ -213,11 +235,11 @@ Fuel uses are listed below.
   Type                                  Notes
   ====================================  ===========================
   Fuel Use: Electricity: Total (MBtu)   Total electricity consumption
-  Fuel Use: Electricity: Net (MBtu)     Subtracts any power produced by PV or generators
+  Fuel Use: Electricity: Net (MBtu)     Total energy consumption minus power produced by PV
   Fuel Use: Natural Gas: Total (MBtu)
   Fuel Use: Fuel Oil: Total (MBtu)
   Fuel Use: Propane: Total (MBtu)
-  Fuel Use: Wood Cord: Total (MBtu)         
+  Fuel Use: Wood Cord: Total (MBtu)
   Fuel Use: Wood Pellets: Total (MBtu)
   Fuel Use: Coal: Total (MBtu)          Not used by OS-ERI
   ====================================  ===========================
@@ -261,7 +283,6 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
   End Use: Electricity: Ceiling Fan (MBtu)
   End Use: Electricity: Television (MBtu)
   End Use: Electricity: Plug Loads (MBtu)                           Excludes independently reported plug loads (e.g., well pump)
-  End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
   End Use: Electricity: Well Pump (MBtu)                            Not used by OS-ERI
   End Use: Electricity: Pool Heater (MBtu)                          Not used by OS-ERI
   End Use: Electricity: Pool Pump (MBtu)                            Not used by OS-ERI
@@ -270,6 +291,7 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
   End Use: Electricity: PV (MBtu)                                   Negative value for any power produced
   End Use: Electricity: Generator (MBtu)                            Negative value for any power produced
   End Use: Electricity: Battery (MBtu)                              Not used by OS-ERI
+  End Use: Electricity: Electric Vehicle Charging (MBtu)            Not used by OS-ERI
   End Use: Natural Gas: Heating (MBtu)                              Excludes heat pump backup
   End Use: Natural Gas: Heating Heat Pump Backup (MBtu)
   End Use: Natural Gas: Hot Water (MBtu)
@@ -361,7 +383,7 @@ Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
   Type                                                              Notes
   ================================================================  ===============================================================
   Emissions: <EmissionsType>: ANSI301: Total (lb)                   Total emissions
-  Emissions: <EmissionsType>: ANSI301: Net (lb)                     Subtracts any power produced by PV or generators
+  Emissions: <EmissionsType>: ANSI301: Net (lb)                     Total emissions minus power produced by PV
   ================================================================  ===============================================================
 
 Annual Emissions by Fuel Use
@@ -375,7 +397,7 @@ Emissions for each emissions type (CO2e, NOx, and SO2) are provided.
   Type                                                              Notes
   ================================================================  ===============================================================
   Emissions: <EmissionsType>: ANSI301: Electricity: Total (lb)      Emissions for Electricity only
-  Emissions: <EmissionsType>: ANSI301: Electricity: Net (lb)        Subtracts any power produced by PV or generators
+  Emissions: <EmissionsType>: ANSI301: Electricity: Net (lb)        Emissions for Electricity only minus power produced by PV
   Emissions: <EmissionsType>: ANSI301: Natural Gas: Total (lb)      Emissions for Natural Gas only
   Emissions: <EmissionsType>: ANSI301: Fuel Oil: Total (lb)         Emissions for Fuel Oil only
   Emissions: <EmissionsType>: ANSI301: Propane: Total (lb)          Emissions for Propane only
@@ -428,14 +450,15 @@ Annual Unmet Hours
 
 Annual unmet hours are listed below.
 
-  =========================  =====
-  Type                       Notes
-  =========================  =====
-  Unmet Hours: Heating (hr)  Number of hours where the heating setpoint is not maintained.
-  Unmet Hours: Cooling (hr)  Number of hours where the cooling setpoint is not maintained.
-  =========================  =====
+  ============================  =====
+  Type                          Notes
+  ============================  =====
+  Unmet Hours: Heating (hr)     Number of hours where the heating setpoint is not maintained. [#]_
+  Unmet Hours: Cooling (hr)     Number of hours where the cooling setpoint is not maintained.
+  Unmet Hours: EV Driving (hr)  Not used by OS-ERI
+  ============================  =====
 
-These numbers reflect the number of hours during the year when the conditioned space temperature is more than 0.2 deg-C (0.36 deg-F) from the setpoint during heating/cooling.
+  .. [#] The unmet heating and cooling numbers reflect the number of hours during the heating/cooling season when the conditioned space temperature deviates more than 0.2 deg-C (0.36 deg-F) from the heating/cooling setpoint.
 
 Peak Building Electricity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -445,10 +468,16 @@ Peak building electricity outputs are listed below.
   ==================================  =============================================================
   Type                                Notes
   ==================================  =============================================================
-  Peak Electricity: Winter Total (W)  Maximum value in Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere)
-  Peak Electricity: Summer Total (W)  Maximum value in Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere)
-  Peak Electricity: Annual Total (W)  Maximum value in any month
+  Peak Electricity: Winter Total (W)  Winter maximum for total electricity consumption [#]_
+  Peak Electricity: Summer Total (W)  Summer maximum for total electricity consumption [#]_
+  Peak Electricity: Annual Total (W)  Annual maximum for total electricity consumption
+  Peak Electricity: Winter Net (W)    Winter maximum for total electricity consumption minus power produced by PV
+  Peak Electricity: Summer Net (W)    Summer maximum for total electricity consumption minus power produced by PV
+  Peak Electricity: Annual Net (W)    Annual maximum for total electricity consumption minus power produced by PV
   ==================================  =============================================================
+
+  .. [#] Winter is Dec/Jan/Feb (or Jun/Jul/Aug in the southern hemisphere).
+  .. [#] Summer is Jun/Jul/Aug (or Dec/Jan/Feb in the southern hemisphere).
 
 Peak Building Loads
 ~~~~~~~~~~~~~~~~~~~
@@ -474,7 +503,7 @@ Component loads represent the estimated contribution of different building compo
 The sum of component loads for heating (or cooling) will roughly equal the annual heating (or cooling) building load reported above.
 
 Component loads disaggregated by Heating/Cooling are listed below.
-   
+
   =================================================  =========================================================================================================
   Type                                               Notes
   =================================================  =========================================================================================================
@@ -511,7 +540,7 @@ Annual hot water uses are listed below.
   Hot Water: Clothes Washer (gal)
   Hot Water: Dishwasher (gal)
   Hot Water: Fixtures (gal)            Showers and faucets.
-  Hot Water: Distribution Waste (gal) 
+  Hot Water: Distribution Waste (gal)
   ===================================  ====================
 
 .. note::
@@ -610,14 +639,14 @@ Home Timeseries Outputs (CSV)
 -----------------------------
 
 See the :ref:`running` section for requesting timeseries outputs.
-When requested, a CSV file of timeseries outputs is written for the Reference/Rated Homes (e.g., ``ERIReferenceHome_Hourly.csv``, ``ERIReferenceHome_Daily.csv``, or ``ERIReferenceHome_Monthly.csv`` for the Reference home).
+When requested, a CSV file of timeseries outputs is written for the Reference/Rated Homes (e.g., ``ReferenceHome_Hourly.csv``, ``ReferenceHome_Daily.csv``, or ``ReferenceHome_Monthly.csv`` for the Reference home).
 
 Depending on the outputs requested, CSV files may include:
 
   =======================  ===================  ================================================================================================================================================
   Type                     Argument [#]_        Notes
   =======================  ===================  ================================================================================================================================================
-  Total Consumptions       ``total``            Energy use for building total and net (i.e., subtracts any power produced by PV or generators).
+  Total Consumptions       ``total``            Energy use for building total and net (i.e., subtracts any power produced by PV).
   Fuel Consumptions        ``fuels``            Energy use for each fuel type (in kBtu for fossil fuels and kWh for electricity).
   End Use Consumptions     ``enduses``          Energy use for each end use type (in kBtu for fossil fuels and kWh for electricity).
   System Use Consumptions  ``systemuses``       Energy use for each HVAC and water heating system (in kBtu).
@@ -629,6 +658,7 @@ Depending on the outputs requested, CSV files may include:
   Component Loads          ``componentloads``   Heating and cooling loads (in kBtu) disaggregated by component (e.g., Walls, Windows, Infiltration, Ducts, etc.).
   Unmet Hours              ``unmethours``       Heating and cooling unmet hours.
   Zone Temperatures        ``temperatures``     Zone temperatures (in deg-F) for each space (e.g., conditioned space, attic, garage, basement, crawlspace, etc.) plus heating/cooling setpoints.
+  Zone Conditions          ``conditions``       Zone conditions (humidity ratio and relative humidity and dewpoint, radiant, and operative temperatures)
   Airflows                 ``airflows``         Airflow rates (in cfm) for infiltration, mechanical ventilation, natural ventilation, and whole house fans.
   Weather                  ``weather``          Weather file data including outdoor temperatures, relative humidity, wind speed, and solar.
   =======================  ===================  ================================================================================================================================================
@@ -663,12 +693,12 @@ Any defaulted values will include the ``dataSource='software'`` attribute in the
 Home EnergyPlus Files
 ---------------------
 
-In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``ERIRatedHome``, ``ERIReferenceHome``, etc. directories).
+In addition, raw EnergyPlus simulation input/output files are available for each simulation (e.g., ``RatedHome``, ``ReferenceHome``, etc. directories).
 
-.. warning:: 
+.. warning::
 
-  It is highly discouraged for software tools to read the raw EnergyPlus output files. 
-  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created. 
+  It is highly discouraged for software tools to read the raw EnergyPlus output files.
+  The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created.
   If there are additional outputs of interest that are not available in the annual/timeseries output files, please send us a request.
 
 .. _hers_diagnostic_output:
@@ -676,5 +706,5 @@ In addition, raw EnergyPlus simulation input/output files are available for each
 HERS Diagnostic Output
 ----------------------
 
-A HERS diagnostic output file (``HERS_Diagnostic.json``) can be produced if the ``--output-diagnostic`` commandline argument is used; see the :ref:`running` section.
+A HERS diagnostic output file (``ERI_<Version>/results/HERS_Diagnostic.json``) can be produced if the ``--output-diagnostic`` commandline argument is used; see the :ref:`running` section.
 The output file includes hourly data and is formatted per the `HERS Diagnostic Output Schema <https://github.com/resnet-us/hers-diagnostic-schema>`_.

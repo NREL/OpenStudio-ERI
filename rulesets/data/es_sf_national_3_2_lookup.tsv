@@ -5,7 +5,10 @@ slab_perimeter_ins_depth		0	0	0	0	0	0	2	2	2	4	4	4	4	4	4	4	4	4	4	4
 slab_perimeter_ins_rvalue		0	0	0	0	0	0	10	10	10	10	10	10	10	10	10	10	10	10	10	10
 slab_under_ins_width		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 slab_under_ins_rvalue		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-floors_over_uncond_spc_ufactor		0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
+floors_ufactor		0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
+floors_insulated	other heated space	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+floors_insulated	other multifamily buffer space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+floors_insulated	other non-freezing space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
 walls_ufactor		0.084	0.084	0.084	0.084	0.084	0.084	0.06	0.06	0.06	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045	0.045
 walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
 walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
@@ -26,13 +29,13 @@ lighting_tier2_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 refrigerator_rated_annual_kwh		450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
-clothes_washer_imef		1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
-clothes_washer_ler		284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284
-clothes_washer_elec_rate		0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
-clothes_washer_gas_rate		1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09
-clothes_washer_ghwc		18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18
-clothes_washer_capacity		4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2
-clothes_washer_lcy		312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312
+clothes_washer_imef	clothes washer present	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
+clothes_washer_ler	clothes washer present	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284
+clothes_washer_elec_rate	clothes washer present	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
+clothes_washer_gas_rate	clothes washer present	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09	1.09
+clothes_washer_ghwc	clothes washer present	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18	18
+clothes_washer_capacity	clothes washer present	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2
+clothes_washer_lcy	clothes washer present	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312	312
 clothes_dryer_cef		3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01	3.01
 dishwasher_ler	compact	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203	203
 dishwasher_elec_rate	compact	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
@@ -60,8 +63,12 @@ hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	
 hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2
 hvac_gshp_cop																					
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
+hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
 hvac_ac_seer		16	16	16	16	16	16	16	16	16	16	16	14	14	14	14	14	14	14	14	14
 hvac_ashp_seer		16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16	16
+hvac_ac_eer		13	13	13	13	13	13	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
+hvac_ashp_eer		13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13	13
 hvac_gshp_eer																					
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75

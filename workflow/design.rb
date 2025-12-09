@@ -6,41 +6,31 @@ require_relative '../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
 require_relative '../rulesets/resources/constants'
 
 class Design
-  DiagnosticFilenameSuffix = 'Diagnostic.msgpack'
-
-  def initialize(calc_type: nil, init_calc_type: nil, output_dir: nil, iecc_version: nil, output_format: 'csv')
+  def initialize(run_type:, calc_type: nil, init_calc_type: nil, output_dir: nil, version: nil, output_format: 'csv')
+    @run_type = run_type
     @calc_type = calc_type
     @init_calc_type = init_calc_type
     name = calc_type.to_s.gsub(' ', '')
-    if not iecc_version.nil?
-      name = name.gsub('ERI', 'IECC_ERI')
-    end
-    if not init_calc_type.nil?
-      name = init_calc_type.gsub(' ', '') + '_' + name
-    end
     if not output_dir.nil?
       @output_dir = output_dir
-      @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
-      @annual_output_path = File.join(output_dir, 'results', "#{name}.#{output_format}")
-      if [Constants::CalcTypeERIRatedHome,
-          Constants::CalcTypeERIReferenceHome,
-          Constants::CalcTypeERIIndexAdjustmentDesign,
-          Constants::CalcTypeERIIndexAdjustmentReferenceHome,
-          Constants::CalcTypeCO2eRatedHome,
-          Constants::CalcTypeCO2eReferenceHome].include?(calc_type) && init_calc_type.nil?
-        # Only need to create hourly diagnostic output file for certain runs
-        @diag_output_path = File.join(output_dir, 'results', "#{name}_#{DiagnosticFilenameSuffix}")
-      end
-      @design_dir = File.join(output_dir, name)
+      output_dir = File.join(output_dir, "#{run_type}_#{version}")
       if not init_calc_type.nil?
         @init_hpxml_output_path = File.join(output_dir, 'results', "#{init_calc_type.gsub(' ', '')}.xml")
+        output_dir = File.join(output_dir, init_calc_type.gsub(' ', ''))
       end
+      @hpxml_output_path = File.join(output_dir, 'results', "#{name}.xml")
+      @annual_output_path = File.join(output_dir, 'results', "#{name}.#{output_format}")
+      if [RunType::ERI, RunType::CO2e].include? run_type
+        # Only need to create hourly diagnostic output file for certain runs
+        @diag_output_path = File.join(output_dir, 'results', "#{name}_Diagnostic.msgpack")
+      end
+      @design_dir = File.join(output_dir, name)
     end
-    @iecc_version = iecc_version
+    @version = version
     @output_format = output_format
   end
-  attr_accessor(:calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :annual_output_path,
-                :diag_output_path, :output_dir, :design_dir, :iecc_version, :output_format)
+  attr_accessor(:run_type, :calc_type, :init_calc_type, :init_hpxml_output_path, :hpxml_output_path, :annual_output_path,
+                :diag_output_path, :output_dir, :design_dir, :version, :output_format)
 end
 
 def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format, diagnostic_output)
@@ -51,10 +41,11 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   # Add OS-HPXML translator measure to workflow
   measure_subdir = 'hpxml-measures/HPXMLtoOpenStudio'
   args = {}
-  args['hpxml_path'] = design.hpxml_output_path
+  args['hpxml_path'] = File.absolute_path(design.hpxml_output_path)
   args['output_dir'] = File.absolute_path(design.design_dir)
   args['debug'] = debug
   args['add_component_loads'] = (add_comp_loads || timeseries_outputs.include?('componentloads'))
+  args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path))
   args['skip_validation'] = !debug
   measures[measure_subdir] = [args]
 
@@ -75,6 +66,7 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['include_timeseries_component_loads'] = timeseries_outputs.include? 'componentloads'
   args['include_timeseries_unmet_hours'] = timeseries_outputs.include? 'unmethours'
   args['include_timeseries_zone_temperatures'] = timeseries_outputs.include? 'temperatures'
+  args['include_timeseries_zone_conditions'] = timeseries_outputs.include? 'conditions'
   args['include_timeseries_airflows'] = timeseries_outputs.include? 'airflows'
   args['include_timeseries_weather'] = timeseries_outputs.include? 'weather'
   args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path))
@@ -102,17 +94,18 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
                                                                 suppress_print: true)
 end
 
-if ARGV.size == 10
-  calc_type = ARGV[0]
-  init_calc_type = (ARGV[1].empty? ? nil : ARGV[1])
-  iecc_version = (ARGV[2].empty? ? nil : ARGV[2])
-  output_dir = ARGV[3]
-  debug = (ARGV[4].downcase.to_s == 'true')
-  timeseries_output_freq = ARGV[5]
-  timeseries_outputs = ARGV[6].split('|')
-  add_comp_loads = (ARGV[7].downcase.to_s == 'true')
-  output_format = ARGV[8]
-  diagnostic_output = (ARGV[9].downcase.to_s == 'true')
-  design = Design.new(calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir, iecc_version: iecc_version, output_format: output_format)
+if ARGV.size == 11
+  run_type = ARGV[0]
+  calc_type = ARGV[1]
+  init_calc_type = (ARGV[2].empty? ? nil : ARGV[2])
+  version = (ARGV[3].empty? ? nil : ARGV[3])
+  output_dir = ARGV[4]
+  debug = (ARGV[5].downcase.to_s == 'true')
+  timeseries_output_freq = ARGV[6]
+  timeseries_outputs = ARGV[7].split('|')
+  add_comp_loads = (ARGV[8].downcase.to_s == 'true')
+  output_format = ARGV[9]
+  diagnostic_output = (ARGV[10].downcase.to_s == 'true')
+  design = Design.new(run_type: run_type, calc_type: calc_type, init_calc_type: init_calc_type, output_dir: output_dir, version: version, output_format: output_format)
   run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_comp_loads, output_format, diagnostic_output)
 end

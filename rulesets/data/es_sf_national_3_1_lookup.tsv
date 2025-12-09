@@ -5,7 +5,10 @@ slab_perimeter_ins_depth		0	0	0	0	0	0	0	0	0	2	2	2	2	2	2	4	4	4	4	4
 slab_perimeter_ins_rvalue		0	0	0	0	0	0	0	0	0	10	10	10	10	10	10	10	10	10	10	10
 slab_under_ins_width		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 slab_under_ins_rvalue		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-floors_over_uncond_spc_ufactor		0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
+floors_ufactor		0.064	0.064	0.064	0.064	0.064	0.064	0.047	0.047	0.047	0.047	0.047	0.033	0.033	0.033	0.033	0.033	0.033	0.033	0.028	0.028
+floors_insulated	other heated space	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE	FALSE
+floors_insulated	other multifamily buffer space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
+floors_insulated	other non-freezing space	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE	TRUE
 walls_ufactor		0.082	0.082	0.082	0.082	0.082	0.082	0.057	0.057	0.057	0.057	0.057	0.057	0.057	0.057	0.057	0.048	0.048	0.048	0.048	0.048
 walls_solar_abs		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75
 walls_emittance		0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9	0.9
@@ -60,8 +63,12 @@ hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	
 hvac_ashp_hspf		8.2	8.2	8.2	8.2	8.2	8.2	8.2	8.2	8.2	8.5	8.5	9.25	9.25	9.25	9.25	9.5	9.5	9.5	9.2	9.2
 hvac_gshp_cop																					
 hvac_wlhp_cop		4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2	4.2
+hvac_ac_compressor		single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	two stage	two stage
 hvac_ac_seer		15	15	15	15	15	15	15	15	15	13	13	13	13	13	13	13	13	13	13	13
 hvac_ashp_seer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	16	16
+hvac_ac_eer		12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3	11.3
+hvac_ashp_eer		12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	12.4	13	13
 hvac_gshp_eer																					
 hvac_wlhp_eer		14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14	14
 hvac_chiller_kw_per_ton		0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78	0.78

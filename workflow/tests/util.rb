@@ -4,6 +4,7 @@ require 'oga'
 require 'json'
 require 'json-schema'
 require_relative '../design'
+require_relative '../util'
 require_relative '../../rulesets/main'
 require_relative '../../rulesets/resources/constants'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
@@ -16,26 +17,16 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversi
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
 
-def _run_ruleset(design, xml, out_xml)
-  designs = [Design.new(calc_type: design)]
-  designs[0].hpxml_output_path = out_xml
-  success, _, _, _, _ = run_rulesets(File.absolute_path(xml), designs)
-
-  assert(success)
-  assert(File.exist?(out_xml))
-end
-
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false, skip_simulation: false,
                   rated_home_only: false, output_format: 'csv', diagnostic_output: false)
   xml = File.absolute_path(xml)
   hpxml = HPXML.new(hpxml_path: xml)
 
-  eri_version = hpxml.header.eri_calculation_version
-  eri_version = Constants::ERIVersions[-1] if eri_version == 'latest'
-  co2_version = hpxml.header.co2index_calculation_version
-  iecc_eri_version = hpxml.header.iecc_eri_calculation_version
-  es_version = hpxml.header.energystar_calculation_version
-  zerh_version = hpxml.header.zerh_calculation_version
+  eri_versions = hpxml.header.eri_calculation_versions
+  co2_versions = hpxml.header.co2index_calculation_versions
+  iecc_versions = hpxml.header.iecc_eri_calculation_versions
+  es_versions = hpxml.header.energystar_calculation_versions
+  denh_versions = hpxml.header.denh_calculation_versions
 
   rundir = File.join(@test_files_dir, test_name, File.basename(xml))
 
@@ -52,106 +43,128 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
   if rated_home_only
     flags += ' --rated-home-only'
   end
-  if diagnostic_output && (not eri_version.nil?)
+  if diagnostic_output && (not eri_versions.empty?)
     # ERI required to generate diagnostic output
     flags += ' --diagnostic-output'
   end
 
   # Run workflow
   workflow_rb = 'energy_rating_index.rb'
-  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" \"#{File.join(File.dirname(__FILE__), "../#{workflow_rb}")}\" -x \"#{xml}\"#{flags} -o \"#{rundir}\" --output-format #{output_format} --debug" # We use --debug so that schema/schematron validation is performed
   system(command)
 
   hpxmls = {}
   outputs = {}
   if rated_home_only
     # ERI w/ Rated Home only
-    hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-    outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
+    eri_versions.each do |eri_version|
+      results_dir = File.join(rundir, "ERI_#{eri_version}", 'results')
+      hpxmls[:rated] = File.join(results_dir, 'RatedHome.xml')
+      outputs[:rated_results] = File.join(results_dir, "RatedHome.#{output_format}")
+    end
   else
-    if not eri_version.nil?
-      # ERI
-      hpxmls[:ref] = File.join(rundir, 'results', 'ERIReferenceHome.xml')
-      hpxmls[:rated] = File.join(rundir, 'results', 'ERIRatedHome.xml')
-      outputs[:eri_results] = File.join(rundir, 'results', "ERI_Results.#{output_format}")
-      outputs[:rated_results] = File.join(rundir, 'results', "ERIRatedHome.#{output_format}")
-      outputs[:ref_results] = File.join(rundir, 'results', "ERIReferenceHome.#{output_format}")
+    # ERI
+    eri_versions.each do |eri_version|
+      results_dir = File.join(rundir, "ERI_#{eri_version}", 'results')
+      hpxmls[:ref] = File.join(results_dir, 'ReferenceHome.xml')
+      hpxmls[:rated] = File.join(results_dir, 'RatedHome.xml')
+      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
+        hpxmls[:iad] = File.join(results_dir, 'IndexAdjustmentHome.xml')
+        hpxmls[:iadref] = File.join(results_dir, 'IndexAdjustmentReferenceHome.xml')
+      end
+      outputs[:eri_results] = File.join(results_dir, "results.#{output_format}")
+      outputs[:rated_results] = File.join(results_dir, "RatedHome.#{output_format}")
+      outputs[:ref_results] = File.join(results_dir, "ReferenceHome.#{output_format}")
+      if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE')
+        outputs[:iad] = File.join(results_dir, "IndexAdjustmentHome.#{output_format}")
+        outputs[:iadref] = File.join(results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
+      end
       if timeseries_frequency != 'none'
-        outputs[:rated_timeseries_results] = File.join(rundir, 'results', "ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
-        outputs[:ref_timeseries_results] = File.join(rundir, 'results', "ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:rated_timeseries_results] = File.join(results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:ref_timeseries_results] = File.join(results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
-    if not co2_version.nil?
-      hpxmls[:co2ref] = File.join(rundir, 'results', 'CO2eReferenceHome.xml')
-      if File.exist? File.join(rundir, 'results', 'CO2e_Results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
-        outputs[:co2e_results] = File.join(rundir, 'results', "CO2e_Results.#{output_format}")
+    # CO2e
+    co2_versions.each do |co2_version|
+      results_dir = File.join(rundir, "CO2e_#{co2_version}", 'results')
+      hpxmls[:co2ref] = File.join(results_dir, 'ReferenceHome.xml')
+      if File.exist? File.join(results_dir, 'results.csv') # Some HPXMLs (e.g., in AK/HI or with wood fuel) won't produce a CO2 Index
+        outputs[:co2e_results] = File.join(results_dir, "results.#{output_format}")
       end
     end
-    if not es_version.nil?
-      # ENERGY STAR
-      hpxmls[:es_ref] = File.join(rundir, 'results', 'ESReference.xml')
-      hpxmls[:es_rated] = File.join(rundir, 'results', 'ESRated.xml')
-      hpxmls[:esrd_ref] = File.join(rundir, 'results', 'ESReference_ERIReferenceHome.xml')
-      hpxmls[:esrd_rated] = File.join(rundir, 'results', 'ESReference_ERIRatedHome.xml')
-      hpxmls[:esrd_iad] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentDesign.xml')
-      hpxmls[:esrd_iadref] = File.join(rundir, 'results', 'ESReference_ERIIndexAdjustmentReferenceHome.xml')
-      hpxmls[:esrat_ref] = File.join(rundir, 'results', 'ESRated_ERIReferenceHome.xml')
-      hpxmls[:esrat_rated] = File.join(rundir, 'results', 'ESRated_ERIRatedHome.xml')
-      hpxmls[:esrat_iad] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentDesign.xml')
-      hpxmls[:esrat_iadref] = File.join(rundir, 'results', 'ESRated_ERIIndexAdjustmentReferenceHome.xml')
-      outputs[:es_results] = File.join(rundir, 'results', "ES_Results.#{output_format}")
-      outputs[:esrd_eri_results] = File.join(rundir, 'results', "ESReference_ERI_Results.#{output_format}")
-      outputs[:esrat_eri_results] = File.join(rundir, 'results', "ESRated_ERI_Results.#{output_format}")
-      outputs[:esrd_rated_results] = File.join(rundir, 'results', "ESReference_ERIRatedHome.#{output_format}")
-      outputs[:esrd_ref_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome.#{output_format}")
-      outputs[:esrd_iad_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentDesign.#{output_format}")
-      outputs[:esrd_iadref_results] = File.join(rundir, 'results', "ESReference_ERIIndexAdjustmentReferenceHome.#{output_format}")
-      outputs[:esrat_rated_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome.#{output_format}")
-      outputs[:esrat_ref_results] = File.join(rundir, 'results', "ESRated_ERIReferenceHome.#{output_format}")
-      outputs[:esrat_iad_results] = File.join(rundir, 'results', "ESRated_ERIIndexAdjustmentDesign.#{output_format}")
-      outputs[:esrat_iadref_results] = File.join(rundir, 'results', "ESRated_ERIIndexAdjustmentReferenceHome.#{output_format}")
+    # IECC
+    iecc_versions.each do |iecc_version|
+      results_dir = File.join(rundir, "IECC_#{iecc_version}", 'results')
+      hpxmls[:iecc_eri_ref] = File.join(results_dir, 'ReferenceHome.xml')
+      hpxmls[:iecc_eri_rated] = File.join(results_dir, 'RatedHome.xml')
+      outputs[:iecc_eri_results] = File.join(results_dir, "results.#{output_format}")
+      outputs[:iecc_eri_rated_results] = File.join(results_dir, "RatedHome.#{output_format}")
+      outputs[:iecc_eri_ref_results] = File.join(results_dir, "ReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        outputs[:esrat_timeseries_results] = File.join(rundir, 'results', "ESRated_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
-        outputs[:esrd_timeseries_results] = File.join(rundir, 'results', "ESReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:iecc_eri_rated_timeseries_results] = File.join(results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:iecc_eri_ref_timeseries_results] = File.join(results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
-    if not zerh_version.nil?
-      # Zero Energy Ready Home
-      hpxmls[:zerh_ref] = File.join(rundir, 'results', 'ZERHReference.xml')
-      hpxmls[:zerh_rated] = File.join(rundir, 'results', 'ZERHRated.xml')
-      hpxmls[:zerhrd_ref] = File.join(rundir, 'results', 'ZERHReference_ERIReferenceHome.xml')
-      hpxmls[:zerhrd_rated] = File.join(rundir, 'results', 'ZERHReference_ERIRatedHome.xml')
-      hpxmls[:zerhrd_iad] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentDesign.xml')
-      hpxmls[:zerhrd_iadref] = File.join(rundir, 'results', 'ZERHReference_ERIIndexAdjustmentReferenceHome.xml')
-      hpxmls[:zerhrat_ref] = File.join(rundir, 'results', 'ZERHRated_ERIReferenceHome.xml')
-      hpxmls[:zerhrat_rated] = File.join(rundir, 'results', 'ZERHRated_ERIRatedHome.xml')
-      hpxmls[:zerhrat_iad] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentDesign.xml')
-      hpxmls[:zerhrat_iadref] = File.join(rundir, 'results', 'ZERHRated_ERIIndexAdjustmentReferenceHome.xml')
-      outputs[:zerh_results] = File.join(rundir, 'results', "ZERH_Results.#{output_format}")
-      outputs[:zerhrd_eri_results] = File.join(rundir, 'results', "ZERHReference_ERI_Results.#{output_format}")
-      outputs[:zerhrat_eri_results] = File.join(rundir, 'results', "ZERHRated_ERI_Results.#{output_format}")
-      outputs[:zerhrd_rated_results] = File.join(rundir, 'results', "ZERHReference_ERIRatedHome.#{output_format}")
-      outputs[:zerhrd_ref_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome.#{output_format}")
-      outputs[:zerhrd_iad_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentDesign.#{output_format}")
-      outputs[:zerhrd_iadref_results] = File.join(rundir, 'results', "ZERHReference_ERIIndexAdjustmentReferenceHome.#{output_format}")
-      outputs[:zerhrat_rated_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome.#{output_format}")
-      outputs[:zerhrat_ref_results] = File.join(rundir, 'results', "ZERHRated_ERIReferenceHome.#{output_format}")
-      outputs[:zerhrat_iad_results] = File.join(rundir, 'results', "ZERHRated_ERIIndexAdjustmentDesign.#{output_format}")
-      outputs[:zerhrat_iadref_results] = File.join(rundir, 'results', "ZERHRated_ERIIndexAdjustmentReferenceHome.#{output_format}")
+    # ENERGY STAR
+    es_versions.each do |es_version|
+      top_results_dir = File.join(rundir, "ES_#{es_version}", 'results')
+      target_results_dir = File.join(rundir, "ES_#{es_version}", 'TargetHome', 'results')
+      rated_results_dir = File.join(rundir, "ES_#{es_version}", 'RatedHome', 'results')
+      hpxmls[:esref] = File.join(top_results_dir, 'TargetHome.xml')
+      hpxmls[:esrat] = File.join(top_results_dir, 'RatedHome.xml')
+      hpxmls[:esref_ref] = File.join(target_results_dir, 'ReferenceHome.xml')
+      hpxmls[:esref_rated] = File.join(target_results_dir, 'RatedHome.xml')
+      hpxmls[:esref_iad] = File.join(target_results_dir, 'IndexAdjustmentHome.xml')
+      hpxmls[:esref_iadref] = File.join(target_results_dir, 'IndexAdjustmentReferenceHome.xml')
+      hpxmls[:esrat_ref] = File.join(rated_results_dir, 'ReferenceHome.xml')
+      hpxmls[:esrat_rated] = File.join(rated_results_dir, 'RatedHome.xml')
+      hpxmls[:esrat_iad] = File.join(rated_results_dir, 'IndexAdjustmentHome.xml')
+      hpxmls[:esrat_iadref] = File.join(rated_results_dir, 'IndexAdjustmentReferenceHome.xml')
+      outputs[:es_results] = File.join(top_results_dir, "results.#{output_format}")
+      outputs[:esref_eri_results] = File.join(target_results_dir, "results.#{output_format}")
+      outputs[:esrat_eri_results] = File.join(rated_results_dir, "results.#{output_format}")
+      outputs[:esref_rated_results] = File.join(target_results_dir, "RatedHome.#{output_format}")
+      outputs[:esref_ref_results] = File.join(target_results_dir, "ReferenceHome.#{output_format}")
+      outputs[:esref_iad_results] = File.join(target_results_dir, "IndexAdjustmentHome.#{output_format}")
+      outputs[:esref_iadref_results] = File.join(target_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:esrat_rated_results] = File.join(rated_results_dir, "RatedHome.#{output_format}")
+      outputs[:esrat_ref_results] = File.join(rated_results_dir, "ReferenceHome.#{output_format}")
+      outputs[:esrat_iad_results] = File.join(rated_results_dir, "IndexAdjustmentHome.#{output_format}")
+      outputs[:esrat_iadref_results] = File.join(rated_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        outputs[:zerhrat_timeseries_results] = File.join(rundir, 'results', "ZERHRated_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
-        outputs[:zerhrd_timeseries_results] = File.join(rundir, 'results', "ZERHReference_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:esrat_timeseries_results] = File.join(rated_results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:esref_timeseries_results] = File.join(target_results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
-    if not iecc_eri_version.nil?
-      hpxmls[:iecc_eri_ref] = File.join(rundir, 'results', 'IECC_ERIReferenceHome.xml')
-      hpxmls[:iecc_eri_rated] = File.join(rundir, 'results', 'IECC_ERIRatedHome.xml')
-      outputs[:iecc_eri_results] = File.join(rundir, 'results', "IECC_ERI_Results.#{output_format}")
-      outputs[:iecc_eri_rated_results] = File.join(rundir, 'results', "IECC_ERIRatedHome.#{output_format}")
-      outputs[:iecc_eri_ref_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome.#{output_format}")
+    # DENH
+    denh_versions.each do |denh_version|
+      top_results_dir = File.join(rundir, "DENH_#{denh_version}", 'results')
+      target_results_dir = File.join(rundir, "DENH_#{denh_version}", 'TargetHome', 'results')
+      rated_results_dir = File.join(rundir, "DENH_#{denh_version}", 'RatedHome', 'results')
+      hpxmls[:denhrref] = File.join(top_results_dir, 'TargetHome.xml')
+      hpxmls[:denhrat] = File.join(top_results_dir, 'RatedHome.xml')
+      hpxmls[:denhrref_ref] = File.join(target_results_dir, 'ReferenceHome.xml')
+      hpxmls[:denhrref_rated] = File.join(target_results_dir, 'RatedHome.xml')
+      hpxmls[:denhrref_iad] = File.join(target_results_dir, 'IndexAdjustmentHome.xml')
+      hpxmls[:denhrref_iadref] = File.join(target_results_dir, 'IndexAdjustmentReferenceHome.xml')
+      hpxmls[:denhrat_ref] = File.join(rated_results_dir, 'ReferenceHome.xml')
+      hpxmls[:denhrat_rated] = File.join(rated_results_dir, 'RatedHome.xml')
+      hpxmls[:denhrat_iad] = File.join(rated_results_dir, 'IndexAdjustmentHome.xml')
+      hpxmls[:denhrat_iadref] = File.join(rated_results_dir, 'IndexAdjustmentReferenceHome.xml')
+      outputs[:denh_results] = File.join(top_results_dir, "results.#{output_format}")
+      outputs[:denhrref_eri_results] = File.join(target_results_dir, "results.#{output_format}")
+      outputs[:denhrat_eri_results] = File.join(rated_results_dir, "results.#{output_format}")
+      outputs[:denhrref_rated_results] = File.join(target_results_dir, "RatedHome.#{output_format}")
+      outputs[:denhrref_ref_results] = File.join(target_results_dir, "ReferenceHome.#{output_format}")
+      outputs[:denhrref_iad_results] = File.join(target_results_dir, "IndexAdjustmentHome.#{output_format}")
+      outputs[:denhrref_iadref_results] = File.join(target_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
+      outputs[:denhrat_rated_results] = File.join(rated_results_dir, "RatedHome.#{output_format}")
+      outputs[:denhrat_ref_results] = File.join(rated_results_dir, "ReferenceHome.#{output_format}")
+      outputs[:denhrat_iad_results] = File.join(rated_results_dir, "IndexAdjustmentHome.#{output_format}")
+      outputs[:denhrat_iadref_results] = File.join(rated_results_dir, "IndexAdjustmentReferenceHome.#{output_format}")
       if timeseries_frequency != 'none'
-        outputs[:iecc_eri_rated_timeseries_results] = File.join(rundir, 'results', "IECC_ERIRatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
-        outputs[:iecc_eri_ref_timeseries_results] = File.join(rundir, 'results', "IECC_ERIReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:denhrat_timeseries_results] = File.join(rated_results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
+        outputs[:denhrref_timeseries_results] = File.join(target_results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
     end
   end
@@ -167,8 +180,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       assert(File.exist?(output_path))
     end
   end
-  if diagnostic_output && (not eri_version.nil?) && (Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014AE'))
-    diag_output_path = File.join(rundir, 'results', 'HERS_Diagnostic.json')
+  if diagnostic_output && (eri_versions.size == 1) && (Constants::ERIVersions.index(eri_versions[0]) >= Constants::ERIVersions.index('2014AE'))
+    results_dir = File.join(rundir, "ERI_#{eri_versions[0]}", 'results')
+    diag_output_path = File.join(results_dir, 'HERS_Diagnostic.json')
     puts "Did not find #{diag_output_path}" unless File.exist?(diag_output_path)
     assert(File.exist?(diag_output_path))
 
@@ -195,6 +209,20 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       next if log_line.include?('OS Message: Error removing temporary directory at')
 
       flunk "Unexpected warning found in #{log_path} run.log: #{log_line}"
+    end
+  end
+
+  # Delete large files to prevent issue with CI running out of space
+  ['eplusout.json',
+   'eplusout.sql',
+   'eplusout.mtr',
+   'eplusmtr.csv',
+   'eplusout.eso',
+   'eplusout.csv',
+   'eplusout_hourly.json',
+   'eplusout_hourly.msgpack'].each do |out_type|
+    Dir["#{rundir}/**/#{out_type}"].each do |out_path|
+      File.delete(out_path)
     end
   end
 
@@ -247,12 +275,18 @@ def _get_csv_results(csvs)
       value = 0 if value == 'FAIL'
 
       if csv.include? 'IECC_'
-        key = "IECC #{key}"
+        key = "IECC #{key}" unless key.start_with?('IECC ')
       elsif csv.include? 'ES_'
-        key = "ES #{key}"
-      elsif csv.include? 'ZERH_'
-        key = "ZERH #{key}"
+        key = "ES #{key}" unless key.start_with?('ES ')
+      elsif csv.include? 'DENH_'
+        key = "DENH #{key}" unless key.start_with?('DENH ')
+      elsif csv.include? 'CO2e_'
+        key = "CO2e #{key}" unless key.start_with?('CO2e ')
       end
+      if not results[key].nil?
+        fail "Duplicate key: #{key}"
+      end
+
       if value.to_s.include? ',' # Sum values for visualization on CI
         results[key] = value.split(',').map(&:to_f).sum
       else
@@ -283,13 +317,13 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
   all_results = {}
   xmldir = File.join(File.dirname(__FILE__), dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
-    out_xml = File.join(@test_files_dir, test_name, File.basename(xml), File.basename(xml))
-    _run_ruleset(Constants::CalcTypeERIReferenceHome, xml, out_xml)
+    _rundir, hpxmls, _csvs = _run_workflow(xml, test_name, skip_simulation: true)
+
     test_num = File.basename(xml)[0, 2].to_i
-    all_results[File.basename(xml)] = _get_reference_home_components(out_xml, test_num, version)
+    all_results[File.basename(xml)] = _get_reference_home_components(hpxmls[:ref], test_num, version)
 
     # Update HPXML to override mech vent fan power for eRatio test
-    new_hpxml = HPXML.new(hpxml_path: out_xml)
+    new_hpxml = HPXML.new(hpxml_path: hpxmls[:ref])
     new_hpxml_bldg = new_hpxml.buildings[0]
     new_hpxml_bldg.ventilation_fans.each do |vent_fan|
       next unless vent_fan.used_for_whole_building_ventilation
@@ -302,9 +336,10 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
         vent_fan.fan_power = 1.00 * vent_fan.tested_flow_rate
       end
     end
-    XMLHelper.write_file(new_hpxml.to_doc, out_xml)
+    new_hpxml_bldg.heat_pumps[0].backup_heating_lockout_temp = nil unless new_hpxml_bldg.heat_pumps.empty?
+    XMLHelper.write_file(new_hpxml.to_doc, hpxmls[:ref])
 
-    _rundir, _hpxmls, csvs = _run_workflow(out_xml, test_name)
+    _rundir, _hpxmls, csvs = _run_workflow(hpxmls[:ref], test_name)
     eri_results = _get_csv_results([csvs[:eri_results]])
     all_results[File.basename(xml)]['e-Ratio'] = (eri_results['Total Loads TnML'] / eri_results['Total Loads TRL']).round(7)
   end
@@ -384,7 +419,7 @@ def _get_reference_home_components(hpxml, test_num, version)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
-  eri_version = hpxml.header.eri_calculation_version
+  eri_version = hpxml.header.eri_calculation_versions[0]
 
   # Above-grade walls
   wall_u, wall_solar_abs, wall_emiss, _wall_area = _get_above_grade_walls(hpxml_bldg)
@@ -508,7 +543,7 @@ def _get_iad_home_components(hpxml, test_num)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
-  eri_version = hpxml.header.eri_calculation_version
+  eri_version = hpxml.header.eri_calculation_versions[0]
 
   # Geometry
   results['Number of Stories'] = hpxml_bldg.building_construction.number_of_conditioned_floors
@@ -686,7 +721,22 @@ def _check_reference_home_components(results, test_num, version)
   assert_equal(0.00036, results['SLAo (ft2/ft2)'])
 
   # Internal gains
-  if version == '2022C'
+  if version == 'latest'
+    # Includes updated values due to HERS Addenda 81 and 90f and provided by Philip on 5/29/25
+    if test_num == 1
+      assert_in_epsilon(55037, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(13589, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 2
+      assert_in_epsilon(52367, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(12519, results['Latent Internal gains (Btu/day)'], epsilon)
+    elsif test_num == 3
+      assert_in_epsilon(47826, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(9146, results['Latent Internal gains (Btu/day)'], epsilon)
+    else
+      assert_in_epsilon(82522, results['Sensible Internal gains (Btu/day)'], epsilon)
+      assert_in_epsilon(17646, results['Latent Internal gains (Btu/day)'], epsilon)
+    end
+  elsif version == '2022C'
     # Pub 002-2024
     if test_num == 1
       assert_in_epsilon(55142, results['Sensible Internal gains (Btu/day)'], epsilon)
@@ -958,7 +1008,7 @@ def _get_infiltration(hpxml_bldg)
   ach50 = air_infil.air_leakage
   cfa = hpxml_bldg.building_construction.conditioned_floor_area
   infil_volume = air_infil.infiltration_volume
-  sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, 0.65, cfa, infil_volume)
+  sla = Airflow.get_infiltration_SLA_from_ACH50(ach50, infil_volume / cfa)
   return sla, ach50
 end
 
@@ -986,7 +1036,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   cooking_range = hpxml_bldg.cooking_ranges[0]
   cooking_range.usage_multiplier = 1.0 if cooking_range.usage_multiplier.nil?
   oven = hpxml_bldg.ovens[0]
-  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, nbeds, cooking_range, oven)
+  cr_annual_kwh, cr_annual_therm, cr_frac_sens, cr_frac_lat = HotWaterAndAppliances.calc_range_oven_energy(nil, hpxml_bldg, cooking_range, oven)
   btu = UnitConversions.convert(cr_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cr_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cr_frac_sens * btu)
   xml_appl_lat += (cr_frac_lat * btu)
@@ -1002,7 +1052,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: Dishwasher
   dishwasher = hpxml_bldg.dishwashers[0]
   dishwasher.usage_multiplier = 1.0 if dishwasher.usage_multiplier.nil?
-  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, nbeds, dishwasher)
+  dw_annual_kwh, dw_frac_sens, dw_frac_lat, _dw_gpd = HotWaterAndAppliances.calc_dishwasher_energy_gpd(nil, eri_version, hpxml_bldg, dishwasher)
   btu = UnitConversions.convert(dw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (dw_frac_sens * btu)
   xml_appl_lat += (dw_frac_lat * btu)
@@ -1010,7 +1060,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesWasher
   clothes_washer = hpxml_bldg.clothes_washers[0]
   clothes_washer.usage_multiplier = 1.0 if clothes_washer.usage_multiplier.nil?
-  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, nbeds, clothes_washer)
+  cw_annual_kwh, cw_frac_sens, cw_frac_lat, _cw_gpd = HotWaterAndAppliances.calc_clothes_washer_energy_gpd(nil, eri_version, hpxml_bldg, clothes_washer)
   btu = UnitConversions.convert(cw_annual_kwh, 'kWh', 'Btu')
   xml_appl_sens += (cw_frac_sens * btu)
   xml_appl_lat += (cw_frac_lat * btu)
@@ -1018,7 +1068,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Appliances: ClothesDryer
   clothes_dryer = hpxml_bldg.clothes_dryers[0]
   clothes_dryer.usage_multiplier = 1.0 if clothes_dryer.usage_multiplier.nil?
-  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, nbeds, clothes_dryer, clothes_washer)
+  cd_annual_kwh, cd_annual_therm, cd_frac_sens, cd_frac_lat = HotWaterAndAppliances.calc_clothes_dryer_energy(nil, eri_version, hpxml_bldg, clothes_dryer, clothes_washer)
   btu = UnitConversions.convert(cd_annual_kwh, 'kWh', 'Btu') + UnitConversions.convert(cd_annual_therm, 'therm', 'Btu')
   xml_appl_sens += (cd_frac_sens * btu)
   xml_appl_lat += (cd_frac_lat * btu)
@@ -1026,7 +1076,7 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   s += "#{xml_appl_sens} #{xml_appl_lat}\n"
 
   # Water Use
-  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds)
+  xml_water_sens, xml_water_lat = Defaults.get_water_use_internal_gains(nbeds, nil, nil)
   s += "#{xml_water_sens} #{xml_water_lat}\n"
 
   # Occupants
@@ -1074,16 +1124,27 @@ def _get_hvac(hpxml_bldg)
     num_afue += 1
   end
   hpxml_bldg.cooling_systems.each do |cooling_system|
-    seer += cooling_system.cooling_efficiency_seer
-    num_seer += 1
+    if not cooling_system.cooling_efficiency_seer.nil?
+      seer += cooling_system.cooling_efficiency_seer
+      num_seer += 1
+    elsif not cooling_system.cooling_efficiency_seer2.nil?
+      seer += HVAC.calc_seer_from_seer2(cooling_system)
+      num_seer += 1
+    end
   end
   hpxml_bldg.heat_pumps.each do |heat_pump|
     if not heat_pump.heating_efficiency_hspf.nil?
       hspf += heat_pump.heating_efficiency_hspf
       num_hspf += 1
+    elsif not heat_pump.heating_efficiency_hspf2.nil?
+      hspf += HVAC.calc_hspf_from_hspf2(heat_pump)
+      num_hspf += 1
     end
     if not heat_pump.cooling_efficiency_seer.nil?
       seer += heat_pump.cooling_efficiency_seer
+      num_seer += 1
+    elsif not heat_pump.cooling_efficiency_seer2.nil?
+      seer += HVAC.calc_seer_from_seer2(heat_pump)
       num_seer += 1
     end
   end
@@ -1093,7 +1154,7 @@ def _get_hvac(hpxml_bldg)
     dse += hvac_distribution.annual_cooling_dse
     num_dse += 1
   end
-  return afue / num_afue, hspf / num_hspf, seer / num_seer, dse / num_dse
+  return (afue / num_afue).round(2), (hspf / num_hspf).round(1), (seer / num_seer).round(1), (dse / num_dse).round(2)
 end
 
 def _get_tstat(eri_version, hpxml_bldg)

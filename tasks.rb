@@ -62,6 +62,9 @@ def create_test_hpxmls
     'RESNET_Tests/4.1_Standard_140/L324XC.xml' => nil,
 
     # These are generated on the fly
+    'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml' => nil,
+    'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml' => nil,
+    'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml' => nil,
     'EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml' => nil,
     'EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml' => nil,
     'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml' => nil,
@@ -71,6 +74,9 @@ def create_test_hpxmls
     'EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml' => nil,
     'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml' => nil,
     'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml' => nil,
+    'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml' => nil,
+    'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml' => nil,
+    'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml' => nil,
     'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml' => nil,
     'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml' => nil,
     'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml' => nil,
@@ -157,7 +163,7 @@ def create_test_hpxmls
       hpxml.buildings.add(building_id: 'MyBuilding')
       hpxml_files.each do |hpxml_file|
         if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file))
+          hpxml = get_standard_140_hpxml(File.join(tests_dir, hpxml_file))
           next
         end
         hpxml_bldg = hpxml.buildings[0]
@@ -246,6 +252,11 @@ end
 def get_standard_140_hpxml(hpxml_path)
   hpxml = HPXML.new(hpxml_path: hpxml_path)
 
+  hpxml_bldg = hpxml.buildings[0]
+  if hpxml_bldg.air_infiltration_measurements[0].infiltration_volume.nil?
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
+  end
+
   return hpxml
 end
 
@@ -254,36 +265,28 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml.header.apply_ashrae140_assumptions = nil
   end
   if hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
-    hpxml.header.eri_calculation_version = '2014'
+    hpxml.header.eri_calculation_versions = ['2014']
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE') ||
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014')
-    hpxml.header.eri_calculation_version = '2014A'
+    hpxml.header.eri_calculation_versions = ['2014A']
   elsif hpxml_file.include?('RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA') ||
         hpxml_file.include?('RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA')
-    hpxml.header.eri_calculation_version = '2019'
+    hpxml.header.eri_calculation_versions = ['2019']
   elsif hpxml_file.include?('Other_HERS_AutoGen_IAD_Home')
-    hpxml.header.eri_calculation_version = '2019ABCD'
-  elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method')
-    hpxml.header.eri_calculation_version = 'latest'
+    hpxml.header.eri_calculation_versions = ['2019ABCD']
+  elsif hpxml_file.include?('RESNET_Tests/4.')
+    hpxml.header.eri_calculation_versions = ['2022CE']
   elsif hpxml_file.include?('EPA_Tests')
     hpxml.header.xml_type = 'HPXML'
     hpxml.header.xml_generated_by = 'tasks.rb'
     hpxml.header.transaction = 'create'
     hpxml.header.created_date_and_time = Time.new(2000, 1, 1, 0, 0, 0, '-07:00').strftime('%Y-%m-%dT%H:%M:%S%:z') # Hard-code to prevent diffs
     hpxml_bldg.event_type = 'proposed workscope'
-    if hpxml_file.include?('SF_National_3.2')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
-    elsif hpxml_file.include?('SF_National_3.1')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_1
-    elsif hpxml_file.include?('SF_National_3.0')
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_0
-    elsif hpxml_file.include?('MF_National_1.2')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
-    elsif hpxml_file.include?('MF_National_1.1')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_1
-    elsif hpxml_file.include?('MF_National_1.0')
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_0
+    ES::AllVersions.each do |es_version|
+      if hpxml_file.include? es_version
+        hpxml.header.energystar_calculation_versions = [es_version]
+      end
     end
     hpxml_bldg.state_code = File.basename(hpxml_file)[11..12]
   end
@@ -292,8 +295,8 @@ def set_hpxml_header(hpxml_file, hpxml, hpxml_bldg, orig_parent)
     hpxml_bldg.header.extension_properties['ParentHPXMLFile'] = File.basename(orig_parent)
   end
 
-  eri_version = hpxml.header.eri_calculation_version
-  eri_version = Constants::ERIVersions[-1] if (eri_version == 'latest' || eri_version.nil?)
+  eri_version = (hpxml.header.eri_calculation_versions.nil? ? nil : hpxml.header.eri_calculation_versions[0])
+  eri_version = 'latest' if eri_version.nil?
   return eri_version
 end
 
@@ -455,8 +458,12 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
            'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
            'EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
            'EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',].include? hpxml_file
+           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
       ach50 = 3
+    elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
+      ach50 = 2.5
     end
     hpxml_bldg.air_infiltration_measurements.clear
     hpxml_bldg.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml_bldg.air_infiltration_measurements.size + 1}",
@@ -465,12 +472,17 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
                                                  air_leakage: ach50,
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
-    tot_cb_area, _ext_cb_area = hpxml_bldg.compartmentalization_boundary_areas()
+    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg)
+    if hpxml_file.include?('MF_National_1.3')
+      air_leakage = 0.27
+    else
+      air_leakage = 0.3
+    end
     hpxml_bldg.air_infiltration_measurements.clear
     hpxml_bldg.air_infiltration_measurements.add(id: "AirInfiltrationMeasurement#{hpxml_bldg.air_infiltration_measurements.size + 1}",
                                                  unit_of_measure: HPXML::UnitsCFM,
                                                  house_pressure: 50,
-                                                 air_leakage: (0.3 * tot_cb_area).round(3),
+                                                 air_leakage: (air_leakage * tot_cb_area).round(3),
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   end
 end
@@ -540,10 +552,13 @@ def set_hpxml_rim_joists(hpxml_file, hpxml_bldg)
       assembly_r = (1.0 / 0.057).round(3)
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.048).round(3)
-    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
+           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     hpxml_bldg.rim_joists.clear
@@ -581,10 +596,13 @@ def set_hpxml_rim_joists(hpxml_file, hpxml_bldg)
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.051).round(3)
-    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
-           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
@@ -647,10 +665,13 @@ def set_hpxml_walls(hpxml_file, hpxml_bldg)
       assembly_r = (1.0 / 0.057).round(3)
     elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.048).round(3)
-    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
-           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
+           'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     hpxml_bldg.walls.clear
@@ -672,10 +693,13 @@ def set_hpxml_walls(hpxml_file, hpxml_bldg)
     elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.0/MFNCv1_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.051).round(3)
-    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+    elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.084).round(3)
     elsif ['EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml',
-           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+           'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       assembly_r = (1.0 / 0.045).round(3)
     end
     if hpxml_file.include?('ground_corner') || hpxml_file.include?('top_corner')
@@ -888,17 +912,22 @@ def set_hpxml_floors(hpxml_file, hpxml_bldg)
       exterior_adjacent_to = HPXML::LocationAtticVented
       if ['EPA_Tests/SF_National_3.0/SFNHv3_CZ2_FL_gas_slab.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.035).round(3)
-      elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
-             'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml'].include? hpxml_file
+      elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml',
+             'EPA_Tests/SF_National_3.1/SFNHv31_CZ2_FL_elec_slab.xml',
+             'EPA_Tests/SF_National_3.0/SFNHv3_CZ4_MO_gas_vented_crawl.xml',
+             'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.030).round(3)
       elsif ['EPA_Tests/MF_National_1.1/MFNCv11_CZ2_FL_elec_top_corner.xml',
              'EPA_Tests/MF_National_1.0/MFNCv1_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.027).round(3)
-      elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
+      elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+             'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml',
+             'EPA_Tests/SF_National_3.2/SFNHv32_CZ2_FL_gas_slab.xml',
              'EPA_Tests/SF_National_3.1/SFNHv31_CZ4_MO_elec_vented_crawl.xml',
              'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
              'EPA_Tests/SF_National_3.0/SFNHv3_CZ6_VT_elec_cond_bsmt.xml',
-             'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+             'EPA_Tests/MF_National_1.2/MFNCv12_CZ2_FL_gas_ground_corner_slab.xml',
+             'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
         ceiling_assembly_r = (1.0 / 0.026).round(3)
       elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ4_MO_gas_vented_crawl.xml',
              'EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
@@ -1001,6 +1030,7 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
     hpxml_bldg.windows.each do |window|
       window.interior_shading_factor_summer = nil
       window.interior_shading_factor_winter = nil
+      window.interior_shading_type = nil
       window.performance_class = HPXML::WindowClassResidential
     end
   elsif hpxml_file.include?('EPA_Tests')
@@ -1028,16 +1058,23 @@ def set_hpxml_windows(hpxml_file, hpxml_bldg)
            'EPA_Tests/MF_National_1.2/MFNCv12_CZ4_MO_gas_top_corner.xml'].include? hpxml_file
       ufactor = 0.30
       shgc = 0.30
-    elsif [
-      'EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
-
-      'EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml'
-    ].include? hpxml_file
+    elsif ['EPA_Tests/SF_National_3.1/SFNHv31_CZ6_VT_gas_cond_bsmt.xml',
+           'EPA_Tests/MF_National_1.1/MFNCv11_CZ6_VT_gas_ground_corner_cond_bsmt.xml'].include? hpxml_file
       ufactor = 0.27
       shgc = 0.40
     elsif ['EPA_Tests/SF_National_3.2/SFNHv32_CZ6_VT_elec_cond_bsmt.xml',
            'EPA_Tests/MF_National_1.2/MFNCv12_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
       ufactor = 0.27
+      shgc = 0.30
+    elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ2_FL_gas_slab.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ2_FL_gas_ground_corner_slab.xml'].include? hpxml_file
+      ufactor = 0.32
+      shgc = 0.23
+    elsif ['EPA_Tests/SF_National_3.3/SFNHv33_CZ4_MO_gas_vented_crawl.xml',
+           'EPA_Tests/SF_National_3.3/SFNHv33_CZ6_VT_elec_cond_bsmt.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ4_MO_gas_top_corner.xml',
+           'EPA_Tests/MF_National_1.3/MFNCv13_CZ6_VT_elec_middle_interior.xml'].include? hpxml_file
+      ufactor = 0.25
       shgc = 0.30
     end
 
@@ -1082,7 +1119,7 @@ end
 
 def set_hpxml_doors(hpxml_file, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests/SF')
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1')
       r_value = (1.0 / 0.17).round(3)
     elsif hpxml_file.include?('SF_National_3.0')
       r_value = (1.0 / 0.21).round(3)
@@ -1101,7 +1138,7 @@ def set_hpxml_doors(hpxml_file, hpxml_bldg)
   elsif hpxml_file.include?('EPA_Tests/MF')
     if hpxml_file.include?('MF_National_1.0')
       r_value = (1.0 / 0.21).round(3)
-    elsif hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.2')
+    elsif hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
       r_value = (1.0 / 0.17).round(3)
     end
     doors = [[0, 21, 'Wall1']]
@@ -1193,12 +1230,19 @@ def set_hpxml_heating_systems(hpxml_file, hpxml_bldg)
     elsif hpxml_file.include?('CZ2')
       afue = 0.80
     elsif hpxml_file.include?('CZ4')
-      afue = 0.90
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+        afue = 0.95
+      else
+        afue = 0.90
+      end
     elsif hpxml_file.include?('CZ6')
       afue = 0.95
     end
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.075
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
       fan_watts_per_cfm = 0.52
       airflow_defect_ratio = -0.20
     else
@@ -1230,6 +1274,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 11,
+                                   cooling_efficiency_eer: 9.6,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1243,6 +1289,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 15,
+                                   cooling_efficiency_eer: 12.5,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1257,6 +1305,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 10,
+                                   cooling_efficiency_eer: 8.8,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1270,6 +1320,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: 13,
+                                   cooling_efficiency_eer: 11,
+                                   compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1277,26 +1329,42 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
     if hpxml_file.include?('_elec_')
       return
     elsif hpxml_file.include?('CZ2')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
+        eer = 13.0
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 14.5
+        eer = 12.2
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 16
+        eer = 13.0
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         seer = 13
+        eer = 11.3
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         seer = 14
+        eer = 11.9
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       else
         seer = 13
+        eer = 11.3
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.075
+      charge_defect_ratio = -0.25
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
       fan_watts_per_cfm = 0.52
       airflow_defect_ratio = -0.20
       charge_defect_ratio = -0.25
@@ -1314,6 +1382,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    cooling_capacity: -1,
                                    fraction_cool_load_served: 1,
                                    cooling_efficiency_seer: seer,
+                                   cooling_efficiency_eer: eer,
+                                   compressor_type: compressor_type,
                                    fan_watts_per_cfm: fan_watts_per_cfm,
                                    airflow_defect_ratio: airflow_defect_ratio,
                                    charge_defect_ratio: charge_defect_ratio)
@@ -1333,6 +1403,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               heating_capacity: -1,
+                              heating_capacity_17F: -1,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
@@ -1341,6 +1412,8 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: 7.5,
                               cooling_efficiency_seer: 12,
+                              cooling_efficiency_eer: 10.3,
+                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
                               charge_defect_ratio: -0.25)
@@ -1354,6 +1427,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               heating_capacity: -1,
+                              heating_capacity_17F: -1,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
@@ -1362,6 +1436,8 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: 6.8,
                               cooling_efficiency_seer: 10,
+                              cooling_efficiency_eer: 8.8,
+                              compressor_type: HPXML::HVACCompressorTypeSingleStage,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
                               charge_defect_ratio: -0.25)
@@ -1372,32 +1448,53 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
     if hpxml_file.include?('_gas_')
       return
     elsif hpxml_file.include?('CZ2')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
+        eer = 13.0
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 8.2
         seer = 15
+        eer = 12.4
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ4')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
+        eer = 13.0
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 8.5
         seer = 15
+        eer = 12.4
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     elsif hpxml_file.include?('CZ6')
-      if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+      if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+        hspf = 9.5
+        seer = 16
+        eer = 13.0
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
+      elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
         hspf = 9.2
         seer = 16
+        eer = 13.0
+        compressor_type = HPXML::HVACCompressorTypeTwoStage
       else
         hspf = 9.5
         seer = 14.5
+        eer = 12.2
+        compressor_type = HPXML::HVACCompressorTypeSingleStage
       end
     end
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      fan_watts_per_cfm = 0.52
+      airflow_defect_ratio = -0.075
+      charge_defect_ratio = -0.25
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
       fan_watts_per_cfm = 0.52
       airflow_defect_ratio = -0.20
       charge_defect_ratio = -0.25
@@ -1414,6 +1511,7 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               cooling_capacity: -1,
                               heating_capacity: -1,
+                              heating_capacity_17F: -1,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
@@ -1422,6 +1520,8 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               fraction_cool_load_served: 1,
                               heating_efficiency_hspf: hspf,
                               cooling_efficiency_seer: seer,
+                              cooling_efficiency_eer: eer,
+                              compressor_type: compressor_type,
                               fan_watts_per_cfm: fan_watts_per_cfm,
                               airflow_defect_ratio: airflow_defect_ratio,
                               charge_defect_ratio: charge_defect_ratio)
@@ -1464,8 +1564,10 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
       'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/04-L324.xml',
       'RESNET_Tests/4.3_HERS_Method/L100A-01.xml'].include?(hpxml_file) ||
      hpxml_file.include?('Hot_Water') ||
+     hpxml_file.include?('EPA_Tests/SF_National_3.3') ||
      hpxml_file.include?('EPA_Tests/SF_National_3.2') ||
      hpxml_file.include?('EPA_Tests/SF_National_3.1') ||
+     hpxml_file.include?('EPA_Tests/MF_National_1.3') ||
      hpxml_file.include?('EPA_Tests/MF_National_1.2') ||
      hpxml_file.include?('EPA_Tests/MF_National_1.1')
     # No leakage
@@ -1515,8 +1617,8 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
   elsif hpxml_file.include?('EPA_Tests')
     supply_area = 0.27 * hpxml_bldg.building_construction.conditioned_floor_area
     return_area = 0.05 * hpxml_bldg.building_construction.conditioned_floor_area
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
-       hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
+       hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1') || hpxml_file.include?('MF_National_1.0')
       if hpxml_file.include?('MF_National_1.0') && hpxml_file.include?('top_corner')
         location = HPXML::LocationAtticVented
         supply_r = 8
@@ -1628,14 +1730,30 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
                                     used_for_whole_building_ventilation: true,
                                     is_shared_system: false)
   elsif hpxml_file.include?('EPA_Tests')
-    if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
-      fan_type = HPXML::MechVentTypeSupply
-    elsif hpxml_file.include?('CZ6')
-      fan_type = HPXML::MechVentTypeExhaust
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
+        fan_type = HPXML::MechVentTypeSupply
+      elsif hpxml_file.include?('CZ6')
+        fan_type = HPXML::MechVentTypeHRV
+        sre = 0.65
+      end
+    else
+      if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
+        fan_type = HPXML::MechVentTypeSupply
+      elsif hpxml_file.include?('CZ6')
+        fan_type = HPXML::MechVentTypeExhaust
+      end
     end
+
     tested_flow_rate = (0.01 * hpxml_bldg.building_construction.conditioned_floor_area + 7.5 * (hpxml_bldg.building_construction.number_of_bedrooms + 1)).round(2)
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
-       hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      if hpxml_file.include?('CZ2') || hpxml_file.include?('CZ4')
+        cfm_per_w = 3.8
+      elsif hpxml_file.include?('CZ6')
+        cfm_per_w = 1.2
+      end
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('SF_National_3.1') ||
+          hpxml_file.include?('MF_National_1.2') || hpxml_file.include?('MF_National_1.1')
       cfm_per_w = 2.8
     elsif hpxml_file.include?('SF_National_3.0') || hpxml_file.include?('MF_National_1.0')
       cfm_per_w = 2.2
@@ -1646,6 +1764,7 @@ def set_hpxml_ventilation_fans(hpxml_file, hpxml_bldg)
                                     tested_flow_rate: tested_flow_rate,
                                     hours_in_operation: 24,
                                     fan_power: (tested_flow_rate / cfm_per_w).round(3),
+                                    sensible_recovery_efficiency: sre,
                                     used_for_whole_building_ventilation: true,
                                     is_shared_system: false)
   end
@@ -1714,7 +1833,10 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
     hpxml_bldg.water_heating_systems.clear
     if hpxml_file.include?('_gas_')
       if hpxml_file.include?('EPA_Tests/MF')
-        if hpxml_file.include?('MF_National_1.2')
+        if hpxml_file.include?('MF_National_1.3')
+          water_heater_type = HPXML::WaterHeaterTypeTankless
+          uniform_energy_factor = 0.95
+        elsif hpxml_file.include?('MF_National_1.2')
           water_heater_type = HPXML::WaterHeaterTypeTankless
           uniform_energy_factor = 0.9
         else
@@ -1723,7 +1845,10 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
           energy_factor = 0.67
         end
       else
-        if hpxml_file.include?('SF_National_3.2')
+        if hpxml_file.include?('SF_National_3.3')
+          water_heater_type = HPXML::WaterHeaterTypeTankless
+          uniform_energy_factor = 0.95
+        elsif hpxml_file.include?('SF_National_3.2')
           water_heater_type = HPXML::WaterHeaterTypeTankless
           uniform_energy_factor = 0.9
         else
@@ -1743,7 +1868,12 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
                                            uniform_energy_factor: uniform_energy_factor)
     elsif hpxml_file.include?('_elec_')
       if hpxml_file.include?('EPA_Tests/MF')
-        if hpxml_file.include?('MF_National_1.2')
+        if hpxml_file.include?('MF_National_1.3')
+          water_heater_type = HPXML::WaterHeaterTypeHeatPump
+          tank_volume = 60
+          uniform_energy_factor = 2.5
+          first_hour_rating = 40
+        elsif hpxml_file.include?('MF_National_1.2')
           water_heater_type = HPXML::WaterHeaterTypeHeatPump
           tank_volume = 60
           uniform_energy_factor = 1.49
@@ -1754,7 +1884,7 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
           energy_factor = 0.95
         end
       else
-        if hpxml_file.include?('SF_National_3.2')
+        if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2')
           water_heater_type = HPXML::WaterHeaterTypeHeatPump
           tank_volume = 60
           uniform_energy_factor = 2.2
@@ -1776,6 +1906,9 @@ def set_hpxml_water_heating_systems(hpxml_file, hpxml_bldg)
                                            uniform_energy_factor: uniform_energy_factor,
                                            first_hour_rating: first_hour_rating)
     end
+  end
+  if hpxml_bldg.water_heating_systems[0].water_heater_type == HPXML::WaterHeaterTypeHeatPump
+    hpxml_bldg.water_heating_systems[0].hpwh_confined_space_without_mitigation = false
   end
 end
 
@@ -1870,7 +2003,7 @@ end
 def set_hpxml_clothes_washer(hpxml_file, eri_version, hpxml_bldg)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('EPA_Tests')
 
-  if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+  if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
     default_values = { integrated_modified_energy_factor: 1.57, # ft3/(kWh/cyc)
                        rated_annual_kwh: 284.0, # kWh/yr
                        label_electric_rate: 0.12, # $/kWh
@@ -1918,7 +2051,8 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
                                   location: HPXML::LocationConditionedSpace,
                                   fuel_type: HPXML::FuelTypeNaturalGas,
                                   control_type: default_values[:control_type],
-                                  combined_energy_factor: default_values[:combined_energy_factor])
+                                  combined_energy_factor: default_values[:combined_energy_factor],
+                                  is_vented: true)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -1937,21 +2071,33 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
                                   location: HPXML::LocationConditionedSpace,
                                   fuel_type: HPXML::FuelTypeElectricity,
                                   control_type: default_values[:control_type],
-                                  combined_energy_factor: default_values[:combined_energy_factor])
+                                  combined_energy_factor: default_values[:combined_energy_factor],
+                                  is_vented: true)
   end
 end
 
 def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests')
+    if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
+      rated_annual_kwh = 240
+      label_electric_rate = 0.14
+      label_gas_rate = 1.21
+      label_annual_gas_cost = 24.00
+    else
+      rated_annual_kwh = 270
+      label_electric_rate = 0.12
+      label_gas_rate = 1.09
+      label_annual_gas_cost = 22.23
+    end
     hpxml_bldg.dishwashers.clear
     hpxml_bldg.dishwashers.add(id: "Dishwasher#{hpxml_bldg.dishwashers.size + 1}",
                                is_shared_appliance: false,
                                location: HPXML::LocationConditionedSpace,
                                place_setting_capacity: 12,
-                               rated_annual_kwh: 270,
-                               label_electric_rate: 0.12,
-                               label_gas_rate: 1.09,
-                               label_annual_gas_cost: 22.23,
+                               rated_annual_kwh: rated_annual_kwh,
+                               label_electric_rate: label_electric_rate,
+                               label_gas_rate: label_gas_rate,
+                               label_annual_gas_cost: label_annual_gas_cost,
                                label_usage: 208 / 52)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
     default_values = Defaults.get_dishwasher_values(eri_version)
@@ -1972,7 +2118,10 @@ def set_hpxml_refrigerator(hpxml_file, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests')
     hpxml_bldg.refrigerators.clear
 
-    if hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.2')
+    if hpxml_file.include?('SF_National_3.3')
+      default_values = Defaults.get_refrigerator_values(hpxml_bldg.building_construction.number_of_bedrooms)
+      rated_annual_kwh = default_values[:rated_annual_kwh]
+    elsif hpxml_file.include?('SF_National_3.2') || hpxml_file.include?('MF_National_1.3') || hpxml_file.include?('MF_National_1.2')
       rated_annual_kwh = 450.0
     else
       rated_annual_kwh = 423.0
@@ -2043,23 +2192,13 @@ end
 def set_hpxml_lighting(hpxml_file, hpxml_bldg)
   return unless hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('EPA_Tests')
 
-  if hpxml_file.include?('EPA_Tests/SF_National_3.2')
+  if hpxml_file.include?('EPA_Tests/SF_National_3.3') || hpxml_file.include?('EPA_Tests/SF_National_3.2') || hpxml_file.include?('EPA_Tests/MF_National_1.3') || hpxml_file.include?('EPA_Tests/MF_National_1.2')
     ltg_fracs = { [HPXML::LocationInterior, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationExterior, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLED] => 1.0,
                   [HPXML::LocationInterior, HPXML::LightingTypeCFL] => 0,
                   [HPXML::LocationExterior, HPXML::LightingTypeCFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeCFL] => 0,
-                  [HPXML::LocationInterior, HPXML::LightingTypeLFL] => 0,
-                  [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
-                  [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
-  elsif hpxml_file.include?('EPA_Tests/MF_National_1.2')
-    ltg_fracs = { [HPXML::LocationInterior, HPXML::LightingTypeLED] => 0,
-                  [HPXML::LocationExterior, HPXML::LightingTypeLED] => 0,
-                  [HPXML::LocationGarage, HPXML::LightingTypeLED] => 0,
-                  [HPXML::LocationInterior, HPXML::LightingTypeCFL] => 1.0,
-                  [HPXML::LocationExterior, HPXML::LightingTypeCFL] => 1.0,
-                  [HPXML::LocationGarage, HPXML::LightingTypeCFL] => 1.0,
                   [HPXML::LocationInterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationExterior, HPXML::LightingTypeLFL] => 0,
                   [HPXML::LocationGarage, HPXML::LightingTypeLFL] => 0 }
@@ -2111,8 +2250,8 @@ def create_sample_hpxmls
   # Copy files we're interested in
   include_list = ['base.xml',
                   'base-appliances-dehumidifier.xml',
-                  'base-appliances-dehumidifier-ief-portable.xml',
-                  'base-appliances-dehumidifier-ief-whole-home.xml',
+                  'base-appliances-dehumidifier-ef-portable.xml',
+                  'base-appliances-dehumidifier-ef-whole-home.xml',
                   'base-appliances-dehumidifier-multiple.xml',
                   'base-appliances-gas.xml',
                   'base-appliances-modified.xml',
@@ -2163,11 +2302,12 @@ def create_sample_hpxmls
                   'base-dhw-recirc-demand.xml',
                   'base-dhw-solar-fraction.xml',
                   'base-dhw-solar-indirect-flat-plate.xml',
-                  'base-dhw-tank-elec-uef.xml',
-                  'base-dhw-tank-gas-uef.xml',
-                  'base-dhw-tank-heat-pump-uef.xml',
-                  'base-dhw-tankless-electric-uef.xml',
-                  'base-dhw-tankless-gas-uef.xml',
+                  'base-dhw-tank-elec-ef.xml',
+                  'base-dhw-tank-gas-ef.xml',
+                  'base-dhw-tank-heat-pump-ef.xml',
+                  'base-dhw-tank-heat-pump-confined-space.xml',
+                  'base-dhw-tankless-electric-ef.xml',
+                  'base-dhw-tankless-gas-ef.xml',
                   'base-dhw-tankless-propane.xml',
                   'base-dhw-tank-oil.xml',
                   'base-dhw-tank-wood.xml',
@@ -2207,7 +2347,7 @@ def create_sample_hpxmls
                   'base-hvac-air-to-air-heat-pump-1-speed-cooling-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-heating-only.xml',
                   'base-hvac-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
-                  'base-hvac-air-to-air-heat-pump-1-speed-seer2-hspf2.xml',
+                  'base-hvac-air-to-air-heat-pump-1-speed-seer-hspf.xml',
                   'base-hvac-air-to-air-heat-pump-2-speed.xml',
                   'base-hvac-air-to-air-heat-pump-var-speed.xml',
                   'base-hvac-boiler-elec-only.xml',
@@ -2215,30 +2355,30 @@ def create_sample_hpxmls
                   'base-hvac-boiler-oil-only.xml',
                   'base-hvac-boiler-propane-only.xml',
                   'base-hvac-central-ac-only-1-speed.xml',
-                  'base-hvac-central-ac-only-1-speed-seer2.xml',
+                  'base-hvac-central-ac-only-1-speed-seer.xml',
                   'base-hvac-central-ac-only-2-speed.xml',
                   'base-hvac-central-ac-only-var-speed.xml',
                   'base-hvac-central-ac-plus-air-to-air-heat-pump-heating.xml',
                   'base-hvac-dse.xml',
-                  'base-hvac-ducts-area-fractions.xml',
+                  'base-hvac-ducts-areas.xml',
                   'base-hvac-ducts-leakage-cfm50.xml',
                   'base-hvac-ducts-buried.xml',
                   'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml',
-                  'base-hvac-dual-fuel-air-to-air-heat-pump-1-speed-lockout-temperatures.xml',
                   'base-hvac-elec-resistance-only.xml',
                   'base-hvac-evap-cooler-only.xml',
                   'base-hvac-evap-cooler-only-ducted.xml',
+                  'base-hvac-fan-motor-type.xml',
                   'base-hvac-fireplace-wood-only.xml',
                   'base-hvac-floor-furnace-propane-only.xml',
                   'base-hvac-furnace-elec-only.xml',
                   'base-hvac-furnace-gas-only.xml',
                   'base-hvac-furnace-gas-plus-air-to-air-heat-pump-cooling.xml',
-                  'base-hvac-ground-to-air-heat-pump.xml',
+                  'base-hvac-ground-to-air-heat-pump-1-speed.xml', # FUTURE: Add 2/var-speed files when OS-HPXML modeling reflects it
                   'base-hvac-ground-to-air-heat-pump-cooling-only.xml',
                   'base-hvac-ground-to-air-heat-pump-heating-only.xml',
                   'base-hvac-install-quality-air-to-air-heat-pump-1-speed.xml',
                   'base-hvac-install-quality-furnace-gas-central-ac-1-speed.xml',
-                  'base-hvac-install-quality-ground-to-air-heat-pump.xml',
+                  'base-hvac-install-quality-ground-to-air-heat-pump-1-speed.xml',
                   'base-hvac-install-quality-mini-split-air-conditioner-only-ducted.xml',
                   'base-hvac-install-quality-mini-split-heat-pump-ducted.xml',
                   'base-hvac-mini-split-air-conditioner-only-ducted.xml',
@@ -2255,7 +2395,7 @@ def create_sample_hpxmls
                   'base-hvac-ptac-with-heating-natural-gas.xml',
                   'base-hvac-pthp.xml',
                   'base-hvac-room-ac-only.xml',
-                  'base-hvac-room-ac-only-ceer.xml',
+                  'base-hvac-room-ac-only-eer.xml',
                   'base-hvac-room-ac-with-heating.xml',
                   'base-hvac-room-ac-with-reverse-cycle.xml',
                   'base-hvac-stove-wood-pellets-only.xml',
@@ -2300,19 +2440,17 @@ def create_sample_hpxmls
 
   # Update HPXMLs as needed
   puts 'Updating HPXML inputs for OS-ERI...'
-  hpxml_paths = []
   Dir['workflow/sample_files/*.xml'].each do |hpxml_path|
-    hpxml_paths << hpxml_path
-  end
-  hpxml_paths.each do |hpxml_path|
+    next unless File.file? hpxml_path
+
     hpxml = HPXML.new(hpxml_path: hpxml_path)
     hpxml_bldg = hpxml.buildings[0]
 
     # Handle different inputs for ERI
 
-    hpxml.header.eri_calculation_version = 'latest'
-    hpxml.header.co2index_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
+    hpxml.header.eri_calculation_versions = ['latest']
+    hpxml.header.co2index_calculation_versions = ['latest']
+    hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
     hpxml.header.utility_bill_scenarios.clear
     hpxml.header.timestep = nil
     hpxml_bldg.site.site_type = nil
@@ -2324,19 +2462,28 @@ def create_sample_hpxmls
     hpxml_bldg.site.ground_conductivity = nil
     hpxml_bldg.building_construction.number_of_units_in_building = nil
     hpxml_bldg.building_construction.number_of_bathrooms = nil
+    hpxml_bldg.air_infiltration_measurements.each do |measurement|
+      measurement.infiltration_type = nil
+      if measurement.infiltration_volume.nil?
+        measurement.infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
+      end
+    end
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
     hpxml_bldg.building_construction.unit_height_above_grade = nil
-    hpxml_bldg.air_infiltration_measurements.each do |measurement|
-      measurement.infiltration_type = nil
-    end
     hpxml_bldg.attics.each do |attic|
+      if attic.attic_type == HPXML::AtticTypeVented
+        attic.vented_attic_sla = 0.003 if attic.vented_attic_sla.nil?
+      end
       if [HPXML::AtticTypeVented,
           HPXML::AtticTypeUnvented].include? attic.attic_type
         attic.within_infiltration_volume = false if attic.within_infiltration_volume.nil?
       end
     end
     hpxml_bldg.foundations.each do |foundation|
+      if foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
+        foundation.vented_crawlspace_sla = 0.00667 if foundation.vented_crawlspace_sla.nil?
+      end
       next unless [HPXML::FoundationTypeBasementUnconditioned,
                    HPXML::FoundationTypeCrawlspaceUnvented,
                    HPXML::FoundationTypeCrawlspaceVented].include? foundation.foundation_type
@@ -2347,6 +2494,12 @@ def create_sample_hpxmls
       roof.roof_type = nil
       roof.interior_finish_type = nil
       roof.interior_finish_thickness = nil
+      if roof.radiant_barrier && roof.radiant_barrier_grade.nil?
+        roof.radiant_barrier_grade = 2
+      end
+      roof.roof_color = nil
+      roof.solar_absorptance = 0.7
+      roof.emittance = 0.92
     end
     (hpxml_bldg.rim_joists + hpxml_bldg.walls).each do |wall_or_rim_joist|
       wall_or_rim_joist.siding = nil
@@ -2394,9 +2547,18 @@ def create_sample_hpxmls
         end
       end
     end
+    hpxml_bldg.slabs.each do |slab|
+      if slab.carpet_fraction.nil?
+        slab.carpet_fraction = 0.0
+      end
+      if slab.carpet_r_value.nil?
+        slab.carpet_r_value = 0.0
+      end
+    end
     hpxml_bldg.windows.each do |window|
       window.interior_shading_factor_winter = nil
       window.interior_shading_factor_summer = nil
+      window.interior_shading_type = nil
     end
     hpxml_bldg.cooling_systems.each do |cooling_system|
       cooling_system.primary_system = nil
@@ -2413,15 +2575,19 @@ def create_sample_hpxmls
       heat_pump.primary_heating_system = nil
       heat_pump.primary_cooling_system = nil
       next unless heat_pump.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir
+
+      heat_pump.compressor_type = nil # FUTURE: Eventually remove this when OS-HPXML modeling reflects it
+
       next unless heat_pump.is_shared_system.nil?
 
       heat_pump.is_shared_system = false
     end
     hpxml_bldg.water_heating_systems.each do |water_heating_system|
       water_heating_system.temperature = nil
-      next unless water_heating_system.is_shared_system.nil?
-
-      water_heating_system.is_shared_system = false
+      water_heating_system.is_shared_system = false if water_heating_system.is_shared_system.nil?
+      if water_heating_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        water_heating_system.hpwh_confined_space_without_mitigation = false if water_heating_system.hpwh_confined_space_without_mitigation.nil?
+      end
     end
     hpxml_bldg.water_fixtures.each do |water_fixture|
       water_fixture.count = nil
@@ -2440,6 +2606,10 @@ def create_sample_hpxmls
       end
     end
     if not hpxml_bldg.clothes_dryers.empty?
+      if hpxml_bldg.clothes_dryers[0].is_vented.nil?
+        hpxml_bldg.clothes_dryers[0].is_vented = (![HPXML::DryingMethodCondensing, HPXML::DryingMethodHeatPump].include? hpxml_bldg.clothes_dryers[0].drying_method)
+        hpxml_bldg.clothes_dryers[0].drying_method = nil
+      end
       if hpxml_bldg.clothes_dryers[0].is_shared_appliance
         hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_dryers[0].count = 2
@@ -2525,6 +2695,23 @@ def create_sample_hpxmls
       end
     end
     hpxml_bldg.heat_pumps.each do |heat_pump|
+      heat_pump.backup_heating_lockout_temp = nil
+      heat_pump.backup_heating_switchover_temp = nil
+
+      if heat_pump.heating_capacity_17F.nil?
+        if [HPXML::HVACTypeHeatPumpAirToAir,
+            HPXML::HVACTypeHeatPumpMiniSplit,
+            HPXML::HVACTypeHeatPumpPTHP,
+            HPXML::HVACTypeHeatPumpRoom].include? heat_pump.heat_pump_type
+          if not heat_pump.heating_capacity_fraction_17F.nil?
+            heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * heat_pump.heating_capacity_fraction_17F).round
+          else
+            heat_pump.heating_capacity_17F = (heat_pump.heating_capacity * 0.6).round
+          end
+          heat_pump.heating_capacity_fraction_17F = nil
+        end
+      end
+
       next unless [HPXML::HVACTypeHeatPumpAirToAir,
                    HPXML::HVACTypeHeatPumpGroundToAir,
                    HPXML::HVACTypeHeatPumpMiniSplit].include? heat_pump.heat_pump_type
@@ -2550,8 +2737,34 @@ def create_sample_hpxmls
 
       heating_system.heating_capacity = 300000
     end
+    (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).each do |hvac_system|
+      next unless hvac_system.cooling_efficiency_eer.nil? && hvac_system.cooling_efficiency_eer2.nil?
+      next if hvac_system.cooling_efficiency_seer.nil? && hvac_system.cooling_efficiency_seer2.nil?
+
+      orig_equipment_type = hvac_system.equipment_type
+      hvac_system.equipment_type = HPXML::HVACEquipmentTypeSplit
+      hvac_system.cooling_efficiency_eer2 = Defaults.get_hvac_eer2(hvac_system)
+      if not hvac_system.cooling_efficiency_seer.nil? # Specify EER instead of EER2
+        hvac_system.cooling_efficiency_eer = HVAC.calc_eer_from_eer2(hvac_system).round(1)
+        hvac_system.cooling_efficiency_eer2 = nil
+      else
+        hvac_system.cooling_efficiency_eer2 = hvac_system.cooling_efficiency_eer2.round(1)
+      end
+      hvac_system.equipment_type = orig_equipment_type
+    end
     hpxml_bldg.pv_systems.each do |pv_system|
       pv_system.is_shared_system = false if pv_system.is_shared_system.nil?
+      pv_system.location = HPXML::LocationRoof if pv_system.location.nil?
+      pv_system.module_type = HPXML::PVModuleTypeStandard if pv_system.module_type.nil?
+      pv_system.tracking = HPXML::PVTrackingTypeFixed if pv_system.tracking.nil?
+      pv_system.system_losses_fraction = 0.14 if pv_system.system_losses_fraction.nil?
+      if pv_system.inverter.nil?
+        if hpxml_bldg.inverters.empty?
+          hpxml_bldg.inverters.add(id: 'Inverter1')
+        end
+        pv_system.inverter_idref = hpxml_bldg.inverters[0].id
+      end
+      pv_system.inverter.inverter_efficiency = 0.96 if pv_system.inverter.inverter_efficiency.nil?
     end
     hpxml_bldg.generators.each do |generator|
       generator.is_shared_system = false if generator.is_shared_system.nil?
@@ -2560,6 +2773,7 @@ def create_sample_hpxmls
       battery.is_shared_system = false if battery.is_shared_system.nil?
       battery.location = nil
       battery.round_trip_efficiency = 0.925
+      battery.nominal_capacity_kwh = nil
     end
     n_htg_systems = (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.size
     n_clg_systems = (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_cool_load_served.to_f > 0 }.size
@@ -2575,9 +2789,27 @@ def create_sample_hpxmls
     hpxml_bldg.hvac_distributions.each do |hvac_distribution|
       next unless hvac_distribution.number_of_return_registers.nil?
       next unless hvac_distribution.distribution_system_type == HPXML::HVACDistributionTypeAir
-      next unless hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
 
-      hvac_distribution.number_of_return_registers = hpxml_bldg.building_construction.number_of_conditioned_floors.ceil
+      if hvac_distribution.ducts.select { |d| d.duct_type == HPXML::DuctTypeReturn }.size > 0
+        hvac_distribution.number_of_return_registers = hpxml_bldg.building_construction.number_of_conditioned_floors.ceil
+      elsif hvac_distribution.air_type != HPXML::AirTypeFanCoil
+        hvac_distribution.number_of_return_registers = 0
+      end
+    end
+    hpxml_bldg.water_heating_systems.each do |dhw_system|
+      next unless dhw_system.tank_volume.nil?
+
+      if dhw_system.water_heater_type == HPXML::WaterHeaterTypeStorage
+        if dhw_system.fuel_type == HPXML::FuelTypeElectricity
+          dhw_system.tank_volume = 40
+        else
+          dhw_system.tank_volume = 30
+        end
+      elsif dhw_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump
+        dhw_system.tank_volume = 80
+      elsif dhw_system.water_heater_type == HPXML::WaterHeaterTypeCombiStorage
+        dhw_system.tank_volume = 50
+      end
     end
     # TODO: Allow UsageBin in 301validator and remove code below
     hpxml_bldg.water_heating_systems.each do |dhw_system|
@@ -2585,15 +2817,30 @@ def create_sample_hpxmls
       next unless [HPXML::WaterHeaterTypeStorage, HPXML::WaterHeaterTypeHeatPump].include? dhw_system.water_heater_type
       next unless dhw_system.first_hour_rating.nil?
 
-      if dhw_system.usage_bin == HPXML::WaterHeaterUsageBinLow
-        dhw_system.usage_bin = nil
-        dhw_system.first_hour_rating = 46.0
-      elsif dhw_system.usage_bin == HPXML::WaterHeaterUsageBinMedium
-        dhw_system.usage_bin = nil
-        dhw_system.first_hour_rating = 56.0
-      else
-        fail hpxml_path
+      dhw_system.first_hour_rating = 56.0
+    end
+    hpxml_bldg.hot_water_distributions.each do |hot_water_distribution|
+      if hot_water_distribution.system_type == HPXML::DHWDistTypeStandard
+        hot_water_distribution.standard_piping_length = 50.0 if hot_water_distribution.standard_piping_length.nil?
+      elsif hot_water_distribution.system_type == HPXML::DHWDistTypeRecirc
+        hot_water_distribution.recirculation_piping_loop_length = 50.0 if hot_water_distribution.recirculation_piping_loop_length.nil?
+        hot_water_distribution.recirculation_branch_piping_length = 50.0 if hot_water_distribution.recirculation_branch_piping_length.nil?
+        hot_water_distribution.recirculation_pump_power = 50.0 if hot_water_distribution.recirculation_pump_power.nil?
       end
+    end
+    hpxml_bldg.cooking_ranges.each do |cooking_range|
+      next unless cooking_range.is_induction.nil?
+
+      cooking_range.is_induction = false
+    end
+    (hpxml_bldg.clothes_washers +
+     hpxml_bldg.clothes_dryers +
+     hpxml_bldg.dishwashers +
+     hpxml_bldg.refrigerators +
+     hpxml_bldg.cooking_ranges).each do |appliance|
+      next unless appliance.location.nil?
+
+      appliance.location = HPXML::LocationConditionedSpace
     end
     zip_map = { 'USA_CO_Denver.Intl.AP.725650_TMY3.epw' => '80019',
                 'USA_OR_Portland.Intl.AP.726980_TMY3.epw' => '97214',
@@ -2626,23 +2873,23 @@ def create_sample_hpxmls
                                                                zone: '3A')
     end
 
-    # Handle different inputs for ENERGY STAR/ZERH
+    # Handle different inputs for ENERGY STAR/DENH
 
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
+      hpxml.header.denh_calculation_versions = [DENH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
+      hpxml.header.denh_calculation_versions = [DENH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     if hpxml_path.include? 'base-bldgtype-mf-unit'
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
+      hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'FL'
-      hpxml.header.energystar_calculation_version = ESConstants::SFFloridaVer3_1
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_Florida') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'HI'
-      hpxml.header.energystar_calculation_version = ESConstants::SFPacificVer3_0
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_Pacific') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     elsif hpxml_bldg.state_code == 'OR'
-      hpxml.header.energystar_calculation_version = ESConstants::SFOregonWashingtonVer3_2
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     hpxml_bldg.hvac_systems.each do |hvac_system|
       next if hvac_system.shared_loop_watts.nil?
@@ -2654,12 +2901,15 @@ def create_sample_hpxmls
 
       dhw_dist.shared_recirculation_motor_efficiency = 0.9
     end
-    hpxml_bldg.hvac_controls.each do |hvac_control|
-      hvac_control.heating_setpoint_temp = nil
-      hvac_control.cooling_setpoint_temp = nil
-      next unless hvac_control.control_type.nil?
 
-      hvac_control.control_type = HPXML::HVACControlTypeManual
+    # Drop all thermostat setpoint info
+    if not hpxml_bldg.hvac_controls.empty?
+      control_type = hpxml_bldg.hvac_controls[0].control_type
+      control_type = HPXML::HVACControlTypeManual if control_type.nil?
+      control_id = hpxml_bldg.hvac_controls[0].id
+      hpxml_bldg.hvac_controls[0].delete
+      hpxml_bldg.hvac_controls.add(id: control_id,
+                                   control_type: control_type)
     end
 
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
@@ -2674,49 +2924,35 @@ def create_sample_hpxmls
   hpxml_bldg.hvac_controls[0].control_type = HPXML::HVACControlTypeProgrammable
   XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-hvac-programmable-thermostat.xml')
 
-  # Older ERI versions
-  Constants::ERIVersions.each do |eri_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml_bldg = hpxml.buildings[0]
-    hpxml.header.eri_calculation_version = eri_version
-    hpxml.header.co2index_calculation_version = nil
-    hpxml.header.iecc_eri_calculation_version = nil
-    hpxml.header.energystar_calculation_version = nil
-    hpxml.header.zerh_calculation_version = nil
-    if Constants::ERIVersions.index(eri_version) < Constants::ERIVersions.index('2019A')
-      # Need old input for clothes dryers
-      hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer
-    end
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-eri-#{eri_version}.xml")
-  end
+  major_eri_versions = Constants::ERIVersions.select { |v| "#{v.to_i}" == v }
+  latest_major_eri_versions = major_eri_versions.map { |mv| Constants::ERIVersions.select { |v| v.include?(mv) }.last }
 
-  # Older CO2 Index versions
-  Constants::ERIVersions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }.each do |co2_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml.header.co2index_calculation_version = co2_version
-    hpxml.header.eri_calculation_version = nil
-    hpxml.header.iecc_eri_calculation_version = nil
-    hpxml.header.energystar_calculation_version = nil
-    hpxml.header.zerh_calculation_version = nil
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-co2-#{co2_version}.xml")
-  end
+  # All versions, single-family
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
+  hpxml_bldg = hpxml.buildings[0]
+  hpxml.header.eri_calculation_versions = latest_major_eri_versions
+  hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
+  hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
+  hpxml.header.energystar_calculation_versions = ES::SFVersions.select { |v| ES::NationalVersions.include?(v) }
+  hpxml.header.denh_calculation_versions = DENH::SFVersions
+  hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
+  XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-sf.xml')
 
-  # All IECC versions
-  IECCConstants::AllVersions.each do |iecc_version|
-    hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base.xml')
-    hpxml_bldg = hpxml.buildings[0]
-    hpxml.header.iecc_eri_calculation_version = iecc_version
-    hpxml.header.eri_calculation_version = nil
-    hpxml.header.co2index_calculation_version = nil
-    hpxml.header.energystar_calculation_version = nil
-    hpxml.header.zerh_calculation_version = nil
-    XMLHelper.write_file(hpxml.to_doc, "workflow/sample_files/base-version-iecc-eri-#{iecc_version}.xml")
-  end
+  # All versions, multi-family
+  hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
+  hpxml_bldg = hpxml.buildings[0]
+  hpxml.header.eri_calculation_versions = latest_major_eri_versions
+  hpxml.header.co2index_calculation_versions = latest_major_eri_versions.select { |v| Constants::ERIVersions.index(v) >= Constants::ERIVersions.index('2019ABCD') }
+  hpxml.header.iecc_eri_calculation_versions = IECC::AllVersions
+  hpxml.header.energystar_calculation_versions = ES::MFVersions.select { |v| ES::NationalVersions.include?(v) }
+  hpxml.header.denh_calculation_versions = DENH::MFVersions
+  hpxml_bldg.clothes_dryers[0].control_type = HPXML::ClothesDryerControlTypeTimer # Need old input for clothes dryers
+  XMLHelper.write_file(hpxml.to_doc, 'workflow/sample_files/base-versions-multiple-mf.xml')
 
   # Additional ENERGY STAR files
   hpxml = HPXML.new(hpxml_path: 'workflow/sample_files/base-bldgtype-mf-unit.xml')
   hpxml_bldg = hpxml.buildings[0]
-  hpxml.header.energystar_calculation_version = ESConstants::MFOregonWashingtonVer1_2
+  hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_OregonWashington') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
   hpxml_bldg.climate_and_risk_zones.climate_zone_ieccs[0].zone = '4C'
   hpxml_bldg.state_code = 'OR'
   hpxml_bldg.zip_code = '97214'
@@ -2726,15 +2962,16 @@ def create_sample_hpxmls
   puts 'Reformatting real_homes HPXMLs...'
   Dir['workflow/real_homes/*.xml'].each do |hpxml_path|
     hpxml = HPXML.new(hpxml_path: hpxml_path)
-    hpxml.header.eri_calculation_version = 'latest'
-    hpxml.header.co2index_calculation_version = 'latest'
-    hpxml.header.iecc_eri_calculation_version = IECCConstants::AllVersions[-1]
-    if hpxml.buildings[0].building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
-      hpxml.header.zerh_calculation_version = ZERHConstants::MFVer2
-      hpxml.header.energystar_calculation_version = ESConstants::MFNationalVer1_2
+    hpxml.header.eri_calculation_versions = ['latest']
+    hpxml.header.co2index_calculation_versions = ['latest']
+    hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
+    hpxml_bldg = hpxml.buildings[0]
+    if hpxml_bldg.building_construction.residential_facility_type == HPXML::ResidentialTypeApartment
+      hpxml.header.denh_calculation_versions = [DENH::MFVersions.select { |v| v.include?('MF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.energystar_calculation_versions = [ES::MFVersions.select { |v| v.include?('MF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     else
-      hpxml.header.zerh_calculation_version = ZERHConstants::SFVer2
-      hpxml.header.energystar_calculation_version = ESConstants::SFNationalVer3_2
+      hpxml.header.denh_calculation_versions = [DENH::SFVersions.select { |v| v.include?('SF') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
+      hpxml.header.energystar_calculation_versions = [ES::SFVersions.select { |v| v.include?('SF_National') }.max_by { |v| v.scan(/\d+\.\d+/).first.to_f }]
     end
     XMLHelper.write_file(hpxml.to_doc, hpxml_path)
   end
@@ -2765,34 +3002,10 @@ if ARGV[0].to_sym == :update_measures
   ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
   ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
 
-  # Apply rubocop
-  cops = ['Layout',
-          'Lint/DeprecatedClassMethods',
-          'Lint/DuplicateElsifCondition',
-          'Lint/DuplicateHashKey',
-          'Lint/DuplicateMethods',
-          'Lint/InterpolationCheck',
-          'Lint/LiteralAsCondition',
-          'Lint/RedundantStringCoercion',
-          'Lint/SelfAssignment',
-          'Lint/UnderscorePrefixedVariableName',
-          'Lint/UnusedBlockArgument',
-          'Lint/UnusedMethodArgument',
-          'Lint/UselessAssignment',
-          'Style/AndOr',
-          'Style/FrozenStringLiteralComment',
-          'Style/HashSyntax',
-          'Style/Next',
-          'Style/NilComparison',
-          'Style/RedundantParentheses',
-          'Style/RedundantSelf',
-          'Style/ReturnNil',
-          'Style/SelfAssignment',
-          'Style/StringLiterals',
-          'Style/StringLiteralsInInterpolation']
+  # Apply rubocop (uses .rubocop.yml)
   commands = ["\"require 'rubocop/rake_task'\"",
               "\"require 'stringio' \"",
-              "\"RuboCop::RakeTask.new(:rubocop) do |t| t.options = ['--autocorrect', '--format', 'simple', '--only', '#{cops.join(',')}'] end\"",
+              "\"RuboCop::RakeTask.new(:rubocop) do |t| t.options = ['--autocorrect', '--format', 'simple'] end\"",
               '"Rake.application[:rubocop].invoke"']
   command = "#{OpenStudio.getOpenStudioCLI} -e #{commands.join(' -e ')}"
   puts 'Applying rubocop auto-correct to measures...'

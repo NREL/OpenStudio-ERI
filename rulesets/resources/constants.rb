@@ -1,40 +1,49 @@
 # frozen_string_literal: true
 
-module Constants
-  CalcTypeCO2eRatedHome = 'CO2e Rated Home'
-  CalcTypeCO2eReferenceHome = 'CO2e Reference Home'
-  CalcTypeERIRatedHome = 'ERI Rated Home'
-  CalcTypeERIReferenceHome = 'ERI Reference Home'
-  CalcTypeERIIndexAdjustmentDesign = 'ERI Index Adjustment Design'
-  CalcTypeERIIndexAdjustmentReferenceHome = 'ERI Index Adjustment Reference Home'
+module RunType
+  ERI = 'ERI'
+  CO2e = 'CO2e'
+  IECC = 'IECC'
+  ES = 'ES'
+  DENH = 'DENH'
 end
 
-module ESConstants
-  CalcTypeEnergyStarRated = 'ES Rated'
-  CalcTypeEnergyStarReference = 'ES Reference'
+module CalcType
+  RatedHome = 'Rated Home'
+  ReferenceHome = 'Reference Home'
+  IndexAdjHome = 'Index Adjustment Home'
+  IndexAdjReferenceHome = 'Index Adjustment Reference Home'
+end
+
+module InitCalcType
+  RatedHome = 'Rated Home'
+  TargetHome = 'Target Home'
+end
+
+module IECC
+  AllVersions = ['2015', '2018', '2021', '2024']
+end
+
+module ES
   SFNationalVer3_0 = 'SF_National_3.0'
   SFNationalVer3_1 = 'SF_National_3.1'
   SFNationalVer3_2 = 'SF_National_3.2'
+  SFNationalVer3_3 = 'SF_National_3.3'
   SFPacificVer3_0 = 'SF_Pacific_3.0'
   SFFloridaVer3_1 = 'SF_Florida_3.1'
   SFOregonWashingtonVer3_2 = 'SF_OregonWashington_3.2'
   MFNationalVer1_0 = 'MF_National_1.0'
   MFNationalVer1_1 = 'MF_National_1.1'
   MFNationalVer1_2 = 'MF_National_1.2'
+  MFNationalVer1_3 = 'MF_National_1.3'
   MFOregonWashingtonVer1_2 = 'MF_OregonWashington_1.2'
-  SFVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, SFPacificVer3_0, SFFloridaVer3_1, SFOregonWashingtonVer3_2]
-  MFVersions = [MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2, MFOregonWashingtonVer1_2]
-  NationalVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2]
+  SFVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, SFNationalVer3_3, SFPacificVer3_0, SFFloridaVer3_1, SFOregonWashingtonVer3_2]
+  MFVersions = [MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2, MFNationalVer1_3, MFOregonWashingtonVer1_2]
+  NationalVersions = [SFNationalVer3_0, SFNationalVer3_1, SFNationalVer3_2, SFNationalVer3_3, MFNationalVer1_0, MFNationalVer1_1, MFNationalVer1_2, MFNationalVer1_3]
   AllVersions = SFVersions + MFVersions
 end
 
-module IECCConstants
-  AllVersions = ['2015', '2018', '2021', '2024']
-end
-
-module ZERHConstants
-  CalcTypeZERHRated = 'ZERH Rated'
-  CalcTypeZERHReference = 'ZERH Reference'
+module DENH
   Ver1 = '1.0'
   SFVer2 = 'SF_2.0'
   MFVer2 = 'MF_2.0'

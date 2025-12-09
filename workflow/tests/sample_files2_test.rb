@@ -34,12 +34,12 @@ class SampleFilesTest1 < Minitest::Test
       start = true if xml.include? 'base-hvac-air-to-air-heat-pump-1-speed.xml'
       next unless start # Run second half of the sample files
 
-      diagnostic_output = !xml.include?('base-version') # Don't bother testing these
+      diagnostic_output = !xml.include?('base-versions') # Don't bother testing these
       rundir, _hpxmls, csvs = _run_workflow(xml, test_name, diagnostic_output: diagnostic_output)
       all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],
                                                           csvs[:co2e_results],
                                                           csvs[:es_results],
-                                                          csvs[:zerh_results],
+                                                          csvs[:denh_results],
                                                           csvs[:iecc_eri_results]])
 
       _rm_path(rundir)

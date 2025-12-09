@@ -13,12 +13,22 @@ OpenStudio-HPXML capabilities include:
 - Modeling individual dwelling units or whole multifamily buildings; see :ref:`hpxml_building` for more information
 - Modeling a wide range of building technologies
 - HVAC design load calculations and equipment autosizing
+- Electric panel NEC load calculations (experimental research feature)
 - Occupancy schedules (smooth or stochastic)
 - Utility bill calculations (flat, tiered, time-of-use, real-time pricing, etc.)
 - Emissions calculations (CO2e, etc.)
 - Annual and timeseries outputs (energy, loads, temperatures, etc.)
 - Optional HPXML inputs with transparent defaults
 - Schematron and XSD Schema input validation
+- Can be used for `automated calibration to utility bills <https://github.com/NREL/OpenStudio-HPXML-calibration>`_
+
+.. note::
+  If you are seeking `DOE HOMES program approval <https://www.energy.gov/scep/single-family-modeling-solutions-home-efficiency-rebates-program>`_, OpenStudio-HPXML can be used to meet the `energy modeling software tests <https://www.energy.gov/scep/articles/home-efficiency-rebates-ira-section-50121-single-family-software-verification>`_.
+
+.. note::
+
+  If you are seeking `ACCA Manual J approval <https://www.acca.org/standards/approved-software>`_ for your software, you will need to contact ACCA and go through their approval process.
+  OpenStudio-HPXML design load calculations can be used to obtain approval, but additional Manual J-specific HPXML inputs need to be specified; refer to the HPXML test files at ``workflow/tests/ACCA_Examples``.
 
 Accuracy vs Speed
 -----------------

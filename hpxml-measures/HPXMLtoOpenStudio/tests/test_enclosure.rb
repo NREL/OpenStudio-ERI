@@ -6,6 +6,7 @@ require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
 require_relative '../resources/util.rb'
+require_relative '../../BuildResidentialHPXML/resources/geometry.rb'
 require_relative 'util.rb'
 
 class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
@@ -13,12 +14,13 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @schema_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', 'resources', 'hpxml_schema', 'HPXML.xsd'))
+    @schematron_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
   end
 
   def teardown
     File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    File.delete(File.join(File.dirname(__FILE__), 'results_annual.csv')) if File.exist? File.join(File.dirname(__FILE__), 'results_annual.csv')
-    File.delete(File.join(File.dirname(__FILE__), 'results_design_load_details.csv')) if File.exist? File.join(File.dirname(__FILE__), 'results_design_load_details.csv')
+    cleanup_results_files
   end
 
   def test_roofs
@@ -578,6 +580,22 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
     args_hash = {}
     args_hash['hpxml_path'] = File.absolute_path(@tmp_hpxml_path)
     hpxml, hpxml_bldg = _create_hpxml('base.xml')
+
+    hpxml_bldg.windows.each do |window|
+      window.storm_type = HPXML::WindowGlassTypeLowE
+    end
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    model, hpxml, hpxml_bldg = _test_measure(args_hash)
+
+    # Check window properties
+    hpxml_bldg.windows.each do |window|
+      os_window = model.getSubSurfaces.find { |w| w.name.to_s == window.id }
+      os_simple_glazing = os_window.construction.get.to_LayeredConstruction.get.getLayer(0).to_SimpleGlazing.get
+
+      assert_equal(0.352, os_simple_glazing.solarHeatGainCoefficient)
+      assert_in_epsilon(0.2351, UnitConversions.convert(os_simple_glazing.uFactor, 'W/(m^2*K)', 'Btu/(hr*ft^2*F)'), 0.001)
+    end
+
     hpxml_bldg.windows.each do |window|
       window.ufactor = 0.6
       window.storm_type = HPXML::WindowGlassTypeLowE
@@ -590,7 +608,7 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
       os_window = model.getSubSurfaces.find { |w| w.name.to_s == window.id }
       os_simple_glazing = os_window.construction.get.to_LayeredConstruction.get.getLayer(0).to_SimpleGlazing.get
 
-      assert_equal(0.36, os_simple_glazing.solarHeatGainCoefficient)
+      assert_equal(0.352, os_simple_glazing.solarHeatGainCoefficient)
       assert_in_epsilon(0.2936, UnitConversions.convert(os_simple_glazing.uFactor, 'W/(m^2*K)', 'Btu/(hr*ft^2*F)'), 0.001)
     end
 
@@ -832,7 +850,7 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
 
         osm_fwalls = model.getSurfaces.select { |s| s.outsideBoundaryCondition == EPlus::BoundaryConditionFoundation && s.adjacentFoundation.get == foundation && s.surfaceType == EPlus::SurfaceTypeWall }
         if not osm_fwalls.empty?
-          osm_fwalls_length = osm_fwalls.map { |s| Geometry.get_surface_length(surface: s) }.sum
+          osm_fwalls_length = osm_fwalls.map { |s| Geometry.get_surface_length(s) }.sum
           assert_in_epsilon(osm_exposed_perimeter, osm_fwalls_length, 0.01)
         end
       end
@@ -859,7 +877,7 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
       ext_fwall_int_adj_tos.each do |int_adj_to, fwalls|
         osm_fwalls = model.getSurfaces.select { |s| s.surfaceType == EPlus::SurfaceTypeWall && s.outsideBoundaryCondition == EPlus::BoundaryConditionFoundation && s.space.get.name.to_s.start_with?(int_adj_to) }
 
-        osm_heights = osm_fwalls.map { |s| Geometry.get_surface_height(surface: s) }.uniq.sort
+        osm_heights = osm_fwalls.map { |s| Geometry.get_surface_height(s) }.uniq.sort
         hpxml_heights = fwalls.map { |fw| fw.height }.uniq.sort
         assert_equal(hpxml_heights, osm_heights)
 
@@ -896,7 +914,6 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
                       'base-foundation-conditioned-crawlspace.xml' => 68.0, # foundation adjacent to conditioned space, IECC zone 5
                       'base-foundation-slab.xml' => 68.0, # foundation adjacent to conditioned space, IECC zone 5
                       'base-foundation-unconditioned-basement.xml' => 41.4, # foundation adjacent to unconditioned basement w/ ceiling insulation
-                      'base-foundation-unconditioned-basement-wall-insulation.xml' => 56.0, # foundation adjacent to unconditioned basement w/ wall insulation
                       'base-foundation-unvented-crawlspace.xml' => 38.6, # foundation adjacent to unvented crawlspace w/ ceiling insulation
                       'base-foundation-vented-crawlspace.xml' => 36.9, # foundation adjacent to vented crawlspace w/ ceiling insulation
                       'base-location-miami-fl.xml' => 78.0 } # foundation adjacent to conditioned space, IECC zone 1
@@ -962,9 +979,9 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
             if i < 3
               surfaces[-1].ufactor += 0.01 * i
             elsif i < 6
-              surfaces[-1].interior_shading_factor_summer -= 0.02 * i
+              surfaces[-1].interior_shading_factor_summer = 1.0 - 0.02 * i
             else
-              surfaces[-1].interior_shading_factor_winter -= 0.01 * i
+              surfaces[-1].interior_shading_factor_winter = 1.0 - 0.01 * i
               if surf_class == HPXML::Window
                 surfaces[-1].fraction_operable = 1.0 - surfaces[-1].fraction_operable
               end
@@ -1010,6 +1027,11 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
 
     [true, false].each do |should_collapse_surfaces|
       _hpxml, hpxml_bldg = _create_hpxml('base-enclosure-skylights.xml')
+      hpxml_bldg.windows.each do |window|
+        window.interior_shading_type = nil
+        window.interior_shading_factor_summer = 0.7
+        window.interior_shading_factor_winter = 0.85
+      end
 
       # Make sure that the presence of HPXML zones/spaces doesn't affect this
       add_zones_spaces(hpxml_bldg)
@@ -1249,9 +1271,17 @@ class HPXMLtoOpenStudioEnclosureTest < Minitest::Test
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
 
-    hpxml = HPXML.new(hpxml_path: File.join(File.dirname(__FILE__), 'in.xml'))
+    hpxml_defaults_path = File.join(File.dirname(__FILE__), 'in.xml')
+    hpxml = HPXML.new(hpxml_path: hpxml_defaults_path, schema_validator: @schema_validator, schematron_validator: @schematron_validator)
+    if not hpxml.errors.empty?
+      puts 'ERRORS:'
+      hpxml.errors.each do |error|
+        puts error
+      end
+      flunk "Validation error(s) in #{hpxml_defaults_path}."
+    end
 
-    File.delete(File.join(File.dirname(__FILE__), 'in.xml'))
+    File.delete(hpxml_defaults_path)
 
     return model, hpxml, hpxml.buildings[0]
   end

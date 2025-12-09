@@ -6,10 +6,10 @@ Setup
 
 To get started:
 
-#. Either download `OpenStudio 3.9.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.9.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Either download `OpenStudio 3.10.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.10.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
 #. Download the `latest release <https://github.com/NREL/OpenStudio-ERI/releases>`_ release.
 
-.. note:: 
+.. note::
 
   If the ``openstudio`` command is not found, it's because the executable is not in your PATH. Either add the executable to your PATH or point directly to the executable found in the openstudio-X.X.X/bin directory.
 
@@ -37,8 +37,11 @@ This will generate output as shown below:
 | Or you can request all output files in JSON (instead of CSV) format:
 | ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --output-format json``
 
-| Finally, you can generate a HERS diagnostic output file using, e.g.:
+| Or you can generate a HERS diagnostic output file using, e.g.:
 | ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --diagnostic-output``
+
+| You can also specify the number of parallel processors to use when running simulations, e.g.:
+| ``openstudio workflow/energy_rating_index.rb -x workflow/sample_files/base.xml --num-proc 2``
 
 Run ``openstudio workflow/energy_rating_index.rb -h`` to see all available commands/arguments.
 

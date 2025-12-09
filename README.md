@@ -14,7 +14,7 @@ The project supports:
 - ANSI/RESNET/ICC 301© Standard for the Calculation and Labeling of the Energy Performance of Dwelling and Sleeping Units using an Energy Rating Index
 - ENERGY STAR Certification System for Homes and Apartments Using an ERI Compliance Path
 - IECC ERI Compliance Alternative (Section R406)
-- DOE ZERH Certification Using an ERI Compliance Path
+- DOE Efficient New Homes (formerly Zero Energy Ready Homes) Certification Using an ERI Compliance Path
 
 For more information on running simulations, generating HPXML files, etc., please visit the [documentation](https://openstudio-eri.readthedocs.io/en/latest).
 

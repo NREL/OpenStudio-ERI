@@ -12,7 +12,7 @@ module Geometry
   # @return [nil]
   def self.apply_roofs(runner, model, spaces, hpxml_bldg, hpxml_header)
     default_azimuths = Defaults.get_azimuths(hpxml_bldg)
-    walls_top, _foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    walls_top = hpxml_bldg.building_construction.additional_properties.walls_height_above_grade
 
     hpxml_bldg.roofs.each do |roof|
       next if roof.net_area < 1.0 # skip modeling net surface area for surfaces comprised entirely of subsurface area
@@ -61,13 +61,9 @@ module Geometry
         radiant_barrier_grade = roof.radiant_barrier_grade
       end
       # FUTURE: Create Constructions.get_air_film(surface) method; use in measure.rb and hpxml_translator_test.rb
-      inside_film = Material.AirFilmRoof(get_roof_pitch([surfaces[0]]))
-      outside_film = Material.AirFilmOutside
+      interior_film = Material.AirFilmIndoorRoof(UnitConversions.convert(surfaces[0].tilt, 'rad', 'deg'), hpxml_header.apply_ashrae140_assumptions)
+      exterior_film = Material.AirFilmOutside(false, hpxml_header.apply_ashrae140_assumptions)
       mat_roofing = Material.RoofMaterial(roof.roof_type)
-      if hpxml_header.apply_ashrae140_assumptions
-        inside_film = Material.AirFilmRoofASHRAE140
-        outside_film = Material.AirFilmOutsideASHRAE140
-      end
       mat_int_finish = Material.InteriorFinishMaterial(roof.interior_finish_type, roof.interior_finish_thickness)
       if mat_int_finish.nil?
         fallback_mat_int_finish = nil
@@ -81,14 +77,14 @@ module Geometry
       if not mat_int_finish.nil?
         # Closed cavity
         constr_sets = [
-          WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 20.0, 0.75, mat_int_finish, mat_roofing),    # 2x8, 24" o.c. + R20
-          WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 10.0, 0.75, mat_int_finish, mat_roofing),    # 2x8, 24" o.c. + R10
-          WoodStudConstructionSet.new(Material.Stud2x(8.0), 0.07, 0.0, 0.75, mat_int_finish, mat_roofing),     # 2x8, 24" o.c.
-          WoodStudConstructionSet.new(Material.Stud2x6, 0.07, 0.0, 0.75, mat_int_finish, mat_roofing),         # 2x6, 24" o.c.
-          WoodStudConstructionSet.new(Material.Stud2x4, 0.07, 0.0, 0.5, mat_int_finish, mat_roofing),          # 2x4, 16" o.c.
-          WoodStudConstructionSet.new(Material.Stud2x4, 0.01, 0.0, 0.0, fallback_mat_int_finish, mat_roofing), # Fallback
+          WoodStudConstructionSet.new(Material.Stud2x(8), 0.07, 20.0, 0.75, mat_int_finish, mat_roofing),    # 2x8, 24" o.c. + R20
+          WoodStudConstructionSet.new(Material.Stud2x(8), 0.07, 10.0, 0.75, mat_int_finish, mat_roofing),    # 2x8, 24" o.c. + R10
+          WoodStudConstructionSet.new(Material.Stud2x(8), 0.07, 0.0, 0.75, mat_int_finish, mat_roofing),     # 2x8, 24" o.c.
+          WoodStudConstructionSet.new(Material.Stud2x(6), 0.07, 0.0, 0.75, mat_int_finish, mat_roofing),         # 2x6, 24" o.c.
+          WoodStudConstructionSet.new(Material.Stud2x(4), 0.07, 0.0, 0.5, mat_int_finish, mat_roofing),          # 2x4, 16" o.c.
+          WoodStudConstructionSet.new(Material.Stud2x(4), 0.01, 0.0, 0.0, fallback_mat_int_finish, mat_roofing), # Fallback
         ]
-        match, constr_set, cavity_r = Constructions.pick_wood_stud_construction_set(assembly_r, constr_sets, inside_film, outside_film)
+        match, constr_set, cavity_r = Constructions.pick_wood_stud_construction_set(assembly_r, constr_sets, interior_film, exterior_film)
 
         Constructions.apply_closed_cavity_roof(model, surfaces, "#{roof.id} construction",
                                                cavity_r, install_grade,
@@ -97,7 +93,7 @@ module Geometry
                                                constr_set.mat_int_finish,
                                                constr_set.osb_thick_in, constr_set.rigid_r,
                                                constr_set.mat_ext_finish, has_radiant_barrier,
-                                               inside_film, outside_film, radiant_barrier_grade,
+                                               interior_film, exterior_film, radiant_barrier_grade,
                                                roof.solar_absorptance, roof.emittance)
       else
         # Open cavity
@@ -106,7 +102,7 @@ module Geometry
           GenericConstructionSet.new(0.0, 0.5, nil, mat_roofing),  # Standard
           GenericConstructionSet.new(0.0, 0.0, nil, mat_roofing),  # Fallback
         ]
-        match, constr_set, layer_r = Constructions.pick_generic_construction_set(assembly_r, constr_sets, inside_film, outside_film)
+        match, constr_set, layer_r = Constructions.pick_generic_construction_set(assembly_r, constr_sets, interior_film, exterior_film)
 
         cavity_r = 0
         cavity_ins_thick_in = 0
@@ -118,10 +114,10 @@ module Geometry
                                              framing_factor, framing_thick_in,
                                              constr_set.osb_thick_in, layer_r + constr_set.rigid_r,
                                              constr_set.mat_ext_finish, has_radiant_barrier,
-                                             inside_film, outside_film, radiant_barrier_grade,
+                                             interior_film, exterior_film, radiant_barrier_grade,
                                              roof.solar_absorptance, roof.emittance)
       end
-      Constructions.check_surface_assembly_rvalue(runner, surfaces, inside_film, outside_film, assembly_r, match)
+      Constructions.check_surface_assembly_rvalue(runner, surfaces, interior_film, exterior_film, assembly_r, match)
     end
   end
 
@@ -135,7 +131,7 @@ module Geometry
   # @return [nil]
   def self.apply_walls(runner, model, spaces, hpxml_bldg, hpxml_header)
     default_azimuths = Defaults.get_azimuths(hpxml_bldg)
-    _walls_top, foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    foundation_top = hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade
 
     hpxml_bldg.walls.each do |wall|
       next if wall.net_area < 1.0 # skip modeling net surface area for surfaces comprised entirely of subsurface area
@@ -187,22 +183,18 @@ module Geometry
       if has_radiant_barrier
         radiant_barrier_grade = wall.radiant_barrier_grade
       end
-      inside_film = Material.AirFilmVertical
+      interior_film = Material.AirFilmIndoorWall
       if wall.is_exterior
-        outside_film = Material.AirFilmOutside
+        exterior_film = Material.AirFilmOutside(false, hpxml_header.apply_ashrae140_assumptions)
         mat_ext_finish = Material.ExteriorFinishMaterial(wall.siding)
       else
-        outside_film = Material.AirFilmVertical
+        exterior_film = Material.AirFilmIndoorWall
         mat_ext_finish = nil
-      end
-      if hpxml_header.apply_ashrae140_assumptions
-        inside_film = Material.AirFilmVerticalASHRAE140
-        outside_film = Material.AirFilmOutsideASHRAE140
       end
       mat_int_finish = Material.InteriorFinishMaterial(wall.interior_finish_type, wall.interior_finish_thickness)
 
       Constructions.apply_wall_construction(runner, model, surfaces, wall.id, wall.wall_type, wall.insulation_assembly_r_value,
-                                            mat_int_finish, has_radiant_barrier, inside_film, outside_film,
+                                            mat_int_finish, has_radiant_barrier, interior_film, exterior_film,
                                             radiant_barrier_grade, mat_ext_finish, wall.solar_absorptance,
                                             wall.emittance)
     end
@@ -217,7 +209,7 @@ module Geometry
   # @return [nil]
   def self.apply_rim_joists(runner, model, spaces, hpxml_bldg)
     default_azimuths = Defaults.get_azimuths(hpxml_bldg)
-    _walls_top, foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    foundation_top = hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade
 
     hpxml_bldg.rim_joists.each do |rim_joist|
       if rim_joist.azimuth.nil?
@@ -260,33 +252,33 @@ module Geometry
 
       # Apply construction
 
-      inside_film = Material.AirFilmVertical
+      interior_film = Material.AirFilmIndoorWall
       if rim_joist.is_exterior
-        outside_film = Material.AirFilmOutside
+        exterior_film = Material.AirFilmOutside
         mat_ext_finish = Material.ExteriorFinishMaterial(rim_joist.siding)
       else
-        outside_film = Material.AirFilmVertical
+        exterior_film = Material.AirFilmIndoorWall
         mat_ext_finish = nil
       end
 
       assembly_r = rim_joist.insulation_assembly_r_value
 
       constr_sets = [
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 20.0, 2.0, nil, mat_ext_finish),  # 2x4 + R20
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 10.0, 2.0, nil, mat_ext_finish),  # 2x4 + R10
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.17, 0.0, 2.0, nil, mat_ext_finish),   # 2x4
-        WoodStudConstructionSet.new(Material.Stud2x(2.0), 0.01, 0.0, 0.0, nil, mat_ext_finish),   # Fallback
+        WoodStudConstructionSet.new(Material.Stud2x(2), 0.17, 20.0, 2.0, nil, mat_ext_finish),  # 2x4 + R20
+        WoodStudConstructionSet.new(Material.Stud2x(2), 0.17, 10.0, 2.0, nil, mat_ext_finish),  # 2x4 + R10
+        WoodStudConstructionSet.new(Material.Stud2x(2), 0.17, 0.0, 2.0, nil, mat_ext_finish),   # 2x4
+        WoodStudConstructionSet.new(Material.Stud2x(2), 0.01, 0.0, 0.0, nil, mat_ext_finish),   # Fallback
       ]
-      match, constr_set, cavity_r = Constructions.pick_wood_stud_construction_set(assembly_r, constr_sets, inside_film, outside_film)
+      match, constr_set, cavity_r = Constructions.pick_wood_stud_construction_set(assembly_r, constr_sets, interior_film, exterior_film)
       install_grade = 1
 
-      Constructions.apply_rim_joist(model, surfaces, "#{rim_joist.id} construction",
-                                    cavity_r, install_grade, constr_set.framing_factor,
+      Constructions.apply_rim_joist(model, surfaces, "#{rim_joist.id} construction", cavity_r,
+                                    install_grade, constr_set.stud.thick_in, constr_set.framing_factor,
                                     constr_set.mat_int_finish, constr_set.osb_thick_in,
                                     constr_set.rigid_r, constr_set.mat_ext_finish,
-                                    inside_film, outside_film, rim_joist.solar_absorptance,
+                                    interior_film, exterior_film, rim_joist.solar_absorptance,
                                     rim_joist.emittance)
-      Constructions.check_surface_assembly_rvalue(runner, surfaces, inside_film, outside_film, assembly_r, match)
+      Constructions.check_surface_assembly_rvalue(runner, surfaces, interior_film, exterior_film, assembly_r, match)
     end
   end
 
@@ -300,7 +292,8 @@ module Geometry
   # @return [nil]
   def self.apply_floors(runner, model, spaces, hpxml_bldg, hpxml_header)
     default_azimuths = Defaults.get_azimuths(hpxml_bldg)
-    walls_top, foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    walls_top = hpxml_bldg.building_construction.additional_properties.walls_height_above_grade
+    foundation_top = hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade
 
     hpxml_bldg.floors.each do |floor|
       next if floor.net_area < 1.0 # skip modeling net surface area for surfaces comprised entirely of subsurface area
@@ -335,49 +328,43 @@ module Geometry
         if floor.exterior_adjacent_to == HPXML::LocationManufacturedHomeUnderBelly
           foundation = hpxml_bldg.foundations.find { |x| x.to_location == floor.exterior_adjacent_to }
           if foundation.belly_wing_skirt_present
+            zero_wind = true
             surface.setWindExposure(EPlus::SurfaceWindExposureNo)
           end
+        end
+        if floor.is_exterior && hpxml_header.apply_ashrae140_assumptions
+          zero_wind = true
+          surface.setWindExposure(EPlus::SurfaceWindExposureNo)
         end
       end
 
       # Apply construction
 
       if floor.is_ceiling
-        if hpxml_header.apply_ashrae140_assumptions
-          # Attic floor
-          inside_film = Material.AirFilmFloorASHRAE140
-          outside_film = Material.AirFilmFloorASHRAE140
-        else
-          inside_film = Material.AirFilmFloorAverage
-          outside_film = Material.AirFilmFloorAverage
-        end
+        interior_film = Material.AirFilmIndoorFloorAverage
+        exterior_film = Material.AirFilmIndoorFloorAverage
         mat_int_finish_or_covering = Material.InteriorFinishMaterial(floor.interior_finish_type, floor.interior_finish_thickness)
         has_radiant_barrier = floor.radiant_barrier
         if has_radiant_barrier
           radiant_barrier_grade = floor.radiant_barrier_grade
         end
       else # Floor
-        if hpxml_header.apply_ashrae140_assumptions
-          # Raised floor
-          inside_film = Material.AirFilmFloorASHRAE140
-          outside_film = Material.AirFilmFloorZeroWindASHRAE140
-          surface.setWindExposure(EPlus::SurfaceWindExposureNo)
+        if floor.interior_adjacent_to == HPXML::LocationConditionedSpace
+          mat_int_finish_or_covering = Material.CoveringBare
+        elsif floor.is_exterior && hpxml_header.apply_ashrae140_assumptions
           mat_int_finish_or_covering = Material.CoveringBare(1.0)
+        end
+        if floor.is_exterior
+          interior_film = Material.AirFilmIndoorFloorAverage
+          exterior_film = Material.AirFilmOutside(zero_wind)
         else
-          inside_film = Material.AirFilmFloorReduced
-          if floor.is_exterior
-            outside_film = Material.AirFilmOutside
-          else
-            outside_film = Material.AirFilmFloorReduced
-          end
-          if floor.interior_adjacent_to == HPXML::LocationConditionedSpace
-            mat_int_finish_or_covering = Material.CoveringBare
-          end
+          interior_film = Material.AirFilmIndoorFloorDown
+          exterior_film = Material.AirFilmIndoorFloorDown
         end
       end
 
       Constructions.apply_floor_ceiling_construction(runner, model, [surface], floor.id, floor.floor_type, floor.is_ceiling, floor.insulation_assembly_r_value,
-                                                     mat_int_finish_or_covering, has_radiant_barrier, inside_film, outside_film, radiant_barrier_grade)
+                                                     mat_int_finish_or_covering, has_radiant_barrier, interior_film, exterior_film, radiant_barrier_grade)
     end
   end
 
@@ -477,8 +464,8 @@ module Geometry
         # Apply construction
 
         wall_type = HPXML::WallTypeConcrete
-        inside_film = Material.AirFilmVertical
-        outside_film = Material.AirFilmVertical
+        interior_film = Material.AirFilmIndoorWall
+        exterior_film = Material.AirFilmIndoorWall
         assembly_r = fnd_wall.insulation_assembly_r_value
         mat_int_finish = Material.InteriorFinishMaterial(fnd_wall.interior_finish_type, fnd_wall.interior_finish_thickness)
         if assembly_r.nil?
@@ -487,12 +474,12 @@ module Geometry
           ext_r = fnd_wall.insulation_exterior_r_value
           mat_concrete = Material.Concrete(concrete_thick_in)
           mat_int_finish_rvalue = mat_int_finish.nil? ? 0.0 : mat_int_finish.rvalue
-          assembly_r = int_r + ext_r + mat_concrete.rvalue + mat_int_finish_rvalue + inside_film.rvalue + outside_film.rvalue
+          assembly_r = int_r + ext_r + mat_concrete.rvalue + mat_int_finish_rvalue + interior_film.rvalue + exterior_film.rvalue
         end
         mat_ext_finish = nil
 
         Constructions.apply_wall_construction(runner, model, [surface], fnd_wall.id, wall_type, assembly_r, mat_int_finish,
-                                              false, inside_film, outside_film, nil, mat_ext_finish, nil, nil)
+                                              false, interior_film, exterior_film, nil, mat_ext_finish, nil, nil)
       end
     end
   end
@@ -552,14 +539,14 @@ module Geometry
     if not assembly_r.nil?
       ext_rigid_height = height
       ext_rigid_offset = 0.0
-      inside_film = Material.AirFilmVertical
+      interior_film = Material.AirFilmIndoorWall
 
       mat_int_finish_rvalue = mat_int_finish.nil? ? 0.0 : mat_int_finish.rvalue
-      ext_rigid_r = assembly_r - mat_wall.rvalue - mat_int_finish_rvalue - inside_film.rvalue
+      ext_rigid_r = assembly_r - mat_wall.rvalue - mat_int_finish_rvalue - interior_film.rvalue
       int_rigid_r = 0.0
       if ext_rigid_r < 0 # Try without interior finish
         mat_int_finish = nil
-        ext_rigid_r = assembly_r - mat_wall.rvalue - inside_film.rvalue
+        ext_rigid_r = assembly_r - mat_wall.rvalue - interior_film.rvalue
       end
       if (ext_rigid_r > 0) && (ext_rigid_r < 0.1)
         ext_rigid_r = 0.0 # Prevent tiny strip of insulation
@@ -587,7 +574,7 @@ module Geometry
                                         soil_k_in)
 
     if not assembly_r.nil?
-      Constructions.check_surface_assembly_rvalue(runner, [surface], inside_film, nil, assembly_r, match)
+      Constructions.check_surface_assembly_rvalue(runner, [surface], interior_film, nil, assembly_r, match)
     end
 
     return surface.adjacentFoundation.get
@@ -683,12 +670,13 @@ module Geometry
 
   # Adds any HPXML Windows to the OpenStudio model.
   #
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param hpxml_header [HPXML::Header] HPXML Header object (one per HPXML file)
   # @return [nil]
-  def self.apply_windows(model, spaces, hpxml_bldg, hpxml_header)
+  def self.apply_windows(runner, model, spaces, hpxml_bldg, hpxml_header)
     # We already stored @fraction_of_windows_operable, so lets remove the
     # fraction_operable properties from windows and re-collapse the enclosure
     # so as to prevent potentially modeling multiple identical windows in E+,
@@ -698,7 +686,7 @@ module Geometry
     end
     hpxml_bldg.collapse_enclosure_surfaces()
 
-    _walls_top, foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    foundation_top = hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade
 
     shading_schedules = {}
 
@@ -717,7 +705,7 @@ module Geometry
       window_length = window.area / window_height
       z_origin = foundation_top
 
-      ufactor, shgc = Constructions.get_ufactor_shgc_adjusted_by_storms(window.storm_type, window.ufactor, window.shgc)
+      ufactor, shgc = Constructions.get_ufactor_shgc_adjusted_by_storms(runner, window.storm_type, window.ufactor, window.shgc)
 
       if window.is_exterior
 
@@ -779,9 +767,9 @@ module Geometry
         surfaces << surface
 
         # Apply construction
-        inside_film = Material.AirFilmVertical
-        outside_film = Material.AirFilmVertical
-        Constructions.apply_door(model, [sub_surface], 'Window', ufactor, inside_film, outside_film)
+        interior_film = Material.AirFilmIndoorWall
+        exterior_film = Material.AirFilmIndoorWall
+        Constructions.apply_door(model, [sub_surface], 'Window', ufactor, interior_film, exterior_film)
       end
     end
 
@@ -795,7 +783,7 @@ module Geometry
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @return [nil]
   def self.apply_doors(model, spaces, hpxml_bldg)
-    _walls_top, foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    foundation_top = hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade
 
     surfaces = []
     hpxml_bldg.doors.each do |door|
@@ -826,13 +814,13 @@ module Geometry
 
       # Apply construction
       ufactor = 1.0 / door.r_value
-      inside_film = Material.AirFilmVertical
+      interior_film = Material.AirFilmIndoorWall
       if door.wall.is_exterior
-        outside_film = Material.AirFilmOutside
+        exterior_film = Material.AirFilmOutside
       else
-        outside_film = Material.AirFilmVertical
+        exterior_film = Material.AirFilmIndoorWall
       end
-      Constructions.apply_door(model, [sub_surface], 'Door', ufactor, inside_film, outside_film)
+      Constructions.apply_door(model, [sub_surface], 'Door', ufactor, interior_film, exterior_film)
     end
 
     Constructions.apply_adiabatic_construction(model, surfaces, 'wall')
@@ -840,14 +828,15 @@ module Geometry
 
   # Adds any HPXML Skylights to the OpenStudio model.
   #
+  # @param runner [OpenStudio::Measure::OSRunner] Object typically used to display warnings
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param hpxml_header [HPXML::Header] HPXML Header object (one per HPXML file)
   # @return [nil]
-  def self.apply_skylights(model, spaces, hpxml_bldg, hpxml_header)
+  def self.apply_skylights(runner, model, spaces, hpxml_bldg, hpxml_header)
     default_azimuths = Defaults.get_azimuths(hpxml_bldg)
-    walls_top, _foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    walls_top = hpxml_bldg.building_construction.additional_properties.walls_height_above_grade
 
     surfaces = []
     shading_schedules = {}
@@ -862,7 +851,7 @@ module Geometry
       length = skylight.area / width
       z_origin = walls_top + 0.5 * Math.sin(Math.atan(tilt)) * width
 
-      ufactor, shgc = Constructions.get_ufactor_shgc_adjusted_by_storms(skylight.storm_type, skylight.ufactor, skylight.shgc)
+      ufactor, shgc = Constructions.get_ufactor_shgc_adjusted_by_storms(runner, skylight.storm_type, skylight.ufactor, skylight.shgc)
 
       if not skylight.curb_area.nil?
         # Create parent surface that includes curb heat transfer
@@ -875,7 +864,7 @@ module Geometry
         surface.additionalProperties.setFeature('Width', total_width)
 
         # Assign curb construction
-        curb_assembly_r = [skylight.curb_assembly_r_value - Material.AirFilmVertical.rvalue - Material.AirFilmOutside.rvalue, 0.1].max
+        curb_assembly_r = [skylight.curb_assembly_r_value - Material.AirFilmIndoorWall.rvalue - Material.AirFilmOutside.rvalue, 0.1].max
         curb_mat = Model.add_massless_material(
           model,
           name: 'SkylightCurbMaterial',
@@ -939,7 +928,7 @@ module Geometry
       surface.setWindExposure(EPlus::SurfaceWindExposureNo)
 
       # Apply construction
-      shaft_assembly_r = [skylight.shaft_assembly_r_value - 2 * Material.AirFilmVertical.rvalue, 0.1].max
+      shaft_assembly_r = [skylight.shaft_assembly_r_value - 2 * Material.AirFilmIndoorWall.rvalue, 0.1].max
       shaft_mat = Model.add_massless_material(
         model,
         name: 'SkylightShaftMaterial',
@@ -966,7 +955,7 @@ module Geometry
   # @return [nil]
   def self.apply_conditioned_floor_area(model, spaces, hpxml_bldg)
     default_azimuths = Defaults.get_azimuths(hpxml_bldg)
-    _walls_top, foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    foundation_top = hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade
 
     sum_cfa = 0.0
     hpxml_bldg.floors.each do |floor|
@@ -984,7 +973,7 @@ module Geometry
 
     addtl_cfa = hpxml_bldg.building_construction.conditioned_floor_area - sum_cfa
 
-    fail if addtl_cfa < -1.0 # Allow some rounding; EPvalidator.xml should prevent this
+    fail if addtl_cfa < -1.0 # Allow some rounding; EPvalidator.sch should prevent this
 
     return unless addtl_cfa > 1.0 # Allow some rounding
 
@@ -1044,11 +1033,11 @@ module Geometry
     end
   end
 
-  # Calculates the assumed above-grade height of the top of the dwelling unit's walls and foundation walls.
+  # Assigns the assumed above-grade height of the top of the dwelling unit's walls and foundation walls.
   #
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
-  # @return [Array<Double, Double>] Top of the walls (ft), top of the foundation walls (ft)
-  def self.get_foundation_and_walls_top(hpxml_bldg)
+  # @return [nil]
+  def self.apply_foundation_and_walls_top(hpxml_bldg)
     foundation_top = [hpxml_bldg.building_construction.unit_height_above_grade, 0].max
     hpxml_bldg.foundation_walls.each do |foundation_wall|
       top = -1 * foundation_wall.depth_below_grade + foundation_wall.height
@@ -1057,74 +1046,16 @@ module Geometry
     ncfl_ag = hpxml_bldg.building_construction.number_of_conditioned_floors_above_grade
     walls_top = foundation_top + hpxml_bldg.building_construction.average_ceiling_height * ncfl_ag
 
-    return walls_top, foundation_top
-  end
-
-  # Get the largest z difference for a surface.
-  #
-  # @param surface [OpenStudio::Model::Surface] an OpenStudio::Model::Surface object
-  # @return [Double] the max z value minus the min x value
-  def self.get_surface_height(surface:)
-    zvalues = get_surface_z_values(surfaceArray: [surface])
-    zrange = zvalues.max - zvalues.min
-    return zrange
-  end
-
-  # Return an array of x values for surfaces passed in.
-  # The values will be relative to the parent origin.
-  # This was intended for spaces.
-  #
-  # @param surfaceArray [Array<OpenStudio::Model::Surface>] array of OpenStudio::Model::Surface objects
-  # @return [Array<Double>] array of x-coordinates (ft)
-  def self.get_surface_x_values(surfaceArray:)
-    xValueArray = []
-    surfaceArray.each do |surface|
-      surface.vertices.each do |vertex|
-        xValueArray << UnitConversions.convert(vertex.x, 'm', 'ft').round(5)
-      end
-    end
-    return xValueArray
-  end
-
-  # Return an array of y values for surfaces passed in.
-  # The values will be relative to the parent origin.
-  # This was intended for spaces.
-  #
-  # @param surfaceArray [Array<OpenStudio::Model::Surface>] array of OpenStudio::Model::Surface objects
-  # @return [Array<Double>] array of y-coordinates (ft)
-  def self.get_surface_y_values(surfaceArray:)
-    yValueArray = []
-    surfaceArray.each do |surface|
-      surface.vertices.each do |vertex|
-        yValueArray << UnitConversions.convert(vertex.y, 'm', 'ft').round(5)
-      end
-    end
-    return yValueArray
-  end
-
-  # Return an array of z values for surfaces passed in.
-  # The values will be relative to the parent origin.
-  # This was intended for spaces.
-  #
-  # @param surfaceArray [Array<OpenStudio::Model::Surface>] array of OpenStudio::Model::Surface objects
-  # @return [Array<Double>] array of z-coordinates (ft)
-  def self.get_surface_z_values(surfaceArray:)
-    # Return an array of z values for surfaces passed in. The values will be relative to the parent origin. This was intended for spaces.
-    zValueArray = []
-    surfaceArray.each do |surface|
-      surface.vertices.each do |vertex|
-        zValueArray << UnitConversions.convert(vertex.z, 'm', 'ft').round(5)
-      end
-    end
-    return zValueArray
+    hpxml_bldg.building_construction.additional_properties.walls_height_above_grade = walls_top
+    hpxml_bldg.building_construction.additional_properties.foundation_height_above_grade = foundation_top
   end
 
   # Get the default number of occupants.
   #
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @return [Double] Number of occupants in the dwelling unit
-  def self.get_occupancy_default_num(nbeds:)
-    return Float(nbeds) # Per ANSI 301 for an asset calculation
+  def self.get_occupancy_default_num(nbeds)
+    return Float(nbeds) # Per ANSI/RESNET/ICC 301 for an asset calculation
   end
 
   # Creates a space and zone based on contents of spaces and value of location.
@@ -1132,7 +1063,7 @@ module Geometry
   #
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
-  # @param location [String] HPXML location
+  # @param location [String] The location of interest (HPXML::LocationXXX)
   # @param zone_multiplier [Integer] the number of similar zones represented
   # @return [OpenStudio::Model::Space, nil] updated spaces hash if location is not already a key
   def self.create_space_and_zone(model, spaces, location, zone_multiplier)
@@ -1208,21 +1139,6 @@ module Geometry
     end
 
     return new_vertices
-  end
-
-  # For an array of roof surfaces, get the maximum tilt.
-  #
-  # @param surfaces [Array<OpenStudio::Model::Surface>] array of OpenStudio::Model::Surface objects
-  # @return [Double] the maximum of surface tilts (degrees)
-  def self.get_roof_pitch(surfaces)
-    tilts = []
-    surfaces.each do |surface|
-      next if surface.surfaceType != EPlus::SurfaceTypeRoofCeiling
-      next if (surface.outsideBoundaryCondition != EPlus::BoundaryConditionOutdoors) && (surface.outsideBoundaryCondition != EPlus::BoundaryConditionAdiabatic)
-
-      tilts << surface.tilt
-    end
-    return UnitConversions.convert(tilts.max, 'rad', 'deg')
   end
 
   # Create vertices for a vertical plane based on length, height, z origin, azimuth, presence of a buffer, and any subsurface area.
@@ -1325,7 +1241,6 @@ module Geometry
   end
 
   # Set calculated zone volumes for all HPXML locations on OpenStudio Thermal Zone and Space objects.
-  # TODO why? for reporting?
   #
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
@@ -1535,18 +1450,6 @@ module Geometry
     end
   end
 
-  # Get the z origin (minimum) of a thermal zone.
-  #
-  # @param zone [OpenStudio::Model::ThermalZone] OpenStudio ThermalZone object
-  # @return [Double] Minimum of space z origins in a zone (ft)
-  def self.get_z_origin_for_zone(zone)
-    z_origins = []
-    zone.spaces.each do |space|
-      z_origins << UnitConversions.convert(space.zOrigin, 'm', 'ft')
-    end
-    return z_origins.min
-  end
-
   # Get the surface transformation using the translation matrix defined by an offset multiplied by 3D translation vector (x, y, z).
   # Applying the affine transformation will shift a set of vertices.
   #
@@ -1579,7 +1482,7 @@ module Geometry
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @return [nil]
   def self.add_neighbor_shading(model, length, hpxml_bldg)
-    walls_top, _foundation_top = get_foundation_and_walls_top(hpxml_bldg)
+    walls_top = hpxml_bldg.building_construction.additional_properties.walls_height_above_grade
     z_origin = 0 # shading surface always starts at grade
 
     shading_surfaces = []
@@ -1607,82 +1510,137 @@ module Geometry
   # Calculate zone volume for an HPXML location based on floor area and an assumed height.
   #
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
-  # @param location [String] the location of interest (HPXML::LocationXXX)
-  # @return [Double] calculated zone volume (ft^3)
+  # @param location [String] The location of interest (HPXML::LocationXXX)
+  # @return [Double] The zone volume (ft^3)
   def self.calculate_zone_volume(hpxml_bldg, location)
-    if [HPXML::LocationBasementUnconditioned,
+    if [HPXML::LocationBasementConditioned,
+        HPXML::LocationBasementUnconditioned,
         HPXML::LocationCrawlspaceUnvented,
         HPXML::LocationCrawlspaceVented,
+        HPXML::LocationCrawlspaceConditioned,
         HPXML::LocationGarage].include? location
       floor_area = hpxml_bldg.slabs.select { |s| s.interior_adjacent_to == location }.map { |s| s.area }.sum(0.0)
-      height = hpxml_bldg.foundation_walls.select { |w| w.interior_adjacent_to == location }.map { |w| w.height }.max
-      if height.nil? # No foundation walls, need to make assumption because HPXML Wall elements don't have a height
-        height = { HPXML::LocationBasementUnconditioned => 8,
-                   HPXML::LocationCrawlspaceUnvented => 3,
-                   HPXML::LocationCrawlspaceVented => 3,
-                   HPXML::LocationGarage => 8 }[location]
-      end
+      height = calculate_zone_height(hpxml_bldg, location)
       return floor_area * height
     elsif [HPXML::LocationAtticUnvented,
            HPXML::LocationAtticVented].include? location
-      floor_area = hpxml_bldg.floors.select { |f| [f.interior_adjacent_to, f.exterior_adjacent_to].include? location }.map { |s| s.area }.sum(0.0)
-      roofs = hpxml_bldg.roofs.select { |r| r.interior_adjacent_to == location }
-      avg_pitch = roofs.map { |r| r.pitch }.sum(0.0) / roofs.size
-      # Assume square hip roof for volume calculation
-      length = floor_area**0.5
-      height = 0.5 * Math.sin(Math.atan(avg_pitch / 12.0)) * length
-      return [floor_area * height / 3.0, 0.01].max
+      footprint_area = calculate_height_and_footprint_of_roofs(hpxml_bldg, location)[1]
+      height = calculate_zone_height(hpxml_bldg, location)
+      return [footprint_area * height / 3.0, 0.01].max # Assume square hip roof
     end
+  end
+
+  # Calculate (or assume) the zone height (difference between top and bottom of the zone) for a
+  # given HPXML location.
+  #
+  # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
+  # @param location [String] The location of interest (HPXML::LocationXXX)
+  # @param above_grade [Boolean] True to return the above-grade height (vs the total height) for a below-grade space
+  # @return [Double] The zone height (ft)
+  def self.calculate_zone_height(hpxml_bldg, location, above_grade: false)
+    if [HPXML::LocationBasementConditioned,
+        HPXML::LocationBasementUnconditioned,
+        HPXML::LocationCrawlspaceUnvented,
+        HPXML::LocationCrawlspaceVented,
+        HPXML::LocationCrawlspaceConditioned,
+        HPXML::LocationGarage].include? location
+      if above_grade
+        height = hpxml_bldg.foundation_walls.select { |w| w.interior_adjacent_to == location }.map { |w| w.height - w.depth_below_grade }.max
+      else
+        height = hpxml_bldg.foundation_walls.select { |w| w.interior_adjacent_to == location }.map { |w| w.height }.max
+      end
+      if height.nil? # No foundation walls, need to make assumption because HPXML Wall elements don't have a height
+        height = { HPXML::LocationBasementConditioned => 8,
+                   HPXML::LocationBasementUnconditioned => 8,
+                   HPXML::LocationCrawlspaceUnvented => 3,
+                   HPXML::LocationCrawlspaceVented => 3,
+                   HPXML::LocationCrawlspaceConditioned => 3,
+                   HPXML::LocationGarage => 8 }[location]
+      end
+    elsif [HPXML::LocationAtticUnvented,
+           HPXML::LocationAtticVented].include? location
+      height = calculate_height_and_footprint_of_roofs(hpxml_bldg, location)[0]
+    end
+    return height
+  end
+
+  # Approximates the height (difference between top and bottom) for the roof surfaces
+  # adjacent to the specified location.
+  #
+  # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
+  # @param location [String] The location of interest (HPXML::LocationXXX)
+  # @return [Double, Double] The height (ft) and footprint area (ft^2) of the roof
+  def self.calculate_height_and_footprint_of_roofs(hpxml_bldg, location)
+    roofs = hpxml_bldg.roofs.select { |r| r.interior_adjacent_to == location }
+    roof_area = roofs.map { |r| r.area }.sum(0.0)
+    avg_pitch = roofs.map { |r| r.pitch }.sum(0.0) / roofs.size
+    roof_pitch_multiplier = ((avg_pitch / 12.0)**2 + 1)**0.5
+    roof_footprint_area = roof_area / roof_pitch_multiplier
+    if avg_pitch > 0
+      # Assume square hip roof
+      length = roof_footprint_area**0.5
+      height = 0.5 * Math.sin(Math.atan(avg_pitch / 12.0)) * length
+    else
+      if [HPXML::LocationAtticUnvented,
+          HPXML::LocationAtticVented].include? location
+        # Flat roof w/ attic, assume height
+        height = 2.0
+      else
+        height = 0.0
+      end
+    end
+    return height, roof_footprint_area
   end
 
   # Get temperature scheduled space values for an HPXML location.
   #
-  # @param location [String] the general HPXML location
+  # @param location [String] The location of interest (HPXML::LocationXXX)
   # @return [Hash] Map of minimum temperature, indoor/outdoor/ground weights, duct regain factor
   def self.get_temperature_scheduled_space_values(location)
-    if location == HPXML::LocationOtherHeatedSpace
+    case location
+    when HPXML::LocationOtherHeatedSpace
       # Average of indoor/outdoor temperatures with minimum of heating setpoint
       return { temp_min: 68,
                indoor_weight: 0.5,
                outdoor_weight: 0.5,
                ground_weight: 0.0,
                f_regain: 0.0 }
-    elsif location == HPXML::LocationOtherMultifamilyBufferSpace
+    when HPXML::LocationOtherMultifamilyBufferSpace
       # Average of indoor/outdoor temperatures with minimum of 50 F
       return { temp_min: 50,
                indoor_weight: 0.5,
                outdoor_weight: 0.5,
                ground_weight: 0.0,
                f_regain: 0.0 }
-    elsif location == HPXML::LocationOtherNonFreezingSpace
+    when HPXML::LocationOtherNonFreezingSpace
       # Floating with outdoor air temperature with minimum of 40 F
       return { temp_min: 40,
                indoor_weight: 0.0,
                outdoor_weight: 1.0,
                ground_weight: 0.0,
                f_regain: 0.0 }
-    elsif location == HPXML::LocationOtherHousingUnit
+    when HPXML::LocationOtherHousingUnit
       # Indoor air temperature
       return { temp_min: nil,
                indoor_weight: 1.0,
                outdoor_weight: 0.0,
                ground_weight: 0.0,
                f_regain: 0.0 }
-    elsif location == HPXML::LocationExteriorWall
+    when HPXML::LocationExteriorWall
       # Average of indoor/outdoor temperatures
       return { temp_min: nil,
                indoor_weight: 0.5,
                outdoor_weight: 0.5,
                ground_weight: 0.0,
                f_regain: 0.5 } # From LBNL's "Technical Background for default values used for Forced Air Systems in Proposed ASHRAE Standard 152P"
-    elsif location == HPXML::LocationUnderSlab
+    when HPXML::LocationUnderSlab
       # Ground temperature
       return { temp_min: nil,
                indoor_weight: 0.0,
                outdoor_weight: 0.0,
                ground_weight: 1.0,
                f_regain: 0.83 } # From LBNL's "Technical Background for default values used for Forced Air Systems in Proposed ASHRAE Standard 152P"
-    elsif location == HPXML::LocationManufacturedHomeBelly
+    when HPXML::LocationManufacturedHomeBelly
       # From LBNL's "Technical Background for default values used for Forced Air Systems in Proposed ASHRAE Standard 152P"
       # 3.5 Manufactured House Belly Pan Temperatures
       # FUTURE: Consider modeling the belly as a separate thermal zone so that we dynamically calculate temperatures.
@@ -1774,7 +1732,7 @@ module Geometry
       # Create E+ other side coefficient object
       otherside_coeffs = OpenStudio::Model::SurfacePropertyOtherSideCoefficients.new(model)
       otherside_coeffs.setName(exterior_adjacent_to)
-      otherside_coeffs.setCombinedConvectiveRadiativeFilmCoefficient(UnitConversions.convert(1.0 / Material.AirFilmVertical.rvalue, 'Btu/(hr*ft^2*F)', 'W/(m^2*K)'))
+      otherside_coeffs.setCombinedConvectiveRadiativeFilmCoefficient(UnitConversions.convert(1.0 / Material.AirFilmIndoorWall.rvalue, 'Btu/(hr*ft^2*F)', 'W/(m^2*K)'))
       # Schedule of space temperature, can be shared with water heater/ducts
       sch = get_space_temperature_schedule(model, exterior_adjacent_to, spaces)
       otherside_coeffs.setConstantTemperatureSchedule(sch)
@@ -1788,7 +1746,7 @@ module Geometry
   # can be shared by any surface, duct adjacent to / located in those spaces.
   #
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
-  # @param location [String] the location of interest (HPXML::LocationXXX)
+  # @param location [String] The location of interest (HPXML::LocationXXX)
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
   # @return [OpenStudio::Model::ScheduleConstant] OpenStudio ScheduleConstant object
   def self.get_space_temperature_schedule(model, location, spaces)
@@ -1920,7 +1878,7 @@ module Geometry
   # Should be called when the object's energy use is sensitive to ambient temperature
   # (e.g., water heaters, ducts, and refrigerators).
   #
-  # @param location [String] the location of interest (HPXML::LocationXXX)
+  # @param location [String] The location of interest (HPXML::LocationXXX)
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
   # @return [OpenStudio::Model::Space or OpenStudio::Model::ScheduleConstant] OpenStudio Space or Schedule object
@@ -1950,7 +1908,7 @@ module Geometry
   # Should be called when the object's energy use is NOT sensitive to ambient temperature
   # (e.g., appliances).
   #
-  # @param location [String] the location of interest (HPXML::LocationXXX)
+  # @param location [String] The location of interest (HPXML::LocationXXX)
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
   # @return [OpenStudio::Model::Space] OpenStudio Space object
   def self.get_space_from_location(location, spaces)
@@ -1965,37 +1923,6 @@ module Geometry
     end
 
     return spaces[location]
-  end
-
-  # Calculates space heights as the max z coordinate minus the min z coordinate.
-  #
-  # @param spaces [Array<OpenStudio::Model::Space>] array of OpenStudio::Model::Space objects
-  # @return [Double] max z coordinate minus min z coordinate for a collection of spaces (ft)
-  def self.get_height_of_spaces(spaces:)
-    minzs = []
-    maxzs = []
-    spaces.each do |space|
-      zvalues = get_surface_z_values(surfaceArray: space.surfaces)
-      minzs << zvalues.min + UnitConversions.convert(space.zOrigin, 'm', 'ft')
-      maxzs << zvalues.max + UnitConversions.convert(space.zOrigin, 'm', 'ft')
-    end
-    return maxzs.max - minzs.min
-  end
-
-  # Determine the length of an OpenStudio Surface by calculating the maximum difference between x and y coordinates.
-  #
-  # @param surface [OpenStudio::Model::Surface] an OpenStudio::Model::Surface object
-  # @return [Double] length of the OpenStudio Surface (ft)
-  def self.get_surface_length(surface:)
-    xvalues = get_surface_x_values(surfaceArray: [surface])
-    yvalues = get_surface_y_values(surfaceArray: [surface])
-    xrange = xvalues.max - xvalues.min
-    yrange = yvalues.max - yvalues.min
-    if xrange > yrange
-      return xrange
-    end
-
-    return yrange
   end
 
   # Calculates the minimum buffer distance that the parent surface
@@ -2015,7 +1942,7 @@ module Geometry
   #
   # @param model [OpenStudio::Model::Model] OpenStudio Model object
   # @param spaces [Hash] Map of HPXML locations => OpenStudio Space objects
-  # @param location [String] the location of interest (HPXML::LocationXXX)
+  # @param location [String] The location of interest (HPXML::LocationXXX)
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @return [OpenStudio::Model::Space] the OpenStudio::Model::Space object corresponding to HPXML::LocationXXX
   def self.create_or_get_space(model, spaces, location, hpxml_bldg)
