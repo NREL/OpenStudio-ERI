@@ -453,6 +453,40 @@ class HPXMLtoOpenStudioDefaultsTest < Minitest::Test
     _test_default_neighbor_building_values(default_hpxml_bldg, [90, 0])
   end
 
+  def test_get_azimuths_with_front_of_home
+    # Test that azimuth_of_front_of_home takes precedence over surface area calculation
+    hpxml, hpxml_bldg = _create_hpxml('base.xml')
+
+    # base.xml has windows at 0, 90, 180, 270 degrees
+    # The largest window area is at 180 (south), so without front_of_home,
+    # the primary azimuth would be calculated as 180 based on surface areas.
+
+    # First verify the fallback behavior (no front_of_home set)
+    hpxml_bldg.site.azimuth_of_front_of_home = nil
+    azimuths = Defaults.get_azimuths(hpxml_bldg)
+    # With windows at cardinal directions, primary will be one of 0/90/180/270
+    assert_equal([0, 90, 180, 270], azimuths)
+
+    # Now set front_of_home to 45 (northeast) - this should OVERRIDE the surface calculation
+    # Even though surfaces point to cardinal directions, the result should be based on 45
+    hpxml_bldg.site.azimuth_of_front_of_home = 45
+    azimuths = Defaults.get_azimuths(hpxml_bldg)
+    # Should return [45, 135, 225, 315] - NOT [0, 90, 180, 270]
+    assert_equal([45, 135, 225, 315], azimuths)
+
+    # Test with front_of_home at 30 degrees to further verify override
+    hpxml_bldg.site.azimuth_of_front_of_home = 30
+    azimuths = Defaults.get_azimuths(hpxml_bldg)
+    # 30 + 90 = 120, 30 + 180 = 210, 30 + 270 = 300
+    assert_equal([30, 120, 210, 300], azimuths)
+
+    # Test edge case: front_of_home at 270 should produce standard cardinals
+    hpxml_bldg.site.azimuth_of_front_of_home = 270
+    azimuths = Defaults.get_azimuths(hpxml_bldg)
+    # 270 + 90 = 360 -> 0, 270 + 180 = 450 -> 90, 270 + 270 = 540 -> 180
+    assert_equal([0, 90, 180, 270], azimuths)
+  end
+
   def test_occupancy
     # Test inputs not overridden by defaults
     hpxml, hpxml_bldg = _create_hpxml('base.xml')

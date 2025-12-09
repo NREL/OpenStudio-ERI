@@ -127,20 +127,26 @@ module Defaults
       return azimuth
     end
 
-    azimuth_areas = {}
-    (hpxml_bldg.surfaces + hpxml_bldg.subsurfaces).each do |surface|
-      next unless surface.respond_to?(:azimuth)
-
-      az = surface.azimuth
-      next if az.nil?
-
-      azimuth_areas[az] = 0 if azimuth_areas[az].nil?
-      azimuth_areas[az] += surface.area
-    end
-    if azimuth_areas.empty?
-      primary_azimuth = 0
+    # Use user-specified front of home azimuth if provided
+    if !hpxml_bldg.site.azimuth_of_front_of_home.nil?
+      primary_azimuth = hpxml_bldg.site.azimuth_of_front_of_home
     else
-      primary_azimuth = azimuth_areas.max_by { |_k, v| v }[0]
+      # Calculate primary azimuth from surface areas
+      azimuth_areas = {}
+      (hpxml_bldg.surfaces + hpxml_bldg.subsurfaces).each do |surface|
+        next unless surface.respond_to?(:azimuth)
+
+        az = surface.azimuth
+        next if az.nil?
+
+        azimuth_areas[az] = 0 if azimuth_areas[az].nil?
+        azimuth_areas[az] += surface.area
+      end
+      if azimuth_areas.empty?
+        primary_azimuth = 0
+      else
+        primary_azimuth = azimuth_areas.max_by { |_k, v| v }[0]
+      end
     end
     return [primary_azimuth,
             unspin_azimuth(primary_azimuth + 90),
