@@ -2773,6 +2773,7 @@ def create_sample_hpxmls
       battery.is_shared_system = false if battery.is_shared_system.nil?
       battery.location = nil
       battery.round_trip_efficiency = 0.925
+      battery.nominal_capacity_kwh = nil
     end
     n_htg_systems = (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.size
     n_clg_systems = (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_cool_load_served.to_f > 0 }.size

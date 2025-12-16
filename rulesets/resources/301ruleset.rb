@@ -1947,7 +1947,6 @@ module ERI_301_Ruleset
                                is_shared_system: orig_battery.is_shared_system,
                                type: orig_battery.type,
                                location: orig_battery.location,
-                               nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
                                usable_capacity_kwh: orig_battery.usable_capacity_kwh,
                                rated_power_output: orig_battery.rated_power_output,
                                round_trip_efficiency: orig_battery.round_trip_efficiency,

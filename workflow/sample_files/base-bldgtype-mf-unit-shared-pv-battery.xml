@@ -335,10 +335,6 @@
             <SystemIdentifier id='Battery1'/>
             <IsSharedSystem>true</IsSharedSystem>
             <BatteryType>Li-ion</BatteryType>
-            <NominalCapacity>
-              <Units>kWh</Units>
-              <Value>120.0</Value>
-            </NominalCapacity>
             <UsableCapacity>
               <Units>kWh</Units>
               <Value>108.0</Value>

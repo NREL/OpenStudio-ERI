@@ -57,7 +57,7 @@ class ERIPVTest < Minitest::Test
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 20.0, usable_capacity_kwh: 18.0, rated_power_output: 6000, round_trip_efficiency: 0.925, is_shared: false }])
+        _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, usable_capacity_kwh: 18.0, rated_power_output: 6000, round_trip_efficiency: 0.925, is_shared: false }])
       else
         _check_battery(hpxml_bldg)
       end
@@ -70,7 +70,7 @@ class ERIPVTest < Minitest::Test
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
         _check_pv(hpxml_bldg, [{ location: HPXML::LocationGround, moduletype: HPXML::PVModuleTypeStandard, tracking: HPXML::PVTrackingTypeFixed, azimuth: 225, tilt: 30, power: 30000, inv_eff: 0.96, losses: 0.14, is_shared: true, nbeds_served: 18 }])
-        _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, nominal_capacity_kwh: 120.0, usable_capacity_kwh: 108.0, rated_power_output: 36000, round_trip_efficiency: 0.925, is_shared: true, nbeds_served: 18 }])
+        _check_battery(hpxml_bldg, [{ type: HPXML::BatteryTypeLithiumIon, location: HPXML::LocationOutside, usable_capacity_kwh: 108.0, rated_power_output: 36000, round_trip_efficiency: 0.925, is_shared: true, nbeds_served: 18 }])
       else
         _check_pv(hpxml_bldg)
         _check_battery(hpxml_bldg)
@@ -138,7 +138,6 @@ class ERIPVTest < Minitest::Test
       assert_equal(expected_values[:is_shared], battery.is_shared_system)
       assert_equal(expected_values[:type], battery.type)
       assert_equal(expected_values[:location], battery.location)
-      assert_equal(expected_values[:nominal_capacity_kwh], battery.nominal_capacity_kwh)
       assert_equal(expected_values[:usable_capacity_kwh], battery.usable_capacity_kwh)
       assert_equal(expected_values[:rated_power_output], battery.rated_power_output)
       assert_equal(expected_values[:round_trip_efficiency], battery.round_trip_efficiency)
