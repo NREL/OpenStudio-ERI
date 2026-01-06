@@ -68,7 +68,6 @@ These features may require shorter timesteps, allow more sophisticated simulatio
   .. [#] GroundToAirHeatPumpModelType choices are "standard" and "experimental".
   .. [#] Use "standard" for standard ground-to-air heat pump modeling.
          Use "experimental" for an improved model that better accounts for coil staging.
-         The "experimental" ground-to-air heat pump models with desuperheater are not supported yet, see :ref:`water_heater_desuperheater`.
 
 .. _hpxml_emissions_scenarios:
 
@@ -393,16 +392,17 @@ Modeling a whole SFA/MF building is defined in ``/HPXML/SoftwareInfo/extension``
 
 For these simulations:
 
-- An HPXML file with multiple ``Building`` elements is used, where each ``Building`` represents an individual dwelling unit.
+- An HPXML file with multiple ``Building`` elements is used, where each ``Building`` represents an individual dwelling unit. See the ``base-bldgtype-mf-whole-building.xml`` sample file for an example.
 - Unit multipliers (using the ``NumberofUnits`` element; see :ref:`building_construction`) can be specified to model *unique* dwelling units, rather than *all* dwelling units, reducing simulation runtime.
-- Adjacent SFA/MF common spaces are still modeled using assumed temperature profiles, not as separate thermal zones. (This may change in the future.)
-- Shared systems are still modeled as individual systems, not shared systems connected to multiple dwelling unit. (This may change in the future.)
-- Energy use for the entire building is calculated; you cannot get energy use for individual dwelling units. (This may change in the future.)
+- Inter-unit heat transfer can be modeled by using the ``SystemIdentifier/@sameas`` attribute on a wall, foundation wall, rim joist, or floor that points to the other corresponding surface. For example, the wall of the second dwelling unit may reference a wall of the first dwelling unit. When the ``@sameas`` attribute is used, no other properties should be specified for that surface. See the ``base-bldgtype-mf-whole-building-inter-unit-heat-transfer.xml`` sample file for an example.
+- Adjacent SFA/MF common spaces are still modeled using assumed temperature profiles, not as separate thermal zones. This may change in the future. (As a workaround, common spaces can be modeled as separate thermal zones by describing them as separate dwelling units -- i.e., ``Building`` elements -- and describing them as "conditioned space" or "basement - conditioned". Each common space can then be described with the full detail allowed for dwelling units -- i.e., HVAC systems, infiltration, lighting, plug loads, etc. Inter-unit heat transfer, particularly between common space units and dwelling units, should be specified as described above. See the ``base-bldgtype-mf-whole-building-common-spaces.xml`` sample file for an example.)
+- Shared systems are still modeled as individual systems, not shared systems connected to multiple dwelling unit. This may change in the future.
+- Energy use for the entire building is calculated; you cannot get energy use for individual dwelling units. This may change in the future.
 
 Notes/caveats about this approach:
 
 - Some inputs (e.g., EPW location or ground conductivity) cannot vary across ``Building`` elements.
-- :ref:`hpxml_batteries` and :ref:`hpxml_vehicles` are not currently supported.
+- :ref:`hpxml_batteries` is not currently supported.
 - :ref:`hpxml_utility_bill_scenarios` using *detailed* :ref:`electricity_rates` are not supported.
 
 .. _building_site:
@@ -1006,6 +1006,7 @@ In addition, one of the following air leakage types must also be defined:
 - :ref:`infil_ach_cfm`
 - :ref:`infil_natural_ach_cfm`
 - :ref:`infil_ela`
+- :ref:`infil_sla`
 - :ref:`infil_leakiness_description`
 
 .. note::
@@ -1061,7 +1062,21 @@ Note that ELA is different than Equivalent Leakage Area (EqLA), which involves a
   ====================================  ======  =======  ===========  =========  =========================  ===============================================
   Element                               Type    Units    Constraints  Required   Default                    Notes
   ====================================  ======  =======  ===========  =========  =========================  ===============================================
-  ``EffectiveLeakageArea``              double  sq. in.  >= 0         Yes                                   Effective leakage area value
+  ``EffectiveLeakageArea``              double  sq. in.  > 0          Yes                                   Effective leakage area value
+  ====================================  ======  =======  ===========  =========  =========================  ===============================================
+
+.. _infil_sla:
+
+Specific Leakage Area
+~~~~~~~~~~~~~~~~~~~~~
+
+If entering air leakage as Specific Leakage Area (SLA), additional information is entered in ``/HPXML/Building/BuildingDetails/Enclosure/AirInfiltration/AirInfiltrationMeasurement``.
+Specific Leakage Area is the unitless ratio of Effective Leakage Area (ELA) divided by conditioned floor area, given in the same units of measure (e.g., sqft).
+
+  ====================================  ======  =======  ===========  =========  =========================  ===============================================
+  Element                               Type    Units    Constraints  Required   Default                    Notes
+  ====================================  ======  =======  ===========  =========  =========================  ===============================================
+  ``SpecificLeakageArea``               double  frac     > 0          Yes                                   Specific leakage area value
   ====================================  ======  =======  ===========  =========  =========================  ===============================================
 
 .. _infil_leakiness_description:
@@ -1246,29 +1261,29 @@ For a multifamily building where the dwelling unit has another dwelling unit abo
   .. [#] If neither Azimuth nor Orientation provided, and it's a *pitched* roof, modeled as four surfaces of equal area facing every direction.
          Azimuth/Orientation is irrelevant for *flat* roofs.
   .. [#] RoofType choices are "asphalt or fiberglass shingles", "wood shingles or shakes", "shingles", "slate or tile shingles", "metal surfacing", "plastic/rubber/synthetic sheeting", "expanded polystyrene sheathing", "concrete", or "cool roof".
-  .. [#] RoofColor choices are "light", "medium", "medium dark", "dark", or "reflective".
+  .. [#] RoofColor choices are "dark", "medium dark", "medium", "medium light", "light", or "reflective".
   .. [#] If SolarAbsorptance not provided, defaults based on RoofType and RoofColor:
 
-         \- **asphalt or fiberglass shingles**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
+         \- **asphalt or fiberglass shingles**: dark=0.92, medium dark=0.89, medium=0.85, medium light=0.8, light=0.75, reflective=0.50
 
-         \- **wood shingles or shakes**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
+         \- **wood shingles or shakes**: dark=0.92, medium dark=0.89, medium=0.85, medium light=0.8, light=0.75, reflective=0.50
 
-         \- **shingles**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
+         \- **shingles**: dark=0.92, medium dark=0.89, medium=0.85, medium light=0.8, light=0.75, reflective=0.50
 
-         \- **slate or tile shingles**: dark=0.90, medium dark=0.83, medium=0.75, light=0.60, reflective=0.30
+         \- **slate or tile shingles**: dark=0.90, medium dark=0.83, medium=0.75, medium light=0.67, light=0.60, reflective=0.30
 
-         \- **metal surfacing**: dark=0.90, medium dark=0.83, medium=0.75, light=0.60, reflective=0.30
+         \- **metal surfacing**: dark=0.90, medium dark=0.83, medium=0.75, medium light=0.67, light=0.60, reflective=0.30
 
-         \- **plastic/rubber/synthetic sheeting**: dark=0.90, medium dark=0.83, medium=0.75, light=0.60, reflective=0.30
+         \- **plastic/rubber/synthetic sheeting**: dark=0.90, medium dark=0.83, medium=0.75, medium light=0.67, light=0.60, reflective=0.30
 
-         \- **expanded polystyrene sheathing**: dark=0.92, medium dark=0.89, medium=0.85, light=0.75, reflective=0.50
+         \- **expanded polystyrene sheathing**: dark=0.92, medium dark=0.89, medium=0.85, medium light=0.8, light=0.75, reflective=0.50
 
-         \- **concrete**: dark=0.90, medium dark=0.83, medium=0.75, light=0.65, reflective=0.50
+         \- **concrete**: dark=0.90, medium dark=0.83, medium=0.75, medium light=0.7, light=0.65, reflective=0.50
 
          \- **cool roof**: 0.30
 
-  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "none".
-  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is conditioned space, otherwise "none".
+  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "not present".
+  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is conditioned space, otherwise "not present".
   .. [#] Pitch is entered as vertical rise in inches for every 12 inches of horizontal run.
          For example, 6.0 means a 6/12 roof, which has a 26.57-degree roof slope.
   .. [#] RadiantBarrier intended for attic roofs. Model assumes an emittance of 0.05.
@@ -1305,8 +1320,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
   .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] If neither Azimuth nor Orientation provided, and it's an *exterior* rim joist, modeled as four surfaces of equal area facing every direction.
          Azimuth/Orientation is irrelevant for *interior* rim joists.
-  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "aluminum siding", "masonite siding", "composite shingle siding", "asbestos siding", "synthetic stucco", or "none".
-  .. [#] Color choices are "light", "medium", "medium dark", "dark", or "reflective".
+  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "stone veneer", "aluminum siding", "masonite siding", "composite shingle siding", "asbestos siding", "synthetic stucco", or "not present".
+  .. [#] Color choices are "dark", "medium dark", "medium", "medium light", "light", or "reflective".
   .. [#] If SolarAbsorptance not provided, defaults based on Color:
 
          \- **dark**: 0.95
@@ -1314,6 +1329,8 @@ Each rim joist surface (i.e., the perimeter of floor joists typically found betw
          \- **medium dark**: 0.85
 
          \- **medium**: 0.70
+
+         \- **medium light**: 0.60
 
          \- **light**: 0.50
 
@@ -1358,8 +1375,8 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
   .. [#] Orientation choices are "northeast", "east", "southeast", "south", "southwest", "west", "northwest", or "north"
   .. [#] If neither Azimuth nor Orientation provided, and it's an *exterior* wall, modeled as four surfaces of equal area facing every direction.
          Azimuth/Orientation is irrelevant for *interior* walls (e.g., between conditioned space and garage).
-  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "aluminum siding", "masonite siding", "composite shingle siding", "asbestos siding", "synthetic stucco", or "none".
-  .. [#] Color choices are "light", "medium", "medium dark", "dark", or "reflective".
+  .. [#] Siding choices are "wood siding", "vinyl siding", "stucco", "fiber cement siding", "brick veneer", "stone veneer", "aluminum siding", "masonite siding", "composite shingle siding", "asbestos siding", "synthetic stucco", or "not present".
+  .. [#] Color choices are "dark", "medium dark", "medium", "medium light", "light", or "reflective".
   .. [#] If SolarAbsorptance not provided, defaults based on Color:
 
          \- **dark**: 0.95
@@ -1368,12 +1385,14 @@ Each wall surface is entered as a ``/HPXML/Building/BuildingDetails/Enclosure/Wa
 
          \- **medium**: 0.70
 
+         \- **medium light**: 0.60
+
          \- **light**: 0.50
 
          \- **reflective**: 0.30
 
-  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "none".
-  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is conditioned space or basement - conditioned, otherwise "none".
+  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "not present".
+  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is conditioned space or basement - conditioned, otherwise "not present".
   .. [#] RadiantBarrier intended for attic gable walls. Model assumes an emittance of 0.05.
   .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
          It should also include the effects of insulation gaps (installation grading) and/or compressed insulation in cavities per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
@@ -1420,8 +1439,8 @@ Any wall surface in contact with the ground is considered a foundation wall.
          For interior foundation walls, depth below grade is the vertical span of foundation wall in contact with the ground.
          For example, an interior foundation wall between an 8 ft conditioned basement and a 3 ft crawlspace has a height of 8 ft and a depth below grade of 5 ft.
          Alternatively, an interior foundation wall between an 8 ft conditioned basement and an 8 ft unconditioned basement has a height of 8 ft and a depth below grade of 0 ft.
-  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "none".
-  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is basement - conditioned, otherwise "none".
+  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "not present".
+  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is basement - conditioned, otherwise "not present".
   .. [#] Layer[InstallationType="continuous - interior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] Layer[InstallationType="continuous - exterior"] only required if AssemblyEffectiveRValue is not provided.
   .. [#] AssemblyEffectiveRValue only required if Layer elements are not provided.
@@ -1472,8 +1491,8 @@ Each floor/ceiling surface that is not in contact with the ground (Slab) nor adj
   .. [#] FloorOrCeiling choices are "floor" or "ceiling".
   .. [#] FloorOrCeiling only required for floors adjacent to "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
   .. [#] FloorType child element choices are ``WoodFrame``, ``StructuralInsulatedPanel``, ``SteelFrame``, or ``SolidConcrete``.
-  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "none".
-  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is conditioned space and the surface is a ceiling, otherwise "none".
+  .. [#] InteriorFinish/Type choices are "gypsum board", "gypsum composite board", "plaster", "wood", "other", or "not present".
+  .. [#] InteriorFinish/Type defaults to "gypsum board" if InteriorAdjacentTo is conditioned space and the surface is a ceiling, otherwise "not present".
   .. [#] RadiantBarrier intended for attic floors. Model assumes an emittance of 0.5 (reduced effectiveness due to accumulation of dust) per `an ORNL article on radiant barriers <https://web.ornl.gov/sci/buildings/tools/radiant/rb2/>`_.
   .. [#] AssemblyEffectiveRValue includes all material layers and interior/exterior air films.
          It should also include the effects of insulation gaps (installation grading), compressed insulation in cavities, and/or reduced attic floor insulation thickness at the eaves per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
@@ -1653,11 +1672,11 @@ Either winter/summer shading coefficients can be directly provided, or they can 
   ``WinterShadingCoefficient``  double  frac   >= 0, <= 1   No        See [#]_   Total winter shading coefficient for modeling (1=transparent, 0=opaque)
   ============================  ======  =====  ===========  ========  =========  =============================================================
 
-  .. [#] Type choices are "external overhangs", "awnings", "solar screens", "solar film", "deciduous tree", "evergreen tree", "building", "other", or "none".
-  .. [#] If Type not provided, and either SummerShadingCoefficient or WinterShadingCoefficient not provided, defaults to "none".
+  .. [#] Type choices are "external overhangs", "awnings", "solar screens", "solar film", "deciduous tree", "evergreen tree", "building", "other", or "not present".
+  .. [#] If Type not provided, and either SummerShadingCoefficient or WinterShadingCoefficient not provided, defaults to "not present".
   .. [#] If SummerFractionCovered not provided, defaults to 1.0 for solar screens/solar film/overhangs/awnings and 0.5 for trees/other/building.
   .. [#] If WinterFractionCovered not provided, defaults to 1.0 for solar screens/solar film/overhangs/awnings, 0.5 for evergreen tree/other/building, and 0.25 for deciduous tree.
-  .. [#] If SummerShadingCoefficient not provided, defaults to 1.0 if Type="none", otherwise calculated as follows:
+  .. [#] If SummerShadingCoefficient not provided, defaults to 1.0 if Type="not present", otherwise calculated as follows:
 
          SummerShadingCoefficient = SummerFractionCovered * C1 + (1 - SummerFractionCovered) * 1.0
 
@@ -1673,7 +1692,7 @@ Either winter/summer shading coefficients can be directly provided, or they can 
 
          \- **other**: C1=0.5
 
-  .. [#] If WinterShadingCoefficient not provided, defaults to 1.0 if Type="none", otherwise calculated using same approach as SummerShadingCoefficient.
+  .. [#] If WinterShadingCoefficient not provided, defaults to 1.0 if Type="not present", otherwise calculated using same approach as SummerShadingCoefficient.
 
 .. note::
 
@@ -1700,13 +1719,13 @@ Either winter/summer shading coefficients can be directly provided, or they can 
   ``WinterShadingCoefficient``  double  frac   >= 0, <= 1   No        See [#]_   Total winter shading coefficient for modeling (1=transparent, 0=opaque)
   ============================  ======  =====  ===========  ========  =========  =============================================================
 
-  .. [#] Type choices are "light blinds", "medium blinds", "dark blinds", "light shades", "medium shades", "dark shades", "light curtains", "medium curtains", "dark curtains", "other", or "none".
-  .. [#] If Type not provided, and either SummerShadingCoefficient or WinterShadingCoefficient not provided, defaults to "light curtains" if not glass block windows and "none" for glass block windows.
+  .. [#] Type choices are "light blinds", "medium blinds", "dark blinds", "light shades", "medium shades", "dark shades", "light curtains", "medium curtains", "dark curtains", "other", or "not present".
+  .. [#] If Type not provided, and either SummerShadingCoefficient or WinterShadingCoefficient not provided, defaults to "light curtains" if not glass block windows and "not present" for glass block windows.
   .. [#] BlindsSummerClosedOrOpen choices are "closed", "open", or "half open".
   .. [#] BlindsWinterClosedOrOpen choices are "closed", "open", or "half open".
   .. [#] If SummerFractionCovered not provided, defaults to 1.0 for blinds and 0.5 for shades/curtains/other.
   .. [#] If WinterFractionCovered not provided, defaults to 1.0 for blinds and 0.5 for shades/curtains/other.
-  .. [#] If SummerShadingCoefficient not provided, defaults to 1.0 if Type="none", otherwise calculated based on Chapter 15 Table 14 of `ASHRAE 2021 Handbook of Fundamentals <https://www.ashrae.org/technical-resources/ashrae-handbook/description-2021-ashrae-handbook-fundamentals>`_:
+  .. [#] If SummerShadingCoefficient not provided, defaults to 1.0 if Type="not present", otherwise calculated based on Chapter 15 Table 14 of `ASHRAE 2021 Handbook of Fundamentals <https://www.ashrae.org/technical-resources/ashrae-handbook/description-2021-ashrae-handbook-fundamentals>`_:
 
          SummerShadingCoefficient = SummerFractionCovered * (C1 - (C2 * WindowSHGC)) + (1 - SummerFractionCovered) * 1.0
 
@@ -1744,7 +1763,7 @@ Either winter/summer shading coefficients can be directly provided, or they can 
 
          \- **other**: C1=0.5, C2=0.0
 
-  .. [#] If WinterShadingCoefficient not provided, defaults to 1.0 if Type="none", otherwise calculated using same approach as SummerShadingCoefficient.
+  .. [#] If WinterShadingCoefficient not provided, defaults to 1.0 if Type="not present", otherwise calculated using same approach as SummerShadingCoefficient.
 
 .. note::
 
@@ -4353,8 +4372,6 @@ If the water heater uses a desuperheater, additional information is entered in `
 
     A desuperheater is currently not allowed if detailed water heater setpoint schedules are used.
 
-    A desuperheater is currently not allowed if ``GroundToAirHeatPumpModelType`` is "experimental", see :ref:`hpxml_simulation_control`.
-
 HPXML Hot Water Distribution
 ****************************
 
@@ -4605,7 +4622,7 @@ A simple solar hot water system is entered as a ``/HPXML/Building/BuildingDetail
   ====================  =======  =====  ============  ========  ========  ======================
 
   .. [#] Portion of total conventional hot water heating load (delivered energy plus tank standby losses).
-         Can be obtained from `Directory of SRCC OG-300 Solar Water Heating System Ratings <https://solar-rating.org/programs/og-300-program/>`_ or NREL's `System Advisor Model <https://sam.nrel.gov/>`_ or equivalent.
+         Can be obtained from `Directory of SRCC OG-300 Solar Water Heating System Ratings <https://solar-rating.org/programs/og-300-program/>`_ or NLR's `System Advisor Model <https://sam.nrel.gov/>`_ or equivalent.
   .. [#] ConnectedTo must reference a ``WaterHeatingSystem``.
          The referenced water heater cannot be a space-heating boiler nor attached to a desuperheater.
   .. [#] If ConnectedTo not provided, solar fraction will apply to all water heaters in the building.
@@ -5489,8 +5506,8 @@ If not entered, the simulation will not include a pool.
   ``Type``              string           See [#]_     Yes                     Pool type
   ====================  =======  ======  ===========  ========  ============  =================
 
-  .. [#] Type choices are "in ground", "on ground", "above ground", "other", "unknown", or "none".
-         If "none" is entered, the simulation will not include a pool.
+  .. [#] Type choices are "in ground", "on ground", "above ground", "other", "unknown", or "not present".
+         If "not present" is entered, the simulation will not include a pool.
          Any other value entered will indicate the presence of a pool; the specific value chosen does not affect the energy model.
 
 Pool Pump
@@ -5511,8 +5528,8 @@ If not entered, the simulation will not include a pool pump.
   ``extension/MonthlyScheduleMultipliers``  array                         No        See [#]_      12 comma-separated monthly multipliers
   ========================================  =======  ======  ===========  ========  ============  ======================================
 
-  .. [#] Type choices are "single speed", "multi speed", "variable speed", "variable flow", "other", "unknown", or "none".
-         If "none" is entered, the simulation will not include a pool pump.
+  .. [#] Type choices are "single speed", "multi speed", "variable speed", "variable flow", "other", "unknown", or "not present".
+         If "not present" is entered, the simulation will not include a pool pump.
          Any other value entered will indicate the presence of a pool pump; the specific value chosen does not affect the energy model.
   .. [#] If Value not provided, defaults based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_: 158.5 / 0.070 * (0.5 + 0.25 * NumberofBedrooms / 3 + 0.25 * ConditionedFloorArea / 1920).
          If NumberofResidents provided, this value will be adjusted using the equations from RECS in :ref:`building_occupancy`.
@@ -5537,8 +5554,8 @@ If not entered, the simulation will not include a pool heater.
   ``extension/MonthlyScheduleMultipliers``                array                                     No        See [#]_  12 comma-separated monthly multipliers
   ======================================================  =======  ==================  ===========  ========  ========  ======================================
 
-  .. [#] Type choices are "none, "gas fired", "electric resistance", or "heat pump".
-         If "none" is entered, the simulation will not include a pool heater.
+  .. [#] Type choices are "not present, "gas fired", "electric resistance", or "heat pump".
+         If "not present" is entered, the simulation will not include a pool heater.
          Any other value entered will indicate the presence of a pool heater; the specific value chosen affects only the default kWh/year and therm/year values as described below.
   .. [#] If Value not provided, defaults as follows:
 
@@ -5566,8 +5583,8 @@ If not entered, the simulation will not include a permanent spa.
   ``Type``              string           See [#]_     Yes                     Permanent spa type
   ====================  =======  ======  ===========  ========  ============  =================
 
-  .. [#] Type choices are "in ground", "on ground", "above ground", "other", "unknown", or "none".
-         If "none" is entered, the simulation will not include a permanent spa.
+  .. [#] Type choices are "in ground", "on ground", "above ground", "other", "unknown", or "not present".
+         If "not present" is entered, the simulation will not include a permanent spa.
          Any other value entered will indicate the presence of a permanent spa; the specific value chosen does not affect the energy model.
 
 Permanent Spa Pump
@@ -5588,8 +5605,8 @@ If not entered, the simulation will not include a permanent spa pump.
   ``extension/MonthlyScheduleMultipliers``  array                         No        See [#]_      12 comma-separated monthly multipliers
   ========================================  =======  ======  ===========  ========  ============  ======================================
 
-  .. [#] Type choices are "single speed", "multi speed", "variable speed", "variable flow", "other", "unknown", or "none".
-         If "none" is entered, the simulation will not include a permanent spa pump.
+  .. [#] Type choices are "single speed", "multi speed", "variable speed", "variable flow", "other", "unknown", or "not present".
+         If "not present" is entered, the simulation will not include a permanent spa pump.
          Any other value entered will indicate the presence of a permanent spa pump; the specific value chosen does not affect the energy model.
   .. [#] If Value not provided, defaults based on the `2010 BAHSP <https://www1.eere.energy.gov/buildings/publications/pdfs/building_america/house_simulation.pdf>`_: 59.5 / 0.059 * (0.5 + 0.25 * NumberofBedrooms / 3 + 0.25 * ConditionedFloorArea / 1920).
          If NumberofResidents provided, this value will be adjusted using the equations from RECS in :ref:`building_occupancy`.
@@ -5614,8 +5631,8 @@ If not entered, the simulation will not include a permanent spa heater.
   ``extension/MonthlyScheduleMultipliers``                array                                     No        See [#]_  12 comma-separated monthly multipliers
   ======================================================  =======  ==================  ===========  ========  ========  =======================================
 
-  .. [#] Type choices are "none, "gas fired", "electric resistance", or "heat pump".
-         If "none" is entered, the simulation will not include a permanent spa heater.
+  .. [#] Type choices are "not present, "gas fired", "electric resistance", or "heat pump".
+         If "not present" is entered, the simulation will not include a permanent spa heater.
          Any other value entered will indicate the presence of a permanent spa heater; the specific value chosen affects only the default kWh/year and therm/year values as described below.
   .. [#] If Value not provided, defaults as follows:
 
