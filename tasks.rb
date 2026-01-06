@@ -472,7 +472,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
                                                  air_leakage: ach50,
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
-    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg)
+    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg, nil)
     if hpxml_file.include?('MF_National_1.3')
       air_leakage = 0.27
     else

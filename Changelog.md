@@ -1,6 +1,8 @@
 ## OpenStudio-ERI v1.12.0
 
 __New Features__
+- Updates to HPXML v5.0-rc1.
+  - **Breaking change**: HPXML namespace changed from http://hpxmlonline.com/2023/09 to http://hpxmlonline.com/2025/12.
 - The `NominalCapacity` input for batteries is no longer used.
 
 ## OpenStudio-ERI v1.11.1
