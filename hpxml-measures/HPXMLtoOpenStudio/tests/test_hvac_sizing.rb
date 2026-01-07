@@ -2,7 +2,6 @@
 
 require_relative '../resources/minitest_helper'
 require 'openstudio'
-require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require_relative '../measure.rb'
 require_relative '../resources/util.rb'
@@ -14,7 +13,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
     @test_files_path = File.join(@root_path, 'workflow', 'tests')
-    @tmp_hpxml_path = File.join(@sample_files_path, 'tmp.xml')
+    @tmp_hpxml_path = File.join(File.dirname(__FILE__), 'tmp.xml')
     @results_dir = File.join(@test_files_path, 'test_results')
     FileUtils.mkdir_p @results_dir
     @schema_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', 'resources', 'hpxml_schema', 'HPXML.xsd'))
@@ -22,8 +21,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
   end
 
   def teardown
-    File.delete(@tmp_hpxml_path) if File.exist? @tmp_hpxml_path
-    cleanup_results_files
+    cleanup_output_files([@tmp_hpxml_path])
   end
 
   def test_hvac_configurations
@@ -39,6 +37,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     sizing_results = {}
     args_hash = { 'hpxml_path' => File.absolute_path(@tmp_hpxml_path),
                   'skip_validation' => true }
+    skip_in_xml_validation = false # Only validate in.xml once for speed
     Dir["#{@sample_files_path}/base-hvac*.xml"].each do |hvac_hpxml|
       next if hvac_hpxml.include? 'autosize'
       next if hvac_hpxml.include? 'detailed-performance' # Autosizing not allowed
@@ -81,16 +80,17 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
           hpxml_bldg.header.heat_pump_backup_sizing_methodology = hp_backup_sizing_methodology
 
           XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
-          _autosized_model, _autosized_hpxml, autosized_bldg = _test_measure(args_hash)
+          _autosized_model, _autosized_hpxml, autosized_bldg = _test_measure(args_hash, skip_in_xml_validation: skip_in_xml_validation)
+          skip_in_xml_validation = true
 
           # Get values
-          htg_cap, clg_cap, hp_backup_cap = Outputs.get_total_hvac_capacities(autosized_bldg)
-          htg_cfm, clg_cfm = Outputs.get_total_hvac_airflows(autosized_bldg)
-          sizing_results[test_name] = { 'HVAC Capacity: Heating (Btu/h)' => htg_cap.round(1),
-                                        'HVAC Capacity: Cooling (Btu/h)' => clg_cap.round(1),
-                                        'HVAC Capacity: Heat Pump Backup (Btu/h)' => hp_backup_cap.round(1),
-                                        'HVAC Airflow: Heating (cfm)' => htg_cfm.round(1),
-                                        'HVAC Airflow: Cooling (cfm)' => clg_cfm.round(1) }
+          capacities = Outputs.get_total_hvac_capacities(autosized_bldg)
+          cfms = Outputs.get_total_hvac_airflows(autosized_bldg)
+          sizing_results[test_name] = { 'HVAC Capacity: Heating (Btu/h)' => capacities[:htg].round(1),
+                                        'HVAC Capacity: Cooling (Btu/h)' => capacities[:clg].round(1),
+                                        'HVAC Capacity: Heat Pump Backup (Btu/h)' => capacities[:htg_backup].round(1),
+                                        'HVAC Airflow: Heating (cfm)' => cfms[:htg].round(1),
+                                        'HVAC Airflow: Cooling (cfm)' => cfms[:clg].round(1) }
 
           next if hpxml_bldg.heat_pumps.size != 1
 
@@ -1001,6 +1001,28 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     assert_equal(hpxml_bldg.heat_pumps[0].backup_heating_capacity, hpxml_bldg.hvac_plant.hdl_total)
   end
 
+  def test_heat_pump_compressor_lockout_temperature
+    # Test that the HP capacity is reduced when the compressor lockout
+    # temperature exceeds the heating design temperature
+    args_hash = {}
+    args_hash['hpxml_path'] = File.absolute_path(@tmp_hpxml_path)
+
+    hpxml, hpxml_bldg = _create_hpxml('base-hvac-air-to-air-heat-pump-1-speed.xml')
+    _remove_hardsized_capacities(hpxml_bldg)
+
+    # Compressor lockout temp < heating design temp
+    hpxml_bldg.heat_pumps[0].compressor_lockout_temp = -10
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _model, _hpxml, hpxml_bldg1 = _test_measure(args_hash)
+
+    # Compressor lockout temp > heating design temp
+    hpxml_bldg.heat_pumps[0].compressor_lockout_temp = 10
+    XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
+    _model, _hpxml, hpxml_bldg2 = _test_measure(args_hash)
+
+    assert_operator(hpxml_bldg1.heat_pumps[0].heating_capacity, :>, hpxml_bldg2.heat_pumps[0].heating_capacity)
+  end
+
   def test_allow_increased_fixed_capacities
     for allow_increased_fixed_capacities in [true, false]
       # Test hard-sized capacities are increased (or not) for various equipment types
@@ -1904,7 +1926,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     _test_measure(args_hash, expect_num_warnings: 0)
   end
 
-  def _test_measure(args_hash, expect_num_warnings: nil)
+  def _test_measure(args_hash, expect_num_warnings: nil, skip_in_xml_validation: false)
     # create an instance of the measure
     measure = HPXMLtoOpenStudio.new
 
@@ -1930,7 +1952,7 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     result = runner.result
 
     # show the output
-    show_output(result) unless result.value.valueName == 'Success'
+    result.showOutput() unless result.value.valueName == 'Success'
 
     # assert that it ran correctly
     assert_equal('Success', result.value.valueName)
@@ -1940,7 +1962,16 @@ class HPXMLtoOpenStudioHVACSizingTest < Minitest::Test
     end
 
     hpxml_defaults_path = File.join(File.dirname(__FILE__), 'in.xml')
-    hpxml = HPXML.new(hpxml_path: hpxml_defaults_path, schema_validator: @schema_validator, schematron_validator: @schematron_validator)
+    if (args_hash['hpxml_path'] == @tmp_hpxml_path) && (not skip_in_xml_validation)
+      # Since there is a penalty to performing schema/schematron validation, we only do it for custom models
+      # Sample files already have their in.xml's checked in the workflow tests
+      schema_validator = @schema_validator
+      schematron_validator = @schematron_validator
+    else
+      schema_validator = nil
+      schematron_validator = nil
+    end
+    hpxml = HPXML.new(hpxml_path: hpxml_defaults_path, schema_validator: schema_validator, schematron_validator: schematron_validator)
     if not hpxml.errors.empty?
       puts 'ERRORS:'
       hpxml.errors.each do |error|

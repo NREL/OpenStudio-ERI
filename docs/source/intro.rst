@@ -22,4 +22,4 @@ Disclaimer
 Downloading and using this software from this website does not constitute accreditation of the final software product by RESNET.
 If you are seeking to develop RESNET Accredited Rating Software, you will need to submit your final software product to RESNET for accreditation.
 
-Any reference herein to RESNET, its activities, products, or services, or any linkages from this website to RESNET's website, does not constitute or imply the endorsement, recommendation, or favoring of the U.S. Government, the Alliance for Sustainable Energy, or any of their employees or contractors acting on their behalf.
+Any reference herein to RESNET, its activities, products, or services, or any linkages from this website to RESNET's website, does not constitute or imply the endorsement, recommendation, or favoring of the U.S. Government, the Alliance for Energy Innovation, or any of their employees or contractors acting on their behalf.

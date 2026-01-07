@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = u'OpenStudio-ERI'
-copyright = u'2025, NREL'
-author = u'NREL'
+copyright = u'2025, NLR'
+author = u'NLR'
 
 # The short X.Y version
 version = u''
@@ -139,7 +139,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'OpenStudio-ERI.tex', u'OpenStudio-ERI Documentation',
-     u'NREL', 'manual'),
+     u'NLR', 'manual'),
 ]
 
 
