@@ -5,7 +5,6 @@
 require 'openstudio'
 require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require_relative '../../hpxml-measures/workflow/tests/util.rb'
-require 'openstudio/measure/ShowRunnerOutput'
 require 'fileutils'
 require 'csv'
 require 'oga'

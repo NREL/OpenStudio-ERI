@@ -16,9 +16,9 @@ concurrency:
 
 jobs:
   run-ruleset-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
-      image: docker://nrel/openstudio:3.10.0
+      image: docker://nrel/openstudio:dev-3.11.0-rc2
     steps:
       - uses: actions/checkout@v4
         with:
@@ -68,9 +68,9 @@ jobs:
           path: docs/_build/html/
 
   run-sample-files1-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
-      image: docker://nrel/openstudio:3.10.0
+      image: docker://nrel/openstudio:dev-3.11.0-rc2
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,9 +91,9 @@ jobs:
           name: test_results_sample_files1
 
   run-sample-files2-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
-      image: docker://nrel/openstudio:3.10.0
+      image: docker://nrel/openstudio:dev-3.11.0-rc2
     steps:
       - uses: actions/checkout@v4
         with:
@@ -114,9 +114,9 @@ jobs:
           name: test_results_sample_files2
 
   run-real-home-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
-      image: docker://nrel/openstudio:3.10.0
+      image: docker://nrel/openstudio:dev-3.11.0-rc2
     steps:
       - uses: actions/checkout@v4
         with:
@@ -137,9 +137,9 @@ jobs:
           name: test_results_real_homes
 
   run-other-tests:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     container:
-      image: docker://nrel/openstudio:3.10.0
+      image: docker://nrel/openstudio:dev-3.11.0-rc2
     steps:
       - uses: actions/checkout@v4
         with:
@@ -168,15 +168,15 @@ jobs:
       - name: Install software and run test
         shell: pwsh
         run: |
-          $env:OS_VERSION="3.10.0"
-          $env:OS_SHA="86d7e215a1"
+          $env:OS_VERSION="3.11.0-rc2"
+          $env:OS_SHA="d7794add90"
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "https://github.com/NREL/OpenStudio/releases/download/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads --diagnostic-output
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base-versions-multiple-sf.xml
 
   merge-results:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
       - uses: actions/checkout@v4
@@ -213,7 +213,7 @@ jobs:
 
   compare-results:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: merge-results
     steps:
       - uses: actions/checkout@v4
@@ -263,7 +263,7 @@ jobs:
           name: comparisons
 
   update-results:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: merge-results
     steps:
       - uses: actions/checkout@v4
