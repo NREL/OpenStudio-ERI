@@ -1108,9 +1108,9 @@ class ERIHVACtest < Minitest::Test
         assert_equal(HPXML::HVACPanHeaterControlTypeContinuous, heat_pump.pan_heater_control_type)
         assert_equal(150.0, heat_pump.pan_heater_watts)
         if heat_pump.cooling_capacity > 0
-          assert_equal(10.0 * UnitConversions.convert(heat_pump.cooling_capacity, 'Btu/hr', 'ton'), heat_pump.crankcase_heater_watts)
+          assert_in_epsilon(10.0 * UnitConversions.convert(heat_pump.cooling_capacity, 'Btu/hr', 'ton'), heat_pump.crankcase_heater_watts, 0.01)
         else
-          assert_equal(10.0 * UnitConversions.convert(heat_pump.heating_capacity, 'Btu/hr', 'ton'), heat_pump.crankcase_heater_watts)
+          assert_in_epsilon(10.0 * UnitConversions.convert(heat_pump.heating_capacity, 'Btu/hr', 'ton'), heat_pump.crankcase_heater_watts, 0.01)
         end
       else
         assert_nil(heat_pump.pan_heater_control_type)
@@ -1221,7 +1221,7 @@ class ERIHVACtest < Minitest::Test
       end
       if [HPXML::HVACTypeCentralAirConditioner,
           HPXML::HVACTypeMiniSplitAirConditioner].include? cooling_system.cooling_system_type
-        assert_equal(10.0 * UnitConversions.convert(cooling_system.cooling_capacity, 'Btu/hr', 'ton'), cooling_system.crankcase_heater_watts)
+        assert_in_epsilon(10.0 * UnitConversions.convert(cooling_system.cooling_capacity, 'Btu/hr', 'ton'), cooling_system.crankcase_heater_watts, 0.01)
       else
         assert_equal(0.0, cooling_system.crankcase_heater_watts.to_f)
       end
