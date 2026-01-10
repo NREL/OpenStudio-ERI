@@ -225,7 +225,7 @@ module ES_DENH_Ruleset
 
     solar_absorptance = lookup_reference_value('roof_solar_abs')
     emittance = lookup_reference_value('roof_emittance')
-    default_roof_pitch = 5.0 # assume 5:12 pitch
+    default_roof_pitch = 6.0 # assume 6:12 pitch
     has_vented_attic = (new_bldg.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
     orig_bldg.roofs.each do |orig_roof|
@@ -233,10 +233,10 @@ module ES_DENH_Ruleset
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
       if orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
-        roof_pitch = default_roof_pitch if roof_pitch == 0
       end
       if roof_interior_adjacent_to != HPXML::LocationConditionedSpace
         insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
+        roof_pitch = default_roof_pitch
       else
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end
