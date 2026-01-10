@@ -236,7 +236,7 @@ module ES_DENH_Ruleset
       end
       if roof_interior_adjacent_to != HPXML::LocationConditionedSpace
         insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
-        roof_pitch = default_roof_pitch
+        roof_pitch = [default_roof_pitch, roof_pitch].max
       else
         insulation_assembly_r_value = (1.0 / ceiling_ufactor).round(3)
       end

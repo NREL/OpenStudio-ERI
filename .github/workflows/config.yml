@@ -175,11 +175,11 @@ jobs:
       - name: Run simulation test
         shell: pwsh
         run: |
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --daily ALL --add-component-loads
+          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --diagnostic-output
       - name: Run simulation test2
         shell: pwsh
         run: |
-          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base-versions-multiple-sf.xml --diagnostic-output
+          & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base-versions-multiple-sf.xml --daily ALL --add-component-loads
 
   merge-results:
     runs-on: ubuntu-24.04
