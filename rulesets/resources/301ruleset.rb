@@ -2516,13 +2516,13 @@ module ERI_301_Ruleset
     if @bldg_type == HPXML::ResidentialTypeSFD
       a_ext = 1.0
     else
-      tot_cb_area, ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
+      tot_cb_area, ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg, nil)
       a_ext = ext_cb_area / tot_cb_area
 
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
         if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
           cfm50 = infil_values[:ach50] * infil_values[:volume] / 60.0
-          tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
+          tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg, nil)
           if cfm50 / tot_cb_area > 0.30
             a_ext = 1.0
           end

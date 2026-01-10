@@ -472,7 +472,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
                                                  air_leakage: ach50,
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
-    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg)
+    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg, nil)
     if hpxml_file.include?('MF_National_1.3')
       air_leakage = 0.27
     else
@@ -2977,7 +2977,16 @@ def create_sample_hpxmls
   end
 end
 
-command_list = [:update_measures, :update_hpxmls, :create_release_zips]
+command_list = [
+  :update_measures,
+  :update_hpxmls,
+  :ruleset_tests,
+  :sample_files_tests1,
+  :sample_files_tests2,
+  :real_home_tests,
+  :other_tests,
+  :create_release_zips
+]
 
 def display_usage(command_list)
   puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -2998,10 +3007,6 @@ elsif not command_list.include? ARGV[0].to_sym
 end
 
 if ARGV[0].to_sym == :update_measures
-  # Prevent NREL error regarding U: drive when not VPNed in
-  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
-  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
-
   # Apply rubocop (uses .rubocop.yml)
   commands = ["\"require 'rubocop/rake_task'\"",
               "\"require 'stringio' \"",
@@ -3018,14 +3023,49 @@ if ARGV[0].to_sym == :update_hpxmls
   require 'oga'
   require_relative 'rulesets/resources/constants'
 
-  # Prevent NREL error regarding U: drive when not VPNed in
-  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
-  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
-
   t = Time.now
   create_test_hpxmls
   create_sample_hpxmls
   puts "Completed in #{(Time.now - t).round(1)}s"
+end
+
+if [:ruleset_tests, :sample_files_tests1, :sample_files_tests2, :real_home_tests, :other_tests].include? ARGV[0].to_sym
+  case ARGV[0].to_sym
+  when :ruleset_tests
+    tests_rbs = Dir['rulesets/tests/*.rb']
+  when :sample_files_tests1
+    tests_rbs = Dir['workflow/tests/sample_files1_test.rb']
+  when :sample_files_tests2
+    tests_rbs = Dir['workflow/tests/sample_files2_test.rb']
+  when :real_home_tests
+    tests_rbs = Dir['workflow/tests/real_homes_test.rb']
+  when :other_tests
+    tests_rbs = Dir['workflow/tests/*test.rb'] - Dir['workflow/tests/real_homes_test.rb'] - Dir['workflow/tests/sample_files*test.rb']
+  end
+
+  # Run tests in random order; we don't want them to only
+  # work when run in a specific order
+  tests_rbs.shuffle!
+
+  # Ensure we run all tests even if there are failures
+  failed_tests = []
+  tests_rbs.each do |test_rb|
+    success = system("#{OpenStudio.getOpenStudioCLI} #{test_rb}")
+    failed_tests << test_rb unless success
+  end
+
+  puts
+  puts
+
+  if not failed_tests.empty?
+    puts 'The following tests FAILED:'
+    failed_tests.each do |failed_test|
+      puts "- #{failed_test}"
+    end
+    exit! 1
+  end
+
+  puts 'All tests passed.'
 end
 
 if ARGV[0].to_sym == :create_release_zips

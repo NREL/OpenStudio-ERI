@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require 'openstudio'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
@@ -363,7 +363,7 @@ class ERIEnclosureTest < Minitest::Test
 
     _test_ruleset(hpxml_name).each do |(_run_type, calc_type), hpxml_bldg|
       if [CalcType::RatedHome].include? calc_type
-        _check_walls(hpxml_bldg, area: 2098, rvalue: (22.7 * 1200 + 4.0 * 898) / 2098, sabs: 0.7, emit: 0.92)
+        _check_walls(hpxml_bldg, area: 2098, rvalue: (22.7 * 960 + 21.3 * 240 + 4.0 * 898) / 2098, sabs: 0.7, emit: 0.92)
       elsif [CalcType::ReferenceHome].include? calc_type
         _check_walls(hpxml_bldg, area: 2098, rvalue: (16.67 * 1200 + 4.0 * 898) / 2098, sabs: 0.75, emit: 0.9)
       elsif [CalcType::IndexAdjHome].include? calc_type
