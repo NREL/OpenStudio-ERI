@@ -167,7 +167,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-      - name: Install software and run test
+      - name: Install software
         shell: pwsh
         run: |
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "${env:OS_URL}/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
