@@ -16,6 +16,8 @@ __New Features__
   - Updates supplemental heating energy use during defrost based on RESNET HERS Addendum 82.
   - Updates shared pump power for ground-source heat pumps on a shared recirculation loop to cycle with heating/cooling load rather than operate continuously per RESNET HERS Addendum 94.
   - Allows desuperheaters to be used with the experimental ground-source heat pump model.
+  - Adds `PanHeaterControlType="heat pump mode"`, in which the pan heater will run when the HP is running (and the outdoor temperature is below 32F).
+  - Updates `PanHeaterControlType="continuous"` to avoid pan heater operation when the outdoor temperature is below the minimum compressor temperature.
 - Allows optional `UsageMultiplier` for electric vehicles described using `Vehicles`.
 - Water heater improvements:
   - Allows HPWHs to have exhaust air ducted to the outside using `HPWHDucting/ExhaustAirTermination="outside"`.
@@ -36,6 +38,8 @@ __New Features__
   - See the [documentation](https://openstudio-hpxml.readthedocs.io/en/latest/workflow_inputs.html#whole-sfa-mf-buildings) for more information.
 - Updated default utility bill rates per EIA energy cost data for 2023.
 - Adds "Electric Panel Load: Max Current Rating (A)" output to results_panel.csv.
+- Adds error-checking for when the sum of supply/return duct leakage to outside values is too high.
+- Adds error-checking for when `HeatPump/HeatingCapacity17F` is provided but `HeatPump/HeatingCapacity` is not.
 
 __Bugfixes__
 - Fixes incorrect cooling design conditions when using TMYx weather files (OpenStudio bug).
@@ -49,7 +53,6 @@ __Bugfixes__
 - Fixes possible errors when small water flow rates for variable-speed experimental ground-source heat pump model.
 - Fixes possible ground-source heat pump sizing error if the heating or cooling design temperature differences are zero.
 - Fixes EMS discharge power program and assignment of default discharging schedule for detailed electric vehicles.
-- Adds error-checking for when `HeatPump/HeatingCapacity17F` is provided but `HeatPump/HeatingCapacity` is not.
 - Avoids thin interior/exterior roof construction layers to help prevent attic temperature out of bounds errors.
 
 ## OpenStudio-HPXML v1.10.0
