@@ -225,7 +225,7 @@ module ES_DENH_Ruleset
 
     solar_absorptance = lookup_reference_value('roof_solar_abs')
     emittance = lookup_reference_value('roof_emittance')
-    default_roof_pitch = 5.0 # assume 5:12 pitch
+    default_roof_pitch = 6.0 # assume 6:12 pitch
     has_vented_attic = (new_bldg.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
     orig_bldg.roofs.each do |orig_roof|
@@ -233,7 +233,7 @@ module ES_DENH_Ruleset
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
       if orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
-        roof_pitch = default_roof_pitch if roof_pitch == 0
+        roof_pitch = default_roof_pitch
       end
       if roof_interior_adjacent_to != HPXML::LocationConditionedSpace
         insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
@@ -1201,7 +1201,7 @@ module ES_DENH_Ruleset
     infil_air_leakage_ach50 = lookup_reference_value('infil_air_leakage_ach50') if infil_air_leakage_ach50.nil?
 
     if not infil_air_leakage_cfm50_per_sqft.nil?
-      tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
+      tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg, nil)
       infil_air_leakage = tot_cb_area * infil_air_leakage_cfm50_per_sqft
       infil_unit_of_measure = HPXML::UnitsCFM
     elsif not infil_air_leakage_ach50.nil?

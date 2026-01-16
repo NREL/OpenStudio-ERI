@@ -6,7 +6,7 @@ Setup
 
 To get started:
 
-#. Either download `OpenStudio 3.10.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.10.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
+#. Either download `OpenStudio 3.11.0 <https://github.com/NREL/OpenStudio/releases/tag/v3.11.0>`_ and install the Command Line Interface/EnergyPlus components, or use the `nrel/openstudio docker image <https://hub.docker.com/r/nrel/openstudio>`_.
 #. Download the `latest release <https://github.com/NREL/OpenStudio-ERI/releases>`_ release.
 
 .. note::
