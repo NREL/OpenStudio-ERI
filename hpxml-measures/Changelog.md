@@ -6,6 +6,8 @@ __New Features__
   - Improves handling of duct leakage specified using cfm25/cfm50.
 - Output updates:
   - **Breaking change**: Replaces "UnitX" prefixes with Building IDs in whole SFA/MF building timeseries outputs.
+  - For whole SFA/MF building simulations, reports energy/fuel use by dwelling unit (i.e., "Dwelling Unit Energy Use: \*" and "Dwelling Unit Fuel Use: \*"). Timeseries outputs are also available.
+- Adds a `run_simulation.rb --ems-debug` argument to generate the EnergyPlus EDD file for debugging EMS programs.
 
 __Bugfixes__
 - Fixes a misleading warning about adjusting inverted setpoints when heating setpoint is greater than cooling setpoint during non-overlapping heating/cooling seasons.
@@ -14,6 +16,11 @@ __Bugfixes__
 - Fixes the design cooling temperature calculations for some vented attic roof types (shingles, plastic/rubber/synthetic sheeting, concrete, cool roof, expanded polystyrene sheathing)
 - Fixes unit multiplier ignored for EV charging using `Vehicles`.
 - Fixes handling of battery losses in the battery resilience output.
+
+## OpenStudio-HPXML v1.11.1
+
+__Bugfixes__
+- Fixes heat pump heating performance sensitivity to indoor temperatures.
 
 ## OpenStudio-HPXML v1.11.0
 

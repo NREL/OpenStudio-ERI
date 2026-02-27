@@ -6,6 +6,11 @@ __New Features__
   - **Breaking change**: HPXML namespace changed from http://hpxmlonline.com/2023/09 to http://hpxmlonline.com/2025/12.
 - The `NominalCapacity` input for batteries is no longer used.
 
+## OpenStudio-ERI v1.11.2
+
+__Bugfixes__
+- Fixes heat pump heating performance sensitivity to indoor temperatures.
+
 ## OpenStudio-ERI v1.11.1
 
 __New Features__
