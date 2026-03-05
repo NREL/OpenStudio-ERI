@@ -2389,12 +2389,10 @@ module ERI_301_Ruleset
                             frac_latent: frac_latent.round(3))
 
     # Television
-    kwh_per_year, frac_sensible, frac_latent = Defaults.get_televisions_values(@cfa, @nbeds)
+    kwh_per_year = Defaults.get_televisions_values(@cfa, @nbeds)
     new_bldg.plug_loads.add(id: 'TelevisionPlugLoad',
                             plug_load_type: HPXML::PlugLoadTypeTelevision,
-                            kwh_per_year: kwh_per_year,
-                            frac_sensible: frac_sensible.round(3),
-                            frac_latent: frac_latent.round(3))
+                            kwh_per_year: kwh_per_year)
   end
 
   def self.set_misc_loads_rated(new_bldg)
