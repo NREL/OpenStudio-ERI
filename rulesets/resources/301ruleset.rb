@@ -3174,12 +3174,12 @@ module ERI_301_Ruleset
 
       # No user input, default
       if compressor_type == HPXML::HVACCompressorTypeVariableSpeed
-        return -20.0 # F
+        return -10.0 # F, Addendum 103 AC/HP Supplement
       else
-        return 0.0 # F
+        return 5.0 # F, Addendum 103 AC/HP Supplement
       end
     else # Fossil fuel
-      # Use RESNET prescribed value
+      # Always use RESNET prescribed value
       return 40.0 # F
     end
   end
