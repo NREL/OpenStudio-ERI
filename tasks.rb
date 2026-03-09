@@ -2698,6 +2698,10 @@ def create_sample_hpxmls
       heat_pump.backup_heating_lockout_temp = nil
       heat_pump.backup_heating_switchover_temp = nil
 
+      if hpxml_path.include? 'base-hvac-air-to-air-heat-pump-1-speed-lockout-temperatures.xml'
+        heat_pump.compressor_lockout_temp = 10.0 # Change from the OS-ERI default of 5F
+      end
+
       if heat_pump.heating_capacity_17F.nil?
         if [HPXML::HVACTypeHeatPumpAirToAir,
             HPXML::HVACTypeHeatPumpMiniSplit,
