@@ -5,9 +5,10 @@ __New Features__
 - Updates to HPXML v5.0-rc1.
   - **Breaking change**: HPXML namespace changed from http://hpxmlonline.com/2023/09 to http://hpxmlonline.com/2025/12.
 - Updated DX heat pump and air conditioner models per HERS Addendum 103.
+  - Compressor lockout temperatures for Rated Home defaults and Reference Home updated from 0F (single/two stage) and -20F (variable speed) to 5F and -10F, respectively.
   - Dual-fuel heat pumps now have the HP sized using the greater of the heating design temperature and 25F.
   - Pan heaters no longer operate when the outdoor temperature is below the compressor lockout temperature.
-- The `NominalCapacity` input for batteries is no longer used.
+- The `Battery/NominalCapacity` input is no longer used.
 
 ## OpenStudio-ERI v1.11.2
 
