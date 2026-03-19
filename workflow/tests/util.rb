@@ -49,12 +49,6 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
       elsif hpxml_bldg.heat_pumps.count { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir } > 0
         # FUTURE: GSHPs currently don't give desired results w/ unit multipliers
         # https://github.com/NatLabRockies/OpenStudio-HPXML/issues/1499
-      elsif hpxml_bldg.batteries.size > 0
-        # FUTURE: Batteries currently don't work with whole SFA/MF buildings
-        # https://github.com/NatLabRockies/OpenStudio-HPXML/issues/1499
-        # but we still want to test unit multipliers
-        whole_sfa_or_mf_building_sim = false
-        hpxml_bldg.building_construction.number_of_units *= 10
       elsif hpxml.header.hvac_onoff_thermostat_deadband
         # On off thermostat not supported with unit multiplier yet
       elsif hpxml.header.heat_pump_backup_heating_capacity_increment
@@ -1137,8 +1131,8 @@ def _check_unit_multiplier_results(xml, hpxml_bldg, annual_results_1x, annual_re
       abs_delta_tol = 500.0
       abs_frac_tol = 0.15
     elsif key.include?('Peak Load:')
-      # Check that the peak load difference is less than 0.2 kBtu/hr or less than 10%
-      abs_delta_tol = 0.2
+      # Check that the peak load difference is less than 200 Btu/hr or less than 10%
+      abs_delta_tol = 200
       abs_frac_tol = 0.1
     elsif key.include?('Hot Water:')
       # Check that the hot water usage difference is less than 10 gal/yr or less than 2%
