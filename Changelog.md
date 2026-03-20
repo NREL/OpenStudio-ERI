@@ -11,6 +11,7 @@ __New Features__
 - The `Battery/NominalCapacity` input is no longer used.
 - Output updates:
   - **Breaking change**: Annual peak load outputs for heating and cooling now use units of Btu/h instead of kBtu/h for consistency with other outputs.
+- Updates schematron validation error messages to be more user friendly.
 
 ## OpenStudio-ERI v1.11.2
 
