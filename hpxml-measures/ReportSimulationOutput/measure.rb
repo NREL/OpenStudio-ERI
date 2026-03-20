@@ -408,10 +408,10 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
       next unless hpxml_bldgs_size > 1
 
-      (1..hpxml_bldgs_size).each do |unit_num|
-        Model.add_output_meter(model, meter_name: "unit#{unit_num}_#{fuel.meter.gsub(':', '_')}", reporting_frequency: 'runperiod')
+      for unit_num in 0..(hpxml_bldgs_size - 1)
+        Model.add_output_meter(model, meter_name: Model.make_unit_meter_name(fuel.meter, unit_num, hpxml_bldgs_size), reporting_frequency: 'runperiod')
         if args[:include_timeseries_fuel_consumptions] && args[:include_timeseries_dwelling_unit_outputs]
-          Model.add_output_meter(model, meter_name: "unit#{unit_num}_#{fuel.meter.gsub(':', '_')}", reporting_frequency: args[:timeseries_frequency])
+          Model.add_output_meter(model, meter_name: Model.make_unit_meter_name(fuel.meter, unit_num, hpxml_bldgs_size), reporting_frequency: args[:timeseries_frequency])
         end
       end
     end
@@ -428,7 +428,14 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
         if args[:timeseries_frequency] != EPlus::TimeseriesFrequencyTimestep
           resilience_frequency = EPlus::TimeseriesFrequencyHourly
         end
-        Model.add_output_meter(model, meter_name: Outputs::MeterCustomElectricityCritical, reporting_frequency: resilience_frequency)
+        for unit_num in 0..(hpxml_bldgs_size - 1)
+          Model.add_output_meter(model, meter_name: Model.make_unit_meter_name(Outputs::MeterCustomElectricityNetCritical, unit_num, hpxml_bldgs_size), reporting_frequency: resilience_frequency)
+          if unit_num == 0 && args[:timeseries_frequency] != resilience_frequency
+            # Add one meter using args[:timeseries_frequency] so we can get E+ timestamps that correspond to that frequency
+            Model.add_output_meter(model, meter_name: Model.make_unit_meter_name(Outputs::MeterCustomElectricityNetCritical, unit_num, hpxml_bldgs_size), reporting_frequency: args[:timeseries_frequency])
+          end
+        end
+
         @resilience.values.each do |resilience|
           resilience.variables.each do |_sys_id, varkey, var|
             Model.add_output_variable(model, key_value: varkey, variable_name: var, reporting_frequency: resilience_frequency)
@@ -818,11 +825,11 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       next unless @hpxml_bldgs.size > 1
 
       @hpxml_bldgs.each do |hpxml_bldg|
-        unit_num = @hpxml_bldgs.index(hpxml_bldg) + 1
-        fuel_meter = fuel.meter.nil? ? nil : fuel.meter.gsub(':', '_')
-        fuel.annual_output_by_unit[hpxml_bldg.building_id] = get_report_meter_data_annual(["unit#{unit_num}_#{fuel_meter}".upcase])
+        unit_num = @hpxml_bldgs.index(hpxml_bldg)
+        fuel_meter = fuel.meter.nil? ? '' : Model.make_unit_meter_name(fuel.meter, unit_num, @hpxml_bldgs.size)
+        fuel.annual_output_by_unit[hpxml_bldg.building_id] = get_report_meter_data_annual([fuel_meter.upcase])
         if args[:include_timeseries_fuel_consumptions] && args[:include_timeseries_dwelling_unit_outputs]
-          fuel.timeseries_output_by_unit[hpxml_bldg.building_id] = get_report_meter_data_timeseries(["unit#{unit_num}_#{fuel_meter}".upcase], UnitConversions.convert(1.0, 'J', fuel.timeseries_units), 0, args[:timeseries_frequency])
+          fuel.timeseries_output_by_unit[hpxml_bldg.building_id] = get_report_meter_data_timeseries([fuel_meter.upcase], UnitConversions.convert(1.0, 'J', fuel.timeseries_units), 0, args[:timeseries_frequency])
         end
       end
     end
@@ -948,44 +955,6 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     end
 
     @hpxml_bldgs.each do |hpxml_bldg|
-      # Apply Heating/Cooling DSEs
-      (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).each do |htg_system|
-        next unless (htg_system.is_a?(HPXML::HeatingSystem) && htg_system.is_heat_pump_backup_system) || htg_system.fraction_heat_load_served > 0
-        next if htg_system.distribution_system_idref.nil?
-        next unless htg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeDSE
-        next if htg_system.distribution_system.annual_heating_dse.nil?
-
-        dse = htg_system.distribution_system.annual_heating_dse
-        @unique_fuel_types.each do |fuel_type|
-          [EUT::Heating, EUT::HeatingHeatPumpBackup, EUT::HeatingFanPump, EUT::HeatingHeatPumpBackupFanPump].each do |end_use_type|
-            end_use = @end_uses[[fuel_type, end_use_type]]
-            next if end_use.nil?
-            next if end_use.annual_output_by_system[htg_system.id].nil?
-
-            fuels = @fuels.select { |k, _v| k[0] == fuel_type }.values
-            apply_multiplier_to_output(end_use, fuels, htg_system.id, hpxml_bldg.building_id, 1.0 / dse)
-          end
-        end
-      end
-      (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).each do |clg_system|
-        next unless clg_system.fraction_cool_load_served > 0
-        next if clg_system.distribution_system_idref.nil?
-        next unless clg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeDSE
-        next if clg_system.distribution_system.annual_cooling_dse.nil?
-
-        dse = clg_system.distribution_system.annual_cooling_dse
-        @unique_fuel_types.each do |fuel_type|
-          [EUT::Cooling, EUT::CoolingFanPump].each do |end_use_type|
-            end_use = @end_uses[[fuel_type, end_use_type]]
-            next if end_use.nil?
-            next if end_use.annual_output_by_system[clg_system.id].nil?
-
-            fuels = @fuels.select { |k, _v| k[0] == fuel_type }.values
-            apply_multiplier_to_output(end_use, fuels, clg_system.id, hpxml_bldg.building_id, 1.0 / dse)
-          end
-        end
-      end
-
       # Apply solar fraction to load for simple solar water heating systems
       hpxml_bldg.solar_thermal_systems.each do |solar_system|
         next if solar_system.solar_fraction.nil?
@@ -1094,27 +1063,6 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       next unless (args[:include_annual_resilience] || args[:include_timeseries_resilience])
       next if resilience.variables.empty?
 
-      batteries = []
-      @hpxml_bldgs.each do |hpxml_bldg|
-        hpxml_bldg.batteries.each do |battery|
-          batteries << battery
-        end
-      end
-      next if batteries.empty?
-
-      if batteries.size > 1
-        # When modeling individual dwelling units, OS-HPXML only allows a single battery
-        # When modeling whole SFA/MF buildings, OS-HPXML does not currently allow batteries
-        fail 'Unexpected error.'
-      end
-
-      battery = batteries[0]
-
-      elcd = @model.getElectricLoadCenterDistributions.find { |elcd| elcd.additionalProperties.getFeatureAsString('HPXML_ID').to_s == battery.id }
-      next if elcd.nil?
-
-      elcs = @model.getElectricLoadCenterStorageLiIonNMCBatterys.find { |elcs| elcs.additionalProperties.getFeatureAsString('HPXML_ID').to_s == battery.id }
-
       resilience_frequency = EPlus::TimeseriesFrequencyTimestep
       ts_per_hr = @model.getTimestep.numberOfTimestepsPerHour
       if args[:timeseries_frequency] != EPlus::TimeseriesFrequencyTimestep
@@ -1122,32 +1070,55 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
         ts_per_hr = 1
       end
 
-      vars = ['Electric Storage Charge Fraction']
-      keys = resilience.variables.select { |v| v[2] == vars[0] }.map { |v| v[1] }
-      batt_soc = get_report_variable_data_timeseries(keys, vars, 1, 0, resilience_frequency)
+      annual_outputs = []
+      timeseries_outputs = []
+      @hpxml_bldgs.each do |hpxml_bldg|
+        if hpxml_bldg.batteries.size > 1
+          # When modeling individual dwelling units, OS-HPXML only allows a single battery
+          fail 'Unexpected error.'
+        end
+        next if hpxml_bldg.batteries.size == 0
 
-      min_soc = elcd.minimumStorageStateofChargeFraction
-      batt_kw = elcd.designStorageControlDischargePower.get / 1000.0
-      batt_roundtrip_eff = elcs.dctoDCChargingEfficiency
-      batt_kwh = elcs.additionalProperties.getFeatureAsDouble('UsableCapacity_kWh').get
+        battery = hpxml_bldg.batteries[0]
 
-      batt_soc_kwh = batt_soc.map { |soc| soc - min_soc }.map { |soc| soc * batt_kwh }
+        elcd = @model.getElectricLoadCenterDistributions.find { |elcd| elcd.additionalProperties.getFeatureAsString('HPXML_ID').to_s == battery.id }
+        next if elcd.nil?
 
-      crit_load = get_report_meter_data_timeseries([Outputs::MeterCustomElectricityCritical.upcase], UnitConversions.convert(1.0, 'J', 'kWh'), 0, resilience_frequency)
+        elcs = @model.getElectricLoadCenterStorageLiIonNMCBatterys.find { |elcs| elcs.additionalProperties.getFeatureAsString('HPXML_ID').to_s == battery.id }
 
-      resilience_timeseries = []
-      n_timesteps = crit_load.size
-      (0...n_timesteps).each do |init_time_step|
-        resilience_timeseries << get_resilience_timestep_value(init_time_step, batt_kwh, batt_kw, batt_soc_kwh[init_time_step], crit_load, batt_roundtrip_eff, n_timesteps, ts_per_hr)
+        vars = ['Electric Storage Charge Fraction']
+        batt_soc = get_report_variable_data_timeseries([elcs.name.to_s.upcase], vars, 1, 0, resilience_frequency)
+
+        min_soc = elcd.minimumStorageStateofChargeFraction
+        batt_kw = elcd.designStorageControlDischargePower.get / 1000.0
+        batt_roundtrip_eff = elcs.dctoDCChargingEfficiency
+        batt_kwh = elcs.additionalProperties.getFeatureAsDouble('UsableCapacity_kWh').get
+
+        batt_soc_kwh = batt_soc.map { |soc| soc - min_soc }.map { |soc| soc * batt_kwh }
+
+        unit_num = @hpxml_bldgs.index(hpxml_bldg)
+        crit_load = get_report_meter_data_timeseries([Model.make_unit_meter_name(Outputs::MeterCustomElectricityNetCritical, unit_num, @hpxml_bldgs.size).upcase], UnitConversions.convert(1.0, 'J', 'kWh'), 0, resilience_frequency)
+
+        resilience_timeseries = []
+        n_timesteps = crit_load.size
+        for init_time_step in 0..(n_timesteps - 1)
+          resilience_timeseries << get_resilience_timestep_value(init_time_step, batt_kwh, batt_kw, batt_soc_kwh[init_time_step], crit_load, batt_roundtrip_eff, n_timesteps, ts_per_hr)
+        end
+
+        annual_outputs << resilience_timeseries.sum(0.0) / resilience_timeseries.size
+
+        next unless args[:include_timeseries_resilience]
+
+        if ![EPlus::TimeseriesFrequencyDaily, EPlus::TimeseriesFrequencyMonthly].include?(args[:timeseries_frequency])
+          timeseries_outputs << resilience_timeseries
+        else
+          timeseries_outputs << rollup_timeseries_output_to_daily_or_monthly(resilience_timeseries, args[:timeseries_frequency], true)
+        end
       end
 
-      resilience.annual_output = resilience_timeseries.sum(0.0) / resilience_timeseries.size
-
-      next unless args[:include_timeseries_resilience]
-
-      resilience.timeseries_output = resilience_timeseries
-      if [EPlus::TimeseriesFrequencyDaily, EPlus::TimeseriesFrequencyMonthly].include? args[:timeseries_frequency]
-        resilience.timeseries_output = rollup_timeseries_output_to_daily_or_monthly(resilience.timeseries_output, args[:timeseries_frequency], true)
+      resilience.annual_output = annual_outputs.max
+      if not timeseries_outputs.empty?
+        resilience.timeseries_output = timeseries_outputs[0].zip(*timeseries_outputs[1..-1]).map { |e| e.max }
       end
     end
 
@@ -1211,7 +1182,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       heated_zones = eval(@model.getBuilding.additionalProperties.getFeatureAsString('heated_zones').get)
       heated_zones.each do |heated_zone|
         var_name = 'Temperature: Heating Setpoint'
-        if @hpxml_header.whole_sfa_or_mf_building_sim
+        if @hpxml_bldgs.size > 1
           building_id = @model.getThermalZones.find { |z| z.name.to_s == heated_zone }.additionalProperties.getFeatureAsString('BuildingID').get
           var_name = "Temperature: #{building_id} Heating Setpoint"
         end
@@ -1225,7 +1196,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       cooled_zones = eval(@model.getBuilding.additionalProperties.getFeatureAsString('cooled_zones').get)
       cooled_zones.each do |cooled_zone|
         var_name = 'Temperature: Cooling Setpoint'
-        if @hpxml_header.whole_sfa_or_mf_building_sim
+        if @hpxml_bldgs.size > 1
           building_id = @model.getThermalZones.find { |z| z.name.to_s == cooled_zone }.additionalProperties.getFeatureAsString('BuildingID').get
           var_name = "Temperature: #{building_id} Cooling Setpoint"
         end
@@ -1737,7 +1708,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     # Peak loads
     if args[:include_annual_peak_loads]
       @peak_loads.each do |_load_type, peak_load|
-        results_out << ["#{peak_load.name} (#{peak_load.annual_units})", peak_load.annual_output.to_f.round(n_digits)]
+        results_out << ["#{peak_load.name} (#{peak_load.annual_units})", peak_load.annual_output.to_f.round]
       end
       results_out << [line_break]
     end
@@ -2162,7 +2133,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
   # @param ts_per_hr [Integer] Number of timesteps per hour
   # @return [Double] Resilience value for the timestep.
   def get_resilience_timestep_value(init_time_step, batt_kwh, batt_kw, batt_soc_kwh, crit_load, batt_roundtrip_eff, n_timesteps, ts_per_hr)
-    for i in 0...n_timesteps
+    for i in 0..(n_timesteps - 1)
       t = (init_time_step + i) % n_timesteps # for wrapping around end of year
       load_kw = crit_load[t]
 
@@ -2215,15 +2186,19 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     shift_values = {}
     indexes.each_with_index do |_i, idx|
       shift_values[idx] = false
-      if apply_ems_shift(timeseries_frequency)
-        if meter_names[idx].include? Constants::ObjectTypeWaterHeaterAdjustment
-          # Shift energy use adjustment to align with hot water energy use
-          shift_values[idx] = true
-        elsif meter_names[idx].include? Constants::ObjectTypePanHeater
-          # Shift energy use adjustment to align with HVAC operation and weather
-          shift_values[idx] = true
-        elsif meter_names[idx].include? Constants::ObjectTypeHPDefrostSupplHeat
-          # Shift energy use adjustment to align with HVAC operation and weather
+      next unless apply_ems_shift(timeseries_frequency)
+
+      # Shift energy use adjustments that lag due to EMS
+      [Constants::ObjectTypeWaterHeaterAdjustment,
+       Constants::ObjectTypePanHeater,
+       Constants::ObjectTypeHPDefrostSupplHeat,
+       Constants::ObjectTypeDSEHeating,
+       Constants::ObjectTypeDSEHeatingHeatPumpBackup,
+       Constants::ObjectTypeDSEHeatingFanPump,
+       Constants::ObjectTypeDSEHeatingHeatPumpBackupFanPump,
+       Constants::ObjectTypeDSECooling,
+       Constants::ObjectTypeDSECoolingFanPump].each do |obj_type|
+        if meter_names[idx].include? obj_type
           shift_values[idx] = true
         end
       end
@@ -2954,7 +2929,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
 
     @peak_loads.each do |load_type, peak_load|
       peak_load.name = "Peak Load: #{load_type}"
-      peak_load.annual_units = 'kBtu/hr'
+      peak_load.annual_units = 'Btu/hr'
     end
 
     # Zone Temperatures
@@ -2995,12 +2970,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     @output_meters_requests = args[:user_output_meters].to_s.split(',').map(&:strip)
   end
 
-  # Sets timeseries output requests for EnergyPlus needed to support performing emissions calculations.
-  # To calculate timeseries emissions or timeseries fuel consumption, we also need to select timeseries
-  # end use consumption because EnergyPlus results may be post-processed due to HVAC DSE.
-  #
-  # NOTE: We might be able to avoid this if we could account for DSE inside EnergyPlus instead of
-  # applying the DSE impact during post-processing.
+  # Sets E+ timeseries output requests needed to support various calculations.
   #
   # @param args [Hash] Map of :argument_name => value
   # @return [Hash] New map of :argument_name => value
@@ -3008,18 +2978,18 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     args = args.dup # We don't want to modify the original arguments
     args[:include_hourly_electric_end_use_consumptions] = false
     if not @emissions.empty?
-      args[:include_hourly_electric_end_use_consumptions] = true # Need hourly electricity values for Cambium
+      # We use hourly electricity values for Cambium and end use consumption data to do emissions calculations
+      args[:include_hourly_electric_end_use_consumptions] = true
       if args[:include_timeseries_emissions] || args[:include_timeseries_emission_end_uses] || args[:include_timeseries_emission_fuels]
-        args[:include_timeseries_fuel_consumptions] = true
+        args[:include_timeseries_end_use_consumptions] = true
       end
     end
-    if args[:include_timeseries_total_consumptions] || args[:include_timeseries_resilience]
+    if args[:include_timeseries_total_consumptions]
+      # Total/net consumptions are rolled up from each fuel consumption
       args[:include_timeseries_fuel_consumptions] = true
     end
-    if args[:include_timeseries_fuel_consumptions]
-      args[:include_timeseries_end_use_consumptions] = true
-    end
     if args[:include_timeseries_system_use_consumptions]
+      # System uses are obtained while getting end use consumption data
       args[:include_timeseries_end_use_consumptions] = true
     end
     return args

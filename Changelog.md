@@ -9,6 +9,9 @@ __New Features__
   - Dual-fuel heat pumps now have the HP sized using the greater of the heating design temperature and 25F.
   - Pan heaters no longer operate when the outdoor temperature is below the compressor lockout temperature.
 - The `Battery/NominalCapacity` input is no longer used.
+- Output updates:
+  - **Breaking change**: Annual peak load outputs for heating and cooling now use units of Btu/h instead of kBtu/h for consistency with other outputs.
+- Updates schematron validation error messages to be more user friendly.
 
 ## OpenStudio-ERI v1.11.2
 

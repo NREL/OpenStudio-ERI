@@ -1800,7 +1800,8 @@ def apply_hpxml_modification_sample_files(hpxml_path, hpxml)
       hpxml_bldg.hvac_controls[0].cooling_setup_start_hour = 9 # 9am
     elsif ['base-hvac-dse.xml',
            'base-dhw-indirect-dse.xml',
-           'base-mechvent-cfis-dse.xml'].include? hpxml_file
+           'base-mechvent-cfis-dse.xml',
+           'base-hvac-dual-fuel-air-to-air-heat-pump-var-speed-dse.xml'].include? hpxml_file
       hpxml_bldg.hvac_distributions[0].distribution_system_type = HPXML::HVACDistributionTypeDSE
       hpxml_bldg.hvac_distributions[0].annual_heating_dse = 0.8
       hpxml_bldg.hvac_distributions[0].annual_cooling_dse = 0.7
@@ -2884,6 +2885,16 @@ def apply_hpxml_modification_sample_files(hpxml_path, hpxml)
     elsif ['base-misc-defaults.xml',
            'base-residents-5-5.xml'].include? hpxml_file
       hpxml_bldg.batteries[0].nominal_capacity_kwh = nil
+    end
+    if ['base-bldgtype-mf-whole-building-pv-battery.xml'].include? hpxml_file
+      if hpxml_bldg_index > 0 # intentionally not all buildings have a battery
+        hpxml_bldg.pv_systems.add(id: "PVSystem#{hpxml_bldg.pv_systems.size + 1}_#{hpxml_bldg_index + 1}",
+                                  array_azimuth: 270,
+                                  array_tilt: 10,
+                                  max_power_output: 4000)
+        hpxml_bldg.batteries.add(id: "Battery#{hpxml_bldg.batteries.size + 1}_#{hpxml_bldg_index + 1}",
+                                 type: HPXML::BatteryTypeLithiumIon)
+      end
     end
 
     # ------------- #

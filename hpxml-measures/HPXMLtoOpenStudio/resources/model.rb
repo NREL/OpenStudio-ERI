@@ -950,6 +950,8 @@ module Model
   # @param reporting_frequency [String] Output reporting frequency ('detailed', 'timestep', 'hourly', 'daily', 'monthly', 'runperiod', or 'annual')
   # @return [OpenStudio::Model::OutputMeter] The model object
   def self.add_output_meter(model, meter_name:, reporting_frequency:)
+    return if reporting_frequency.downcase == 'none'
+
     model.getOutputMeters.each do |om|
       next unless om.name == meter_name
       next unless om.reportingFrequency == reporting_frequency
@@ -1155,7 +1157,7 @@ module Model
 
       adjacent_unit_number = surface.additionalProperties.getFeatureAsInteger('adjacentUnitNumber').get
       adjacent_space_type = surface.additionalProperties.getFeatureAsString('adjacentSpaceType').get
-      adjacent_hpxml_id = make_variable_name(surface.additionalProperties.getFeatureAsString('adjacentHpxmlID').get, adjacent_unit_number)
+      adjacent_hpxml_id = make_unit_variable_name(surface.additionalProperties.getFeatureAsString('adjacentHpxmlID').get, adjacent_unit_number)
       adjacent_space_type = HPXML::LocationConditionedSpace if HPXML::conditioned_locations_this_unit.include?(adjacent_space_type)
 
       unit_model = hpxml_osm_map.values[adjacent_unit_number]
@@ -1192,13 +1194,35 @@ module Model
   # @param obj_name [String] the OpenStudio object name
   # @param unit_number [Integer] index number corresponding to an HPXML Building object
   # @return [String] the new OpenStudio object name with unique unit prefix
-  def self.make_variable_name(obj_name, unit_number)
+  def self.make_unit_variable_name(obj_name, unit_number)
+    if obj_name.to_s.include?(':Zone:')
+      obj_name = obj_name.split(':')
+      prefix = obj_name[0..-2].join(':')
+      zone_name = make_unit_variable_name(obj_name[-1], unit_number)
+      new_name = "#{prefix}:#{zone_name}"
+      return new_name
+    end
+
     new_name = ems_friendly_name("unit#{unit_number + 1}_#{obj_name}")
 
     # Need to fix HWPH outlet node name
     if new_name.include?('_Outlet') && new_name.include?(ems_friendly_name(Constants::ObjectTypeWaterHeater))
       new_name.gsub!('_Outlet', ' Outlet')
     end
+    return new_name
+  end
+
+  # Return the unit-level meter name based on the building-level meter name.
+  #
+  # @param obj_name [String] building-level EnergyPlus meter name
+  # @param unit_number [Integer] index number corresponding to an HPXML Building object
+  # @param hpxml_bldgs_size [Integer] number of dwelling units in the HPXML file
+  # @return [String] unit-level EnergyPlus meter name
+  def self.make_unit_meter_name(obj_name, unit_number, hpxml_bldgs_size)
+    return obj_name if hpxml_bldgs_size == 1
+
+    new_name = make_unit_variable_name(obj_name, unit_number)
+    new_name.gsub!('Facility', 'DwellingUnit')
     return new_name
   end
 
@@ -1209,21 +1233,16 @@ module Model
   # cooking range:InteriorEquipment:Electricity:Zone:unit1_CONDITIONED_SPACE).
   # Additionally, variables with the EMS key get updated.
   #
-  # @param key_var_group
+  # @param key [String] Key Name
+  # @param var [String] Output Variable or Meter Name
   # @param unit_number [Integer] index number corresponding to an HPXML Building object
   # @return [String, String] The key and variable updated with prefixes and friendly strings.
-  def self.update_key_variable_group(key_var_group, unit_number)
-    key, var = key_var_group
-    if (not key.empty?) && (key != 'EMS')
-      key = make_variable_name(key, unit_number)
+  def self.update_key_variable_group(key, var, unit_number)
+    if (not key.empty?) && (key.downcase != 'ems') && (key.downcase != 'environment')
+      key = make_unit_variable_name(key, unit_number)
     end
-    if var.include?(':Zone:')
-      var = var.split(':')
-      prefix = var[0..-2].join(':')
-      zone_name = make_variable_name(var[-1], unit_number)
-      var = "#{prefix}:#{zone_name}"
-    elsif key == 'EMS'
-      var = make_variable_name(var, unit_number)
+    if var.include?(':Zone:') || key.downcase == 'ems'
+      var = make_unit_variable_name(var, unit_number)
     end
     return key, var
   end
@@ -1235,19 +1254,20 @@ module Model
   # @return [nil]
   def self.prefix_object_names(unit_model, unit_number)
     # FUTURE: Create objects with unique names up front so we don't have to do this
+    # Although it may be challenging for objects that OpenStudio automatically creates/names.
 
     # Custom meter objects
     (unit_model.getMeterCustoms + unit_model.getMeterCustomDecrements).each do |meter|
       if meter.is_a? OpenStudio::Model::MeterCustomDecrement
         source_meter_name = meter.sourceMeterName
-        source_meter_name = make_variable_name(source_meter_name, unit_number)
+        source_meter_name = make_unit_variable_name(source_meter_name, unit_number)
         meter.setSourceMeterName(source_meter_name)
       end
 
       key_var_groups = meter.keyVarGroups
       meter.removeAllKeyVarGroups
       key_var_groups.each do |key_var_group|
-        key, var = update_key_variable_group(key_var_group, unit_number)
+        key, var = update_key_variable_group(key_var_group[0], key_var_group[1], unit_number)
         meter.addKeyVarGroup(key, var)
       end
     end
@@ -1256,33 +1276,35 @@ module Model
     ems_map = {}
 
     unit_model.getEnergyManagementSystemSensors.each do |sensor|
-      ems_map[sensor.name.to_s] = make_variable_name(sensor.name, unit_number)
-      sensor.setKeyName(make_variable_name(sensor.keyName, unit_number)) unless sensor.keyName.empty? || sensor.keyName.downcase == 'environment'
+      ems_map[sensor.name.to_s] = make_unit_variable_name(sensor.name, unit_number)
+      key, var = update_key_variable_group(sensor.keyName, sensor.outputVariableOrMeterName, unit_number)
+      sensor.setKeyName(key)
+      sensor.setOutputVariableOrMeterName(var)
     end
 
     unit_model.getEnergyManagementSystemActuators.each do |actuator|
-      ems_map[actuator.name.to_s] = make_variable_name(actuator.name, unit_number)
+      ems_map[actuator.name.to_s] = make_unit_variable_name(actuator.name, unit_number)
     end
 
     unit_model.getEnergyManagementSystemInternalVariables.each do |internal_variable|
-      ems_map[internal_variable.name.to_s] = make_variable_name(internal_variable.name, unit_number)
-      internal_variable.setInternalDataIndexKeyName(make_variable_name(internal_variable.internalDataIndexKeyName, unit_number)) unless internal_variable.internalDataIndexKeyName.empty?
+      ems_map[internal_variable.name.to_s] = make_unit_variable_name(internal_variable.name, unit_number)
+      internal_variable.setInternalDataIndexKeyName(make_unit_variable_name(internal_variable.internalDataIndexKeyName, unit_number)) unless internal_variable.internalDataIndexKeyName.empty?
     end
 
     unit_model.getEnergyManagementSystemGlobalVariables.each do |global_variable|
-      ems_map[global_variable.name.to_s] = make_variable_name(global_variable.name, unit_number)
+      ems_map[global_variable.name.to_s] = make_unit_variable_name(global_variable.name, unit_number)
     end
 
     unit_model.getEnergyManagementSystemOutputVariables.each do |output_variable|
       next if output_variable.emsVariableObject.is_initialized
 
-      new_ems_variable_name = make_variable_name(output_variable.emsVariableName, unit_number)
+      new_ems_variable_name = make_unit_variable_name(output_variable.emsVariableName, unit_number)
       ems_map[output_variable.emsVariableName.to_s] = new_ems_variable_name
       output_variable.setEMSVariableName(new_ems_variable_name)
     end
 
     unit_model.getEnergyManagementSystemSubroutines.each do |subroutine|
-      ems_map[subroutine.name.to_s] = make_variable_name(subroutine.name, unit_number)
+      ems_map[subroutine.name.to_s] = make_unit_variable_name(subroutine.name, unit_number)
     end
 
     # Variables in program lines don't get updated automatically
@@ -1322,7 +1344,7 @@ module Model
         next if model_object.name.to_s == unit_model.alwaysOffDiscreteSchedule.name.to_s
       end
 
-      model_object.setName(make_variable_name(model_object.name, unit_number))
+      model_object.setName(make_unit_variable_name(model_object.name, unit_number))
     end
   end
 end

@@ -23,7 +23,7 @@ jobs:
   run-ruleset-tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
@@ -64,7 +64,7 @@ jobs:
           for RST_FILE in docs/source/*.rst; do NUM_REFS=$(grep -F -o "[#]_" $RST_FILE | wc -l); NUM_FOOTNOTES=$(grep -F -o ".. [#]" $RST_FILE | wc -l); if [ $NUM_REFS != $NUM_FOOTNOTES ]; then echo "ERROR: Number of footnote references doesn't match number of footnotes in $RST_FILE." && exit 1; fi done
 
       - name: Save Docs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: documentation
           path: docs/_build/html/
@@ -72,7 +72,7 @@ jobs:
   run-sample-files1-tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
@@ -87,7 +87,7 @@ jobs:
           openstudio tasks.rb sample_files_tests1
 
       - name: Store results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/test_results
           name: test_results_sample_files1
@@ -95,7 +95,7 @@ jobs:
   run-sample-files2-tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
@@ -110,7 +110,7 @@ jobs:
           openstudio tasks.rb sample_files_tests2
 
       - name: Store results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/test_results
           name: test_results_sample_files2
@@ -118,7 +118,7 @@ jobs:
   run-real-home-tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
@@ -133,7 +133,7 @@ jobs:
           openstudio tasks.rb real_home_tests
 
       - name: Store results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/test_results
           name: test_results_real_homes
@@ -141,7 +141,7 @@ jobs:
   run-other-tests:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
@@ -156,7 +156,7 @@ jobs:
           openstudio tasks.rb other_tests
 
       - name: Store results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/test_results
           name: test_results_other
@@ -164,7 +164,7 @@ jobs:
   run-windows-tests:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
       - name: Install software
@@ -185,12 +185,12 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
       - name: Download all results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: test_results
           pattern: test_results_*
@@ -212,7 +212,7 @@ jobs:
           rm test_results/sample_files2.csv
 
       - name: Store results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/test_results
           name: test_results
@@ -222,28 +222,28 @@ jobs:
     runs-on: ubuntu-24.04
     needs: merge-results
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.base.sha }}
 
       - name: Store base results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/base_results
           name: base_results
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Download base results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: base_results
           name: base_results
 
       - name: Download feature results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: test_results
           name: test_results
@@ -263,7 +263,7 @@ jobs:
           python hpxml-measures/workflow/tests/compare.py -a visualize
 
       - name: Store comparisons
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: workflow/tests/comparisons
           name: comparisons
@@ -272,12 +272,12 @@ jobs:
     runs-on: ubuntu-24.04
     needs: merge-results
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
       - name: Download feature results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: test_results
           name: test_results
