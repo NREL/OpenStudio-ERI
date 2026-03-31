@@ -83,6 +83,12 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         outputs[:rated_timeseries_results] = File.join(results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
         outputs[:ref_timeseries_results] = File.join(results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
+      next unless not hpxml.header.utility_bill_scenarios.empty?
+
+      outputs[:rated_annual_bills] = File.join(results_dir, "RatedHome_AnnualBills.#{output_format}")
+      outputs[:rated_monthly_bills] = File.join(results_dir, "RatedHome_MonthlyBills.#{output_format}")
+      outputs[:ref_annual_bills] = File.join(results_dir, "ReferenceHome_AnnualBills.#{output_format}")
+      outputs[:ref_monthly_bills] = File.join(results_dir, "ReferenceHome_MonthlyBills.#{output_format}")
     end
     # CO2e
     co2_versions.each do |co2_version|

@@ -8,6 +8,7 @@ __New Features__
   - Compressor lockout temperatures for Rated Home defaults and Reference Home updated from 0F (single/two stage) and -20F (variable speed) to 5F and -10F, respectively.
   - Dual-fuel heat pumps now have the HP sized using the greater of the heating design temperature and 25F.
   - Pan heaters no longer operate when the outdoor temperature is below the compressor lockout temperature.
+- Utility bill scenarios can now be defined for the Rated/Reference Homes; see [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-utility-bill-scenarios) for more information.
 - The `Battery/NominalCapacity` input is no longer used.
 - Output updates:
   - **Breaking change**: Annual peak load outputs for heating and cooling now use units of Btu/h instead of kBtu/h for consistency with other outputs.

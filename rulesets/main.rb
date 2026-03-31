@@ -75,6 +75,13 @@ def run_rulesets(hpxml_input_path, designs, schema_validator = nil, schematron_v
       warnings << "Could not look up Cambium GEA for zip code: '#{zip_code}'. CO2e emissions will not be calculated."
     end
 
+    # Electricity tariff file path
+    orig_hpxml.header.utility_bill_scenarios.each do |bill_scenario|
+      next if bill_scenario.elec_tariff_filepath.nil?
+
+      bill_scenario.elec_tariff_filepath = File.absolute_path(File.join(File.dirname(hpxml_input_path), bill_scenario.elec_tariff_filepath))
+    end
+
     lookup_program_data = {}
     init_hpxmls_written = []
 

@@ -73,6 +73,14 @@ def run_design(design, debug, timeseries_output_freq, timeseries_outputs, add_co
   args['timeseries_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_#{timeseries_output_freq.capitalize}.#{output_format}")))
   measures[measure_subdir] = [args]
 
+  # Add OS-HPXML utility bills measure to workflow
+  measure_subdir = 'hpxml-measures/ReportUtilityBills'
+  args = {}
+  args['output_format'] = output_format
+  args['annual_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_AnnualBills.#{output_format}")))
+  args['monthly_output_file_name'] = File.join('..', 'results', File.basename(design.annual_output_path.gsub(".#{output_format}", "_MonthlyBills.#{output_format}")))
+  measures[measure_subdir] = [args]
+
   if diagnostic_output && !design.diag_output_path.nil?
     # Add OS-HPXML reporting measure to workflow
     measure_subdir = 'hpxml-measures/ReportSimulationOutput'
