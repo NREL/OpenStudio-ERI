@@ -83,6 +83,20 @@ class WorkflowTest < Minitest::Test
     _run_workflow(xml, test_name, rated_home_only: true)
   end
 
+  def test_utility_bills
+    test_name = 'utility_bills'
+
+    # Run ERI workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base-misc-bills.xml"
+    _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
+
+    # Check for utility bill CSV files
+    assert(File.exist?(csvs[:rated_annual_bills]))
+    assert(File.exist?(csvs[:rated_monthly_bills]))
+    assert(File.exist?(csvs[:ref_annual_bills]))
+    assert(File.exist?(csvs[:ref_monthly_bills]))
+  end
+
   def test_co2index_without_extra_simulation
     # Check that if we run an all-electric home, it reuses the ERI Reference Home
     # simulation results for the CO2e Reference Home, rather than running an additional

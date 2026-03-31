@@ -227,6 +227,9 @@ module ERI_301_Ruleset
     new_bldg.header.manualj_heating_setpoint = 70
     new_bldg.header.manualj_cooling_setpoint = 75
     new_hpxml.header.temperature_capacitance_multiplier = 1.0
+    orig_hpxml.header.utility_bill_scenarios.each do |ub_scenario|
+      new_hpxml.header.utility_bill_scenarios << ub_scenario
+    end
 
     new_bldg.site.available_fuels = orig_bldg.site.available_fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban

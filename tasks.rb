@@ -2427,6 +2427,11 @@ def create_sample_hpxmls
                   'base-mechvent-multiple.xml',
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
+                  'base-misc-bills.xml',
+                  'base-misc-bills-detailed-only.xml',
+                  'base-misc-bills-pv.xml',
+                  'base-misc-bills-pv-detailed-only.xml',
+                  'base-misc-bills-pv-mixed.xml',
                   'base-misc-generators.xml',
                   'base-pv.xml',
                   'base-pv-battery.xml']
@@ -2451,7 +2456,12 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_versions = ['latest']
     hpxml.header.co2index_calculation_versions = ['latest']
     hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
-    hpxml.header.utility_bill_scenarios.clear
+    hpxml.header.utility_bill_scenarios.clear unless hpxml_path.include? 'misc-bills'
+    hpxml.header.utility_bill_scenarios.each do |bill_scenario|
+      next if bill_scenario.elec_tariff_filepath.nil?
+
+      bill_scenario.elec_tariff_filepath = File.join('..', '..', 'hpxml-measures', 'ReportUtilityBills', 'resources', 'detailed_rates', File.basename(bill_scenario.elec_tariff_filepath))
+    end
     hpxml.header.timestep = nil
     hpxml_bldg.site.site_type = nil
     hpxml_bldg.site.surroundings = nil
@@ -3094,6 +3104,8 @@ if ARGV[0].to_sym == :create_release_zips
            'hpxml-measures/HPXMLtoOpenStudio/resources/**/*.*',
            'hpxml-measures/ReportSimulationOutput/measure.*',
            'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
+           'hpxml-measures/ReportUtilityBills/measure.*',
+           'hpxml-measures/ReportUtilityBills/resources/**/*.*',
            'hpxml-measures/workflow/tests/util.rb',
            'rulesets/**/*.*',
            'weather/*.*',

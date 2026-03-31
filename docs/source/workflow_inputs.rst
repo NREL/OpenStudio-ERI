@@ -83,6 +83,125 @@ The OpenStudio-ERI calculation(s) to be performed are entered in ``/HPXML/Softwa
   For example, it does not check that the home meets all ENERGY STAR and DOE Efficient New Homes Mandatory Requirements.
   It is the software tool's responsibility to perform these additional steps.
 
+.. _hpxml_utility_bill_scenarios:
+
+HPXML Utility Bill Scenarios
+****************************
+
+One or more utility bill scenarios can be entered as an ``/HPXML/SoftwareInfo/extension/UtilityBillScenarios/UtilityBillScenario``.
+If not entered, utility bills will not be calculated.
+
+  ================================  ========  =====  ===========  ========  ========  ========================================================
+  Element                           Type      Units  Constraints  Required  Default   Notes
+  ================================  ========  =====  ===========  ========  ========  ========================================================
+  ``Name``                          string                        Yes                 Name of the scenario (which shows up in the output file)
+  ``UtilityRate``                   element                       No                  Utility rate(s) for a given fuel type; multiple are allowed
+  ``PVCompensation``                element                       No                  PV compensation information
+  ================================  ========  =====  ===========  ========  ========  ========================================================
+
+See :ref:`bill_outputs` for a description of how the calculated utility bills appear in the output files.
+
+.. _electricity_rates:
+
+Electricity Rates
+~~~~~~~~~~~~~~~~~
+
+For each scenario, electricity rates can be optionally entered as an ``/HPXML/SoftwareInfo/extension/UtilityBillScenarios/UtilityBillScenario/UtilityRate``.
+Electricity rates can be entered using Simple inputs or Detailed inputs.
+
+**Simple**
+
+For simple utility rate structures, inputs can be entered using a fixed charge and a marginal rate.
+
+  ================================  ========  =======  ===========  ========  ========  ====================
+  Element                           Type      Units    Constraints  Required  Default   Notes
+  ================================  ========  =======  ===========  ========  ========  ====================
+  ``FuelType``                      string             electricity  Yes                 Fuel type
+  ``FixedCharge``                   double    $/month  >= 0         No        12.0      Monthly fixed charge
+  ``MarginalRate``                  double    $/kWh    >= 0         No        See [#]_  Marginal flat rate
+  ================================  ========  =======  ===========  ========  ========  ====================
+
+  .. [#] If MarginalRate not provided, it defaults to state-level value based on EIA SEDS data, available at ``hpxml-measures/ReportUtilityBills/resources/simple_rates/pr_all_update.csv``.
+
+**Detailed**
+
+For detailed utility rate structures, inputs can be entered using a tariff JSON file.
+
+  ================================  ========  =======  ===========  ========  ========  =============================
+  Element                           Type      Units    Constraints  Required  Default   Notes
+  ================================  ========  =======  ===========  ========  ========  =============================
+  ``FuelType``                      string             electricity  Yes                 Fuel type
+  ``TariffFilePath``                string                          Yes                 Path to tariff JSON file [#]_
+  ================================  ========  =======  ===========  ========  ========  =============================
+
+  .. [#] TariffFilePath must point to a JSON file with utility rate structure information.
+         Tariff files can describe flat, tiered, time-of-use, tiered time-of-use, or real-time pricing rates.
+         Sources of tariff files include `OpenEI's U.S. Utility Rate Database (URDB) <https://openei.org/wiki/Utility_Rate_Database>`_;
+         a large set of residential OpenEI URDB rates for U.S. utilities are included at ``hpxml-measures/ReportUtilityBills/resources/detailed_rates/openei_rates.zip``.
+         Additional sample tariff files can be found in ``hpxml-measures/ReportUtilityBills/resources/detailed_rates``.
+         Tariff files are formatted based on `OpenEI API version 7 <https://openei.org/services/doc/rest/util_rates/?version=7#response-fields>`_.
+
+Fuel Rates
+~~~~~~~~~~
+
+For each scenario, fuel rates can be optionally entered as an ``/HPXML/SoftwareInfo/extension/UtilityBillScenarios/UtilityBillScenario/UtilityRate``.
+
+  ================================  ========  ========  ===========  ========  ========  ====================
+  Element                           Type      Units     Constraints  Required  Default   Notes
+  ================================  ========  ========  ===========  ========  ========  ====================
+  ``FuelType``                      string              See [#]_     Yes                 Fuel type
+  ``FixedCharge``                   double    $/month   >= 0         No        See [#]_  Monthly fixed charge
+  ``MarginalRate``                  double    See [#]_  >= 0         No        See [#]_  Marginal flat rate
+  ================================  ========  ========  ===========  ========  ========  ====================
+
+  .. [#] FuelType choices are "natural gas", "propane", "fuel oil", "coal", "wood", and "wood pellets".
+  .. [#] FixedCharge defaults to $12/month for natural gas and $0/month for other fuels.
+  .. [#] MarginalRate units are $/therm for natural gas, $/gallon for propane and fuel oil, and $/kBtu for other fuels.
+  .. [#] If MarginalRate not provided, it defaults to state-level value based on EIA SEDS data, available at ``hpxml-measures/ReportUtilityBills/resources/simple_rates/pr_all_update.csv``.
+
+PV Compensation
+~~~~~~~~~~~~~~~
+
+For each scenario, PV compensation information can be optionally entered in ``/HPXML/SoftwareInfo/extension/UtilityBillScenarios/UtilityBillScenario/PVCompensation``.
+
+  =============================================================  ========  =======  ===========  ========  ==============  ==============================
+  Element                                                        Type      Units    Constraints  Required  Default         Notes
+  =============================================================  ========  =======  ===========  ========  ==============  ==============================
+  ``CompensationType[NetMetering | FeedInTariff]``               element                         No        NetMetering     PV compensation type
+  ``MonthlyGridConnectionFee[Units="$/kW" or Units="$"]/Value``  double                          No        0               PV monthly grid connection fee
+  =============================================================  ========  =======  ===========  ========  ==============  ==============================
+
+**Net-Metering**
+
+If the PV compensation type is net-metering, additional information can be entered in ``/HPXML/SoftwareInfo/extension/UtilityBillScenarios/UtilityBillScenario/PVCompensation/CompensationType/NetMetering``.
+
+  ================================  ========  =======  ===========  ========  ==============  =============================================================
+  Element                           Type      Units    Constraints  Required  Default         Notes
+  ================================  ========  =======  ===========  ========  ==============  =============================================================
+  ``AnnualExcessSellbackRateType``  string             See [#]_     No        User-Specified  Net metering annual excess sellback rate type [#]_
+  ``AnnualExcessSellbackRate``      double    $/kWh    >= 0         No [#]_   0.03            User-specified net metering annual excess sellback rate [#]_
+  ================================  ========  =======  ===========  ========  ==============  =============================================================
+
+  .. [#] AnnualExcessSellbackRateType choices are "User-Specified" and "Retail Electricity Cost".
+  .. [#] When annual PV production exceeds the annual building electricity consumption, this rate, which is often significantly below the retail rate, determines the value of the excess electricity sold back to the utility.
+         This may happen to offset gas consumption, for example.
+  .. [#] AnnualExcessSellbackRate is only used when AnnualExcessSellbackRateType="User-Specified".
+  .. [#] Since modeled electricity consumption will not change from one year to the next, "indefinite rollover" of annual excess generation credit is best approximated by setting "User-Specified" and entering a rate of zero.
+
+**Feed-in Tariff**
+
+If the PV compensation type is feed-in tariff, additional information can be entered in ``/HPXML/SoftwareInfo/extension/UtilityBillScenarios/UtilityBillScenario/PVCompensation/CompensationType/FeedInTariff``.
+
+  ============================  ========  =======  ===========  ========  ==============  ========================
+  Element                       Type      Units    Constraints  Required  Default         Notes
+  ============================  ========  =======  ===========  ========  ==============  ========================
+  ``FeedInTariffRate``          double    $/kWh    >= 0         No        0.12            Feed-in tariff rate [#]_
+  ============================  ========  =======  ===========  ========  ==============  ========================
+
+  .. [#] FeedInTariffRate applies to full (not excess) PV production.
+         Some utilities/regions may have a feed-in tariff policy where compensation occurs for *excess* PV production (i.e., PV-generated electricity sent to the grid that is not immediately consumed by the building), rather than *full* PV production.
+         OpenStudio-ERI is currently unable to calculate utility bills for such a feed-in tariff policy.
+
 HPXML Building Site
 -------------------
 
@@ -167,7 +286,7 @@ Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRi
 
   .. [#] If EPWFilePath not provided, defaults based on the U.S. TMY3 weather station closest to the zip code centroid.
          The mapping can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/data/zipcode_weather_stations.csv``.
-  .. [#] A full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
+  .. [#] The full set of U.S. TMY3 weather files can be `downloaded here <https://data.nlr.gov/system/files/128/1774980365-USA-TMY3-EPW.zip>`_.
 
 HPXML Climate Zones
 -------------------

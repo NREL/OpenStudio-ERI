@@ -94,6 +94,71 @@
     </sch:rule>
   </sch:pattern>
 
+  <sch:pattern>
+    <sch:title>[UtilityBillScenario]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario'>
+      <sch:assert role='ERROR' test='count(h:Name) = 1'>Expected Name</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="electricity"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="electricity"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="natural gas"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="natural gas"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="propane"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="propane"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="fuel oil"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="fuel oil"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="coal"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="coal"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="wood"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="wood"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:UtilityRate[h:FuelType="wood pellets"]) &lt;= 1'>Expected at most one UtilityRate[FuelType="wood pellets"]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:PVCompensation) &lt;= 1'>Expected at most one PVCompensation</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[UtilityRate]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario/h:UtilityRate'>
+      <sch:assert role='ERROR' test='count(h:FixedCharge) &lt;= 1'>Expected at most one FixedCharge</sch:assert>
+      <sch:assert role='ERROR' test='number(h:FixedCharge) &gt;= 0 or not(h:FixedCharge)'>Expected FixedCharge to be greater than or equal to 0</sch:assert>
+      <sch:assert role='ERROR' test='count(h:MarginalRate) &lt;= 1'>Expected at most one MarginalRate</sch:assert>
+      <sch:assert role='ERROR' test='number(h:MarginalRate) &gt;= 0 or not(h:MarginalRate)'>Expected MarginalRate to be greater than or equal to 0</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[UtilityRate=Electricity]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario/h:UtilityRate[h:FuelType="electricity"]'>
+      <sch:assert role='ERROR' test='count(h:FixedCharge) + count(h:TariffFilePath) &lt;= 1'>Expected not both FixedCharge and TariffFilePath</sch:assert>
+      <sch:assert role='ERROR' test='count(h:MarginalRate) + count(h:TariffFilePath) &lt;= 1'>Expected not both MarginalRate and TariffFilePath</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[PVCompensation]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario/h:PVCompensation'>
+      <sch:assert role='ERROR' test='count(h:CompensationType[h:NetMetering | h:FeedInTariff]) = 1'>Expected CompensationType[NetMetering | FeedInTariff]</sch:assert>
+      <sch:assert role='ERROR' test='count(h:MonthlyGridConnectionFee[h:Units="$/kW" or h:Units="$"]/h:Value) &lt;= 1'>Expected not both MonthlyGridConnectionFee[Units="$/kW"]/Value and MonthlyGridConnectionFee[Units="$"]/Value</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[PVCompensationType=NetMetering]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario/h:PVCompensation/h:CompensationType/h:NetMetering'>
+      <sch:assert role='ERROR' test='count(h:AnnualExcessSellbackRateType) &lt;= 1'>Expected at most one AnnualExcessSellbackRateType</sch:assert>
+      <sch:assert role='ERROR' test='h:AnnualExcessSellbackRateType[text()="User-Specified" or text()="Retail Electricity Cost"] or not(h:AnnualExcessSellbackRateType)'>Expected AnnualExcessSellbackRateType to be 'User-Specified' or 'Retail Electricity Cost'</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[PVCompensationType=NetMeteringWithUserExcessSellbackRate]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario/h:PVCompensation/h:CompensationType/h:NetMetering[h:AnnualExcessSellbackRateType="User-Specified"]'>
+      <sch:assert role='ERROR' test='count(h:AnnualExcessSellbackRate) &lt;= 1'>Expected at most one AnnualExcessSellbackRate</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AnnualExcessSellbackRate) &gt;= 0 or not(h:AnnualExcessSellbackRate)'>Expected AnnualExcessSellbackRate to be greater than or equal to 0</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <sch:pattern>
+    <sch:title>[PVCompensationType=FeedInTariff]</sch:title>
+    <sch:rule context='/h:HPXML/h:SoftwareInfo/h:extension/h:UtilityBillScenarios/h:UtilityBillScenario/h:PVCompensation/h:CompensationType/h:FeedInTariff'>
+      <sch:assert role='ERROR' test='count(h:FeedInTariffRate) &lt;= 1'>Expected at most one FeedInTariffRate</sch:assert>
+      <sch:assert role='ERROR' test='number(h:FeedInTariffRate) &gt;= 0 or not(h:FeedInTariffRate)'>Expected FeedInTariffRate to be greater than or equal to 0</sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
    <sch:pattern>
     <sch:title>[Building]</sch:title>
     <sch:rule context='/h:HPXML/h:Building'>
