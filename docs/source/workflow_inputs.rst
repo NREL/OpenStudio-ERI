@@ -286,7 +286,7 @@ Weather information is entered in ``/HPXML/Building/BuildingDetails/ClimateandRi
 
   .. [#] If EPWFilePath not provided, defaults based on the U.S. TMY3 weather station closest to the zip code centroid.
          The mapping can be found at ``hpxml-measures/HPXMLtoOpenStudio/resources/data/zipcode_weather_stations.csv``.
-  .. [#] A full set of U.S. TMY3 weather files can be `downloaded here <https://data.nrel.gov/system/files/128/tmy3s-cache-csv.zip>`_.
+  .. [#] The full set of U.S. TMY3 weather files can be `downloaded here <https://data.nlr.gov/system/files/128/1774980365-USA-TMY3-EPW.zip>`_.
 
 HPXML Climate Zones
 -------------------
