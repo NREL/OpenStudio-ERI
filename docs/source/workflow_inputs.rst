@@ -6,7 +6,7 @@ Workflow Inputs
 Introduction
 ------------
 
-OpenStudio-ERI requires a building description in an `HPXML file <https://hpxml.nrel.gov/>`_ format.
+OpenStudio-ERI requires a building description in an `HPXML file <https://hpxml.nlr.gov/>`_ format.
 HPXML is an open data standard for collecting and transferring home energy data.
 Using HPXML files reduces the complexity and effort for software developers to leverage the EnergyPlus simulation engine.
 
@@ -244,7 +244,7 @@ Each fuel type available to the building is entered in ``/HPXML/Building/Buildin
   ``Fuel``  string             See [#]_     Yes                Fuel name
   ========  ========  =======  ===========  ========  =======  ============================
 
-  .. [#] Fuel choices can be found at the `HPXML Toolbox website <https://hpxml.nrel.gov/datadictionary/3.0.0/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable/Fuel>`_.
+  .. [#] Fuel choices can be found at the `HPXML Toolbox website <https://hpxml.nlr.gov/datadictionary/latest/Building/BuildingDetails/BuildingSummary/Site/FuelTypesAvailable/Fuel>`_.
 
 .. note::
 
@@ -2486,7 +2486,7 @@ A simple solar hot water system is entered as a ``/HPXML/Building/BuildingDetail
   ====================  =======  =====  ============  ========  ========  ======================
 
   .. [#] Portion of total conventional hot water heating load (delivered energy plus tank standby losses).
-         Can be obtained from `Directory of SRCC OG-300 Solar Water Heating System Ratings <https://solar-rating.org/programs/og-300-program/>`_ or NREL's `System Advisor Model <https://sam.nrel.gov/>`_ or equivalent.
+         Can be obtained from `Directory of SRCC OG-300 Solar Water Heating System Ratings <https://solar-rating.org/programs/og-300-program/>`_ or NLR's `System Advisor Model <https://sam.nlr.gov/>`_ or equivalent.
   .. [#] ConnectedTo must reference a ``WaterHeatingSystem``.
          The referenced water heater cannot be a space-heating boiler nor attached to a desuperheater.
   .. [#] If ConnectedTo not provided, solar fraction will apply to all water heaters in the building.
@@ -2529,7 +2529,7 @@ HPXML Photovoltaics
 
 Each solar electric photovoltaic (PV) system is entered as a ``/HPXML/Building/BuildingDetails/Systems/Photovoltaics/PVSystem``.
 
-Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov>`_.
+Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nlr.gov/>`_.
 
   ====================================  =======  =====  ==================  ========  ========  ============================================
   Element                               Type     Units  Constraints         Required  Default   Notes
@@ -2551,7 +2551,7 @@ Many of the inputs are adopted from the `PVWatts model <https://pvwatts.nrel.gov
   .. [#] ModuleType choices are "standard", "premium", or "thin film".
   .. [#] Tracking choices are "fixed", "1-axis", "1-axis backtracked", or "2-axis".
   .. [#] System losses due to soiling, shading, snow, mismatch, wiring, degradation, etc.
-         Default from the `PVWatts documentation <https://www.nrel.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
+         Default from the `PVWatts documentation <https://docs.nlr.gov/docs/fy14osti/62641.pdf>`_ is 0.14, which breaks down as follows.
          Note that the total loss (14%) is not the sum of the individual losses but is calculated by multiplying the reduction due to each loss.
 
          \- **Soiling**: 2%
