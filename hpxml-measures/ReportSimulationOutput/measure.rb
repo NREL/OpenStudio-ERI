@@ -549,11 +549,17 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       end
 
       # Also report thermostat setpoints
+      # Note that we use the schedule value, rather than the Zone Thermostat Heating (or Cooling) Setpoint Temperature output variable,
+      # because the latter is adjusted when the on-off thermostat deadband model is used.
       heated_zones.each do |heated_zone|
-        Model.add_output_variable(model, key_value: heated_zone.upcase, variable_name: 'Zone Thermostat Heating Setpoint Temperature', reporting_frequency: args[:timeseries_frequency])
+        thermal_zone = model.getThermalZones.find { |z| z.name.to_s == heated_zone }
+        sched_name = thermal_zone.thermostatSetpointDualSetpoint.get.heatingSetpointTemperatureSchedule.get.name.to_s.upcase
+        Model.add_output_variable(model, key_value: sched_name, variable_name: 'Schedule Value', reporting_frequency: args[:timeseries_frequency])
       end
       cooled_zones.each do |cooled_zone|
-        Model.add_output_variable(model, key_value: cooled_zone.upcase, variable_name: 'Zone Thermostat Cooling Setpoint Temperature', reporting_frequency: args[:timeseries_frequency])
+        thermal_zone = model.getThermalZones.find { |z| z.name.to_s == cooled_zone }
+        sched_name = thermal_zone.thermostatSetpointDualSetpoint.get.coolingSetpointTemperatureSchedule.get.name.to_s.upcase
+        Model.add_output_variable(model, key_value: sched_name, variable_name: 'Schedule Value', reporting_frequency: args[:timeseries_frequency])
       end
     end
 
@@ -955,7 +961,7 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
     end
 
     @hpxml_bldgs.each do |hpxml_bldg|
-      # Apply solar fraction to load for simple solar water heating systems
+      # Apply solar fraction to load and hot water uses for simple solar water heating systems
       hpxml_bldg.solar_thermal_systems.each do |solar_system|
         next if solar_system.solar_fraction.nil?
 
@@ -969,6 +975,9 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
         end
         dhw_ids.each do |dhw_id|
           apply_multiplier_to_output(@loads[LT::HotWaterDelivered], [@loads[LT::HotWaterSolarThermal]], dhw_id, nil, 1.0 / (1.0 - solar_system.solar_fraction))
+          @hot_water_uses.each do |_hot_water_type, hot_water|
+            apply_multiplier_to_output(hot_water, [], dhw_id, nil, 1.0 / (1.0 - solar_system.solar_fraction))
+          end
         end
       end
     end
@@ -1182,28 +1191,32 @@ class ReportSimulationOutput < OpenStudio::Measure::ReportingMeasure
       heated_zones = eval(@model.getBuilding.additionalProperties.getFeatureAsString('heated_zones').get)
       heated_zones.each do |heated_zone|
         var_name = 'Temperature: Heating Setpoint'
+        thermal_zone = @model.getThermalZones.find { |z| z.name.to_s == heated_zone }
         if @hpxml_bldgs.size > 1
-          building_id = @model.getThermalZones.find { |z| z.name.to_s == heated_zone }.additionalProperties.getFeatureAsString('BuildingID').get
+          building_id = thermal_zone.additionalProperties.getFeatureAsString('BuildingID').get
           var_name = "Temperature: #{building_id} Heating Setpoint"
         end
         @zone_temps["#{heated_zone} Heating Setpoint"] = ZoneTemp.new
         @zone_temps["#{heated_zone} Heating Setpoint"].name = var_name
         @zone_temps["#{heated_zone} Heating Setpoint"].timeseries_units = 'F'
-        @zone_temps["#{heated_zone} Heating Setpoint"].timeseries_output = get_report_variable_data_timeseries([heated_zone.upcase], ['Zone Thermostat Heating Setpoint Temperature'], 9.0 / 5.0, 32.0, args[:timeseries_frequency])
+        sched_name = thermal_zone.thermostatSetpointDualSetpoint.get.heatingSetpointTemperatureSchedule.get.name.to_s.upcase
+        @zone_temps["#{heated_zone} Heating Setpoint"].timeseries_output = get_report_variable_data_timeseries([sched_name], ['Schedule Value'], 9.0 / 5.0, 32.0, args[:timeseries_frequency])
       end
 
       # Cooling Setpoints
       cooled_zones = eval(@model.getBuilding.additionalProperties.getFeatureAsString('cooled_zones').get)
       cooled_zones.each do |cooled_zone|
         var_name = 'Temperature: Cooling Setpoint'
+        thermal_zone = @model.getThermalZones.find { |z| z.name.to_s == cooled_zone }
         if @hpxml_bldgs.size > 1
-          building_id = @model.getThermalZones.find { |z| z.name.to_s == cooled_zone }.additionalProperties.getFeatureAsString('BuildingID').get
+          building_id = thermal_zone.additionalProperties.getFeatureAsString('BuildingID').get
           var_name = "Temperature: #{building_id} Cooling Setpoint"
         end
         @zone_temps["#{cooled_zone} Cooling Setpoint"] = ZoneTemp.new
         @zone_temps["#{cooled_zone} Cooling Setpoint"].name = var_name
         @zone_temps["#{cooled_zone} Cooling Setpoint"].timeseries_units = 'F'
-        @zone_temps["#{cooled_zone} Cooling Setpoint"].timeseries_output = get_report_variable_data_timeseries([cooled_zone.upcase], ['Zone Thermostat Cooling Setpoint Temperature'], 9.0 / 5.0, 32.0, args[:timeseries_frequency])
+        sched_name = thermal_zone.thermostatSetpointDualSetpoint.get.coolingSetpointTemperatureSchedule.get.name.to_s.upcase
+        @zone_temps["#{cooled_zone} Cooling Setpoint"].timeseries_output = get_report_variable_data_timeseries([sched_name], ['Schedule Value'], 9.0 / 5.0, 32.0, args[:timeseries_frequency])
       end
     end
 
