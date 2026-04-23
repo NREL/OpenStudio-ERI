@@ -634,7 +634,7 @@ __Bugfixes__
 __Breaking changes__
 - OpenStudio version 2.9.1 is now required.
 - The `--hourly-output` argument now only generates hourly output for the Reference/Rated Homes, not the IAD Homes, for faster runtime.
-- Foundation walls described with the `Insulation/Layer` approach now require two layers (i.e., interior and exterior). (Foundation walls described using the `Insulation/AssemblyEffectiveRValue` approach are unchanged.) See [here](https://github.com/NREL/OpenStudio-HPXML/pull/120) for more information.
+- Foundation walls described with the `Insulation/Layer` approach now require two layers (i.e., interior and exterior). (Foundation walls described using the `Insulation/AssemblyEffectiveRValue` approach are unchanged.) See [here](https://github.com/NatLabRockies/OpenStudio-HPXML/pull/120) for more information.
 
 __New Features__
 - Runtime performance improvements for all buildings.

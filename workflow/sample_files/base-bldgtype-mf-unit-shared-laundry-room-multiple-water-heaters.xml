@@ -282,7 +282,7 @@
             <SystemIdentifier id='WaterHeatingSystem1'/>
             <FuelType>natural gas</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>conditioned space</Location>
+            <Location>other heated space</Location>
             <IsSharedSystem>true</IsSharedSystem>
             <TankVolume>60.0</TankVolume>
             <FractionDHWLoadServed>0.5</FractionDHWLoadServed>
@@ -297,7 +297,7 @@
             <SystemIdentifier id='WaterHeatingSystem2'/>
             <FuelType>natural gas</FuelType>
             <WaterHeaterType>storage water heater</WaterHeaterType>
-            <Location>conditioned space</Location>
+            <Location>other heated space</Location>
             <IsSharedSystem>true</IsSharedSystem>
             <TankVolume>60.0</TankVolume>
             <FractionDHWLoadServed>0.5</FractionDHWLoadServed>

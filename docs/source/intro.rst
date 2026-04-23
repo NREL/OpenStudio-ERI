@@ -2,7 +2,7 @@ Introduction
 ============
 
 The OpenStudio-ERI project allows calculating an Energy Rating Index (ERI) using the Department of Energy's open-source `OpenStudio <https://www.openstudio.net/>`_/`EnergyPlus <https://energyplus.net/>`_ simulation platform.
-The building description is provided in an `HPXML file <https://hpxml.nrel.gov/>`_ format.
+The building description is provided in an `HPXML file <https://hpxml.nlr.gov/>`_ format.
 
 The project supports:
 
@@ -14,7 +14,7 @@ The project supports:
 License
 -------
 
-This workflow is available under a BSD-3-like license, which is a free, open-source, and permissive license. For more information, check out the `license file <https://github.com/NREL/OpenStudio-ERI/blob/master/LICENSE.md>`_.
+This workflow is available under a BSD-3-like license, which is a free, open-source, and permissive license. For more information, check out the `license file <https://github.com/NatLabRockies/OpenStudio-ERI/blob/master/LICENSE.md>`_.
 
 Disclaimer
 ----------

@@ -25,6 +25,11 @@ __Bugfixes__
 - Fixes handling of zero occupants (i.e., unoccupied dwelling unit):
   - Fixes lighting and plug/fuel load energy use to not be zeroed out when a kWh/year or therm/year value is provided.
   - Fixes pool/spa energy use to be zeroed out when a kWh/year or therm/year value is not provided, or when there is a "Vacancy" unavailable period.
+- Fixes incorrect hot water (gallons) output for solar thermal systems using `SolarFraction`.
+- Small bugfixes when using the on/off thermostat deadband advanced research feature:
+  - Fixes unmet hours outputs, which could be missing some periods of unmet hours.
+  - Fixes timeseries outputs for heating/cooling setpoints.
+- Fixes logic in HP multi-stage backup advanced research feature.
 
 ## OpenStudio-HPXML v1.11.1
 
