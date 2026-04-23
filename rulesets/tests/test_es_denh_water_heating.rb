@@ -454,17 +454,17 @@ class EnergyStarDOEEfficientNewHomeWaterHeatingTest < Minitest::Test
       _convert_to_es_denh('base-bldgtype-mf-unit-shared-water-heater-recirc.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       if [ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFFloridaVer3_1].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 120.0, ef: 0.45, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationOtherHeatedSpace, tank_vol: 120.0, ef: 0.45, n_bedrooms_served: 18 }])
       elsif program_version == ES::SFPacificVer3_0
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 120.0, ef: 0.80, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationOtherHeatedSpace, tank_vol: 120.0, ef: 0.80, n_bedrooms_served: 18 }])
       elsif [ES::SFOregonWashingtonVer3_2, ES::MFOregonWashingtonVer1_2].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, ef: 0.91, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationOtherHeatedSpace, ef: 0.91, n_bedrooms_served: 18 }])
       elsif [DENH::SFVer2, DENH::MFVer2, ES::SFNationalVer3_3, ES::MFNationalVer1_3].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.95, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationOtherHeatedSpace, uef: 0.95, n_bedrooms_served: 18 }])
       elsif [ES::MFNationalVer1_0, ES::MFNationalVer1_1, DENH::Ver1].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, tank_vol: 120.0, ef: 0.77, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationOtherHeatedSpace, tank_vol: 120.0, ef: 0.77, n_bedrooms_served: 18 }])
       elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2].include? program_version
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationConditionedSpace, uef: 0.90, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeTankless, fuel: HPXML::FuelTypeNaturalGas, location: HPXML::LocationOtherHeatedSpace, uef: 0.90, n_bedrooms_served: 18 }])
       else
         fail "Unhandled program version: #{program_version}"
       end

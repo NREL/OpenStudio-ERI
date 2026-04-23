@@ -439,7 +439,7 @@ class ERIWaterHeatingTest < Minitest::Test
           _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.59 }])
         end
       elsif [CalcType::RatedHome].include? calc_type
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 120, uef: 0.60, fhr: 56.0, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationOtherHeatedSpace, tank_vol: 120, uef: 0.60, fhr: 56.0, n_bedrooms_served: 18 }])
       else
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.59 }])
       end
@@ -464,7 +464,7 @@ class ERIWaterHeatingTest < Minitest::Test
           _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.59 }])
         end
       elsif [CalcType::RatedHome].include? calc_type
-        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 120, ef: 0.59, n_bedrooms_served: 18 }])
+        _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationOtherHeatedSpace, tank_vol: 120, ef: 0.59, n_bedrooms_served: 18 }])
       else
         _check_water_heater(hpxml_bldg, [{ whtype: HPXML::WaterHeaterTypeStorage, fuel: HPXML::FuelTypeNaturalGas, setpoint: 125.0, location: HPXML::LocationConditionedSpace, tank_vol: 40, ef: 0.59 }])
       end
