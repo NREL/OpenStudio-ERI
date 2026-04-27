@@ -315,7 +315,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
 
   # Run simulations
   all_results = {}
-  xmldir = File.join(File.dirname(__FILE__), dir_name)
+  xmldir = File.join(@resnet_tests_dir, dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, hpxmls, _csvs = _run_workflow(xml, test_name, skip_simulation: true)
 
@@ -385,7 +385,7 @@ def _test_resnet_hers_method(test_name, dir_name)
 
   # Run simulations
   all_results = {}
-  xmldir = File.join(File.dirname(__FILE__), dir_name)
+  xmldir = File.join(@resnet_tests_dir, dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
     results = _get_csv_results([csvs[:eri_results]])
