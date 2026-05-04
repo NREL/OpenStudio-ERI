@@ -14,9 +14,10 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 class RealHomesTest < Minitest::Test
   def setup
-    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
+    @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
+    @test_files_dir = File.join(@test_base_dir, 'test_files')
     FileUtils.mkdir_p @test_files_dir
   end
 
@@ -27,7 +28,7 @@ class RealHomesTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../real_homes"
+    xmldir = File.join(File.dirname(__FILE__), '..', 'real_homes')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       rundir, _hpxmls, csvs = _run_workflow(xml, test_name, diagnostic_output: true)
       all_results[File.basename(xml)] = _get_csv_results([csvs[:eri_results],

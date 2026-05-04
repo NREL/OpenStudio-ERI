@@ -13,7 +13,7 @@ require_relative 'util.rb'
 
 class RESNETOtherTest < Minitest::Test
   def setup
-    @test_base_dir = ENV['RESNET_TEST_BASE_DIR'] || File.dirname(__FILE__)
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
     @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
     @test_files_dir = File.join(@test_base_dir, 'test_files')

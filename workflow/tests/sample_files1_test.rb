@@ -14,9 +14,10 @@ require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 class SampleFilesTest1 < Minitest::Test
   def setup
-    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
+    @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
+    @test_files_dir = File.join(@test_base_dir, 'test_files')
     FileUtils.mkdir_p @test_files_dir
   end
 
@@ -28,7 +29,7 @@ class SampleFilesTest1 < Minitest::Test
     # Run simulations
     files = 'base*.xml'
     all_results = {}
-    xmldir = "#{File.dirname(__FILE__)}/../sample_files"
+    xmldir = File.join(File.dirname(__FILE__), '..', 'sample_files')
     Dir["#{xmldir}/#{files}"].sort.each do |xml|
       break if xml.include? 'base-hvac-air-to-air-heat-pump-1-speed.xml' # Run first half of the sample files
 
