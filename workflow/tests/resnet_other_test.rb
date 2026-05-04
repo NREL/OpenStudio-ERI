@@ -12,16 +12,18 @@ require_relative 'util.rb'
 
 class RESNETOtherTest < Minitest::Test
   def setup
-    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
+    @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
+    @test_files_dir = File.join(@test_base_dir, 'test_files')
     FileUtils.mkdir_p @test_files_dir
+    @resnet_tests_dir = File.join(@test_base_dir, 'RESNET_Tests')
   end
 
   def test_resnet_hers_reference_home_auto_generation_301_2019_pre_addendum_a
     version = '2019'
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA',
-                                                                   'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA',
+                                                                   'Other_HERS_AutoGen_Reference_Home_301_2019_PreAddendumA',
                                                                    version)
 
     # Check results
@@ -35,7 +37,7 @@ class RESNETOtherTest < Minitest::Test
     # Older test w/ 301-2014 mechanical ventilation acceptance criteria
     version = '2014'
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_Other_HERS_AutoGen_Reference_Home_301_2014',
-                                                                   'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014',
+                                                                   'Other_HERS_AutoGen_Reference_Home_301_2014',
                                                                    version)
 
     # Check results
@@ -52,7 +54,7 @@ class RESNETOtherTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_HERS_AutoGen_IAD_Home')
+    xmldir = File.join(@resnet_tests_dir, 'Other_HERS_AutoGen_IAD_Home')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _rundir, hpxmls, _csvs = _run_workflow(xml, test_name, skip_simulation: true)
       test_num = File.basename(xml)[0, 2].to_i
@@ -87,7 +89,7 @@ class RESNETOtherTest < Minitest::Test
 
   def test_resnet_hers_method_301_2019_pre_addendum_a
     all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2019_PreAddendumA',
-                                           'RESNET_Tests/Other_HERS_Method_301_2019_PreAddendumA')
+                                           'Other_HERS_Method_301_2019_PreAddendumA')
 
     # Check results
     all_results.each do |xml, results|
@@ -99,7 +101,7 @@ class RESNETOtherTest < Minitest::Test
   def test_resnet_hers_method_301_2014_pre_addendum_e
     # Tests before 301-2019 Addendum E (IAF) was in place
     all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2014_PreAddendumE',
-                                           'RESNET_Tests/Other_HERS_Method_301_2014_PreAddendumE')
+                                           'Other_HERS_Method_301_2014_PreAddendumE')
 
     # Check results
     all_results.each do |xml, results|
@@ -116,7 +118,7 @@ class RESNETOtherTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_Hot_Water_301_2019_PreAddendumA')
+    xmldir = File.join(@resnet_tests_dir, 'Other_Hot_Water_301_2019_PreAddendumA')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
 
@@ -140,7 +142,7 @@ class RESNETOtherTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/Other_Hot_Water_301_2014_PreAddendumA')
+    xmldir = File.join(@resnet_tests_dir, 'Other_Hot_Water_301_2014_PreAddendumA')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
 

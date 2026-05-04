@@ -12,10 +12,12 @@ require_relative 'util.rb'
 
 class RESNETTest < Minitest::Test
   def setup
-    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
+    @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
+    @test_files_dir = File.join(@test_base_dir, 'test_files')
     FileUtils.mkdir_p @test_files_dir
+    @resnet_tests_dir = File.join(@test_base_dir, 'RESNET_Tests')
   end
 
   def test_resnet_ashrae_140
@@ -24,7 +26,7 @@ class RESNETTest < Minitest::Test
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.1_Standard_140')
+    xmldir = File.join(@resnet_tests_dir, '4.1_Standard_140')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
@@ -52,7 +54,7 @@ class RESNETTest < Minitest::Test
   def test_resnet_hers_reference_home_auto_generation
     version = '2022C' # Latest version that caused changes to results
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_4.2_HERS_AutoGen_Reference_Home',
-                                                                   'RESNET_Tests/4.2_HERS_AutoGen_Reference_Home',
+                                                                   '4.2_HERS_AutoGen_Reference_Home',
                                                                    version)
 
     # Check results
@@ -65,7 +67,7 @@ class RESNETTest < Minitest::Test
   def test_resnet_hers_method
     version = '2019A' # Latest version that caused changes to results
     all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
-                                           'RESNET_Tests/4.3_HERS_Method')
+                                           '4.3_HERS_Method')
 
     # Check results
     all_results.each do |xml, results|
@@ -80,7 +82,7 @@ class RESNETTest < Minitest::Test
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.4_HVAC')
+    xmldir = File.join(@resnet_tests_dir, '4.4_HVAC')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
@@ -112,7 +114,7 @@ class RESNETTest < Minitest::Test
     File.delete(test_results_csv) if File.exist? test_results_csv
 
     # Run simulations
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.5_DSE')
+    xmldir = File.join(@resnet_tests_dir, '4.5_DSE')
     all_results = {}
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
@@ -142,7 +144,7 @@ class RESNETTest < Minitest::Test
 
     # Run simulations
     all_results = {}
-    xmldir = File.join(File.dirname(__FILE__), 'RESNET_Tests/4.6_Hot_Water')
+    xmldir = File.join(@resnet_tests_dir, '4.6_Hot_Water')
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
 
