@@ -460,6 +460,7 @@ Annual unmet hours are listed below.
   ============================  =====
 
   .. [#] The unmet heating and cooling numbers reflect the number of hours during the heating/cooling season when the conditioned space temperature deviates more than 0.2 deg-C (0.36 deg-F) from the heating/cooling setpoint.
+         OpenStudio-ERI will issue a warning if there are more than 300 unmet hours for heating or cooling.
 
 Peak Building Electricity
 ~~~~~~~~~~~~~~~~~~~~~~~~~

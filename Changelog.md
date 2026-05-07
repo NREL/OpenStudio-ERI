@@ -1,18 +1,23 @@
 ## OpenStudio-ERI v1.12.0
 
 __New Features__
-- Updates to OpenStudio 3.11/EnergyPlus 25.2.
+- Updates to OpenStudio-HPXML 1.12/OpenStudio 3.11/EnergyPlus 25.2.
 - Updates to HPXML v5.0-rc1.
   - **Breaking change**: HPXML namespace changed from http://hpxmlonline.com/2023/09 to http://hpxmlonline.com/2025/12.
 - Updated DX heat pump and air conditioner models per HERS Addendum 103.
   - Compressor lockout temperatures for Rated Home defaults and Reference Home updated from 0F (single/two stage) and -20F (variable speed) to 5F and -10F, respectively.
   - Dual-fuel heat pumps now have the HP sized using the greater of the heating design temperature and 25F.
   - Pan heaters no longer operate when the outdoor temperature is below the compressor lockout temperature.
+- Adds a warning if there are more than 300 unmet hours for heating or cooling.
 - Utility bill scenarios can now be defined for the Rated/Reference Homes; see [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-utility-bill-scenarios) for more information.
 - The `Battery/NominalCapacity` input is no longer used.
 - Output updates:
   - **Breaking change**: Annual peak load outputs for heating and cooling now use units of Btu/h instead of kBtu/h for consistency with other outputs.
 - Updates schematron validation error messages to be more user friendly.
+
+__Bugfixes__
+- Fixes incorrect hot water (gallons) output for solar thermal systems using `SolarFraction`.
+- Fixes possible "Failed to process String" EnergyPlus error when requesting component loads.
 
 ## OpenStudio-ERI v1.11.2
 

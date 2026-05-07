@@ -121,7 +121,7 @@ For simple utility rate structures, inputs can be entered using a fixed charge a
   ``MarginalRate``                  double    $/kWh    >= 0         No        See [#]_  Marginal flat rate
   ================================  ========  =======  ===========  ========  ========  ====================
 
-  .. [#] If MarginalRate not provided, it defaults to state-level value based on EIA SEDS data, available at ``hpxml-measures/ReportUtilityBills/resources/simple_rates/pr_all_update.csv``.
+  .. [#] If MarginalRate not provided, it defaults to state-level value based on EIA SEDS data, available at ``hpxml-measures/ReportUtilityBills/resources/simple_rates/eia_fuel_rates_by_state.csv``.
 
 **Detailed**
 
@@ -157,7 +157,7 @@ For each scenario, fuel rates can be optionally entered as an ``/HPXML/SoftwareI
   .. [#] FuelType choices are "natural gas", "propane", "fuel oil", "coal", "wood", and "wood pellets".
   .. [#] FixedCharge defaults to $12/month for natural gas and $0/month for other fuels.
   .. [#] MarginalRate units are $/therm for natural gas, $/gallon for propane and fuel oil, and $/kBtu for other fuels.
-  .. [#] If MarginalRate not provided, it defaults to state-level value based on EIA SEDS data, available at ``hpxml-measures/ReportUtilityBills/resources/simple_rates/pr_all_update.csv``.
+  .. [#] If MarginalRate not provided, it defaults to state-level value based on EIA SEDS data, available at ``hpxml-measures/ReportUtilityBills/resources/simple_rates/eia_fuel_rates_by_state.csv``.
 
 PV Compensation
 ~~~~~~~~~~~~~~~

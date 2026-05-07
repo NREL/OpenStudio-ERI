@@ -2999,7 +2999,7 @@ command_list = [
   :sample_files_tests2,
   :real_home_tests,
   :other_tests,
-  :create_release_zips
+  :create_release_zip
 ]
 
 def display_usage(command_list)
@@ -3082,7 +3082,7 @@ if [:ruleset_tests, :sample_files_tests1, :sample_files_tests2, :real_home_tests
   puts 'All tests passed.'
 end
 
-if ARGV[0].to_sym == :create_release_zips
+if ARGV[0].to_sym == :create_release_zip
   require_relative 'workflow/version'
 
   if ENV['CI']
