@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.12.0
 
 __New Features__
-- Updates to OpenStudio 3.11/EnergyPlus 25.2.
+- Updates to OpenStudio-HPXML 1.12/OpenStudio 3.11/EnergyPlus 25.2.
 - Updates to HPXML v5.0-rc1.
   - **Breaking change**: HPXML namespace changed from http://hpxmlonline.com/2023/09 to http://hpxmlonline.com/2025/12.
 - Updated DX heat pump and air conditioner models per HERS Addendum 103.
