@@ -2216,6 +2216,29 @@ module ERI_301_Ruleset
   def self.set_appliances_dehumidifier_rated(orig_bldg, new_bldg)
     return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
 
+    if orig_bldg.dehumidifiers.empty?
+      dehumidifier_capacity = 60  # pints/day  TODO: Replace with Jon's calculation
+      # https://www.federalregister.gov/documents/2016/08/22/2016-19969/energy-conservation-program-energy-conservation-standards-for-dehumidifiers
+      if dehumidifier_capacity <= 25.0
+        dehumidifier_ief = 1.3
+      elsif dehumidifier_capacity <= 50.0
+        dehumidifier_ief = 1.6
+      else
+        dehumidifier_ief = 2.41
+      end
+
+      orig_bldg.dehumidifiers.each do |dehumidifier|
+        new_bldg.dehumidifiers.add(id: "Dehumidifier",
+                                  type: HPXML::DehumidifierTypePortable,
+                                  capacity: dehumidifier_capacity,
+                                  integrated_energy_factor: dehumidifier_ief,
+                                  rh_setpoint: 0.60,  # TODO: 60% vs 55%
+                                  fraction_served: 1.0,
+                                  location: HPXML::LocationConditionedSpace)
+      end
+      return
+    end
+
     orig_bldg.dehumidifiers.each do |dehumidifier|
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
                                  type: dehumidifier.type,
