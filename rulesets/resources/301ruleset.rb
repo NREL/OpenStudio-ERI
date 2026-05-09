@@ -2227,15 +2227,13 @@ module ERI_301_Ruleset
         dehumidifier_ief = 2.41
       end
 
-      orig_bldg.dehumidifiers.each do |dehumidifier|
-        new_bldg.dehumidifiers.add(id: "Dehumidifier",
-                                  type: HPXML::DehumidifierTypePortable,
-                                  capacity: dehumidifier_capacity,
-                                  integrated_energy_factor: dehumidifier_ief,
-                                  rh_setpoint: 0.60,  # TODO: 60% vs 55%
-                                  fraction_served: 1.0,
-                                  location: HPXML::LocationConditionedSpace)
-      end
+      new_bldg.dehumidifiers.add(id: "Dehumidifier",
+                                 type: HPXML::DehumidifierTypePortable,
+                                 capacity: dehumidifier_capacity,
+                                 integrated_energy_factor: dehumidifier_ief,
+                                 rh_setpoint: 0.60,  # TODO: 60% vs 55%
+                                 fraction_served: 1.0,
+                                 location: HPXML::LocationConditionedSpace)
       return
     end
 
