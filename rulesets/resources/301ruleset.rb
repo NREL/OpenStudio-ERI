@@ -1339,7 +1339,7 @@ module ERI_301_Ruleset
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_heating_fuel = HPXML::FuelTypeElectricity
         backup_heating_efficiency_percent = 1.0
-        backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
+        backup_heating_capacity = 1000 # Capacity will be increased as needed
       end
       if [HPXML::HVACTypeHeatPumpAirToAir,
           HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
