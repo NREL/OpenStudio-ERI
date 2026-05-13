@@ -161,6 +161,11 @@ jobs:
           path: workflow/tests/test_results
           name: test_results_other
 
+      - name: Store release package
+        uses: actions/upload-artifact@v7
+        with:
+          path: OpenStudio-ERI-*.zip
+
   run-windows-tests:
     runs-on: windows-latest
     steps:
