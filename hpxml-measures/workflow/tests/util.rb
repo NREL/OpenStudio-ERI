@@ -302,8 +302,8 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     end
     # HVAC is undersized or poor install quality or advanced research features
     if hpxml_path.include?('base-hvac-undersized.xml') || hpxml_path.include?('install-quality') || hpxml_path.include?('research-features')
-      next if message.include?('There are a large number of unmet hours') && message.include?('for heating; this may indicate the heating system is undersized or the presence of large thermostat setbacks.')
-      next if message.include?('There are a large number of unmet hours') && message.include?('for cooling; this may indicate the cooling system is undersized or the presence of large thermostat setbacks.')
+      next if message.include?('There are a large number of unmet hours') && message.include?('for heating; this may indicate the heating system is undersized or can be caused by recovery from thermostat setbacks.')
+      next if message.include?('There are a large number of unmet hours') && message.include?('for cooling; this may indicate the cooling system is undersized or can be caused by recovery from thermostat setbacks.')
     end
 
     # FUTURE: Revert this eventually
@@ -414,6 +414,7 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     # GSHPs with hard-sized capacities
     if hpxml_path.include? 'house052.xml'
       next if message.include? 'heating capacity is disproportionate (> 20% different) to total cooling capacity' # safe to ignore
+      next if message.include? 'SimHVAC: Maximum iterations (20) exceeded for all HVAC loops'
     end
     # Solar thermal systems
     if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.solar_thermal_systems.size > 0 }

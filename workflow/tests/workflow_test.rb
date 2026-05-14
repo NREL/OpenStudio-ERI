@@ -154,7 +154,9 @@ class WorkflowTest < Minitest::Test
       system(command)
       assert(File.exist? 'OpenStudio-ERI/workflow/tests/test_results/RESNET_Test_4.3_HERS_Method.csv')
 
-      File.delete(zip_path)
+      if not ENV['CI'] # Keep on CI to store as an artifact
+        File.delete(zip_path)
+      end
       rm_path('OpenStudio-ERI')
     end
   end

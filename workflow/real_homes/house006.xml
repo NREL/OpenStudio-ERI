@@ -450,9 +450,9 @@
               <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
-              <HeatingCapacity>-1.0</HeatingCapacity>
-              <HeatingCapacity17F>-1.0</HeatingCapacity17F>
-              <CoolingCapacity>-1.0</CoolingCapacity>
+              <HeatingCapacity>24000.0</HeatingCapacity>
+              <HeatingCapacity17F>13000.0</HeatingCapacity17F>
+              <CoolingCapacity>24000.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
@@ -460,7 +460,7 @@
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>-1.0</BackupHeatingCapacity>
+              <BackupHeatingCapacity>17061.0</BackupHeatingCapacity>
               <FractionHeatLoadServed>0.5</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.5</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
@@ -487,9 +487,9 @@
               <IsSharedSystem>false</IsSharedSystem>
               <HeatPumpType>air-to-air</HeatPumpType>
               <HeatPumpFuel>electricity</HeatPumpFuel>
-              <HeatingCapacity>-1.0</HeatingCapacity>
-              <HeatingCapacity17F>-1.0</HeatingCapacity17F>
-              <CoolingCapacity>-1.0</CoolingCapacity>
+              <HeatingCapacity>24000.0</HeatingCapacity>
+              <HeatingCapacity17F>13000.0</HeatingCapacity17F>
+              <CoolingCapacity>24000.0</CoolingCapacity>
               <CompressorType>single stage</CompressorType>
               <BackupType>integrated</BackupType>
               <BackupSystemFuel>electricity</BackupSystemFuel>
@@ -497,7 +497,7 @@
                 <Units>Percent</Units>
                 <Value>1.0</Value>
               </BackupAnnualHeatingEfficiency>
-              <BackupHeatingCapacity>-1.0</BackupHeatingCapacity>
+              <BackupHeatingCapacity>17061.0</BackupHeatingCapacity>
               <FractionHeatLoadServed>0.5</FractionHeatLoadServed>
               <FractionCoolLoadServed>0.5</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>

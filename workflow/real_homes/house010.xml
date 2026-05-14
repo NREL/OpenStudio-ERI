@@ -1028,7 +1028,7 @@
             <Tracking>fixed</Tracking>
             <ArrayAzimuth>135</ArrayAzimuth>
             <ArrayTilt>20.0</ArrayTilt>
-            <MaxPowerOutput>1.0</MaxPowerOutput>
+            <MaxPowerOutput>1000.0</MaxPowerOutput>
             <SystemLossesFraction>0.14</SystemLossesFraction>
             <AttachedToInverter idref='Inverter1'/>
           </PVSystem>
