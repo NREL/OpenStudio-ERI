@@ -3090,7 +3090,7 @@ if ARGV[0].to_sym == :create_release_zip
     git_files = Dir['**/*.*']
     git_files -= Dir['workflow/tests/run*/*.*']
     git_files -= Dir['workflow/tests/test_results/*.*']
-    git_files -= Dir['workflow/tests/test_files/*.*']
+    git_files -= Dir['workflow/tests/test_files/**/*.*']
   else
     # Only include files under git version control
     command = 'git ls-files'
