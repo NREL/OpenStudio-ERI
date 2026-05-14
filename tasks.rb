@@ -3114,30 +3114,7 @@ if ARGV[0].to_sym == :create_release_zip
            'workflow/sample_files/*.*',
            'workflow/tests/*.rb',
            'workflow/tests/**/*.csv',
-           'workflow/tests/**/*.xml',
-           'documentation/index.html',
-           'documentation/_static/**/*.*']
-
-  if not ENV['CI']
-    # Generate documentation
-    puts 'Generating documentation...'
-    command = 'sphinx-build -b singlehtml docs/source documentation'
-    begin
-      `#{command}`
-      if not File.exist? File.join(File.dirname(__FILE__), 'documentation', 'index.html')
-        puts 'Documentation was not successfully generated. Aborting...'
-        exit!
-      end
-    rescue
-      puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
-      exit!
-    end
-
-    fonts_dir = File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts')
-    if Dir.exist? fonts_dir
-      FileUtils.rm_r(fonts_dir)
-    end
-  end
+           'workflow/tests/**/*.xml']
 
   # Create zip files
   require 'zip'
@@ -3147,23 +3124,13 @@ if ARGV[0].to_sym == :create_release_zip
   Zip::File.open(zip_path, create: true) do |zipfile|
     files.each do |f|
       Dir[f].each do |file|
-        if file.start_with? 'documentation'
-          # always include
-        else
-          if not git_files.include? file
-            next
-          end
+        if not git_files.include? file
+          next
         end
         zipfile.add(File.join('OpenStudio-ERI', file), file)
       end
     end
-    puts "Wrote file at #{zip_path}."
   end
-
-  # Cleanup
-  if not ENV['CI']
-    FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation'))
-  end
-
+  puts "Wrote file at #{zip_path}."
   puts 'Done.'
 end
