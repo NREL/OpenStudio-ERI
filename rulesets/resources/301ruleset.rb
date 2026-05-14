@@ -22,7 +22,8 @@ module ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., RatedHome.xml
-    Defaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    Defaults.apply(runner, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
