@@ -2,7 +2,7 @@
 
 __New Features__
 - HVAC updates:
-  - Adds a warning if there are more than 300 unmet hours for heating or cooling.
+  - Adds a warning if there are more than 300 unmet hours for heating or cooling; setpoint tolerance increased from 0.36 deg-F (0.2 deg-C) to 0.5 deg-F.
   - Dual-fuel heat pumps with switchover temperatures > 25F are now autosized based on 25F to allow some additional heating capacity buffer.
   - Improves handling of duct leakage specified using cfm25/cfm50.
   - Crankcase heating energy is now disabled during unavailable periods, e.g., power outages.
@@ -38,6 +38,7 @@ __Bugfixes__
 - Fixes logic in HP multi-stage backup advanced research feature.
 - Fixes PV grid connection fee applying in utility bill calculation even if the home has no PV.
 - Fixes possible "Failed to process String" EnergyPlus error when requesting component loads.
+- Fixes ducts in manufactured home belly from being incorrectly modeled as if they were outside.
 
 ## OpenStudio-HPXML v1.11.1
 
