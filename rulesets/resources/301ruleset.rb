@@ -22,7 +22,8 @@ module ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., RatedHome.xml
-    Defaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    Defaults.apply(runner, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
@@ -1339,7 +1340,7 @@ module ERI_301_Ruleset
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_heating_fuel = HPXML::FuelTypeElectricity
         backup_heating_efficiency_percent = 1.0
-        backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
+        backup_heating_capacity = 1000 # Capacity will be increased as needed
       end
       if [HPXML::HVACTypeHeatPumpAirToAir,
           HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type

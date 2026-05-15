@@ -208,7 +208,7 @@
             <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
             <Height>7.6</Height>
             <Area>981.9</Area>
-            <Thickness>0.7</Thickness>
+            <Thickness>8.0</Thickness>
             <DepthBelowGrade>5.1</DepthBelowGrade>
             <Insulation>
               <SystemIdentifier id='FoundationWall1Insulation'/>

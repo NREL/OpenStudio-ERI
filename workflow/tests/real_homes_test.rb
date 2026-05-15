@@ -7,9 +7,6 @@ require 'csv'
 require 'oga'
 require_relative 'util.rb'
 require_relative '../../rulesets/resources/constants'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
 
 class RealHomesTest < Minitest::Test
   def setup
