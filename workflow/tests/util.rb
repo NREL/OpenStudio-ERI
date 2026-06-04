@@ -516,7 +516,7 @@ def _get_reference_home_components(hpxml, test_num, version)
   results['East window area (ft2)'] = win_areas[90].round(2)
   results['West window area (ft2)'] = win_areas[270].round(2)
   results['Window U-Factor'] = win_u.round(2)
-  if version == '2022C'
+  if version == 'latest'
     results['Window SHGCo'] = win_shgc_htg.round(2)
     assert_equal(win_shgc_htg, win_shgc_clg)
   else
@@ -534,14 +534,14 @@ def _get_reference_home_components(hpxml, test_num, version)
   results['Latent Internal gains (Btu/day)'] = xml_it_lat.round(0)
 
   # HVAC
-  afue, hspf, seer, dse = _get_hvac(hpxml_bldg)
+  afue, hspf, seer, dse = _get_hvac(hpxml_bldg, version)
   if (test_num == 1) || (test_num == 4)
-    results['Labeled heating system rating and efficiency'] = afue.round(2)
+    results['Labeled heating system rating and efficiency'] = afue
   else
-    results['Labeled heating system rating and efficiency'] = hspf.round(1)
+    results['Labeled heating system rating and efficiency'] = hspf
   end
-  results['Labeled cooling system rating and efficiency'] = seer.round(1)
-  results['Air Distribution System Efficiency'] = dse.round(2)
+  results['Labeled cooling system rating and efficiency'] = seer
+  results['Air Distribution System Efficiency'] = dse
 
   # Thermostat
   tstat, htg_sp, clg_sp = _get_tstat(eri_version, hpxml_bldg)
@@ -616,7 +616,7 @@ def _get_iad_home_components(hpxml, test_num)
   results['Mechanical ventilation'] = mv_kwh
 
   # HVAC
-  afue, hspf, seer, _dse = _get_hvac(hpxml_bldg)
+  afue, hspf, seer, _dse = _get_hvac(hpxml_bldg, version)
   if (test_num == 1) || (test_num == 4)
     results['Labeled heating system rating and efficiency'] = afue
   else
@@ -731,7 +731,7 @@ def _check_reference_home_components(results, test_num, version)
   else
     assert_equal(0.35, results['Window U-Factor'])
   end
-  if version == '2022C'
+  if version == 'latest'
     # Pub 002-2024
     assert_equal(0.33, results['Window SHGCo'])
   else
@@ -744,7 +744,7 @@ def _check_reference_home_components(results, test_num, version)
 
   # Internal gains
   if version == 'latest'
-    # Includes updated values due to HERS Addenda 81 and 90f and provided by Philip on 5/29/25
+    # Updated from Pub002-SCC-2024-Working-Draft.docx on 6/4/2026
     if test_num == 1
       assert_in_epsilon(55037, results['Sensible Internal gains (Btu/day)'], epsilon)
       assert_in_epsilon(13589, results['Latent Internal gains (Btu/day)'], epsilon)
@@ -796,9 +796,17 @@ def _check_reference_home_components(results, test_num, version)
   if (test_num == 1) || (test_num == 4)
     assert_equal(0.78, results['Labeled heating system rating and efficiency'])
   else
-    assert_equal(7.7, results['Labeled heating system rating and efficiency'])
+    if version == 'latest'
+      assert_equal(6.55, results['Labeled heating system rating and efficiency'])
+    else
+      assert_equal(7.7, results['Labeled heating system rating and efficiency'])
+    end
   end
-  assert_equal(13.0, results['Labeled cooling system rating and efficiency'])
+  if version == 'latest'
+    assert_equal(12.35, results['Labeled cooling system rating and efficiency'])
+  else
+    assert_equal(13.0, results['Labeled cooling system rating and efficiency'])
+  end
   assert_equal(0.80, results['Air Distribution System Efficiency'])
 
   # Thermostat
@@ -808,7 +816,7 @@ def _check_reference_home_components(results, test_num, version)
 
   # Mechanical ventilation
   mv_kwh_yr = nil
-  if version == '2022C'
+  if version == 'latest'
     # Pub 002-2024
     mv_kwh_yr = { 1 => 0.0, 2 => 223.9, 3 => 288.1, 4 => 763.4 }[test_num]
   elsif version == '2019'
@@ -1139,44 +1147,34 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   return xml_btu_sens, xml_btu_lat
 end
 
-def _get_hvac(hpxml_bldg)
-  afue = hspf = seer = dse = num_afue = num_hspf = num_seer = num_dse = 0.0
+def _get_hvac(hpxml_bldg, version)
+  afue = hspf = seer = dse = 0.0
   hpxml_bldg.heating_systems.each do |heating_system|
-    afue += heating_system.heating_efficiency_afue
-    num_afue += 1
+    afue = heating_system.heating_efficiency_afue unless heating_system.heating_efficiency_afue.nil?
   end
   hpxml_bldg.cooling_systems.each do |cooling_system|
-    if not cooling_system.cooling_efficiency_seer.nil?
-      seer += cooling_system.cooling_efficiency_seer
-      num_seer += 1
-    elsif not cooling_system.cooling_efficiency_seer2.nil?
-      seer += HVAC.calc_seer_from_seer2(cooling_system)
-      num_seer += 1
+    if version == 'latest'
+      seer = cooling_system.cooling_efficiency_seer2 unless cooling_system.cooling_efficiency_seer2.nil?
+    else
+      seer = HVAC.calc_seer_from_seer2(cooling_system).round(1) unless cooling_system.cooling_efficiency_seer2.nil?
     end
   end
   hpxml_bldg.heat_pumps.each do |heat_pump|
-    if not heat_pump.heating_efficiency_hspf.nil?
-      hspf += heat_pump.heating_efficiency_hspf
-      num_hspf += 1
-    elsif not heat_pump.heating_efficiency_hspf2.nil?
-      hspf += HVAC.calc_hspf_from_hspf2(heat_pump)
-      num_hspf += 1
-    end
-    if not heat_pump.cooling_efficiency_seer.nil?
-      seer += heat_pump.cooling_efficiency_seer
-      num_seer += 1
-    elsif not heat_pump.cooling_efficiency_seer2.nil?
-      seer += HVAC.calc_seer_from_seer2(heat_pump)
-      num_seer += 1
+    if version == 'latest'
+      hspf = heat_pump.heating_efficiency_hspf2 unless heat_pump.heating_efficiency_hspf2.nil?
+      seer = heat_pump.cooling_efficiency_seer2 unless heat_pump.cooling_efficiency_seer2.nil?
+    else
+      hspf = HVAC.calc_hspf_from_hspf2(heat_pump).round(1) unless heat_pump.heating_efficiency_hspf2.nil?
+      seer = HVAC.calc_seer_from_seer2(heat_pump).round(1) unless heat_pump.cooling_efficiency_seer2.nil?
     end
   end
   hpxml_bldg.hvac_distributions.each do |hvac_distribution|
-    dse += hvac_distribution.annual_heating_dse
-    num_dse += 1
-    dse += hvac_distribution.annual_cooling_dse
-    num_dse += 1
+    dse = [hvac_distribution.annual_heating_dse, hvac_distribution.annual_cooling_dse].uniq
+    fail 'multiple dse' if dse.size != 1
+
+    dse = dse[0]
   end
-  return (afue / num_afue).round(2), (hspf / num_hspf).round(1), (seer / num_seer).round(1), (dse / num_dse).round(2)
+  return afue.round(2), hspf.round(2), seer.round(2), dse.round(2)
 end
 
 def _get_tstat(eri_version, hpxml_bldg)
@@ -1230,7 +1228,7 @@ def _check_method_results(results, test_num, has_tankless_water_heater, version)
   heating_mepr =  { 1 => 6.80,   2 => 6.80,   3 => 0.78,   4 => 9.85,   5 => 0.96  }
   hotwater_fuel = { 1 => 'elec', 2 => 'gas',  3 => 'elec', 4 => 'elec', 5 => 'elec' }
   hotwater_mepr = { 1 => 0.88,   2 => 0.82,   3 => 0.88,   4 => 0.88,   5 => 0.88 }
-  if version == '2019A'
+  if version == 'latest'
     ec_x_la = { 1 => 20.45,  2 => 22.42,  3 => 21.28,  4 => 21.40,  5 => 22.42 }
   else
     ec_x_la = { 1 => 21.27,  2 => 23.33,  3 => 22.05,  4 => 22.35,  5 => 23.33 }

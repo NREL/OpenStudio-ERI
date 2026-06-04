@@ -2,16 +2,13 @@
 <HPXML xmlns='http://hpxmlonline.com/2025/12' schemaVersion='5.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
+    <XMLGeneratedBy>hand</XMLGeneratedBy>
     <CreatedDateAndTime>2000-01-01T00:00:00-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
-      <ERICalculation>
-        <Version>2022CE</Version>
-      </ERICalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -22,8 +19,9 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <Surroundings>stand-alone</Surroundings>
-          <VerticalSurroundings>no units above or below</VerticalSurroundings>
+          <Soil>
+            <Conductivity>0.8</Conductivity>
+          </Soil>
         </Site>
         <BuildingOccupancy>
           <NumberofResidents>0.0</NumberofResidents>
@@ -362,9 +360,6 @@
                 <Value>1.0</Value>
               </AnnualHeatingEfficiency>
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
-              <extension>
-                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
-              </extension>
             </HeatingSystem>
             <CoolingSystem>
               <SystemIdentifier id='CoolingSystem1'/>
@@ -378,9 +373,10 @@
                 <Units>SEER2</Units>
                 <Value>9.5</Value>
               </AnnualCoolingEfficiency>
-              <extension>
-                <FanPowerWattsPerCFM>0.5</FanPowerWattsPerCFM>
-              </extension>
+              <AnnualCoolingEfficiency>
+                <Units>EER2</Units>
+                <Value>8.32</Value>
+              </AnnualCoolingEfficiency>
             </CoolingSystem>
           </HVACPlant>
           <HVACControl>

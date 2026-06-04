@@ -2,14 +2,14 @@
 <HPXML xmlns='http://hpxmlonline.com/2025/12' schemaVersion='5.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
+    <XMLGeneratedBy>hand</XMLGeneratedBy>
     <CreatedDateAndTime>2000-01-01T00:00:00-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ERICalculation>
-        <Version>2022CE</Version>
+        <Version>latest</Version>
       </ERICalculation>
     </extension>
   </SoftwareInfo>
@@ -43,11 +43,6 @@
           <NumberofBedrooms>3</NumberofBedrooms>
           <ConditionedFloorArea>1539.0</ConditionedFloorArea>
         </BuildingConstruction>
-        <extension>
-          <AdditionalProperties>
-            <ParentHPXMLFile>L100A-01.xml</ParentHPXMLFile>
-          </AdditionalProperties>
-        </extension>
       </BuildingSummary>
       <ClimateandRiskZones>
         <ClimateZoneIECC>
@@ -363,16 +358,16 @@
               <FractionHeatLoadServed>1.0</FractionHeatLoadServed>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>10.0</Value>
+                <Units>SEER2</Units>
+                <Value>9.5</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>8.8</Value>
+                <Units>EER2</Units>
+                <Value>8.36</Value>
               </AnnualCoolingEfficiency>
               <AnnualHeatingEfficiency>
-                <Units>HSPF</Units>
-                <Value>6.8</Value>
+                <Units>HSPF2</Units>
+                <Value>5.78</Value>
               </AnnualHeatingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>

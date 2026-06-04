@@ -25,15 +25,7 @@ class WorkflowHERSTest < Minitest::Test
 
     hvac_results = {}
     all_results.each do |xml, results|
-      is_heat = false
-      if xml.include? 'HVAC2'
-        is_heat = true
-      end
-      is_electric_heat = true
-      if xml.include?('HVAC2a') || xml.include?('HVAC2b')
-        is_electric_heat = false
-      end
-      hvac_results[xml] = _get_simulation_hvac_energy_results(results, is_heat, is_electric_heat)
+      hvac_results[xml] = _get_simulation_hvac_energy_results(xml, results)
     end
 
     hvac_energy = _write_hers_hvac_results(hvac_results, test_results_csv)
@@ -58,12 +50,7 @@ class WorkflowHERSTest < Minitest::Test
 
     dse_results = {}
     all_results.each do |xml, results|
-      is_heat = false
-      if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
-        is_heat = true
-      end
-      is_electric_heat = false
-      dse_results[xml] = _get_simulation_hvac_energy_results(results, is_heat, is_electric_heat)
+      dse_results[xml] = _get_simulation_hvac_energy_results(xml, results)
     end
 
     dse_energy = _write_hers_dse_results(dse_results, test_results_csv)

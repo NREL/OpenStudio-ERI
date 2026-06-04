@@ -52,7 +52,7 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_reference_home_auto_generation
-    version = '2022C' # Latest version that caused changes to results
+    version = 'latest'
     all_results = _test_resnet_hers_reference_home_auto_generation('RESNET_Test_4.2_HERS_AutoGen_Reference_Home',
                                                                    '4.2_HERS_AutoGen_Reference_Home',
                                                                    version)
@@ -65,7 +65,7 @@ class RESNETTest < Minitest::Test
   end
 
   def test_resnet_hers_method
-    version = '2019A' # Latest version that caused changes to results
+    version = 'latest'
     all_results = _test_resnet_hers_method('RESNET_Test_4.3_HERS_Method',
                                            '4.3_HERS_Method')
 
@@ -87,16 +87,8 @@ class RESNETTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
 
-      is_heat = false
-      if xml.include? 'HVAC2'
-        is_heat = true
-      end
-      is_electric_heat = true
-      if xml.include?('HVAC2a') || xml.include?('HVAC2b')
-        is_electric_heat = false
-      end
       results = _get_csv_results([csv_path])
-      all_results[File.basename(xml)] = _get_simulation_hvac_energy_results(results, is_heat, is_electric_heat)
+      all_results[File.basename(xml)] = _get_simulation_hvac_energy_results(xml, results)
     end
     assert(all_results.size > 0)
 
@@ -119,13 +111,8 @@ class RESNETTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       csv_path = _run_simulation(xml, test_name)
 
-      is_heat = false
-      if ['HVAC3a.xml', 'HVAC3b.xml', 'HVAC3c.xml', 'HVAC3d.xml'].include? File.basename(xml)
-        is_heat = true
-      end
-      is_electric_heat = false
       results = _get_csv_results([csv_path])
-      all_results[File.basename(xml)] = _get_simulation_hvac_energy_results(results, is_heat, is_electric_heat)
+      all_results[File.basename(xml)] = _get_simulation_hvac_energy_results(xml, results)
     end
     assert(all_results.size > 0)
 

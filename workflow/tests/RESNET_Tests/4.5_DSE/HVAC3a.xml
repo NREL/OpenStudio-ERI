@@ -2,16 +2,13 @@
 <HPXML xmlns='http://hpxmlonline.com/2025/12' schemaVersion='5.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
-    <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
+    <XMLGeneratedBy>hand</XMLGeneratedBy>
     <CreatedDateAndTime>2000-01-01T00:00:00-07:00</CreatedDateAndTime>
     <Transaction>create</Transaction>
   </XMLTransactionHeaderInformation>
   <SoftwareInfo>
     <extension>
       <ApplyASHRAE140Assumptions>true</ApplyASHRAE140Assumptions>
-      <ERICalculation>
-        <Version>2022CE</Version>
-      </ERICalculation>
     </extension>
   </SoftwareInfo>
   <Building>
@@ -22,8 +19,9 @@
     <BuildingDetails>
       <BuildingSummary>
         <Site>
-          <Surroundings>stand-alone</Surroundings>
-          <VerticalSurroundings>no units above or below</VerticalSurroundings>
+          <Soil>
+            <Conductivity>0.8</Conductivity>
+          </Soil>
         </Site>
         <BuildingOccupancy>
           <NumberofResidents>0.0</NumberofResidents>
@@ -80,20 +78,9 @@
           <Foundation>
             <SystemIdentifier id='Foundation1'/>
             <FoundationType>
-              <Basement>
-                <Conditioned>false</Conditioned>
-              </Basement>
+              <Ambient/>
             </FoundationType>
-            <AttachedToRimJoist idref='RimJoist1'/>
-            <AttachedToRimJoist idref='RimJoist2'/>
-            <AttachedToRimJoist idref='RimJoist3'/>
-            <AttachedToRimJoist idref='RimJoist4'/>
-            <AttachedToFoundationWall idref='FoundationWall1'/>
-            <AttachedToFoundationWall idref='FoundationWall2'/>
-            <AttachedToFoundationWall idref='FoundationWall3'/>
-            <AttachedToFoundationWall idref='FoundationWall4'/>
             <AttachedToFloor idref='Floor1'/>
-            <AttachedToSlab idref='Slab1'/>
           </Foundation>
         </Foundations>
         <Roofs>
@@ -126,64 +113,6 @@
             </Insulation>
           </Roof>
         </Roofs>
-        <RimJoists>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist1'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>42.7</Area>
-            <Azimuth>0</Azimuth>
-            <Siding>masonite siding</Siding>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.9</Emittance>
-            <Insulation>
-              <SystemIdentifier id='RimJoist1Insulation'/>
-              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
-            </Insulation>
-          </RimJoist>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist2'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>20.3</Area>
-            <Azimuth>90</Azimuth>
-            <Siding>masonite siding</Siding>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.9</Emittance>
-            <Insulation>
-              <SystemIdentifier id='RimJoist2Insulation'/>
-              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
-            </Insulation>
-          </RimJoist>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist3'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>42.7</Area>
-            <Azimuth>180</Azimuth>
-            <Siding>masonite siding</Siding>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.9</Emittance>
-            <Insulation>
-              <SystemIdentifier id='RimJoist3Insulation'/>
-              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
-            </Insulation>
-          </RimJoist>
-          <RimJoist>
-            <SystemIdentifier id='RimJoist4'/>
-            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>20.3</Area>
-            <Azimuth>270</Azimuth>
-            <Siding>masonite siding</Siding>
-            <SolarAbsorptance>0.6</SolarAbsorptance>
-            <Emittance>0.9</Emittance>
-            <Insulation>
-              <SystemIdentifier id='RimJoist4Insulation'/>
-              <AssemblyEffectiveRValue>5.01</AssemblyEffectiveRValue>
-            </Insulation>
-          </RimJoist>
-        </RimJoists>
         <Walls>
           <Wall>
             <SystemIdentifier id='Wall1'/>
@@ -306,112 +235,10 @@
             </Insulation>
           </Wall>
         </Walls>
-        <FoundationWalls>
-          <FoundationWall>
-            <SystemIdentifier id='FoundationWall1'/>
-            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Type>solid concrete</Type>
-            <Height>7.25</Height>
-            <Area>413.2</Area>
-            <Azimuth>0</Azimuth>
-            <Thickness>6.0</Thickness>
-            <DepthBelowGrade>6.583</DepthBelowGrade>
-            <InteriorFinish>
-              <Type>not present</Type>
-            </InteriorFinish>
-            <Insulation>
-              <SystemIdentifier id='FoundationWall1Insulation'/>
-              <Layer>
-                <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-            </Insulation>
-          </FoundationWall>
-          <FoundationWall>
-            <SystemIdentifier id='FoundationWall2'/>
-            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Type>solid concrete</Type>
-            <Height>7.25</Height>
-            <Area>195.8</Area>
-            <Azimuth>90</Azimuth>
-            <Thickness>6.0</Thickness>
-            <DepthBelowGrade>6.583</DepthBelowGrade>
-            <InteriorFinish>
-              <Type>not present</Type>
-            </InteriorFinish>
-            <Insulation>
-              <SystemIdentifier id='FoundationWall2Insulation'/>
-              <Layer>
-                <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-            </Insulation>
-          </FoundationWall>
-          <FoundationWall>
-            <SystemIdentifier id='FoundationWall3'/>
-            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Type>solid concrete</Type>
-            <Height>7.25</Height>
-            <Area>413.2</Area>
-            <Azimuth>180</Azimuth>
-            <Thickness>6.0</Thickness>
-            <DepthBelowGrade>6.583</DepthBelowGrade>
-            <InteriorFinish>
-              <Type>not present</Type>
-            </InteriorFinish>
-            <Insulation>
-              <SystemIdentifier id='FoundationWall3Insulation'/>
-              <Layer>
-                <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-            </Insulation>
-          </FoundationWall>
-          <FoundationWall>
-            <SystemIdentifier id='FoundationWall4'/>
-            <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Type>solid concrete</Type>
-            <Height>7.25</Height>
-            <Area>195.8</Area>
-            <Azimuth>270</Azimuth>
-            <Thickness>6.0</Thickness>
-            <DepthBelowGrade>6.583</DepthBelowGrade>
-            <InteriorFinish>
-              <Type>not present</Type>
-            </InteriorFinish>
-            <Insulation>
-              <SystemIdentifier id='FoundationWall4Insulation'/>
-              <Layer>
-                <InstallationType>continuous - exterior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-              <Layer>
-                <InstallationType>continuous - interior</InstallationType>
-                <NominalRValue>0.0</NominalRValue>
-              </Layer>
-            </Insulation>
-          </FoundationWall>
-        </FoundationWalls>
         <Floors>
           <Floor>
             <SystemIdentifier id='Floor1'/>
-            <ExteriorAdjacentTo>basement - unconditioned</ExteriorAdjacentTo>
+            <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
             <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorOrCeiling>floor</FloorOrCeiling>
             <FloorType>
@@ -420,7 +247,7 @@
             <Area>1539.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1Insulation'/>
-              <AssemblyEffectiveRValue>13.85</AssemblyEffectiveRValue>
+              <AssemblyEffectiveRValue>14.15</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
@@ -442,28 +269,6 @@
             </Insulation>
           </Floor>
         </Floors>
-        <Slabs>
-          <Slab>
-            <SystemIdentifier id='Slab1'/>
-            <InteriorAdjacentTo>basement - unconditioned</InteriorAdjacentTo>
-            <Area>1539.0</Area>
-            <ExposedPerimeter>168.0</ExposedPerimeter>
-            <PerimeterInsulation>
-              <SystemIdentifier id='Slab1PerimeterInsulation'/>
-              <Layer>
-                <NominalRValue>0.0</NominalRValue>
-                <InsulationDepth>0.0</InsulationDepth>
-              </Layer>
-            </PerimeterInsulation>
-            <UnderSlabInsulation>
-              <SystemIdentifier id='Slab1UnderSlabInsulation'/>
-              <Layer>
-                <NominalRValue>0.0</NominalRValue>
-                <InsulationWidth>0.0</InsulationWidth>
-              </Layer>
-            </UnderSlabInsulation>
-          </Slab>
-        </Slabs>
         <Windows>
           <Window>
             <SystemIdentifier id='Window1'/>
@@ -605,14 +410,14 @@
                 <Ducts>
                   <SystemIdentifier id='Ducts1'/>
                   <DuctType>supply</DuctType>
-                  <DuctEffectiveRValue>1.5</DuctEffectiveRValue>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>308.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id='Ducts2'/>
                   <DuctType>return</DuctType>
-                  <DuctEffectiveRValue>1.5</DuctEffectiveRValue>
+                  <DuctInsulationRValue>0.0</DuctInsulationRValue>
                   <DuctLocation>conditioned space</DuctLocation>
                   <DuctSurfaceArea>77.0</DuctSurfaceArea>
                 </Ducts>
