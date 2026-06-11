@@ -561,7 +561,7 @@ def _get_reference_home_components(hpxml, test_num, version)
   return results
 end
 
-def _get_iad_home_components(hpxml, test_num)
+def _get_iad_home_components(hpxml, test_num, version)
   results = {}
   hpxml = HPXML.new(hpxml_path: hpxml)
   hpxml_bldg = hpxml.buildings[0]
