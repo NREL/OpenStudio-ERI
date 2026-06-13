@@ -55,17 +55,31 @@ module ERI_301_Ruleset
 
     elevation = hpxml_bldg.elevation  # ft
     atmos_pressure = ((1 - 0.0000068754 * elevation)**5.2559) * 14.6959  # psia
-    dehum_mcdb2 = @weather.design.CoolingDehumidificationMeanCoincidentDryBulb2
-    dehum_hr2 = @weather.design.CoolingDehumidificationHumidityRatio2
+    # Keep both 1% and 2% dehumidification design conditions available so the
+    # active condition can be changed with a single variable.
+    dehum_design = {
+      1 => {
+        dp: @weather.design.CoolingDehumidificationDewPoint1,
+        mcdb: @weather.design.CoolingDehumidificationMeanCoincidentDryBulb1,
+        hr: @weather.design.CoolingDehumidificationHumidityRatio1
+      },
+      2 => {
+        dp: @weather.design.CoolingDehumidificationDewPoint2,
+        mcdb: @weather.design.CoolingDehumidificationMeanCoincidentDryBulb2,
+        hr: @weather.design.CoolingDehumidificationHumidityRatio2
+      }
+    }
 
-    # Some EPWs may not include dehumidification design conditions; skip sizing in that case.
-    return if dehum_mcdb2.nil? || dehum_hr2.nil?
+    # Default to 2% dehumidification condition; change to 1 to use 1% condition.
+    active_dehum_condition = 2
+    dehum_mcdb = dehum_design[active_dehum_condition][:mcdb]
+    dehum_hr = dehum_design[active_dehum_condition][:hr]
 
     indoor_hr = Psychrometrics.w_fT_R_P(clg_setpt, rh_setpt, atmos_pressure)
     enthalpy_vaporization = 1061 + 0.444 * clg_setpt  # Btu/lbm
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
-    oa_density = 1 / (0.370486 * (dehum_mcdb2 + 459.67) * (1 + 1.607858 * dehum_hr2) / atmos_pressure) * (1 + dehum_hr2)
-    ventilation_latent_load = (q_tot * 60) * oa_density * (dehum_hr2 - indoor_hr) * enthalpy_vaporization  # Btu/hr
+    oa_density = 1 / (0.370486 * (dehum_mcdb + 459.67) * (1 + 1.607858 * dehum_hr) / atmos_pressure) * (1 + dehum_hr)
+    ventilation_latent_load = (q_tot * 60) * oa_density * (dehum_hr - indoor_hr) * enthalpy_vaporization  # Btu/hr
     internal_latent_load = xml_it_lat  # Btu/hr
     total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
     w_coeff = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
