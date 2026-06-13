@@ -922,10 +922,6 @@
           <display_name>Crawlspace, Unvented</display_name>
         </choice>
         <choice>
-          <value>Crawlspace, Conditioned</value>
-          <display_name>Crawlspace, Conditioned</display_name>
-        </choice>
-        <choice>
           <value>Basement, Unconditioned</value>
           <display_name>Basement, Unconditioned</display_name>
         </choice>
@@ -11454,7 +11450,11 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
+<<<<<<< HEAD
       <checksum>FE0CEC87</checksum>
+=======
+      <checksum>E3E200DA</checksum>
+>>>>>>> c7149aa548bdf6a251e333fa452adb2b5e55688f
     </file>
     <file>
       <filename>constants.rb</filename>
@@ -11466,7 +11466,7 @@
       <filename>geometry.rb</filename>
       <filetype>rb</filetype>
       <usage_type>resource</usage_type>
-      <checksum>7B56FACC</checksum>
+      <checksum>84C42F03</checksum>
     </file>
     <file>
       <filename>options/advanced_feature.tsv</filename>
@@ -11766,7 +11766,7 @@
       <filename>options/geometry_foundation_type.tsv</filename>
       <filetype>tsv</filetype>
       <usage_type>resource</usage_type>
-      <checksum>A0ED3FC0</checksum>
+      <checksum>647701C8</checksum>
     </file>
     <file>
       <filename>options/geometry_garage_type.tsv</filename>
@@ -12096,7 +12096,7 @@
       <filename>test_build_residential_hpxml.rb</filename>
       <filetype>rb</filetype>
       <usage_type>test</usage_type>
-      <checksum>819DB64D</checksum>
+      <checksum>E0DC52BC</checksum>
     </file>
   </files>
 </measure>

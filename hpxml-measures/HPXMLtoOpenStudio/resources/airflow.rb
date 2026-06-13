@@ -1827,13 +1827,11 @@ module Airflow
 
           # Calculate the apparent sensible effectiveness
           vent_mech_apparent_sens_eff = (t_sup_out - t_sup_in) / (t_exh_in - t_sup_in)
-
         else
-          # The following is derived from (taken from CSA 439, Clause 9.2.1, Eq. 7):
+          # The following is derived from CSA 439, Clause 9.2.1, Eq. 7:
           t_sup_out = t_sup_in + (vent_mech.sensible_recovery_efficiency_adjusted * (t_exh_in - t_sup_in))
 
           vent_mech_apparent_sens_eff = vent_mech.sensible_recovery_efficiency_adjusted
-
         end
 
         # Calculate the supply temperature before the fan
@@ -1864,11 +1862,11 @@ module Airflow
 
           if not vent_mech.total_recovery_efficiency.nil?
             # The following is derived from CSA 439, Clause 9.3.3.2, Eq. 13:
-            #    E_THR = (m_sup,fan * Cp * (h_sup,out - h_sup,in) - P_sup,fan) / (m_exh,fan * Cp * (h_exh,in - h_sup,in) + P_exh,fan)
-            h_sup_out = h_sup_in - (vent_mech.total_recovery_efficiency * (m_fan * (h_sup_in - h_exh_in) + p_fan) + p_fan) / m_fan
+            #    E_THR = (m_sup,fan * (h_sup,out - h_sup,in) - P_sup,fan) / (m_exh,fan * (h_exh,in - h_sup,in) + P_exh,fan)
+            h_sup_out = h_sup_in + (vent_mech.total_recovery_efficiency * (m_fan * (h_exh_in - h_sup_in) + p_fan) + p_fan) / m_fan
           else
-            # The following is derived from (taken from CSA 439, Clause 9.2.1, Eq. 7):
-            h_sup_out = h_sup_in - (vent_mech.total_recovery_efficiency_adjusted * (h_sup_in - h_exh_in))
+            # The following is derived from CSA 439, Clause 9.2.1, Eq. 7:
+            h_sup_out = h_sup_in + (vent_mech.total_recovery_efficiency_adjusted * (h_exh_in - h_sup_in))
           end
 
           w_sup_out = Psychrometrics.w_fT_h_SI(t_sup_out, h_sup_out)
@@ -2873,7 +2871,7 @@ module Airflow
   # @param is_balanced [Double] Whether the mechanical ventilation fan is balanced (supply airflow equal to exhaust airflow)
   # @param frac_imbal [Double] The fraction of total mechanical ventilation airflow that is imbalanced
   # @param a_ext [Double] Ratio of exterior envelope area to total envelope area for SFA/MF units
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @param eri_version [String] Version of the ANSI/RESNET/ICC 301 Standard to use for equations/assumptions
   # @param hours_in_operation [Double] Hours/day that the fan is operating
   # @return [Double] Mechanical ventilation fan airflow rate (cfm)
