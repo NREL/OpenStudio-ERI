@@ -60,18 +60,17 @@ module ERI_301_Ruleset
     dehum_mcdb1 = @weather.design.CoolingDehumidificationMeanCoincidentDryBulb1
     dehum_hr1 = @weather.design.CoolingDehumidificationHumidityRatio1
     clg_db1 = @weather.design.CoolingDryBulb1
-    indoor_hr = Psychrometrics.w_fT_R_P(clg_setpt, (rh_setpt/100), atmos_pressure)
-    enthalpy_vaporization = Psychrometrics.hfg_fT(clg_setpt)  # Btu/lbm
+    indoor_hr = Psychrometrics.w_fT_R_P(clg_setpt, rh_setpt, atmos_pressure)
+    enthalpy_vaporization = 1061 + 0.444 * clg_setpt  # Btu/lbm
     total_air_exchange_rate = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
-    oa_density = 0.370486 * (dehum_mcdb2 + 459.67) * (1 + 1.607858 * dehum_hr2) / atmos_pressure
+    oa_density = 1 / (0.370486 * (dehum_mcdb2 + 459.67) * (1 + 1.607858 * dehum_hr2) / atmos_pressure) * (1 + dehum_hr2)
     ventilation_latent_load = (total_air_exchange_rate * 60) * oa_density * (dehum_hr2 - indoor_hr) * enthalpy_vaporization  # Btu/hr
     internal_latent_load = xml_it_lat  # Btu/hr
     total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_vaporization) * (water_density / ft3_to_pint ) * 24  # Btu/hr
     w_coeff = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
-    cap_curve_design_cond = w_coeff[0] + w_coeff[1] * UnitConversions.convert(clg_setpt, 'f', 'c') + w_coeff[2] * UnitConversions.convert(clg_setpt, 'f', 'c')**2 + w_coeff[3] * rh_setpt + w_coeff[4] * rh_setpt**2 + w_coeff[5] * UnitConversions.convert(clg_setpt, 'f', 'c') * rh_setpt  # check if rh_setpt is in fraction or percent
+    cap_curve_design_cond = w_coeff[0] + w_coeff[1] * UnitConversions.convert(clg_setpt, 'f', 'c') + w_coeff[2] * UnitConversions.convert(clg_setpt, 'f', 'c')**2 + w_coeff[3] * (rh_setpt * 100) + w_coeff[4] * (rh_setpt * 100)**2 + w_coeff[5] * UnitConversions.convert(clg_setpt, 'f', 'c') * (rh_setpt * 100)
 
     dehumidifier_capacity = total_dehumidification_load / cap_curve_design_cond  # pints/day
-    puts "dehumifier_capacity: #{dehumidifier_capacity} pints/day"
 
     # efficiency
     # https://www.federalregister.gov/documents/2016/08/22/2016-19969/energy-conservation-program-energy-conservation-standards-for-dehumidifiers

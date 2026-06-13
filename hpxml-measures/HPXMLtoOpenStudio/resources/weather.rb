@@ -362,10 +362,10 @@ class WeatherFile
       design.CoolingHumidityRatio = Psychrometrics.w_fT_Twb_P(design.CoolingDrybulb, UnitConversions.convert(mcwb, 'C', 'F'), press_psi)
       design.CoolingDehumidificationDewPoint2 = UnitConversions.convert(dehum_dp2, 'C', 'F')
       design.CoolingDehumidificationMeanCoincidentDryBulb2 = UnitConversions.convert(dehum_mcdb2, 'C', 'F')
-      design.CoolingDehumidificationHumidityRatio2 = dehum_hr2
+      design.CoolingDehumidificationHumidityRatio2 = dehum_hr2 / 1000.0
       design.CoolingDehumidificationDewPoint1 = UnitConversions.convert(dehum_dp1, 'C', 'F')
       design.CoolingDehumidificationMeanCoincidentDryBulb1 = UnitConversions.convert(dehum_mcdb1, 'C', 'F')
-      design.CoolingDehumidificationHumidityRatio1 = dehum_hr1
+      design.CoolingDehumidificationHumidityRatio1 = dehum_hr1 / 1000.0
       design.CoolingDryBulb1 = UnitConversions.convert(clg_db1, 'C', 'F')
       return true
     end
