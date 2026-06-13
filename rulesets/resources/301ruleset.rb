@@ -38,6 +38,7 @@ module ERI_301_Ruleset
   def self.dehumidifier_sizing_and_efficiency(hpxml)
     hpxml_bldg = hpxml.buildings[0]
     return if hpxml_bldg.dehumidifiers.empty?
+    dehumidifier = hpxml_bldg.dehumidifiers[0]
 
     # capacity
     water_density = 62.4  # lbm/ft3
@@ -47,44 +48,41 @@ module ERI_301_Ruleset
       require_relative '../../workflow/tests/util'
     end
 
-    xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_bldg, @eri_version)  # in workflow/tests/util.rb
+    _xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_bldg, @eri_version)  # in workflow/tests/util.rb
     clg_setpt = hpxml_bldg.header.manualj_cooling_setpoint  # F
-    rh_setpt = hpxml_bldg.dehumidifiers[0].rh_setpoint  # %
+    rh_setpt = dehumidifier.rh_setpoint # fraction
+    rh_setpt_pct = rh_setpt * 100.0
 
     elevation = hpxml_bldg.elevation  # ft
     atmos_pressure = ((1 - 0.0000068754 * elevation)**5.2559) * 14.6959  # psia
-    dehum_dp2 = @weather.design.CoolingDehumidificationDewPoint2
     dehum_mcdb2 = @weather.design.CoolingDehumidificationMeanCoincidentDryBulb2
     dehum_hr2 = @weather.design.CoolingDehumidificationHumidityRatio2
-    dehum_dp1 = @weather.design.CoolingDehumidificationDewPoint1
-    dehum_mcdb1 = @weather.design.CoolingDehumidificationMeanCoincidentDryBulb1
-    dehum_hr1 = @weather.design.CoolingDehumidificationHumidityRatio1
-    clg_db1 = @weather.design.CoolingDryBulb1
+
+    # Some EPWs may not include dehumidification design conditions; skip sizing in that case.
+    return if dehum_mcdb2.nil? || dehum_hr2.nil?
+
     indoor_hr = Psychrometrics.w_fT_R_P(clg_setpt, rh_setpt, atmos_pressure)
     enthalpy_vaporization = 1061 + 0.444 * clg_setpt  # Btu/lbm
-    total_air_exchange_rate = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
+    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
     oa_density = 1 / (0.370486 * (dehum_mcdb2 + 459.67) * (1 + 1.607858 * dehum_hr2) / atmos_pressure) * (1 + dehum_hr2)
-    ventilation_latent_load = (total_air_exchange_rate * 60) * oa_density * (dehum_hr2 - indoor_hr) * enthalpy_vaporization  # Btu/hr
+    ventilation_latent_load = (q_tot * 60) * oa_density * (dehum_hr2 - indoor_hr) * enthalpy_vaporization  # Btu/hr
     internal_latent_load = xml_it_lat  # Btu/hr
-    total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_vaporization) * (water_density / ft3_to_pint ) * 24  # Btu/hr
+    total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
     w_coeff = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
-    cap_curve_design_cond = w_coeff[0] + w_coeff[1] * UnitConversions.convert(clg_setpt, 'f', 'c') + w_coeff[2] * UnitConversions.convert(clg_setpt, 'f', 'c')**2 + w_coeff[3] * (rh_setpt * 100) + w_coeff[4] * (rh_setpt * 100)**2 + w_coeff[5] * UnitConversions.convert(clg_setpt, 'f', 'c') * (rh_setpt * 100)
+    clg_setpt_c = UnitConversions.convert(clg_setpt, 'f', 'c')
+    cap_curve_design_cond = w_coeff[0] + w_coeff[1] * clg_setpt_c + w_coeff[2] * clg_setpt_c**2 + w_coeff[3] * rh_setpt_pct + w_coeff[4] * rh_setpt_pct**2 + w_coeff[5] * clg_setpt_c * rh_setpt_pct
 
-    dehumidifier_capacity = total_dehumidification_load / cap_curve_design_cond  # pints/day
+    return if cap_curve_design_cond <= 0
+
+    dehumidifier_capacity = [total_dehumidification_load / cap_curve_design_cond, 0.0].max # pints/day
 
     # efficiency
     # https://www.federalregister.gov/documents/2016/08/22/2016-19969/energy-conservation-program-energy-conservation-standards-for-dehumidifiers
-    if dehumidifier_capacity <= 25.0
-      dehumidifier_ief = 1.3
-    elsif dehumidifier_capacity <= 50.0
-      dehumidifier_ief = 1.6
-    else
-      dehumidifier_ief = 2.41
-    end
+    dehumidifier_ief = get_dehumidifier_ief(dehumidifier_capacity)
 
     # Apply calculated values to the resulting HPXML.
-    hpxml_bldg.dehumidifiers[0].capacity = dehumidifier_capacity
-    hpxml_bldg.dehumidifiers[0].integrated_energy_factor = dehumidifier_ief
+    dehumidifier.capacity = dehumidifier_capacity
+    dehumidifier.integrated_energy_factor = dehumidifier_ief
   end
 
   def self.apply_reference_home_ruleset(orig_hpxml, iecc_version: nil, is_all_electric: false)
@@ -2476,6 +2474,16 @@ module ERI_301_Ruleset
   end
 
   private
+
+  def self.get_dehumidifier_ief(dehumidifier_capacity)
+    if dehumidifier_capacity <= 25.0
+      return 1.3
+    elsif dehumidifier_capacity <= 50.0
+      return 1.6
+    else
+      return 2.41
+    end
+  end
 
   def self.calc_rated_home_q_fans_by_system(orig_bldg, all_mech_vent_fans)
     # Calculates the target average airflow rate for each mechanical
