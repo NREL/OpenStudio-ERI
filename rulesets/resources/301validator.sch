@@ -1085,6 +1085,10 @@
     <sch:title>[MechanicalVentilation]</sch:title>
     <sch:rule context='/h:HPXML/h:Building/h:BuildingDetails/h:Systems/h:MechanicalVentilation/h:VentilationFans/h:VentilationFan[h:UsedForWholeBuildingVentilation="true"]'>
       <sch:assert role='ERROR' test='count(h:FanType) = 1'>Expected FanType</sch:assert>
+      <!-- Warnings -->
+      <sch:report role='WARN' test='count(h:RatedFlowRate) + count(h:extension/h:FlowRateNotTested[text()="true"]) = 2'>Both RatedFlowRate and extension/FlowRateNotTested="true" are provided; the ventilation system is assumed to have unmeasured airflow and RatedFlowRate will not be used.</sch:report>
+      <sch:report role='WARN' test='count(h:CalculatedFlowRate) + count(h:extension/h:FlowRateNotTested[text()="true"]) = 2'>Both CalculatedFlowRate and extension/FlowRateNotTested="true" are provided; the ventilation system is assumed to have unmeasured airflow and CalculatedFlowRate will not be used.</sch:report>
+      <sch:report role='WARN' test='count(h:DeliveredVentilation) + count(h:extension/h:FlowRateNotTested[text()="true"]) = 2'>Both DeliveredVentilation and extension/FlowRateNotTested="true" are provided; the ventilation system is assumed to have unmeasured airflow and DeliveredVentilation will not be used.</sch:report>
     </sch:rule>
   </sch:pattern>
 

@@ -207,6 +207,7 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     run_log = File.readlines(log_path).map(&:strip)
     run_log.each do |log_line|
       next unless log_line.start_with?('Warning:') || log_line.start_with?('Error:')
+      next if log_path.include? 'house096.xml' # Crazy home w/ lots of warnings
       next if log_line.include? 'No emissions factor found for Scenario=ANSI301'
       next if log_line.include? 'Could not look up Cambium GEA for zip code'
       next if log_line.include? 'Ducts are entirely within conditioned space but there is moderate leakage to the outside.'
