@@ -716,13 +716,15 @@ module HotWaterAndAppliances
     end
 
     if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019A')
-      if clothes_dryer.combined_energy_factor.nil?
-        clothes_dryer.combined_energy_factor = calc_clothes_dryer_cef_from_ef(clothes_dryer.energy_factor)
+      combined_energy_factor = clothes_dryer.combined_energy_factor
+      if combined_energy_factor.nil?
+        combined_energy_factor = calc_clothes_dryer_cef_from_ef(clothes_dryer.energy_factor)
       end
-      if clothes_washer.integrated_modified_energy_factor.nil?
-        clothes_washer.integrated_modified_energy_factor = calc_clothes_washer_imef_from_mef(clothes_washer.modified_energy_factor)
+      integrated_modified_energy_factor = clothes_washer.integrated_modified_energy_factor
+      if integrated_modified_energy_factor.nil?
+        integrated_modified_energy_factor = calc_clothes_washer_imef_from_mef(clothes_washer.modified_energy_factor)
       end
-      rmc = (0.97 * (clothes_washer.capacity / clothes_washer.integrated_modified_energy_factor) - clothes_washer.rated_annual_kwh / 312.0) / ((2.0104 * clothes_washer.capacity + 1.4242) * 0.455) + 0.04
+      rmc = (0.97 * (clothes_washer.capacity / integrated_modified_energy_factor) - clothes_washer.rated_annual_kwh / 312.0) / ((2.0104 * clothes_washer.capacity + 1.4242) * 0.455) + 0.04
       if n_occ.nil? # Asset calculation
         if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('latest') # FIXME: Change from 'latest' when incorporated in 301 standard
           # RESNET HERS Addendum 81 Eq. 4.2-34
@@ -738,7 +740,7 @@ module HotWaterAndAppliances
         scy = 123.0 + 61.0 * n_occ # Eq. 1 from http://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf
       end
       acy = scy * ((3.0 * 2.08 + 1.59) / (clothes_washer.capacity * 2.08 + 1.59))
-      annual_kwh = (((rmc - 0.04) * 100) / 55.5) * (8.45 / clothes_dryer.combined_energy_factor) * acy
+      annual_kwh = (((rmc - 0.04) * 100) / 55.5) * (8.45 / combined_energy_factor) * acy
       if clothes_dryer.fuel_type == HPXML::FuelTypeElectricity
         annual_therm = 0.0
       else
@@ -746,11 +748,13 @@ module HotWaterAndAppliances
         annual_kwh = annual_kwh * 0.07 * (3.73 / 3.30)
       end
     else
-      if clothes_dryer.energy_factor.nil?
-        clothes_dryer.energy_factor = calc_clothes_dryer_ef_from_cef(clothes_dryer.combined_energy_factor)
+      energy_factor = clothes_dryer.energy_factor
+      if energy_factor.nil?
+        energy_factor = calc_clothes_dryer_ef_from_cef(clothes_dryer.combined_energy_factor)
       end
-      if clothes_washer.modified_energy_factor.nil?
-        clothes_washer.modified_energy_factor = calc_clothes_washer_mef_from_imef(clothes_washer.integrated_modified_energy_factor)
+      modified_energy_factor = clothes_washer.modified_energy_factor
+      if modified_energy_factor.nil?
+        modified_energy_factor = calc_clothes_washer_mef_from_imef(clothes_washer.integrated_modified_energy_factor)
       end
       if clothes_dryer.control_type == HPXML::ClothesDryerControlTypeTimer
         field_util_factor = 1.18
@@ -758,12 +762,12 @@ module HotWaterAndAppliances
         field_util_factor = 1.04
       end
       if clothes_dryer.fuel_type == HPXML::FuelTypeElectricity
-        annual_kwh = 12.5 * (164.0 + 46.5 * nbeds) * (field_util_factor / clothes_dryer.energy_factor) * ((clothes_washer.capacity / clothes_washer.modified_energy_factor) - clothes_washer.rated_annual_kwh / 392.0) / (0.2184 * (clothes_washer.capacity * 4.08 + 0.24))
+        annual_kwh = 12.5 * (164.0 + 46.5 * nbeds) * (field_util_factor / energy_factor) * ((clothes_washer.capacity / modified_energy_factor) - clothes_washer.rated_annual_kwh / 392.0) / (0.2184 * (clothes_washer.capacity * 4.08 + 0.24))
         annual_therm = 0.0
       else
-        annual_kwh = 12.5 * (164.0 + 46.5 * nbeds) * (field_util_factor / 3.01) * ((clothes_washer.capacity / clothes_washer.modified_energy_factor) - clothes_washer.rated_annual_kwh / 392.0) / (0.2184 * (clothes_washer.capacity * 4.08 + 0.24))
-        annual_therm = annual_kwh * 3412.0 * (1.0 - 0.07) * (3.01 / clothes_dryer.energy_factor) / 100000
-        annual_kwh = annual_kwh * 0.07 * (3.01 / clothes_dryer.energy_factor)
+        annual_kwh = 12.5 * (164.0 + 46.5 * nbeds) * (field_util_factor / 3.01) * ((clothes_washer.capacity / modified_energy_factor) - clothes_washer.rated_annual_kwh / 392.0) / (0.2184 * (clothes_washer.capacity * 4.08 + 0.24))
+        annual_therm = annual_kwh * 3412.0 * (1.0 - 0.07) * (3.01 / energy_factor) / 100000
+        annual_kwh = annual_kwh * 0.07 * (3.01 / energy_factor)
       end
     end
 
