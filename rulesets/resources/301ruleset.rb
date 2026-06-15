@@ -8,7 +8,6 @@ module ERI_301_Ruleset
     @cambium_gea = cambium_gea
     @is_southern_hemisphere = (weather.header.Latitude < 0)
     @eri_version = eri_version
-    @rated_home_has_dehumidifier = false
 
     # Update HPXML object based on calculation type
     if calc_type == CalcType::ReferenceHome
@@ -27,7 +26,7 @@ module ERI_301_Ruleset
     Defaults.apply(runner, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Dehumidifier sizing and efficiency
-    dehumidifier_sizing_and_efficiency(hpxml) if not @rated_home_has_dehumidifier
+    dehumidifier_sizing_and_efficiency(hpxml)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
@@ -38,7 +37,8 @@ module ERI_301_Ruleset
   def self.dehumidifier_sizing_and_efficiency(hpxml)
     hpxml_bldg = hpxml.buildings[0]
     return if hpxml_bldg.dehumidifiers.empty?
-    dehumidifier = hpxml_bldg.dehumidifiers[0]
+    dehumidifier = hpxml_bldg.dehumidifiers.find { |d| d.capacity.nil? }
+    return if dehumidifier.nil?
 
     # capacity
     water_density = 62.4  # lbm/ft3
@@ -2288,15 +2288,12 @@ module ERI_301_Ruleset
     if orig_bldg.dehumidifiers.empty?
       new_bldg.dehumidifiers.add(id: "Dehumidifier",
                                  type: HPXML::DehumidifierTypePortable,
-                                 capacity: 60,  # placeholder
-                                 integrated_energy_factor: 1.3,  # placeholder
                                  rh_setpoint: 0.60,  # TODO: 60% vs 55%
                                  fraction_served: 1.0,
                                  location: HPXML::LocationConditionedSpace)
       return
     end
 
-    @rated_home_has_dehumidifier = true
     orig_bldg.dehumidifiers.each do |dehumidifier|
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
                                  type: dehumidifier.type,
