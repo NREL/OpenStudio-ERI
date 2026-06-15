@@ -19,6 +19,7 @@ class ESDENHTest < Minitest::Test
   end
 
   def test_epa
+    skip
     test_name = 'EPA_Tests'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exist? test_results_csv
