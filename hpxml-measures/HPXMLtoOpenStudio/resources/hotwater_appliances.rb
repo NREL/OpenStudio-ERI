@@ -615,11 +615,12 @@ module HotWaterAndAppliances
     end
 
     if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2019A')
-      if dishwasher.rated_annual_kwh.nil?
-        dishwasher.rated_annual_kwh = calc_dishwasher_annual_kwh_from_ef(dishwasher.energy_factor)
+      rated_annual_kwh = dishwasher.rated_annual_kwh
+      if rated_annual_kwh.nil?
+        rated_annual_kwh = calc_dishwasher_annual_kwh_from_ef(dishwasher.energy_factor)
       end
       lcy = dishwasher.label_usage * 52.0
-      kwh_per_cyc = ((dishwasher.label_annual_gas_cost * 0.5497 / dishwasher.label_gas_rate - dishwasher.rated_annual_kwh * dishwasher.label_electric_rate * 0.02504 / dishwasher.label_electric_rate) / (dishwasher.label_electric_rate * 0.5497 / dishwasher.label_gas_rate - 0.02504)) / lcy
+      kwh_per_cyc = ((dishwasher.label_annual_gas_cost * 0.5497 / dishwasher.label_gas_rate - rated_annual_kwh * dishwasher.label_electric_rate * 0.02504 / dishwasher.label_electric_rate) / (dishwasher.label_electric_rate * 0.5497 / dishwasher.label_gas_rate - 0.02504)) / lcy
       if n_occ.nil? # Asset calculation
         if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('latest') # FIXME: Change from 'latest' when incorporated in 301 standard
           # RESNET HERS Addendum 81 Eq. 4.2-36a
@@ -637,18 +638,19 @@ module HotWaterAndAppliances
       dwcpy = scy * (12.0 / dishwasher.place_setting_capacity)
       annual_kwh = kwh_per_cyc * dwcpy
 
-      gpd = (dishwasher.rated_annual_kwh - kwh_per_cyc * lcy) * 0.02504 * dwcpy / 365.0
+      gpd = (rated_annual_kwh - kwh_per_cyc * lcy) * 0.02504 * dwcpy / 365.0
     else
-      if dishwasher.energy_factor.nil?
-        dishwasher.energy_factor = calc_dishwasher_ef_from_annual_kwh(dishwasher.rated_annual_kwh)
+      energy_factor = dishwasher.energy_factor
+      if energy_factor.nil?
+        energy_factor = calc_dishwasher_ef_from_annual_kwh(dishwasher.rated_annual_kwh)
       end
       dwcpy = (88.4 + 34.9 * nbeds) * (12.0 / dishwasher.place_setting_capacity)
-      annual_kwh = ((86.3 + 47.73 / dishwasher.energy_factor) / 215.0) * dwcpy
+      annual_kwh = ((86.3 + 47.73 / energy_factor) / 215.0) * dwcpy
 
       if Constants::ERIVersions.index(eri_version) >= Constants::ERIVersions.index('2014A')
-        gpd = dwcpy * (4.6415 * (1.0 / dishwasher.energy_factor) - 1.9295) / 365.0
+        gpd = dwcpy * (4.6415 * (1.0 / energy_factor) - 1.9295) / 365.0
       else
-        gpd = ((88.4 + 34.9 * nbeds) * 8.16 - (88.4 + 34.9 * nbeds) * 12.0 / dishwasher.place_setting_capacity * (4.6415 * (1.0 / dishwasher.energy_factor) - 1.9295)) / 365.0
+        gpd = ((88.4 + 34.9 * nbeds) * 8.16 - (88.4 + 34.9 * nbeds) * 12.0 / dishwasher.place_setting_capacity * (4.6415 * (1.0 / energy_factor) - 1.9295)) / 365.0
       end
     end
 
