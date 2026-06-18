@@ -80,7 +80,7 @@ module ERI_301_Ruleset
     q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
     oa_density = 1 / (0.370486 * (dehum_mcdb + 459.67) * (1 + 1.607858 * dehum_hr) / atmos_pressure) * (1 + dehum_hr)
     ventilation_latent_load = (q_tot * 60) * oa_density * (dehum_hr - indoor_hr) * enthalpy_vaporization  # Btu/hr
-    internal_latent_load = xml_it_lat  # Btu/hr
+    internal_latent_load = xml_it_lat / 24  # Btu/hr
     total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
     w_coeff = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
     clg_setpt_c = UnitConversions.convert(clg_setpt, 'f', 'c')
