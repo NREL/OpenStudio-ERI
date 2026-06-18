@@ -95,7 +95,7 @@ module ERI_301_Ruleset
     dehumidifier_ief = get_dehumidifier_ief(dehumidifier_capacity)
 
     # Apply calculated values to the resulting HPXML.
-    dehumidifier.capacity = dehumidifier_capacity
+    dehumidifier.capacity = dehumidifier_capacity.round(2)
     dehumidifier.integrated_energy_factor = dehumidifier_ief
   end
 
