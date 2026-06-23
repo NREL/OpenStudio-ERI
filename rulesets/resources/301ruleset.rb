@@ -87,8 +87,10 @@ module ERI_301_Ruleset
     mechanical_ventilation_airflow_cfm = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
     outdoor_air_density = 1 / (0.370486 * (design_condition_db_f + 459.67) * (1 + 1.607858 * design_condition_hr) / atmospheric_pressure_psia) * (1 + design_condition_hr)
     ventilation_latent_load = (mechanical_ventilation_airflow_cfm * 60) * outdoor_air_density * (design_condition_hr - indoor_humidity_ratio) * enthalpy_of_vaporization  # Btu/hr
+    # For sizing, do not allow dry outdoor air to reduce required dehumidification capacity.
+    ventilation_latent_load_for_sizing = [ventilation_latent_load, 0.0].max  # Btu/hr
     internal_latent_load = internal_latent_btu_per_day / 24  # Btu/hr
-    total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_of_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
+    total_dehumidification_load = ((ventilation_latent_load_for_sizing + internal_latent_load) / enthalpy_of_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
     capacity_curve_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
     cooling_setpoint_c = UnitConversions.convert(cooling_setpoint_f, 'f', 'c')
     capacity_curve_value = capacity_curve_coefficients[0] + capacity_curve_coefficients[1] * cooling_setpoint_c + capacity_curve_coefficients[2] * cooling_setpoint_c**2 + capacity_curve_coefficients[3] * indoor_rh_setpoint_pct + capacity_curve_coefficients[4] * indoor_rh_setpoint_pct**2 + capacity_curve_coefficients[5] * cooling_setpoint_c * indoor_rh_setpoint_pct
