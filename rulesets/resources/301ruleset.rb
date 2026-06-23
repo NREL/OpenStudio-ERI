@@ -8,6 +8,7 @@ module ERI_301_Ruleset
     @cambium_gea = cambium_gea
     @is_southern_hemisphere = (weather.header.Latitude < 0)
     @eri_version = eri_version
+    @calc_type = calc_type
 
     # Update HPXML object based on calculation type
     if calc_type == CalcType::ReferenceHome
@@ -2274,7 +2275,7 @@ module ERI_301_Ruleset
   def self.set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
     return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
 
-    if orig_bldg.dehumidifiers.empty?
+    if orig_bldg.dehumidifiers.empty? && (@calc_type != CalcType::IndexAdjReferenceHome)
       new_bldg.dehumidifiers.add(id: "Dehumidifier",
                                  type: HPXML::DehumidifierTypePortable,
                                  rh_setpoint: 0.60,  # TODO: 60% vs 55%

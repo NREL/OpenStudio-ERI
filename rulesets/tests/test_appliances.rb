@@ -171,8 +171,6 @@ class ERIApplianceTest < Minitest::Test
       elsif [CalcType::RatedHome].include? calc_type
         _check_dehumidifiers(hpxml_bldg, [{ type: HPXML::DehumidifierTypePortable, capacity: 40.0, ief: 1.4, rh_setpoint: 0.6, frac_load: 0.5, location: HPXML::LocationConditionedSpace },
                                           { type: HPXML::DehumidifierTypePortable, capacity: 30.0, ief: 1.9, rh_setpoint: 0.6, frac_load: 0.25, location: HPXML::LocationConditionedSpace }])
-      elsif [CalcType::IndexAdjReferenceHome].include? calc_type
-        _check_dehumidifiers(hpxml_bldg, [{ type: HPXML::DehumidifierTypePortable, capacity: 98.05, ief: 2.41, rh_setpoint: 0.6, frac_load: 1.0, location: HPXML::LocationConditionedSpace }])
       else
         _check_dehumidifiers(hpxml_bldg)
       end
