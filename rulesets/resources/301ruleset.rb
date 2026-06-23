@@ -48,47 +48,51 @@ module ERI_301_Ruleset
       require_relative '../../workflow/tests/util'
     end
 
-    _xml_it_sens, xml_it_lat = _get_internal_gains(hpxml_bldg, @eri_version)  # in workflow/tests/util.rb
-    clg_setpt = hpxml_bldg.header.manualj_cooling_setpoint  # F
-    rh_setpt = dehumidifier.rh_setpoint # fraction
-    rh_setpt_pct = rh_setpt * 100.0
+    _internal_sensible_btu_per_day, internal_latent_btu_per_day = _get_internal_gains(hpxml_bldg, @eri_version)  # in workflow/tests/util.rb
+    cooling_setpoint_f = hpxml_bldg.header.manualj_cooling_setpoint  # F
+    indoor_rh_setpoint = dehumidifier.rh_setpoint # fraction
+    indoor_rh_setpoint_pct = indoor_rh_setpoint * 100.0
 
     elevation = hpxml_bldg.elevation  # ft
-    atmos_pressure = ((1 - 0.0000068754 * elevation)**5.2559) * 14.6959  # psia
+    atmospheric_pressure_psia = ((1 - 0.0000068754 * elevation)**5.2559) * 14.6959  # psia
     # Keep both 1% and 2% dehumidification design conditions available so the
     # active condition can be changed with a single variable.
-    dehum_design = {
+    dehumidification_design_conditions = {
       1 => {
-        dp: @weather.design.CoolingDehumidificationDewPoint1,
-        mcdb: @weather.design.CoolingDehumidificationMeanCoincidentDryBulb1,
-        hr: @weather.design.CoolingDehumidificationHumidityRatio1
+        mcwb: @weather.design.CoolingMeanCoincidentWetBulb1,
+        db: @weather.design.CoolingDryBulb1,
       },
       2 => {
         dp: @weather.design.CoolingDehumidificationDewPoint2,
         mcdb: @weather.design.CoolingDehumidificationMeanCoincidentDryBulb2,
-        hr: @weather.design.CoolingDehumidificationHumidityRatio2
       }
     }
 
     # Default to 2% dehumidification condition; change to 1 to use 1% condition.
-    active_dehum_condition = 2
-    dehum_mcdb = dehum_design[active_dehum_condition][:mcdb]
-    dehum_hr = dehum_design[active_dehum_condition][:hr]
+    active_dehumidification_condition = 2
+    if active_dehumidification_condition == 1
+      design_condition_db_f = dehumidification_design_conditions[active_dehumidification_condition][:db]
+      design_condition_mcwb_f = dehumidification_design_conditions[active_dehumidification_condition][:mcwb]
+      humidity_ratio = Psychrometrics.w_fT_Twb_P(design_condition_db_f, design_condition_mcwb_f, atmospheric_pressure_psia)
+      design_condition_dp_f = Psychrometrics.Tdp_fP_w(atmospheric_pressure_psia, humidity_ratio)
+    elsif active_dehumidification_condition == 2
+      design_condition_db_f = dehumidification_design_conditions[active_dehumidification_condition][:mcdb]
+      design_condition_dp_f = dehumidification_design_conditions[active_dehumidification_condition][:dp]
+    end
+    design_condition_hr = Psychrometrics.w_fT_Twb_P(design_condition_dp_f, design_condition_dp_f, atmospheric_pressure_psia)
 
-    indoor_hr = Psychrometrics.w_fT_R_P(clg_setpt, rh_setpt, atmos_pressure)
-    enthalpy_vaporization = 1061 + 0.444 * clg_setpt  # Btu/lbm
-    q_tot = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
-    oa_density = 1 / (0.370486 * (dehum_mcdb + 459.67) * (1 + 1.607858 * dehum_hr) / atmos_pressure) * (1 + dehum_hr)
-    ventilation_latent_load = (q_tot * 60) * oa_density * (dehum_hr - indoor_hr) * enthalpy_vaporization  # Btu/hr
-    internal_latent_load = xml_it_lat / 24  # Btu/hr
-    total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
-    w_coeff = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
-    clg_setpt_c = UnitConversions.convert(clg_setpt, 'f', 'c')
-    cap_curve_design_cond = w_coeff[0] + w_coeff[1] * clg_setpt_c + w_coeff[2] * clg_setpt_c**2 + w_coeff[3] * rh_setpt_pct + w_coeff[4] * rh_setpt_pct**2 + w_coeff[5] * clg_setpt_c * rh_setpt_pct
+    indoor_humidity_ratio = Psychrometrics.w_fT_R_P(cooling_setpoint_f, indoor_rh_setpoint, atmospheric_pressure_psia)
+    enthalpy_of_vaporization = 1061 + 0.444 * cooling_setpoint_f  # Btu/lbm
+    mechanical_ventilation_airflow_cfm = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
+    outdoor_air_density = 1 / (0.370486 * (design_condition_db_f + 459.67) * (1 + 1.607858 * design_condition_hr) / atmospheric_pressure_psia) * (1 + design_condition_hr)
+    ventilation_latent_load = (mechanical_ventilation_airflow_cfm * 60) * outdoor_air_density * (design_condition_hr - indoor_humidity_ratio) * enthalpy_of_vaporization  # Btu/hr
+    internal_latent_load = internal_latent_btu_per_day / 24  # Btu/hr
+    total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_of_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
+    capacity_curve_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
+    cooling_setpoint_c = UnitConversions.convert(cooling_setpoint_f, 'f', 'c')
+    capacity_curve_value = capacity_curve_coefficients[0] + capacity_curve_coefficients[1] * cooling_setpoint_c + capacity_curve_coefficients[2] * cooling_setpoint_c**2 + capacity_curve_coefficients[3] * indoor_rh_setpoint_pct + capacity_curve_coefficients[4] * indoor_rh_setpoint_pct**2 + capacity_curve_coefficients[5] * cooling_setpoint_c * indoor_rh_setpoint_pct
 
-    return if cap_curve_design_cond <= 0
-
-    dehumidifier_capacity = [total_dehumidification_load / cap_curve_design_cond, 0.0].max # pints/day
+    dehumidifier_capacity = [total_dehumidification_load / capacity_curve_value, 0.0].max # pints/day
 
     # efficiency
     # https://www.federalregister.gov/documents/2016/08/22/2016-19969/energy-conservation-program-energy-conservation-standards-for-dehumidifiers
