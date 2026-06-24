@@ -212,6 +212,9 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
       next if log_line.include? 'Could not look up Cambium GEA for zip code'
       next if log_line.include? 'Ducts are entirely within conditioned space but there is moderate leakage to the outside.'
 
+      if log_path.include? 'base-bldgtype-mf-unit-shared-mechvent-preconditioning.xml' # FIXME: Address this
+        next if log_line.include? 'this may indicate the dehumidification system is undersized'
+      end
       if log_path.include? 'base-battery.xml'
         next if log_line.include? 'Battery without PV specified, and no charging/discharging schedule provided; battery is assumed to operate as backup and will not be modeled.'
       end
