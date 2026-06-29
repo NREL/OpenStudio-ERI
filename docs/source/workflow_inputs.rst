@@ -2140,7 +2140,7 @@ Each conventional storage water heater is entered as a ``/HPXML/Building/Buildin
   ``IsSharedSystem``                             boolean                                      Yes                 Whether it serves multiple dwelling units or shared laundry room
   ``TankVolume``                                 double   gal           > 0                   Yes                 Nominal tank volume
   ``FractionDHWLoadServed``                      double   frac          >= 0, <= 1 [#]_       Yes                 Fraction of hot water load served [#]_
-  ``HeatingCapacity``                            double   Btu/hr        > 0                   No        See [#]_  Heating output capacity
+  ``HeatingCapacity``                            double   Btu/hr        > 0                   No        See [#]_  Heating input capacity
   ``UniformEnergyFactor`` or ``EnergyFactor``    double   frac          < 1                   Yes                 EnergyGuide label rated efficiency
   ``FirstHourRating``                            double   gal/hr        > 0                   See [#]_            EnergyGuide label first hour rating
   ``RecoveryEfficiency``                         double   frac          > 0, <= 1 [#]_        No        See [#]_  Recovery efficiency
