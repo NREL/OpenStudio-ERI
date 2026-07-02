@@ -8,6 +8,7 @@ module ERI_301_Ruleset
     @cambium_gea = cambium_gea
     @is_southern_hemisphere = (weather.header.Latitude < 0)
     @eri_version = eri_version
+    @calc_type = calc_type
 
     # Update HPXML object based on calculation type
     if calc_type == CalcType::ReferenceHome
@@ -25,10 +26,84 @@ module ERI_301_Ruleset
     runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
     Defaults.apply(runner, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
+    # Dehumidifier sizing and efficiency
+    dehumidifier_sizing_and_efficiency(hpxml)
+
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
 
     return hpxml
+  end
+
+  def self.dehumidifier_sizing_and_efficiency(hpxml)
+    hpxml_bldg = hpxml.buildings[0]
+    return if hpxml_bldg.dehumidifiers.empty?
+    dehumidifier = hpxml_bldg.dehumidifiers.find { |d| d.capacity.nil? }
+    return if dehumidifier.nil?
+
+    # capacity
+    water_density = 62.4  # lbm/ft3
+    ft3_to_pint = 59.84  # ft3/pint
+
+    unless Object.private_method_defined?(:_get_internal_gains)
+      require_relative '../../workflow/tests/util'
+    end
+
+    _internal_sensible_btu_per_day, internal_latent_btu_per_day = _get_internal_gains(hpxml_bldg, @eri_version)  # in workflow/tests/util.rb
+    cooling_setpoint_f = hpxml_bldg.header.manualj_cooling_setpoint  # F
+    indoor_rh_setpoint = dehumidifier.rh_setpoint # fraction
+    indoor_rh_setpoint_pct = indoor_rh_setpoint * 100.0
+
+    elevation = hpxml_bldg.elevation  # ft
+    atmospheric_pressure_psia = ((1 - 0.0000068754 * elevation)**5.2559) * 14.6959  # psia
+    # Keep both 1% and 2% dehumidification design conditions available so the
+    # active condition can be changed with a single variable.
+    dehumidification_design_conditions = {
+      1 => {
+        mcwb: @weather.design.CoolingMeanCoincidentWetBulb1,
+        db: @weather.design.CoolingDryBulb1,
+      },
+      2 => {
+        dp: @weather.design.CoolingDehumidificationDewPoint2,
+        mcdb: @weather.design.CoolingDehumidificationMeanCoincidentDryBulb2,
+      }
+    }
+
+    # Default to 2% dehumidification condition; change to 1 to use 1% condition.
+    active_dehumidification_condition = 2
+    if active_dehumidification_condition == 1
+      design_condition_db_f = dehumidification_design_conditions[active_dehumidification_condition][:db]
+      design_condition_mcwb_f = dehumidification_design_conditions[active_dehumidification_condition][:mcwb]
+      humidity_ratio = Psychrometrics.w_fT_Twb_P(design_condition_db_f, design_condition_mcwb_f, atmospheric_pressure_psia)
+      design_condition_dp_f = Psychrometrics.Tdp_fP_w(atmospheric_pressure_psia, humidity_ratio)
+    elsif active_dehumidification_condition == 2
+      design_condition_db_f = dehumidification_design_conditions[active_dehumidification_condition][:mcdb]
+      design_condition_dp_f = dehumidification_design_conditions[active_dehumidification_condition][:dp]
+    end
+    design_condition_hr = Psychrometrics.w_fT_Twb_P(design_condition_dp_f, design_condition_dp_f, atmospheric_pressure_psia)
+
+    indoor_humidity_ratio = Psychrometrics.w_fT_R_P(cooling_setpoint_f, indoor_rh_setpoint, atmospheric_pressure_psia)
+    enthalpy_of_vaporization = 1061 + 0.444 * cooling_setpoint_f  # Btu/lbm
+    mechanical_ventilation_airflow_cfm = Airflow.get_mech_vent_qtot_cfm(@nbeds, @cfa)  # cfm
+    outdoor_air_density = 1 / (0.370486 * (design_condition_db_f + 459.67) * (1 + 1.607858 * design_condition_hr) / atmospheric_pressure_psia) * (1 + design_condition_hr)
+    ventilation_latent_load = (mechanical_ventilation_airflow_cfm * 60) * outdoor_air_density * (design_condition_hr - indoor_humidity_ratio) * enthalpy_of_vaporization  # Btu/hr
+    internal_latent_load = internal_latent_btu_per_day / 24  # Btu/hr
+    total_dehumidification_load = ((ventilation_latent_load + internal_latent_load) / enthalpy_of_vaporization) * (water_density / ft3_to_pint) * 24.0  # pints/day
+    # For sizing, do not allow negative total dehumidification load
+    total_dehumidification_load_for_sizing = [total_dehumidification_load, 0.0].max
+    capacity_curve_coefficients = [-1.162525707, 0.02271469, -0.000113208, 0.021110538, -6.93034E-05, 0.000378843]  # Jon's coefficients
+    cooling_setpoint_c = UnitConversions.convert(cooling_setpoint_f, 'f', 'c')
+    capacity_curve_value = capacity_curve_coefficients[0] + capacity_curve_coefficients[1] * cooling_setpoint_c + capacity_curve_coefficients[2] * cooling_setpoint_c**2 + capacity_curve_coefficients[3] * indoor_rh_setpoint_pct + capacity_curve_coefficients[4] * indoor_rh_setpoint_pct**2 + capacity_curve_coefficients[5] * cooling_setpoint_c * indoor_rh_setpoint_pct
+
+    dehumidifier_capacity = [total_dehumidification_load_for_sizing / capacity_curve_value, 0.1].max # pints/day
+
+    # efficiency
+    # https://www.federalregister.gov/documents/2016/08/22/2016-19969/energy-conservation-program-energy-conservation-standards-for-dehumidifiers
+    dehumidifier_ief = get_dehumidifier_ief(dehumidifier_capacity)
+
+    # Apply calculated values to the resulting HPXML.
+    dehumidifier.capacity = dehumidifier_capacity.round(2)
+    dehumidifier.integrated_energy_factor = dehumidifier_ief
   end
 
   def self.apply_reference_home_ruleset(orig_hpxml, iecc_version: nil, is_all_electric: false)
@@ -2202,6 +2277,15 @@ module ERI_301_Ruleset
   def self.set_appliances_dehumidifier_reference(orig_bldg, new_bldg)
     return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
 
+    if orig_bldg.dehumidifiers.empty? && (@calc_type != CalcType::IndexAdjReferenceHome)
+      new_bldg.dehumidifiers.add(id: "Dehumidifier",
+                                 type: HPXML::DehumidifierTypePortable,
+                                 rh_setpoint: 0.60,  # TODO: 60% vs 55%
+                                 fraction_served: 1.0,
+                                 location: HPXML::LocationConditionedSpace)
+      return
+    end
+
     orig_bldg.dehumidifiers.each do |dehumidifier|
       reference_values = Defaults.get_dehumidifier_values(dehumidifier.capacity)
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
@@ -2216,6 +2300,15 @@ module ERI_301_Ruleset
 
   def self.set_appliances_dehumidifier_rated(orig_bldg, new_bldg)
     return if Constants::ERIVersions.index(@eri_version) < Constants::ERIVersions.index('2019AB')
+
+    if orig_bldg.dehumidifiers.empty?
+      new_bldg.dehumidifiers.add(id: "Dehumidifier",
+                                 type: HPXML::DehumidifierTypePortable,
+                                 rh_setpoint: 0.60,  # TODO: 60% vs 55%
+                                 fraction_served: 1.0,
+                                 location: HPXML::LocationConditionedSpace)
+      return
+    end
 
     orig_bldg.dehumidifiers.each do |dehumidifier|
       new_bldg.dehumidifiers.add(id: dehumidifier.id,
@@ -2408,6 +2501,16 @@ module ERI_301_Ruleset
   end
 
   private
+
+  def self.get_dehumidifier_ief(dehumidifier_capacity)
+    if dehumidifier_capacity <= 25.0
+      return 1.3
+    elsif dehumidifier_capacity <= 50.0
+      return 1.6
+    else
+      return 2.41
+    end
+  end
 
   def self.calc_rated_home_q_fans_by_system(orig_bldg, all_mech_vent_fans)
     # Calculates the target average airflow rate for each mechanical

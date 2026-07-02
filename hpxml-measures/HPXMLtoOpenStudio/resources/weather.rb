@@ -310,6 +310,26 @@ class WeatherFile
       else
         incomplete_data = true
       end
+      if epw_design_condition.coolingDehumidificationDewPoint2.is_initialized
+        dehum_dp2 = epw_design_condition.coolingDehumidificationDewPoint2.get
+      else
+        incomplete_data = true
+      end
+      if epw_design_condition.coolingDehumidificationMeanCoincidentDryBulb2.is_initialized
+        dehum_mcdb2 = epw_design_condition.coolingDehumidificationMeanCoincidentDryBulb2.get
+      else
+        incomplete_data = true
+      end
+      if epw_design_condition.coolingMeanCoincidentWetBulb1.is_initialized
+        clg_mcwb1 = epw_design_condition.coolingMeanCoincidentWetBulb1.get
+      else
+        incomplete_data = true
+      end
+      if epw_design_condition.coolingDryBulb1.is_initialized
+        clg_db1 = epw_design_condition.coolingDryBulb1.get
+      else
+        incomplete_data = true
+      end
 
       if incomplete_data
         if not runner.nil?
@@ -323,6 +343,10 @@ class WeatherFile
       design.DailyTemperatureRange = UnitConversions.convert(dtr, 'deltaC', 'deltaF')
       press_psi = Psychrometrics.Pstd_fZ(header.Elevation)
       design.CoolingHumidityRatio = Psychrometrics.w_fT_Twb_P(design.CoolingDrybulb, UnitConversions.convert(mcwb, 'C', 'F'), press_psi)
+      design.CoolingDehumidificationDewPoint2 = UnitConversions.convert(dehum_dp2, 'C', 'F')
+      design.CoolingDehumidificationMeanCoincidentDryBulb2 = UnitConversions.convert(dehum_mcdb2, 'C', 'F')
+      design.CoolingMeanCoincidentWetBulb1 = UnitConversions.convert(clg_mcwb1, 'C', 'F')
+      design.CoolingDryBulb1 = UnitConversions.convert(clg_db1, 'C', 'F')
       return true
     end
 
@@ -519,5 +543,9 @@ class WeatherDesign
   attr_accessor(:HeatingDrybulb,        # [Double] 99% heating design drybulb temperature (F)
                 :CoolingDrybulb,        # [Double] 1% cooling design drybulb temperature (F)
                 :CoolingHumidityRatio,  # [Double] Humidity ratio corresponding to cooling mean coincident wetbulb temperature (lbm/lbm)
-                :DailyTemperatureRange) # [Double] Difference between daily high/low outdoor drybulb temperatures during the hottest month (deltaF)
+                :DailyTemperatureRange, # [Double] Difference between daily high/low outdoor drybulb temperatures during the hottest month (deltaF)
+                :CoolingDehumidificationDewPoint2, # [Double] Cooling dehumidification 2% dew point (F)
+                :CoolingDehumidificationMeanCoincidentDryBulb2, # [Double] Dry-bulb at dehumidification 2% condition (F)
+                :CoolingMeanCoincidentWetBulb1, # [Double] Wet-bulb at 1% condition (F)
+                :CoolingDryBulb1) # [Double] Cooling 1% dry-bulb temperature (F)
 end
