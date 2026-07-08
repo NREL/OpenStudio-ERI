@@ -6,7 +6,6 @@ None	0	0
 80% Carpet	0.8	2
 100% Carpet	1	2
 "Detailed Example: 100% Carpet, R-2.5"	1	2.5
-ASHRAE 140 Tests	1	2.08
 		
 # Fraction: The fraction of floor area covered by carpet.		
 # R-Value: R-value for the carpet.		

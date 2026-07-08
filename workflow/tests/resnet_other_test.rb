@@ -48,6 +48,7 @@ class RESNETOtherTest < Minitest::Test
   end
 
   def test_resnet_hers_iad_home_auto_generation
+    version = '2019'
     test_name = 'RESNET_Test_Other_HERS_AutoGen_IAD_Home'
     test_results_csv = File.absolute_path(File.join(@test_results_dir, "#{test_name}.csv"))
     File.delete(test_results_csv) if File.exist? test_results_csv
@@ -58,7 +59,7 @@ class RESNETOtherTest < Minitest::Test
     Dir["#{xmldir}/*.xml"].sort.each do |xml|
       _rundir, hpxmls, _csvs = _run_workflow(xml, test_name, skip_simulation: true)
       test_num = File.basename(xml)[0, 2].to_i
-      all_results[File.basename(xml)] = _get_iad_home_components(hpxmls[:iad], test_num)
+      all_results[File.basename(xml)] = _get_iad_home_components(hpxmls[:iad], test_num, version)
     end
     assert(all_results.size > 0)
 
@@ -88,17 +89,19 @@ class RESNETOtherTest < Minitest::Test
   end
 
   def test_resnet_hers_method_301_2019_pre_addendum_a
+    version = '2019'
     all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2019_PreAddendumA',
                                            'Other_HERS_Method_301_2019_PreAddendumA')
 
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, '2019')
+      _check_method_results(results, test_num, test_num == 2, version)
     end
   end
 
   def test_resnet_hers_method_301_2014_pre_addendum_e
+    version = '2014'
     # Tests before 301-2019 Addendum E (IAF) was in place
     all_results = _test_resnet_hers_method('RESNET_Test_Other_HERS_Method_301_2014_PreAddendumE',
                                            'Other_HERS_Method_301_2014_PreAddendumE')
@@ -106,7 +109,7 @@ class RESNETOtherTest < Minitest::Test
     # Check results
     all_results.each do |xml, results|
       test_num = File.basename(xml).gsub('L100A-', '').gsub('.xml', '').to_i
-      _check_method_results(results, test_num, test_num == 2, '2014')
+      _check_method_results(results, test_num, test_num == 2, version)
     end
   end
 
