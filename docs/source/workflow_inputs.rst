@@ -2219,7 +2219,7 @@ Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Sy
   ``IsSharedSystem``                                   boolean                                        Yes                 Whether it serves multiple dwelling units or shared laundry room
   ``TankVolume``                                       double   gal           > 0                     Yes                 Nominal tank volume
   ``FractionDHWLoadServed``                            double   frac          >= 0, <= 1 [#]_         Yes                 Fraction of hot water load served [#]_
-  ``UniformEnergyFactor`` or ``EnergyFactor``          double   frac          >= 2, <= 5              Yes                 EnergyGuide label rated efficiency
+  ``UniformEnergyFactor`` or ``EnergyFactor``          double   frac          >= 1.45, <= 5           Yes                 EnergyGuide label rated efficiency
   ``FirstHourRating``                                  double   gal/hr        > 0                     See [#]_            EnergyGuide label first hour rating
   ``WaterHeaterInsulation/Jacket/JacketRValue``        double   F-ft2-hr/Btu  >= 0                    No        0         R-value of additional tank insulation wrap
   ``UsesDesuperheater``                                boolean                                        No        false     Presence of desuperheater? [#]_
