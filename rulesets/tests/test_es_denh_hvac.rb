@@ -42,220 +42,182 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     end
   end
 
-  def get_central_ac_seer_cz5(program_version)
-    if [ES::SFPacificVer3_0].include? program_version
-      return 14.5
-    elsif [ES::SFFloridaVer3_1].include? program_version
-      return 15.0
-    elsif [ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2, DENH::Ver1].include? program_version
-      return 13.0
-    elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 14.0
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+  def get_hvac_eff_values(program_version, hvac_type, cz)
+    if hvac_type == 'central_ac'
+      if cz == 5
+        vals = {
+          ES::SFNationalVer3_0 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFNationalVer3_1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFNationalVer3_2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFNationalVer3_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFPacificVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFFloridaVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFOregonWashingtonVer3_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::MFNationalVer1_0 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::MFNationalVer1_1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::MFNationalVer1_2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::MFNationalVer1_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::MFOregonWashingtonVer1_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
+          DENH::SFVer2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+          DENH::MFVer2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+        }[program_version]
+      end
 
-  def get_ashp_seer_cz5(program_version)
-    if [ES::SFNationalVer3_1, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2,
-        ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
-      return 15.0
-    elsif [ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
-      return 14.5
-    elsif [DENH::Ver1].include? program_version
-      return 13.0
-    elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
-           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-           DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 16.0
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+    elsif hvac_type == 'ashp'
+      if cz == 5
+        vals = {
+          ES::SFNationalVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
+          ES::SFNationalVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
+          ES::SFNationalVer3_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
+          ES::SFNationalVer3_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          ES::SFPacificVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 8.20 },
+          ES::SFFloridaVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 8.20 },
+          ES::SFOregonWashingtonVer3_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50 },
+          ES::MFNationalVer1_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
+          ES::MFNationalVer1_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
+          ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
+          ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          ES::MFOregonWashingtonVer1_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50 },
+          DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 10.0 },
+          DENH::SFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          DENH::MFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+        }[program_version]
+      elsif cz == 7
+        vals = {
+          ES::SFNationalVer3_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
+          ES::SFNationalVer3_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
+          ES::SFNationalVer3_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          ES::MFNationalVer1_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
+          ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
+          ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          DENH::SFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          DENH::MFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+        }[program_version]
+      end
 
-  def get_ashp_eer_cz5(program_version)
-    if [ES::SFNationalVer3_1, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2,
-        ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
-      return 12.5
-    elsif [ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
-      return 12.1
-    elsif [DENH::Ver1].include? program_version
-      return 13.0
-    elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
-           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-           DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 16.0
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+    elsif hvac_type == 'gshp'
+      if cz == 5
+        vals = {
+          ES::SFNationalVer3_3 => { cop: 2.8, eer: 14.0 },
+          ES::MFNationalVer1_0 => { cop: 2.7, eer: 12.7 },
+          ES::MFNationalVer1_1 => { cop: 2.7, eer: 13.0 },
+          ES::MFNationalVer1_2 => { cop: 2.7, eer: 14.0 },
+          ES::MFNationalVer1_3 => { cop: 2.8, eer: 14.0 },
+          ES::MFOregonWashingtonVer1_2 => { cop: 2.8, eer: 13.0 },
+          DENH::MFVer2 => { cop: 2.8, eer: 14.0 },
+        }[program_version]
+      elsif cz == 7
+        vals = {
+          ES::SFNationalVer3_0 => { cop: 3.5, eer: 16.1 },
+          ES::SFNationalVer3_1 => { cop: 3.6, eer: 17.1 },
+          ES::SFNationalVer3_3 => { cop: 2.8, eer: 14.0 },
+          ES::SFPacificVer3_0 => { cop: 3.5, eer: 16.1 },
+          ES::SFFloridaVer3_1 => { cop: 3.5, eer: 16.1 },
+          ES::SFOregonWashingtonVer3_2 => { cop: 3.5, eer: 16.1 },
+          ES::MFNationalVer1_0 => { cop: 3.5, eer: 16.1 },
+          ES::MFNationalVer1_1 => { cop: 2.7, eer: 17.1 },
+          ES::MFNationalVer1_2 => { cop: 2.7, eer: 14.0 },
+          ES::MFNationalVer1_3 => { cop: 2.8, eer: 14.0 },
+          DENH::Ver1 => { cop: 3.6, eer: 17.1 },
+          DENH::MFVer2 => { cop: 2.8, eer: 14.0 },
+        }[program_version]
+      end
 
-  def get_ashp_seer_cz7(program_version)
-    if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
-        ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
-        DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 16.0
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+    elsif hvac_type == 'gas_boiler'
+      if cz == 5
+        vals = {
+          ES::SFNationalVer3_0 => { afue: 0.85 },
+          ES::SFNationalVer3_1 => { afue: 0.90 },
+          ES::SFNationalVer3_2 => { afue: 0.95 },
+          ES::SFNationalVer3_3 => { afue: 0.95 },
+          ES::SFPacificVer3_0 => { afue: 0.80 },
+          ES::SFFloridaVer3_1 => { afue: 0.80 },
+          ES::SFOregonWashingtonVer3_2 => { afue: 0.90 },
+          ES::MFNationalVer1_0 => { afue: 0.85 },
+          ES::MFNationalVer1_1 => { afue: 0.90 },
+          ES::MFNationalVer1_2 => { afue: 0.95 },
+          ES::MFNationalVer1_3 => { afue: 0.95 },
+          ES::MFOregonWashingtonVer1_2 => { afue: 0.90 },
+          DENH::Ver1 => { afue: 0.94 },
+          DENH::SFVer2 => { afue: 0.95 },
+          DENH::MFVer2 => { afue: 0.95 },
+        }[program_version]
+      end
 
-  def get_ashp_hspf_cz5(program_version)
-    if [ES::SFNationalVer3_1, ES::SFNationalVer3_0,
-        ES::MFNationalVer1_0, ES::MFNationalVer1_1].include? program_version
-      return 9.25
-    elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
-      return 8.20
-    elsif [ES::SFOregonWashingtonVer3_2, ES::SFNationalVer3_3,
-           ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_3,
-           DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 9.50
-    elsif [DENH::Ver1].include? program_version
-      return 10.0
-    elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2].include? program_version
-      return 9.20
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+    elsif hvac_type == 'gas_furnace'
+      if cz == 5
+        vals = {
+          ES::SFNationalVer3_0 => { afue: 0.90 },
+          ES::SFNationalVer3_1 => { afue: 0.95 },
+          ES::SFNationalVer3_2 => { afue: 0.95 },
+          ES::SFNationalVer3_3 => { afue: 0.95 },
+          ES::SFPacificVer3_0 => { afue: 0.80 },
+          ES::SFFloridaVer3_1 => { afue: 0.80 },
+          ES::SFOregonWashingtonVer3_2 => { afue: 0.95 },
+          ES::MFNationalVer1_0 => { afue: 0.90 },
+          ES::MFNationalVer1_1 => { afue: 0.95 },
+          ES::MFNationalVer1_2 => { afue: 0.95 },
+          ES::MFNationalVer1_3 => { afue: 0.95 },
+          ES::MFOregonWashingtonVer1_2 => { afue: 0.95 },
+          DENH::Ver1 => { afue: 0.94 },
+          DENH::SFVer2 => { afue: 0.95 },
+          DENH::MFVer2 => { afue: 0.95 },
+        }[program_version]
+      end
 
-  def get_ashp_hspf_cz7(program_version)
-    if [ES::SFNationalVer3_1, ES::SFNationalVer3_2,
-        ES::MFNationalVer1_1, ES::MFNationalVer1_2].include? program_version
-      return 9.20
-    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_3,
-           DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 9.50
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+    elsif hvac_type == 'oil_furnace'
+      if cz == 5
+        vals = {
+          ES::SFNationalVer3_0 => { afue: 0.85 },
+          ES::SFNationalVer3_1 => { afue: 0.85 },
+          ES::SFNationalVer3_3 => { afue: 0.95 },
+          ES::SFPacificVer3_0 => { afue: 0.80 },
+          ES::SFFloridaVer3_1 => { afue: 0.80 },
+          ES::SFOregonWashingtonVer3_2 => { afue: 0.85 },
+          ES::MFNationalVer1_0 => { afue: 0.85 },
+          ES::MFNationalVer1_1 => { afue: 0.85 },
+          ES::MFNationalVer1_3 => { afue: 0.95 },
+          ES::MFOregonWashingtonVer1_2 => { afue: 0.85 },
+          DENH::Ver1 => { afue: 0.94 },
+          DENH::SFVer2 => { afue: 0.95 },
+          DENH::MFVer2 => { afue: 0.95 },
+        }[program_version]
+      end
 
-  def get_gshp_cop_cz5(program_version)
-    if [ES::MFNationalVer1_2, ES::MFNationalVer1_1, ES::MFNationalVer1_0].include? program_version
-      return 2.7
-    elsif [ES::SFNationalVer3_3, ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
-      return 2.8
-    else
-      fail "Unhandled program version: #{program_version}"
     end
-  end
 
-  def get_gshp_eer_cz5(program_version)
-    if [ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
-      return 14.0
-    elsif [ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
-      return 13.0
-    elsif [ES::MFNationalVer1_0].include? program_version
-      return 12.7
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
+    fail "Unhandled case for #{program_version}, #{hvac_type}, #{cz}." if vals.nil?
 
-  def get_gshp_cop_cz7(program_version)
-    if [ES::SFNationalVer3_1, DENH::Ver1].include? program_version
-      return 3.6
-    elsif [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_0].include? program_version
-      return 3.5
-    elsif [ES::MFOregonWashingtonVer1_2, DENH::SFVer2].include? program_version
-      return # Never applies
-    elsif [ES::MFNationalVer1_2, ES::MFNationalVer1_1].include? program_version
-      return 2.7
-    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
-      return 2.8
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
-
-  def get_gshp_eer_cz7(program_version)
-    if [ES::SFNationalVer3_1, ES::MFNationalVer1_1, DENH::Ver1].include? program_version
-      return 17.1
-    elsif [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_0].include? program_version
-      return 16.1
-    elsif [ES::MFOregonWashingtonVer1_2, DENH::SFVer2].include? program_version
-      return # Never applies
-    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::MFVer2].include? program_version
-      return 14.0
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
-
-  def get_gas_boiler_afue_cz5(program_version)
-    if [ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
-      return 0.90
-    elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
-      return 0.80
-    elsif [ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
-      return 0.85
-    elsif [DENH::Ver1].include? program_version
-      return 0.94
-    elsif [ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::MFNationalVer1_2, ES::MFNationalVer1_3, DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 0.95
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
-
-  def get_gas_furnace_afue_cz5(program_version)
-    if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3, ES::SFOregonWashingtonVer3_2,
-        ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3, ES::MFOregonWashingtonVer1_2, DENH::SFVer2, DENH::MFVer2].include? program_version
-      return 0.95
-    elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
-      return 0.80
-    elsif [ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
-      return 0.90
-    elsif [DENH::Ver1].include? program_version
-      return 0.94
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
-  end
-
-  def get_oil_furnace_afue_cz5(program_version)
-    if [ES::SFNationalVer3_1, ES::SFOregonWashingtonVer3_2, ES::MFNationalVer1_1, ES::MFOregonWashingtonVer1_2].include? program_version
-      return 0.85
-    elsif [ES::SFPacificVer3_0, ES::SFFloridaVer3_1].include? program_version
-      return 0.80
-    elsif [ES::SFNationalVer3_0, ES::MFNationalVer1_0].include? program_version
-      return 0.85
-    elsif [DENH::Ver1].include? program_version
-      return 0.94
-    elsif [DENH::SFVer2, DENH::MFVer2, ES::SFNationalVer3_3, ES::MFNationalVer1_3].include? program_version
-      return 0.95
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
+    return vals
   end
 
   def get_default_hvac_iq_values(program_version)
-    if [DENH::SFVer2, DENH::MFVer2].include? program_version
-      return { charge_defect_ratio: -0.25,
-               airflow_defect_ratio: -0.075,
-               fan_watts_per_cfm: 0.45 }
-    elsif [ES::SFNationalVer3_2, ES::MFNationalVer1_2].include? program_version
-      return { charge_defect_ratio: -0.25,
-               airflow_defect_ratio: -0.20,
-               fan_watts_per_cfm: 0.52 }
-    elsif [ES::SFNationalVer3_3, ES::MFNationalVer1_3].include? program_version
-      return { charge_defect_ratio: -0.25,
-               airflow_defect_ratio: -0.075,
-               fan_watts_per_cfm: 0.52 }
-    elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
-           ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
-           DENH::Ver1].include? program_version
-      # Grade 3 installation quality
-      return { charge_defect_ratio: -0.25,
-               airflow_defect_ratio: -0.25,
-               fan_watts_per_cfm: 0.58 }
-    else
-      fail "Unhandled program version: #{program_version}"
-    end
+    vals = {
+      ES::SFNationalVer3_0 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::SFNationalVer3_1 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::SFNationalVer3_2 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.20, fan_watts_per_cfm: 0.52 },
+      ES::SFNationalVer3_3 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.075, fan_watts_per_cfm: 0.52 },
+      ES::SFPacificVer3_0 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::SFFloridaVer3_1 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::SFOregonWashingtonVer3_2 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::MFNationalVer1_0 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::MFNationalVer1_1 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      ES::MFNationalVer1_2 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.20, fan_watts_per_cfm: 0.52 },
+      ES::MFNationalVer1_3 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.075, fan_watts_per_cfm: 0.52 },
+      ES::MFOregonWashingtonVer1_2 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      DENH::Ver1 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.25, fan_watts_per_cfm: 0.58 },
+      DENH::SFVer2 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.075, fan_watts_per_cfm: 0.45 },
+      DENH::MFVer2 => { charge_defect_ratio: -0.25, airflow_defect_ratio: -0.075, fan_watts_per_cfm: 0.45 },
+    }[program_version]
+
+    fail "Unhandled program version: #{program_version}" if vals.nil?
+
+    return vals
   end
 
   def get_eer_from_seer(seer)
+    # FIXME: Remove
     return { 13.0 => 11.3,
              14.0 => 11.9,
              14.5 => 12.2,
@@ -289,10 +251,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-boiler-elec-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -318,7 +281,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-boiler-gas-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_boiler_afue_cz5(program_version), frac_load: 1.0 }])
+      hvac_eff_values = get_hvac_eff_values(program_version, 'gas_boiler', 5)
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **hvac_eff_values }])
       _check_cooling_system(hpxml_bldg)
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
@@ -331,10 +295,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-furnace-elec-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -360,8 +325,9 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-furnace-gas-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'gas_furnace', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_cooling_system(hpxml_bldg)
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
@@ -389,8 +355,9 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-stove-wood-pellets-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'gas_furnace', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_cooling_system(hpxml_bldg)
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
@@ -418,10 +385,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-wall-furnace-elec-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -447,10 +415,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-elec-resistance-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -487,11 +456,13 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       if [ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
           DENH::SFVer2, DENH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 7)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0,
              DENH::Ver1].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz7(program_version), eer: get_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 80, **hvac_iq_values }])
+        hvac_eff_values = get_hvac_eff_values(program_version, 'gshp', 7)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 0.0, pump_w_per_ton: 80, **hvac_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -521,10 +492,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
         _convert_to_es_denh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
+        hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
           _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -559,11 +531,13 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
         if [ES::SFNationalVer3_0, ES::MFNationalVer1_0, DENH::Ver1].include? program_version
-          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz7(program_version), eer: get_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_iq_values }])
+          hvac_eff_values = get_hvac_eff_values(program_version, 'gshp', 7)
+          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_eff_values, **hvac_iq_values }])
         elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
                ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
                DENH::SFVer2, DENH::MFVer2].include? program_version
-          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+          hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 7)
+          _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
         else
           fail "Unhandled program version: #{program_version}"
         end
@@ -593,10 +567,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-mini-split-heat-pump-ducted.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -622,10 +597,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-mini-split-heat-pump-ductless.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -655,10 +631,12 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [*ES::MFVersions, DENH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz5(program_version), eer: get_gshp_eer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_iq_values }])
+        hvac_eff_values = get_hvac_eff_values(program_version, 'gshp', 5)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              DENH::Ver1, DENH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -696,11 +674,13 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [ES::SFNationalVer3_0, *ES::MFVersions, DENH::Ver1, DENH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz7(program_version), eer: get_gshp_eer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_iq_values }])
+        hvac_eff_values = get_hvac_eff_values(program_version, 'gshp', 7)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, pump_w_per_ton: 80, **hvac_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1, ES::MFNationalVer1_2, ES::MFNationalVer1_3,
              DENH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 7)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -729,11 +709,12 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-dual-fuel-air-to-air-heat-pump-1-speed.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
+      backup_eff = get_hvac_eff_values(program_version, 'gas_furnace', 5)[:afue]
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
-      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: get_gas_furnace_afue_cz5(program_version), **hvac_iq_values }])
-
+      _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeNaturalGas, backup_eff: backup_eff, **hvac_eff_values, **hvac_iq_values }])
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
         _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -760,9 +741,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
         _convert_to_es_denh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
+        hvac_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
-        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
         _check_heat_pump(hpxml_bldg)
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -795,9 +777,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
         _convert_to_es_denh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
+        hvac_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
-        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+        _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
         _check_heat_pump(hpxml_bldg)
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -829,10 +812,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
         _convert_to_es_denh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
+        hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
           _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -861,9 +845,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh(hpxml_name, program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      htg_eff_values = get_hvac_eff_values(program_version, 'gas_furnace', 5)
+      clg_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -894,10 +880,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
         _convert_to_es_denh(hpxml_name, program_version)
         hpxml_bldg = _test_ruleset(program_version)
+        hvac_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
         hvac_iq_values = get_default_hvac_iq_values(program_version)
         _check_heating_system(hpxml_bldg)
         _check_cooling_system(hpxml_bldg)
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_eff_values, **hvac_iq_values }])
         _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
         if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
           _check_ducts(hpxml_bldg, [{ duct_type: HPXML::DuctTypeSupply, duct_rvalue: 0.0, duct_area: 729.0, duct_location: HPXML::LocationBasementConditioned },
@@ -924,9 +911,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-evap-cooler-only.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -953,9 +941,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-mini-split-air-conditioner-only-ducted.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -982,9 +971,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-mini-split-air-conditioner-only-ductless.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      hvac_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       _check_heating_system(hpxml_bldg)
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **hvac_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1011,9 +1001,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      htg_eff_values = get_hvac_eff_values(program_version, 'gas_furnace', 5)
+      clg_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1037,8 +1029,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _convert_to_es_denh('base-foundation-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1063,8 +1055,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _convert_to_es_denh('base-foundation-ambient.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1090,8 +1082,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _convert_to_es_denh('base-enclosure-2stories.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1126,8 +1118,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1162,8 +1154,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       hpxml_bldg = _test_ruleset(program_version)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 1.0, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 1.0, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 1.0, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1195,42 +1187,48 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     [*ES::AllVersions, *DENH::AllVersions].each do |program_version|
       _convert_to_es_denh('base-hvac-multiple.xml', program_version)
       hpxml_bldg = _test_ruleset(program_version)
+      gas_furn_eff_values = get_hvac_eff_values(program_version, 'gas_furnace', 5)
+      gas_boil_eff_values = get_hvac_eff_values(program_version, 'gas_boiler', 5)
+      ac_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
+      ashp_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
       if [ES::SFNationalVer3_2, ES::SFNationalVer3_3,
           ES::MFNationalVer1_2, ES::MFNationalVer1_3,
           DENH::SFVer2, DENH::MFVer2].include? program_version
-        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_boiler_afue_cz5(program_version), frac_load: 0.1 },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values }])
+        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_furn_eff_values, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_boil_eff_values },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_furn_eff_values, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_furn_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1,
              ES::MFOregonWashingtonVer1_2, ES::MFNationalVer1_0, ES::MFNationalVer1_1,
              DENH::Ver1].include? program_version
-        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_boiler_afue_cz5(program_version), frac_load: 0.1 },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeOil, eff: get_oil_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values },
-                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.1, **hvac_iq_values }])
+        oil_furn_eff_values = get_hvac_eff_values(program_version, 'oil_furnace', 5)
+        _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_furn_eff_values, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeBoiler, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_boil_eff_values },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeOil, frac_load: 0.1, **oil_furn_eff_values, **hvac_iq_values },
+                                           { systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.1, **gas_furn_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.1333, **hvac_iq_values },
-                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.1333, **hvac_iq_values },
-                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.1333, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 0.1333, **ac_eff_values, **hvac_iq_values },
+                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 0.1333, **ac_eff_values, **hvac_iq_values },
+                                         { systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 0.1333, **ac_eff_values, **hvac_iq_values }])
       if [*ES::MFVersions, DENH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, cop: get_gshp_cop_cz5(program_version), eer: get_gshp_eer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, pump_w_per_ton: 80, is_shared_system: false, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        gshp_eff_values = get_hvac_eff_values(program_version, 'gshp', 5)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.2, pump_w_per_ton: 80, is_shared_system: false, **gshp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              DENH::Ver1, DENH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values },
-                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values },
+                                      { systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 0.1, frac_load_cool: 0.2, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -1247,9 +1245,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       hpxml_bldg.cooling_systems[0].fraction_cool_load_served = 0.3
       XMLHelper.write_file(hpxml.to_doc, @tmp_hpxml_path)
       hpxml_bldg = _test_ruleset(program_version)
+      htg_eff_values = get_hvac_eff_values(program_version, 'gas_furnace', 5)
+      clg_eff_values = get_hvac_eff_values(program_version, 'central_ac', 5)
       hvac_iq_values = get_default_hvac_iq_values(program_version)
-      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, eff: get_gas_furnace_afue_cz5(program_version), frac_load: 0.2, **hvac_iq_values }])
-      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, seer: get_central_ac_seer_cz5(program_version), frac_load: 0.3, **hvac_iq_values }])
+      _check_heating_system(hpxml_bldg, [{ systype: HPXML::HVACTypeFurnace, fuel: HPXML::FuelTypeNaturalGas, frac_load: 0.2, **htg_eff_values, **hvac_iq_values }])
+      _check_cooling_system(hpxml_bldg, [{ systype: HPXML::HVACTypeCentralAirConditioner, fuel: HPXML::FuelTypeElectricity, frac_load: 0.3, **clg_eff_values, **hvac_iq_values }])
       _check_heat_pump(hpxml_bldg)
       _check_thermostat(hpxml_bldg, control_type: HPXML::HVACControlTypeProgrammable)
       if [ES::SFNationalVer3_0, ES::SFPacificVer3_0, ES::SFOregonWashingtonVer3_2].include? program_version
@@ -1772,10 +1772,12 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [*ES::MFVersions, DENH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_gshp_eer_cz5(program_version), cop: get_gshp_cop_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
+        gshp_eff_values = get_hvac_eff_values(program_version, 'gshp', 5)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, frac_load_heat: 1.0, frac_load_cool: 1.0, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **gshp_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              DENH::Ver1, DENH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz5(program_version), seer: get_ashp_seer_cz5(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        ashp_eff_values = get_hvac_eff_values(program_version, 'ashp', 5)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -1810,10 +1812,12 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       _check_heating_system(hpxml_bldg)
       _check_cooling_system(hpxml_bldg)
       if [ES::SFNationalVer3_0, *ES::MFVersions, DENH::Ver1, DENH::MFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, eer: get_gshp_eer_cz7(program_version), cop: get_gshp_cop_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **hvac_iq_values }])
+        gshp_eff_values = get_hvac_eff_values(program_version, 'gshp', 7)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpGroundToAir, fuel: HPXML::FuelTypeElectricity, num_units_served: 6, frac_load_heat: 1.0, frac_load_cool: 1.0, shared_loop_watts: 635.3, pump_w_per_ton: 80, is_shared_system: true, **gshp_eff_values, **hvac_iq_values }])
       elsif [ES::SFFloridaVer3_1, ES::SFOregonWashingtonVer3_2, ES::SFPacificVer3_0, ES::SFNationalVer3_1, ES::SFNationalVer3_2, ES::SFNationalVer3_3,
              DENH::SFVer2].include? program_version
-        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, hspf: get_ashp_hspf_cz7(program_version), seer: get_ashp_seer_cz7(program_version), frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **hvac_iq_values }])
+        ashp_eff_values = get_hvac_eff_values(program_version, 'ashp', 7)
+        _check_heat_pump(hpxml_bldg, [{ systype: HPXML::HVACTypeHeatPumpAirToAir, fuel: HPXML::FuelTypeElectricity, frac_load_heat: 1.0, frac_load_cool: 1.0, backup_fuel: HPXML::FuelTypeElectricity, backup_eff: 1.0, **ashp_eff_values, **hvac_iq_values }])
       else
         fail "Unhandled program version: #{program_version}"
       end
@@ -1895,7 +1899,9 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       end
       assert_equal(expected_values[:systype], heating_system.heating_system_type)
       assert_equal(expected_values[:fuel], heating_system.heating_system_fuel)
-      if not expected_values[:eff].nil?
+      if not expected_values[:afue].nil?
+        assert_equal(expected_values[:afue], heating_system.heating_efficiency_afue)
+      elsif not expected_values[:eff].nil?
         assert_equal(expected_values[:eff], heating_system.heating_efficiency_afue.to_f + heating_system.heating_efficiency_percent.to_f)
       else
         assert_nil(heating_system.heating_efficiency_afue)
@@ -1953,7 +1959,9 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       end
       assert_equal(expected_values[:systype], heat_pump.heat_pump_type)
       assert_equal(expected_values[:fuel], heat_pump.heat_pump_fuel)
-      if not expected_values[:hspf].nil?
+      if not expected_values[:hspf2].nil?
+        assert_equal(expected_values[:hspf2], heat_pump.heating_efficiency_hspf2)
+      elsif not expected_values[:hspf].nil?
         assert_equal(expected_values[:hspf], heat_pump.heating_efficiency_hspf)
       else
         assert_nil(heat_pump.heating_efficiency_hspf)
@@ -1963,7 +1971,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       else
         assert_nil(heat_pump.heating_efficiency_cop)
       end
-      if not expected_values[:seer].nil?
+      if not expected_values[:seer2].nil?
+        assert_in_delta(expected_values[:seer2], heat_pump.cooling_efficiency_seer2, 0.1)
+        assert_equal(expected_values[:comptype], heat_pump.compressor_type)
+      elsif not expected_values[:seer].nil?
         if not heat_pump.cooling_efficiency_seer2.nil?
           assert_in_delta(expected_values[:seer], HVAC.calc_seer_from_seer2(heat_pump), 0.1)
         else
@@ -1975,7 +1986,9 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
         assert_nil(heat_pump.cooling_efficiency_seer)
         assert_nil(heat_pump.compressor_type)
       end
-      if not expected_values[:eer].nil?
+      if not expected_values[:eer2].nil?
+        assert_in_delta(expected_values[:eer2], heat_pump.cooling_efficiency_eer2, 0.1)
+      elsif not expected_values[:eer].nil?
         if not heat_pump.cooling_efficiency_eer2.nil?
           assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(heat_pump), 0.1)
         elsif not heat_pump.cooling_efficiency_ceer.nil?
@@ -2056,7 +2069,10 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       end
       assert_equal(expected_values[:systype], cooling_system.cooling_system_type)
       assert_equal(expected_values[:fuel], cooling_system.cooling_system_fuel)
-      if not expected_values[:seer].nil?
+      if not expected_values[:seer2].nil?
+        assert_in_epsilon(expected_values[:seer2], cooling_system.cooling_efficiency_seer2, 0.1)
+        assert_equal(expected_values[:comptype], cooling_system.compressor_type)
+      elsif not expected_values[:seer].nil?
         if not cooling_system.cooling_efficiency_seer2.nil?
           assert_in_epsilon(expected_values[:seer], HVAC.calc_seer_from_seer2(cooling_system), 0.1)
         else
@@ -2068,7 +2084,9 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
         assert_nil(cooling_system.cooling_efficiency_seer)
         assert_nil(cooling_system.compressor_type)
       end
-      if not expected_values[:eer].nil?
+      if not expected_values[:eer2].nil?
+        assert_in_delta(expected_values[:eer2], cooling_system.cooling_efficiency_eer2, 0.1)
+      elsif not expected_values[:eer].nil?
         if not cooling_system.cooling_efficiency_eer2.nil?
           assert_in_delta(expected_values[:eer], HVAC.calc_eer_from_eer2(cooling_system), 0.1)
         elsif not cooling_system.cooling_efficiency_ceer.nil?
