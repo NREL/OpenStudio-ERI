@@ -71,7 +71,7 @@ hvac_ashp_hspf2		7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	8	8	8	8	8	8	8	8	8
 hvac_gshp_cop		2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.7	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8	2.8
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
 hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
-hvac_ashp_compressor		variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	one stage	one stage	one stage	one stage	one stage	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed
+hvac_ashp_compressor		variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	single stage	single stage	single stage	single stage	single stage	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed
 hvac_ac_seer2		17.1	17.1	17.1	17.1	17.1	17.1	15.2	15.2	15.2	15.2	15.2	13.3	13.3	13.3	13.3	13.3	13.3	13.3	13.3	13.3
 hvac_ashp_seer2		17.1	17.1	17.1	17.1	17.1	17.1	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2
 hvac_ac_eer2		13.3	13.3	13.3	13.3	13.3	13.3	12	12	12	12	12	11.7	11.7	11.7	11.7	11.7	11.7	11.7	11.7	11.7
