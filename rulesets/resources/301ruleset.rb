@@ -1725,8 +1725,6 @@ module ERI_301_Ruleset
 
       energy_factor = get_reference_water_heater_ef(fuel_type, tank_volume)
 
-      heating_capacity = Defaults.get_water_heater_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size)
-
       # If 2022, reference WH is in default location, regardless of rated home location
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022')
         location = Defaults.get_water_heater_location(orig_bldg, @iecc_zone)
@@ -1748,7 +1746,6 @@ module ERI_301_Ruleset
                                          performance_adjustment: 1.0,
                                          tank_volume: tank_volume,
                                          fraction_dhw_load_served: 1.0,
-                                         heating_capacity: heating_capacity.round(0),
                                          energy_factor: energy_factor,
                                          uses_desuperheater: false,
                                          temperature: Defaults.get_water_heater_temperature(@eri_version))
@@ -1766,9 +1763,6 @@ module ERI_301_Ruleset
 
     orig_bldg.water_heating_systems.each do |orig_water_heater|
       heating_capacity = orig_water_heater.heating_capacity
-      if (orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage) && heating_capacity.nil?
-        heating_capacity = Defaults.get_water_heater_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_bldg.water_heating_systems.size)
-      end
 
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
         performance_adjustment = Defaults.get_water_heater_performance_adjustment(orig_water_heater)
@@ -2838,7 +2832,6 @@ module ERI_301_Ruleset
     wh_tank_vol = 40.0
 
     wh_ef = get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
-    wh_cap = Defaults.get_water_heater_heating_capacity(wh_fuel_type, @nbeds, 1)
 
     new_bldg.water_heating_systems.add(id: 'WaterHeatingSystem',
                                        is_shared_system: false,
@@ -2848,7 +2841,6 @@ module ERI_301_Ruleset
                                        performance_adjustment: 1.0,
                                        tank_volume: wh_tank_vol,
                                        fraction_dhw_load_served: 1.0,
-                                       heating_capacity: wh_cap.round(0),
                                        energy_factor: wh_ef,
                                        uses_desuperheater: false,
                                        temperature: Defaults.get_water_heater_temperature(@eri_version))
