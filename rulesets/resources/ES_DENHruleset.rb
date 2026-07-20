@@ -1487,6 +1487,10 @@ module ES_DENH_Ruleset
   def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system)
     seer = lookup_reference_value('hvac_ac_seer')
     eer = lookup_reference_value('hvac_ac_eer')
+    if seer.nil? && eer.nil?
+      seer2 = lookup_reference_value('hvac_ac_seer2')
+      eer2 = lookup_reference_value('hvac_ac_eer2')
+    end
     compressor_type = lookup_reference_value('hvac_ac_compressor')
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
@@ -1503,7 +1507,9 @@ module ES_DENH_Ruleset
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
                                  cooling_efficiency_seer: seer,
+                                 cooling_efficiency_seer2: seer2,
                                  cooling_efficiency_eer: eer,
+                                 cooling_efficiency_eer2: eer2,
                                  compressor_type: compressor_type,
                                  charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
@@ -1557,6 +1563,11 @@ module ES_DENH_Ruleset
         hspf = lookup_reference_value('hvac_ashp_hspf')
         seer = lookup_reference_value('hvac_ashp_seer')
         eer = lookup_reference_value('hvac_ashp_eer')
+        if hspf.nil? && seer.nil? && eer.nil?
+          hspf2 = lookup_reference_value('hvac_ashp_hspf2')
+          seer2 = lookup_reference_value('hvac_ashp_seer2')
+          eer2 = lookup_reference_value('hvac_ashp_eer2')
+        end
         compressor_type = lookup_reference_value('hvac_ashp_compressor')
       end
       if orig_htg_system.is_shared_system && orig_htg_system.is_a?(HPXML::HeatPump) &&
@@ -1621,8 +1632,11 @@ module ES_DENH_Ruleset
                             fraction_heat_load_served: heat_load_frac,
                             fraction_cool_load_served: cool_load_frac,
                             cooling_efficiency_seer: seer,
+                            cooling_efficiency_seer2: seer2,
                             cooling_efficiency_eer: eer,
+                            cooling_efficiency_eer2: eer2,
                             heating_efficiency_hspf: hspf,
+                            heating_efficiency_hspf2: hspf2,
                             heating_efficiency_cop: cop,
                             compressor_type: compressor_type,
                             pump_watts_per_ton: pump_watts_per_ton,

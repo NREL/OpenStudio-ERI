@@ -27,9 +27,9 @@ lighting_tier1_grg		0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 lighting_tier2_int		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_ext		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 lighting_tier2_grg		1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-refrigerator_rated_annual_kwh	1-2 bedrooms, refrigerator present	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
-refrigerator_rated_annual_kwh	3-4 bedrooms, refrigerator present	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600
-refrigerator_rated_annual_kwh	5+ bedrooms, refrigerator present	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650
+refrigerator_rated_annual_kwh	"1-2 bedrooms, refrigerator present"	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450	450
+refrigerator_rated_annual_kwh	"3-4 bedrooms, refrigerator present"	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600	600
+refrigerator_rated_annual_kwh	"5+ bedrooms, refrigerator present"	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650	650
 clothes_washer_imef	clothes washer present	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57	1.57
 clothes_washer_ler	clothes washer present	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284	284
 clothes_washer_elec_rate	clothes washer present	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12	0.12
@@ -61,15 +61,15 @@ hvac_central_boiler_wlhp_et		0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.8	0.89	0.89	0.9	0
 hvac_furnace_afue	natural gas	0.8	0.8	0.8	0.8	0.8	0.8	0.92	0.92	0.92	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_furnace_afue	fuel oil	0.8	0.8	0.8	0.8	0.8	0.8	0.92	0.92	0.92	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95	0.95
 hvac_hp_type		air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air	air-to-air
-hvac_ashp_hspf		9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.2	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5	9.5
+hvac_ashp_hspf2		7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	7.8	8	8	8	8	8	8	8	8	8
 hvac_gshp_cop																					
 hvac_wlhp_cop		4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5	4.5
-hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
-hvac_ashp_compressor		two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage	two stage
-hvac_ac_seer		18	18	18	18	18	18	16	16	16	16	16	14	14	14	14	14	14	14	14	14
-hvac_ashp_seer		18	18	18	18	18	18	16	16	16	16	16	16	16	16	16	16	16	16	16	16
-hvac_ac_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9	11.9
-hvac_ashp_eer		13.8	13.8	13.8	13.8	13.8	13.8	13	13	13	13	13	13	13	13	13	13	13	13	13	13
+hvac_ac_compressor		two stage	two stage	two stage	two stage	two stage	two stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage	single stage
+hvac_ashp_compressor		variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	one stage	one stage	one stage	one stage	one stage	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed	variable speed
+hvac_ac_seer2		17.1	17.1	17.1	17.1	17.1	17.1	15.2	15.2	15.2	15.2	15.2	13.3	13.3	13.3	13.3	13.3	13.3	13.3	13.3	13.3
+hvac_ashp_seer2		17.1	17.1	17.1	17.1	17.1	17.1	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2	15.2
+hvac_ac_eer2		13.3	13.3	13.3	13.3	13.3	13.3	12	12	12	12	12	11.7	11.7	11.7	11.7	11.7	11.7	11.7	11.7	11.7
+hvac_ashp_eer2		10.8	10.8	10.8	10.8	10.8	10.8	11	11	11	11	11	11	11	11	11	11	11	11	11	11
 hvac_gshp_eer																					
 hvac_wlhp_eer		15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15	15
 hvac_chiller_kw_per_ton		0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75	0.75

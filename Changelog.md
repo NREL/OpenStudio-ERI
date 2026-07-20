@@ -1,6 +1,7 @@
 ## OpenStudio-ERI v1.13.0
 
 __Features__
+- Updates DENH v2 target home HVAC specifications per policy records SFV2.046 and MFV2.048.
 
 __Bugfixes__
 

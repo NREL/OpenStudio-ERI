@@ -59,8 +59,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
           ES::MFNationalVer1_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
           ES::MFOregonWashingtonVer1_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
           DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          DENH::SFVer2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
-          DENH::MFVer2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
+          DENH::SFVer2 => { seer2: 13.3, eer2: 11.7, comptype: HPXML::HVACCompressorTypeSingleStage },
+          DENH::MFVer2 => { seer2: 13.3, eer2: 11.7, comptype: HPXML::HVACCompressorTypeSingleStage },
         }[program_version]
       end
 
@@ -80,8 +80,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
           ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
           ES::MFOregonWashingtonVer1_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50 },
           DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 10.0 },
-          DENH::SFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          DENH::MFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          DENH::SFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
+          DENH::MFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
         }[program_version]
       elsif cz == 7
         vals = {
@@ -91,8 +91,8 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
           ES::MFNationalVer1_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
           ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
           ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          DENH::SFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          DENH::MFVer2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
+          DENH::SFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
+          DENH::MFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
         }[program_version]
       end
 
@@ -216,8 +216,7 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     return vals
   end
 
-  def get_eer_from_seer(seer)
-    # FIXME: Remove
+  def get_default_eer_from_seer(seer)
     return { 13.0 => 11.3,
              14.0 => 11.9,
              14.5 => 12.2,
@@ -1980,7 +1979,7 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
         else
           assert_in_delta(expected_values[:seer], heat_pump.cooling_efficiency_seer, 0.1)
         end
-        assert_in_delta(get_eer_from_seer(expected_values[:seer]), heat_pump.cooling_efficiency_eer, 0.1)
+        assert_in_delta(get_default_eer_from_seer(expected_values[:seer]), heat_pump.cooling_efficiency_eer, 0.1)
         assert_equal(get_compressor_type_from_seer(expected_values[:seer]), heat_pump.compressor_type)
       else
         assert_nil(heat_pump.cooling_efficiency_seer)
@@ -2078,7 +2077,7 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
         else
           assert_in_epsilon(expected_values[:seer], cooling_system.cooling_efficiency_seer, 0.1)
         end
-        assert_in_delta(get_eer_from_seer(expected_values[:seer]), cooling_system.cooling_efficiency_eer, 0.1)
+        assert_in_delta(get_default_eer_from_seer(expected_values[:seer]), cooling_system.cooling_efficiency_eer, 0.1)
         assert_equal(get_compressor_type_from_seer(expected_values[:seer]), cooling_system.compressor_type)
       else
         assert_nil(cooling_system.cooling_efficiency_seer)
