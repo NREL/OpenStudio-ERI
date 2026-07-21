@@ -217,6 +217,7 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
   end
 
   def get_default_eer_from_seer(seer)
+    # Values used for program versions that don't explicitly specify EER (e.g., DENH v1)
     return { 13.0 => 11.3,
              14.0 => 11.9,
              14.5 => 12.2,
