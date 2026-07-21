@@ -549,7 +549,7 @@ module Defaults
 
       if has_fuel[HPXML::FuelTypeNaturalGas]
         if scenario.natural_gas_fixed_charge.nil?
-          scenario.natural_gas_fixed_charge = 12.0 # https://www.aga.org/sites/default/files/aga_energy_analysis_-_natural_gas_utility_rate_structure.pdf says $11.25/month in 2015
+          scenario.natural_gas_fixed_charge = 12.0 # https://www.ourenergypolicy.org/wp-content/uploads/2016/01/ea_2015-03_customercharge2015.pdf says $11.25/month in 2015
           scenario.natural_gas_fixed_charge_isdefaulted = true
         end
         if scenario.natural_gas_marginal_rate.nil?
@@ -898,12 +898,11 @@ module Defaults
   # @return [nil]
   def self.apply_building_construction(hpxml_header, hpxml_bldg)
     cond_volume = hpxml_bldg.building_construction.conditioned_building_volume
-    cond_crawl_volume = Geometry.calculate_zone_volume(hpxml_bldg, HPXML::LocationCrawlspaceConditioned)
     cfa = hpxml_bldg.building_construction.conditioned_floor_area
     nbeds = hpxml_bldg.building_construction.number_of_bedrooms
     if hpxml_bldg.building_construction.average_ceiling_height.nil?
       if not cond_volume.nil?
-        hpxml_bldg.building_construction.average_ceiling_height = ((cond_volume - cond_crawl_volume) / cfa).round(2)
+        hpxml_bldg.building_construction.average_ceiling_height = (cond_volume / cfa).round(2)
       else
         if hpxml_bldg.roofs.any? { |r| r.interior_adjacent_to == HPXML::LocationConditionedSpace }
           # This is a very crude estimate for cathedral ceiling and conditioned attic, but better than nothing
@@ -919,11 +918,11 @@ module Defaults
     end
     if hpxml_bldg.building_construction.conditioned_building_volume.nil?
       avg_ceiling_height = hpxml_bldg.building_construction.average_ceiling_height
-      hpxml_bldg.building_construction.conditioned_building_volume = (cfa * avg_ceiling_height + cond_crawl_volume).round
+      hpxml_bldg.building_construction.conditioned_building_volume = (cfa * avg_ceiling_height).round
       hpxml_bldg.building_construction.conditioned_building_volume_isdefaulted = true
     end
     if hpxml_bldg.building_construction.number_of_bathrooms.nil?
-      hpxml_bldg.building_construction.number_of_bathrooms = Float(get_num_bathrooms(nbeds)).to_i
+      hpxml_bldg.building_construction.number_of_bathrooms = get_num_bathrooms(nbeds)
       hpxml_bldg.building_construction.number_of_bathrooms_isdefaulted = true
     end
     if hpxml_bldg.building_construction.number_of_units.nil?
@@ -1060,24 +1059,6 @@ module Defaults
       end
       if unvented_crawls.map { |f| f.within_infiltration_volume }.uniq.size != 1
         fail 'All unvented crawlspaces must have the same WithinInfiltrationVolume value.'
-      end
-    end
-
-    if hpxml_bldg.has_location(HPXML::LocationCrawlspaceConditioned)
-      cond_crawls = hpxml_bldg.foundations.select { |f| f.foundation_type == HPXML::FoundationTypeCrawlspaceConditioned }
-      if cond_crawls.empty?
-        hpxml_bldg.foundations.add(id: get_id('ConditionedCrawlspace', hpxml_bldg.foundations, unit_num),
-                                   foundation_type: HPXML::FoundationTypeCrawlspaceConditioned)
-        cond_crawls << hpxml_bldg.foundations[-1]
-      end
-      cond_crawls.each do |cond_crawl|
-        next unless cond_crawl.within_infiltration_volume.nil?
-
-        cond_crawl.within_infiltration_volume = true
-        cond_crawl.within_infiltration_volume_isdefaulted = true
-      end
-      if cond_crawls.map { |f| f.within_infiltration_volume }.uniq.size != 1
-        fail 'All conditioned crawlspaces must have the same WithinInfiltrationVolume value.'
       end
     end
 
@@ -2839,7 +2820,7 @@ module Defaults
       schedules_file_includes_cooling_setpoint_temp = (schedules_file.nil? ? false : schedules_file.includes_col_name(SchedulesFile::Columns[:CoolingSetpoint].name))
       if hvac_control.cooling_setpoint_temp.nil? && hvac_control.weekday_cooling_setpoints.nil? && !schedules_file_includes_cooling_setpoint_temp
         # No cooling setpoints; set a default cooling setpoint for, e.g., natural ventilation
-        clg_weekday_setpoints, clg_weekend_setpoints = Defaults.get_cooling_setpoint(HPXML::HVACControlTypeManual, eri_version)
+        clg_weekday_setpoints, clg_weekend_setpoints = get_cooling_setpoint(HPXML::HVACControlTypeManual, eri_version)
         if clg_weekday_setpoints.split(', ').uniq.size == 1 && clg_weekend_setpoints.split(', ').uniq.size == 1 && clg_weekday_setpoints.split(', ').uniq == clg_weekend_setpoints.split(', ').uniq
           hvac_control.cooling_setpoint_temp = clg_weekend_setpoints.split(', ').uniq[0].to_f
         else
@@ -3373,7 +3354,7 @@ module Defaults
         water_heating_system.additional_properties.cop = get_water_heater_heat_pump_cop(water_heating_system)
 
         if water_heating_system.heating_capacity.nil?
-          water_heating_system.heating_capacity = (UnitConversions.convert(0.5, 'kW', 'Btu/hr') * water_heating_system.additional_properties.cop).round
+          water_heating_system.heating_capacity = UnitConversions.convert(0.5, 'kW', 'Btu/hr').round
           water_heating_system.heating_capacity_isdefaulted = true
         end
 
@@ -4622,7 +4603,7 @@ module Defaults
       ceiling_fan.weekend_fractions_isdefaulted = true
     end
     if ceiling_fan.monthly_multipliers.nil? && !schedules_file_includes_ceiling_fan
-      ceiling_fan.monthly_multipliers = Defaults.get_ceiling_fan_months(weather).join(', ')
+      ceiling_fan.monthly_multipliers = get_ceiling_fan_months(weather).join(', ')
       ceiling_fan.monthly_multipliers_isdefaulted = true
     end
   end
@@ -5066,7 +5047,7 @@ module Defaults
   #
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Equivalent number of bedrooms
   def self.get_equivalent_nbeds(nbeds, n_occ, unit_type)
     if n_occ.nil?
@@ -5502,10 +5483,15 @@ module Defaults
   # Gets the default number of bathrooms in the dwelling unit.
   #
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
-  # @return [Double] Number of bathrooms
+  # @return [Integer] Number of bathrooms
   def self.get_num_bathrooms(nbeds)
     nbaths = nbeds / 2.0 + 0.5 # From BA HSP
-    return nbaths
+
+    # Ensure at least 1 bathroom (which the HPXML schema requires).
+    # Even a studio apartment w/ zero bedrooms would have a bathroom.
+    nbaths = [nbaths, 1].max
+
+    return nbaths.to_i
   end
 
   # Gets the default properties for cooking ranges/ovens.
@@ -5993,7 +5979,7 @@ module Defaults
       case foundation_type
       when HPXML::FoundationTypeSlab, HPXML::FoundationTypeAboveApartment
         c_foundation -= 0.036992 * area_fraction
-      when HPXML::FoundationTypeBasementConditioned, HPXML::FoundationTypeCrawlspaceUnvented, HPXML::FoundationTypeCrawlspaceConditioned
+      when HPXML::FoundationTypeBasementConditioned, HPXML::FoundationTypeCrawlspaceUnvented
         c_foundation += 0.108713 * area_fraction
       when HPXML::FoundationTypeBasementUnconditioned, HPXML::FoundationTypeCrawlspaceVented, HPXML::FoundationTypeBellyAndWing, HPXML::FoundationTypeAmbient
         c_foundation += 0.180352 * area_fraction
@@ -6163,10 +6149,6 @@ module Defaults
   # @param nbaths [Integer] Number of bathrooms in the dwelling unit
   # @return [Double] Water heater heating capacity (Btu/hr)
   def self.get_water_heater_heating_capacity(fuel, nbeds, num_water_heaters, nbaths = nil)
-    if nbaths.nil?
-      nbaths = Defaults.get_num_bathrooms(nbeds)
-    end
-
     # Adjust the heating capacity if there are multiple water heaters in the home
     nbaths /= num_water_heaters.to_f
 
@@ -6213,10 +6195,6 @@ module Defaults
   def self.get_water_heater_tank_volume(fuel, is_hpwh, nbeds, nbaths, n_occ)
     # FUTURE: Take into account usage multipliers
     # FUTURE: Incorporate number of occupants for conventional elec/gas storage WHs.
-
-    if nbaths.nil?
-      nbaths = Defaults.get_num_bathrooms(nbeds)
-    end
 
     if is_hpwh && !n_occ.nil? # Heat pump water heater
       # Source: Jeff Maguire recommendation for ResStock when num occupants is known
@@ -6512,7 +6490,7 @@ module Defaults
 
   # Gets the default compressor type for a HVAC system.
   #
-  # @param [HPXML::HeatingSystem or HPXML::CoolingSystem or HPXML::HeatPump]
+  # @param hvac_system [HPXML::CoolingSystem or HPXML::HeatPump] The HPXML HVAC system of interest
   # @return [String] Compressor type (HPXML::HVACCompressorTypeXXX)
   def self.get_hvac_compressor_type(hvac_system)
     if HVAC.is_room_dx_hvac_system(hvac_system)
@@ -6524,7 +6502,7 @@ module Defaults
 
   # Gets the default EER for a HVAC system.
   #
-  # @param [HPXML::CoolingSystem or HPXML::HeatPump]
+  # @param hvac_system [HPXML::CoolingSystem or HPXML::HeatPump] The HPXML HVAC system of interest
   # @return [Double] Cooling EER2 (Btu/Wh)
   def self.get_hvac_eer2(hvac_system)
     seer2 = hvac_system.cooling_efficiency_seer2
@@ -6567,7 +6545,6 @@ module Defaults
   def self.get_duct_locations(hpxml_bldg)
     primary_duct_location_hierarchy = [HPXML::LocationBasementConditioned,
                                        HPXML::LocationBasementUnconditioned,
-                                       HPXML::LocationCrawlspaceConditioned,
                                        HPXML::LocationCrawlspaceVented,
                                        HPXML::LocationCrawlspaceUnvented,
                                        HPXML::LocationAtticVented,
@@ -7122,7 +7099,7 @@ module Defaults
         if water_heating_system.water_heater_type == HPXML::WaterHeaterTypeStorage
           watts += UnitConversions.convert(water_heating_system.heating_capacity, 'btu/hr', 'w')
         elsif water_heating_system.water_heater_type == HPXML::WaterHeaterTypeHeatPump
-          watts += [UnitConversions.convert(Waterheater.get_heating_input_capacity(water_heating_system.heating_capacity, water_heating_system.additional_properties.cop), 'btu/hr', 'w'),
+          watts += [UnitConversions.convert(water_heating_system.heating_capacity, 'btu/hr', 'w'),
                     UnitConversions.convert(water_heating_system.backup_heating_capacity, 'btu/hr', 'w')].max
         elsif water_heating_system.water_heater_type == HPXML::WaterHeaterTypeTankless
           if hpxml_bldg.building_construction.number_of_bathrooms == 1
@@ -7500,7 +7477,7 @@ module Defaults
   #
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Array<Double, Double, Double>] Plug loads annual use (kWh), sensible/latent fractions
   def self.get_residual_mels_values(cfa, n_occ = nil, unit_type = nil)
     if n_occ == 0
@@ -7532,7 +7509,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Television annual use (kWh)
   def self.get_televisions_values(cfa, nbeds, n_occ = nil, unit_type = nil)
     if n_occ == 0
@@ -7567,7 +7544,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Annual energy use (kWh/yr)
   def self.get_pool_pump_annual_energy(cfa, nbeds, n_occ, unit_type)
     if n_occ == 0
@@ -7575,7 +7552,7 @@ module Defaults
       return 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     return 158.6 / 0.070 * (0.5 + 0.25 * nbeds_eq / 3.0 + 0.25 * cfa / 1920.0)
   end
@@ -7585,11 +7562,11 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @param type [String] Type of heater (HPXML::HeaterTypeXXX)
   # @return [Array<String, Double>] Energy units (HPXML::UnitsXXX), annual energy use (kWh/yr or therm/yr)
   def self.get_pool_heater_annual_energy(cfa, nbeds, n_occ, unit_type, type)
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     load_units = nil
     load_value = nil
@@ -7621,7 +7598,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Annual energy use (kWh/yr)
   def self.get_permanent_spa_pump_annual_energy(cfa, nbeds, n_occ, unit_type)
     if n_occ == 0
@@ -7629,7 +7606,7 @@ module Defaults
       return 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     return 59.5 / 0.059 * (0.5 + 0.25 * nbeds_eq / 3.0 + 0.25 * cfa / 1920.0) # kWh/yr
   end
@@ -7639,11 +7616,11 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @param type [String] Type of heater (HPXML::HeaterTypeXXX)
   # @return [Array<String, Double>] Energy units (HPXML::UnitsXXX), annual energy use (kWh/yr or therm/yr)
   def self.get_permanent_spa_heater_annual_energy(cfa, nbeds, n_occ, unit_type, type)
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     load_units = nil
     load_value = nil
@@ -7695,7 +7672,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Annual energy use (kWh/yr)
   def self.get_default_well_pump_annual_energy(cfa, nbeds, n_occ, unit_type)
     if n_occ == 0
@@ -7703,7 +7680,7 @@ module Defaults
       return 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     return 50.8 / 0.127 * (0.5 + 0.25 * nbeds_eq / 3.0 + 0.25 * cfa / 1920.0)
   end
@@ -7713,7 +7690,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Annual energy use (therm/yr)
   def self.get_gas_grill_annual_energy(cfa, nbeds, n_occ, unit_type)
     if n_occ == 0
@@ -7721,7 +7698,7 @@ module Defaults
       return 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     return 0.87 / 0.029 * (0.5 + 0.25 * nbeds_eq / 3.0 + 0.25 * cfa / 1920.0)
   end
@@ -7731,7 +7708,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Annual energy use (therm/yr)
   def self.get_default_gas_lighting_annual_energy(cfa, nbeds, n_occ, unit_type)
     if n_occ == 0
@@ -7739,7 +7716,7 @@ module Defaults
       return 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     return 0.22 / 0.012 * (0.5 + 0.25 * nbeds_eq / 3.0 + 0.25 * cfa / 1920.0)
   end
@@ -7749,7 +7726,7 @@ module Defaults
   # @param cfa [Double] Conditioned floor area in the dwelling unit (ft2)
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @return [Double] Annual energy use (therm/yr)
   def self.get_gas_fireplace_annual_energy(cfa, nbeds, n_occ, unit_type)
     if n_occ == 0
@@ -7757,7 +7734,7 @@ module Defaults
       return 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     return 1.95 / 0.032 * (0.5 + 0.25 * nbeds_eq / 3.0 + 0.25 * cfa / 1920.0)
   end
@@ -7766,7 +7743,7 @@ module Defaults
   #
   # @param nbeds [Integer] Number of bedrooms in the dwelling unit
   # @param n_occ [Double] Number of occupants in the dwelling unit
-  # @param unit_type [String] Type of dwelling unit (HXPML::ResidentialTypeXXX)
+  # @param unit_type [String] Type of dwelling unit (HPXML::ResidentialTypeXXX)
   # @param general_water_use_usage_multiplier [Double] Usage multiplier on internal gains
   # @return [Array<Double, Double>] Sensible/latent internal gains (Btu/yr)
   def self.get_water_use_internal_gains(nbeds, n_occ, unit_type, general_water_use_usage_multiplier = 1.0)
@@ -7775,7 +7752,7 @@ module Defaults
       return 0.0, 0.0
     end
 
-    nbeds_eq = Defaults.get_equivalent_nbeds(nbeds, n_occ, unit_type)
+    nbeds_eq = get_equivalent_nbeds(nbeds, n_occ, unit_type)
 
     # ANSI/RESNET/ICC 301 - Table 4.2.2(3). Internal Gains for Reference Homes
     sens_gains = (-1227.0 - 409.0 * nbeds_eq) * general_water_use_usage_multiplier # Btu/day
