@@ -1104,8 +1104,8 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Occupants
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
-  heat_gain, hrs_per_day, frac_sens, frac_lat = Defaults.get_occupancy_values()
-  btu = nbeds * heat_gain * hrs_per_day * 365.0
+  occ_gain, frac_sens, frac_lat = Defaults.get_occupancy_values()
+  btu = nbeds * occ_gain * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
   s += "#{xml_occ_sens} #{xml_occ_lat}\n"

@@ -524,8 +524,9 @@
       <sch:assert role='ERROR' test='count(h:DistributionSystem) = 1'>Expected DistributionSystem</sch:assert>
       <sch:assert role='ERROR' test='h:HeatingSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]'>Expected HeatingSystemFuel to be 'electricity' or 'natural gas' or 'fuel oil' or 'propane' or 'wood' or 'wood pellets'</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected HeatingCapacity</sch:assert>
-      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE" or h:Units="Percent"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value</sch:assert>
       <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="Percent"]/Value to be less than or equal to 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionHeatLoadServed) = 1'>Expected FractionHeatLoadServed</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWattsPerCFM) = 1'>Expected extension/FanPowerWattsPerCFM</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:FanPowerWattsPerCFM) &gt;= 0 or not(h:extension/h:FanPowerWattsPerCFM)'>Expected extension/FanPowerWattsPerCFM to be greater than or equal to 0</sch:assert>
@@ -545,8 +546,9 @@
       <sch:assert role='ERROR' test='count(h:DistributionSystem) = 0'>Expected no DistributionSystem</sch:assert>
       <sch:assert role='ERROR' test='h:HeatingSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]'>Expected HeatingSystemFuel to be 'electricity' or 'natural gas' or 'fuel oil' or 'propane' or 'wood' or 'wood pellets'</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected HeatingCapacity</sch:assert>
-      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE" or h:Units="Percent"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value</sch:assert>
       <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="Percent"]/Value to be less than or equal to 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionHeatLoadServed) = 1'>Expected FractionHeatLoadServed</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWatts) &lt;= 1'>Expected at most one extension/FanPowerWatts</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:FanPowerWatts) &gt;= 0 or not(h:extension/h:FanPowerWatts)'>Expected extension/FanPowerWatts to be greater than or equal to 0</sch:assert>
@@ -559,8 +561,9 @@
       <sch:assert role='ERROR' test='count(h:DistributionSystem) = 0'>Expected no DistributionSystem</sch:assert>
       <sch:assert role='ERROR' test='h:HeatingSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]'>Expected HeatingSystemFuel to be 'electricity' or 'natural gas' or 'fuel oil' or 'propane' or 'wood' or 'wood pellets'</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected HeatingCapacity</sch:assert>
-      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE" or h:Units="Percent"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value</sch:assert>
       <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="Percent"]/Value to be less than or equal to 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionHeatLoadServed) = 1'>Expected FractionHeatLoadServed</sch:assert>
       <sch:assert role='ERROR' test='count(h:extension/h:FanPowerWatts) &lt;= 1'>Expected at most one extension/FanPowerWatts</sch:assert>
       <sch:assert role='ERROR' test='number(h:extension/h:FanPowerWatts) &gt;= 0 or not(h:extension/h:FanPowerWatts)'>Expected extension/FanPowerWatts to be greater than or equal to 0</sch:assert>
@@ -574,8 +577,9 @@
       <sch:assert role='ERROR' test='count(h:DistributionSystem) = 1'>Expected DistributionSystem</sch:assert>
       <sch:assert role='ERROR' test='h:HeatingSystemFuel[text()="electricity" or text()="natural gas" or text()="fuel oil" or text()="propane" or text()="wood" or text()="wood pellets"]'>Expected HeatingSystemFuel to be 'electricity' or 'natural gas' or 'fuel oil' or 'propane' or 'wood' or 'wood pellets'</sch:assert>
       <sch:assert role='ERROR' test='count(h:HeatingCapacity) = 1'>Expected HeatingCapacity</sch:assert>
-      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value</sch:assert>
+      <sch:assert role='ERROR' test='count(h:AnnualHeatingEfficiency[h:Units="AFUE" or h:Units="Percent"]/h:Value) = 1'>Expected AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value</sch:assert>
       <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="AFUE"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="AFUE"]/Value to be less than or equal to 1</sch:assert>
+      <sch:assert role='ERROR' test='number(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value) &lt;= 1 or not(h:AnnualHeatingEfficiency[h:Units="Percent"]/h:Value)'>Expected AnnualHeatingEfficiency[Units="Percent"]/Value to be less than or equal to 1</sch:assert>
       <sch:assert role='ERROR' test='count(h:FractionHeatLoadServed) = 1'>Expected FractionHeatLoadServed</sch:assert>
     </sch:rule>
   </sch:pattern>
@@ -1510,6 +1514,12 @@
       <sch:assert role='ERROR' test='count(h:LabelAnnualGasCost) = 1'>Expected LabelAnnualGasCost</sch:assert>
       <sch:assert role='ERROR' test='count(h:LabelUsage) = 1'>Expected LabelUsage</sch:assert>
       <sch:assert role='ERROR' test='count(h:Capacity) = 1'>Expected Capacity</sch:assert>
+      <!-- Warnings -->
+      <sch:report role='WARN' test='number(h:LabelElectricRate) &gt;= 0.5'>LabelElectricRate should typically be less than 0.5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelGasRate) &lt;= 0.5'>LabelGasRate should typically be greater than 0.5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelGasRate) &gt;= 5'>LabelGasRate should typically be less than 5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelAnnualGasCost) &lt;= 5'>LabelAnnualGasCost should typically be greater than 5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelUsage) &gt;= 20'>LabelUsage should typically be less than 20.</sch:report>
     </sch:rule>
   </sch:pattern>
 
@@ -1555,6 +1565,12 @@
       <sch:assert role='ERROR' test='count(h:LabelAnnualGasCost) = 1'>Expected LabelAnnualGasCost</sch:assert>
       <sch:assert role='ERROR' test='count(h:LabelUsage) = 1'>Expected LabelUsage</sch:assert>
       <sch:assert role='ERROR' test='count(h:PlaceSettingCapacity) = 1'>Expected PlaceSettingCapacity</sch:assert>
+      <!-- Warnings -->
+      <sch:report role='WARN' test='number(h:LabelElectricRate) &gt;= 0.5'>LabelElectricRate should typically be less than 0.5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelGasRate) &lt;= 0.5'>LabelGasRate should typically be greater than 0.5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelGasRate) &gt;= 5'>LabelGasRate should typically be less than 5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelAnnualGasCost) &lt;= 5'>LabelAnnualGasCost should typically be greater than 5.</sch:report>
+      <sch:report role='WARN' test='number(h:LabelUsage) &gt;= 20'>LabelUsage should typically be less than 20.</sch:report>
     </sch:rule>
   </sch:pattern>
 

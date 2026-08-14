@@ -518,6 +518,7 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
       # Get assumed EF for combi system
 
       eta_c = system.related_hvac_system.heating_efficiency_afue
+      system.related_hvac_system.heating_efficiency_percent if eta_c.nil?
       if system.water_heater_type == HPXML::WaterHeaterTypeCombiTankless
         ef = eta_c
       elsif system.water_heater_type == HPXML::WaterHeaterTypeCombiStorage

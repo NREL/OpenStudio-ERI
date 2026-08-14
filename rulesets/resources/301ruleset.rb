@@ -2118,7 +2118,7 @@ module ERI_301_Ruleset
       location = dishwasher.location.gsub('unvented', 'vented')
     end
 
-    reference_values = Defaults.get_dishwasher_values(@eri_version)
+    reference_values = Defaults.get_dishwasher_values()
     new_bldg.dishwashers.add(id: id,
                              is_shared_appliance: false,
                              location: location,

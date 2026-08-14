@@ -194,7 +194,7 @@ def create_test_hpxmls
         set_hpxml_water_fixtures(hpxml_file, hpxml_bldg)
         set_hpxml_clothes_washer(hpxml_file, eri_version, hpxml_bldg)
         set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
-        set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
+        set_hpxml_dishwasher(hpxml_file, hpxml_bldg)
         set_hpxml_refrigerator(hpxml_file, hpxml_bldg)
         set_hpxml_cooking_range(hpxml_file, hpxml_bldg)
         set_hpxml_oven(hpxml_file, hpxml_bldg)
@@ -2076,7 +2076,7 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
   end
 end
 
-def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
+def set_hpxml_dishwasher(hpxml_file, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
       rated_annual_kwh = 240
@@ -2100,7 +2100,7 @@ def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
                                label_annual_gas_cost: label_annual_gas_cost,
                                label_usage: 208 / 52)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water')
-    default_values = Defaults.get_dishwasher_values(eri_version)
+    default_values = Defaults.get_dishwasher_values()
     hpxml_bldg.dishwashers.clear
     hpxml_bldg.dishwashers.add(id: "Dishwasher#{hpxml_bldg.dishwashers.size + 1}",
                                is_shared_appliance: false,

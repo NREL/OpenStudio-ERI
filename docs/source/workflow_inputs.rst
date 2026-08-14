@@ -913,21 +913,21 @@ Furnace
 
 Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem``.
 
-  ===============================================  =======  ======  ===============  ========  ===========  ================================================
-  Element                                          Type     Units   Constraints      Required  Default      Notes
-  ===============================================  =======  ======  ===============  ========  ===========  ================================================
-  ``SystemIdentifier``                             id                                Yes                    Unique identifier
-  ``DistributionSystem``                           idref            See [#]_         Yes                    ID of attached distribution system
-  ``HeatingSystemType/Furnace``                    element                           Yes                    Type of heating system
-  ``HeatingSystemFuel``                            string           See [#]_         Yes                    Fuel type
-  ``HeatingCapacity``                              double   Btu/hr  >= 0 [#]_        Yes                    Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double   frac    > 0, <= 1        Yes                    Rated heating efficiency
-  ``FractionHeatLoadServed``                       double   frac    >= 0, <= 1 [#]_  Yes                    Fraction of heating load served
-  ``extension/FanMotorType``                       string           See [#]_         No        See [#]_     Blower fan model type
-  ``extension/FanPowerWattsPerCFM``                double   W/cfm   >= 0 [#]_        Yes                    Blower fan efficiency at maximum fan speed [#]_
-  ``extension/HeatingDesignAirflowCFM``            double   cfm     >= 0             No        240 cfm/ton  Blower fan heating design airflow rate [#]_
-  ``extension/AirflowDefectRatio``                 double   frac    >= -0.9, <= 9    Yes                    Deviation between design/installed airflow rates [#]_
-  ===============================================  =======  ======  ===============  ========  ===========  ================================================
+  ==================================================================  =======  ======  ===============  ========  ===========  ================================================
+  Element                                                             Type     Units   Constraints      Required  Default      Notes
+  ==================================================================  =======  ======  ===============  ========  ===========  ================================================
+  ``SystemIdentifier``                                                id                                Yes                    Unique identifier
+  ``DistributionSystem``                                              idref            See [#]_         Yes                    ID of attached distribution system
+  ``HeatingSystemType/Furnace``                                       element                           Yes                    Type of heating system
+  ``HeatingSystemFuel``                                               string           See [#]_         Yes                    Fuel type
+  ``HeatingCapacity``                                                 double   Btu/hr  >= 0 [#]_        Yes                    Heating output capacity
+  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                    Rated heating efficiency
+  ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  Yes                    Fraction of heating load served
+  ``extension/FanMotorType``                                          string           See [#]_         No        See [#]_     Blower fan model type
+  ``extension/FanPowerWattsPerCFM``                                   double   W/cfm   >= 0 [#]_        Yes                    Blower fan efficiency at maximum fan speed [#]_
+  ``extension/HeatingDesignAirflowCFM``                               double   cfm     >= 0             No        240 cfm/ton  Blower fan heating design airflow rate [#]_
+  ``extension/AirflowDefectRatio``                                    double   frac    >= -0.9, <= 9    Yes                    Deviation between design/installed airflow rates [#]_
+  ==================================================================  =======  ======  ===============  ========  ===========  ================================================
 
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_air` (type: "regular velocity" or "gravity") or :ref:`hvac_distribution_dse`.
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
@@ -956,17 +956,17 @@ Wall Furnace
 
 Each wall furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem``.
 
-  ===============================================  =======  ======  ===============  ========  =======  ===================
-  Element                                          Type     Units   Constraints      Required  Default  Notes
-  ===============================================  =======  ======  ===============  ========  =======  ===================
-  ``SystemIdentifier``                             id                                Yes                Unique identifier
-  ``HeatingSystemType/WallFurnace``                element                           Yes                Type of heating system
-  ``HeatingSystemFuel``                            string           See [#]_         Yes                Fuel type
-  ``HeatingCapacity``                              double   Btu/hr  >= 0 [#]_        Yes                Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double   frac    > 0, <= 1        Yes                Rated heating efficiency
-  ``FractionHeatLoadServed``                       double   frac    >= 0, <= 1 [#]_  Yes                Fraction of heating load served
-  ``extension/FanPowerWatts``                      double   W       >= 0             No        0        Fan power
-  ===============================================  =======  ======  ===============  ========  =======  ===================
+  ==================================================================  =======  ======  ===============  ========  =======  ===================
+  Element                                                             Type     Units   Constraints      Required  Default  Notes
+  ==================================================================  =======  ======  ===============  ========  =======  ===================
+  ``SystemIdentifier``                                                id                                Yes                Unique identifier
+  ``HeatingSystemType/WallFurnace``                                   element                           Yes                Type of heating system
+  ``HeatingSystemFuel``                                               string           See [#]_         Yes                Fuel type
+  ``HeatingCapacity``                                                 double   Btu/hr  >= 0 [#]_        Yes                Heating output capacity
+  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                Rated heating efficiency
+  ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  Yes                Fraction of heating load served
+  ``extension/FanPowerWatts``                                         double   W       >= 0             No        0        Fan power
+  ==================================================================  =======  ======  ===============  ========  =======  ===================
 
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
   .. [#] HeatingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
@@ -979,17 +979,17 @@ Floor Furnace
 
 Each floor furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem``.
 
-  ===============================================  =======  ======  ===============  ========  =======  ===================
-  Element                                          Type     Units   Constraints      Required  Default  Notes
-  ===============================================  =======  ======  ===============  ========  =======  ===================
-  ``SystemIdentifier``                             id                                Yes                Unique identifier
-  ``HeatingSystemType/FloorFurnace``               element                           Yes                Type of heating system
-  ``HeatingSystemFuel``                            string           See [#]_         Yes                Fuel type
-  ``HeatingCapacity``                              double   Btu/hr  >= 0 [#]_        Yes                Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double   frac    > 0, <= 1        Yes                Rated heating efficiency
-  ``FractionHeatLoadServed``                       double   frac    >= 0, <= 1 [#]_  Yes                Fraction of heating load served
-  ``extension/FanPowerWatts``                      double   W       >= 0             No        0        Fan power
-  ===============================================  =======  ======  ===============  ========  =======  ===================
+  ==================================================================  =======  ======  ===============  ========  =======  ===================
+  Element                                                             Type     Units   Constraints      Required  Default  Notes
+  ==================================================================  =======  ======  ===============  ========  =======  ===================
+  ``SystemIdentifier``                                                id                                Yes                Unique identifier
+  ``HeatingSystemType/FloorFurnace``                                  element                           Yes                Type of heating system
+  ``HeatingSystemFuel``                                               string           See [#]_         Yes                Fuel type
+  ``HeatingCapacity``                                                 double   Btu/hr  >= 0 [#]_        Yes                Heating output capacity
+  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                Rated heating efficiency
+  ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  Yes                Fraction of heating load served
+  ``extension/FanPowerWatts``                                         double   W       >= 0             No        0        Fan power
+  ==================================================================  =======  ======  ===============  ========  =======  ===================
 
   .. [#] HeatingSystemFuel choices are  "natural gas", "fuel oil", "propane", "electricity", "wood", or "wood pellets".
   .. [#] HeatingCapacity=-1 can be used to autosize the equipment for research purposes or to run tests (it should *not* be used for a real home).
@@ -1002,17 +1002,17 @@ Boiler (In-Unit)
 
 Each in-unit boiler is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem``.
 
-  ===============================================  ========  ======  ===============  ========  ========  =========================================
-  Element                                          Type      Units   Constraints      Required  Default   Notes
-  ===============================================  ========  ======  ===============  ========  ========  =========================================
-  ``SystemIdentifier``                             id                                 Yes                 Unique identifier
-  ``DistributionSystem``                           idref             See [#]_         Yes                 ID of attached distribution system
-  ``HeatingSystemType/Boiler``                     element                            Yes                 Type of heating system
-  ``HeatingSystemFuel``                            string            See [#]_         Yes                 Fuel type
-  ``HeatingCapacity``                              double    Btu/hr  >= 0 [#]_        Yes                 Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double    frac    > 0, <= 1        Yes                 Rated heating efficiency
-  ``FractionHeatLoadServed``                       double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
-  ===============================================  ========  ======  ===============  ========  ========  =========================================
+  ==================================================================  ========  ======  ===============  ========  ========  =========================================
+  Element                                                             Type      Units   Constraints      Required  Default   Notes
+  ==================================================================  ========  ======  ===============  ========  ========  =========================================
+  ``SystemIdentifier``                                                id                                 Yes                 Unique identifier
+  ``DistributionSystem``                                              idref             See [#]_         Yes                 ID of attached distribution system
+  ``HeatingSystemType/Boiler``                                        element                            Yes                 Type of heating system
+  ``HeatingSystemFuel``                                               string            See [#]_         Yes                 Fuel type
+  ``HeatingCapacity``                                                 double    Btu/hr  >= 0 [#]_        Yes                 Heating output capacity
+  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double    frac    > 0, <= 1        Yes                 Rated heating efficiency
+  ``FractionHeatLoadServed``                                          double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
+  ==================================================================  ========  ======  ===============  ========  ========  =========================================
 
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_hydronic` (type: "radiator", "baseboard", "radiant floor", or "radiant ceiling") or :ref:`hvac_distribution_dse`.
          Note: The choice of hydronic distribution type does not currently affect simulation results.
@@ -1027,22 +1027,22 @@ Boiler (Shared)
 
 Each shared boiler (serving multiple dwelling units) is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC/HVACPlant/HeatingSystem``.
 
-  ===============================================  ========  ======  ===============  ========  ========  =========================================
-  Element                                          Type      Units   Constraints      Required  Default   Notes
-  ===============================================  ========  ======  ===============  ========  ========  =========================================
-  ``SystemIdentifier``                             id                                 Yes                 Unique identifier
-  ``IsSharedSystem``                               boolean                            Yes                 Whether it serves multiple dwelling units
-  ``NumberofUnitsServed``                          integer           > 1              Yes                 Number of dwelling units served
-  ``DistributionSystem``                           idref             See [#]_         Yes                 ID of attached distribution system
-  ``HeatingSystemType/Boiler``                     element                            Yes                 Type of heating system
-  ``HeatingSystemFuel``                            string            See [#]_         Yes                 Fuel type
-  ``HeatingCapacity``                              double    Btu/hr  >= 0             Yes                 Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE"]/Value``  double    frac    > 0, <= 1        Yes                 Rated heating efficiency
-  ``FractionHeatLoadServed``                       double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
-  ``extension/SharedLoopWatts``                    double    W       >= 0             Yes                 Shared loop power
-  ``extension/SharedLoopMotorEfficiency``          double    frac    > 0, < 1         No        0.85      Shared loop motor efficiency
-  ``extension/FanCoilWatts``                       double    W       >= 0             See [#]_            Fan coil power
-  ===============================================  ========  ======  ===============  ========  ========  =========================================
+  ==================================================================  ========  ======  ===============  ========  ========  =========================================
+  Element                                                             Type      Units   Constraints      Required  Default   Notes
+  ==================================================================  ========  ======  ===============  ========  ========  =========================================
+  ``SystemIdentifier``                                                id                                 Yes                 Unique identifier
+  ``IsSharedSystem``                                                  boolean                            Yes                 Whether it serves multiple dwelling units
+  ``NumberofUnitsServed``                                             integer           > 1              Yes                 Number of dwelling units served
+  ``DistributionSystem``                                              idref             See [#]_         Yes                 ID of attached distribution system
+  ``HeatingSystemType/Boiler``                                        element                            Yes                 Type of heating system
+  ``HeatingSystemFuel``                                               string            See [#]_         Yes                 Fuel type
+  ``HeatingCapacity``                                                 double    Btu/hr  >= 0             Yes                 Heating output capacity
+  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double    frac    > 0, <= 1        Yes                 Rated heating efficiency
+  ``FractionHeatLoadServed``                                          double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
+  ``extension/SharedLoopWatts``                                       double    W       >= 0             Yes                 Shared loop power
+  ``extension/SharedLoopMotorEfficiency``                             double    frac    > 0, < 1         No        0.85      Shared loop motor efficiency
+  ``extension/FanCoilWatts``                                          double    W       >= 0             See [#]_            Fan coil power
+  ==================================================================  ========  ======  ===============  ========  ========  =========================================
 
   .. [#] HVACDistribution type must be :ref:`hvac_distribution_hydronic` (type: "radiator", "baseboard", "radiant floor", "radiant ceiling", or "water loop") or :ref:`hvac_distribution_air` (type: "fan coil").
          If the shared boiler has "water loop" distribution, a :ref:`hvac_hp_water_loop` must also be specified.
