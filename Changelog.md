@@ -12,6 +12,8 @@ __Bugfixes__
 - Fixes ERV supply outlet enthalpy calculation used to calculate latent effectiveness.
 - Removes duplicated ceiling/floor internal mass surfaces between conditioned stories.
 - Fixes heat gain from occupants; heat gains from appliances, lighting, etc. are unaffected.
+- Fixes specific heat for drywall (0.2 -> 0.26 Btu/lb-F).
+- Fixes order-dependent effective below-grade depth when collapsing similar foundation walls.
 
 ## OpenStudio-ERI v1.12.0
 
