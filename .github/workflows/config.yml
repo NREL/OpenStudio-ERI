@@ -24,8 +24,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Install software
         run: |
@@ -73,8 +71,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Install OpenStudio
         run: |
@@ -96,8 +92,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Install OpenStudio
         run: |
@@ -119,8 +113,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Install OpenStudio
         run: |
@@ -142,8 +134,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Install OpenStudio
         run: |
@@ -171,17 +161,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
+
       - name: Install software
         shell: pwsh
         run: |
           Invoke-WebRequest -OutFile Windows.tar.gz -URI "${env:OS_URL}/v${env:OS_VERSION}/OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows.tar.gz"
           tar -xzf Windows.tar.gz
+
       - name: Run simulation test
         shell: pwsh
         run: |
           & .\OpenStudio-${env:OS_VERSION}+${env:OS_SHA}-Windows\bin\openstudio.exe workflow\energy_rating_index.rb -x workflow\sample_files\base.xml --diagnostic-output
+
       - name: Run simulation test2
         shell: pwsh
         run: |
@@ -192,8 +183,6 @@ jobs:
     needs: [run-sample-files1-tests, run-sample-files2-tests, run-real-home-tests, run-other-tests]
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Download all results
         uses: actions/download-artifact@v8
@@ -275,6 +264,7 @@ jobs:
           name: comparisons
 
   update-results:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     needs: merge-results
     steps:

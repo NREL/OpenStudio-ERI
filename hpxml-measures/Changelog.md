@@ -1,10 +1,18 @@
 ## OpenStudio-HPXML v1.13.0
 
 __Features__
+- Updates to HPXML v5.0.
+  - **Breaking change**: `Roof/RoofType="cool roof"` replaced by `Roof/CoolRoof="true"`.
+  - `Roof/RoofColor` now has an additional option of "white".
 - **Breaking change**: Conditioned crawlspaces are no longer allowed; use unvented crawlspace instead.
 - **Breaking change**: For heat pump water heaters, ``HeatingCapacity`` is now *input* rather than *output* capacity, similar to other water heater types.
-- For furnaces/boilers, allows heating efficiency with units of "Percent" as an alternative to "AFUE"; the two units are modeled identically.
+- PV systems:
+  - Allows `CollectorArea` or `NumberOfPanels` instead of `MaxPowerOutput`.
+  - Allows `YearInstalled` instead of `YearModulesManufactured` for age-based degradation.
+- To accommodate electric furnaces/boilers, allows heating efficiency with units of "Percent" as an alternative to "AFUE"; the two units are modeled identically.
+- Updates to some roof/wall solar absorptance defaults.
 - Updates garage ventilation rate to be SLA=1/150 (same as a vented crawlspace).
+- Reverts E+ radiant exchange algorithm from CarrollMRT to ScriptF.
 - Adds min/max value warnings for clothes washer and dishwasher label inputs (e.g., `LabelElectricRate` and `LabelGasRate`).
 
 __Bugfixes__
@@ -16,6 +24,8 @@ __Bugfixes__
 - Removes duplicated ceiling/floor internal mass surfaces between conditioned stories.
 - Fixes error if `NumberofBedrooms=0` and `NumberofBathrooms` is omitted.
 - Fixes heat gain from occupants; heat gains from appliances, lighting, etc. are unaffected.
+- Fixes specific heat for drywall (0.2 -> 0.26 Btu/lb-F).
+- Fixes order-dependent effective below-grade depth when collapsing similar foundation walls.
 
 ## OpenStudio-HPXML v1.12.0
 

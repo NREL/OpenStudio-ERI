@@ -3,7 +3,7 @@
 __Features__
 - Updates DENH v2 target home HVAC specifications per policy records SFV2.046 and MFV2.048.
 - Updates garage ventilation rate to be SLA=1/150 (same as a vented crawlspace).
-- For furnaces/boilers, allows heating efficiency with units of "Percent" as an alternative to "AFUE"; the two units are modeled identically.
+- To accommodate electric furnaces/boilers, allows heating efficiency with units of "Percent" as an alternative to "AFUE"; the two units are modeled identically.
 - Adds min/max value warnings for clothes washer and dishwasher label inputs (e.g., `LabelElectricRate` and `LabelGasRate`).
 
 __Bugfixes__
@@ -12,6 +12,8 @@ __Bugfixes__
 - Fixes ERV supply outlet enthalpy calculation used to calculate latent effectiveness.
 - Removes duplicated ceiling/floor internal mass surfaces between conditioned stories.
 - Fixes heat gain from occupants; heat gains from appliances, lighting, etc. are unaffected.
+- Fixes specific heat for drywall (0.2 -> 0.26 Btu/lb-F).
+- Fixes order-dependent effective below-grade depth when collapsing similar foundation walls.
 
 ## OpenStudio-ERI v1.12.0
 

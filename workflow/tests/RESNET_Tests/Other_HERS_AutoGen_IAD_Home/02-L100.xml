@@ -34,6 +34,9 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
+          <Soil>
+            <Conductivity>0.8</Conductivity>
+          </Soil>
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
@@ -459,7 +462,7 @@
         <Doors>
           <Door>
             <SystemIdentifier id='Door1'/>
-            <AttachedToWall idref='Wall3'/>
+            <AttachedToWall idref='Wall1'/>
             <Area>20.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>3.04</RValue>
