@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require 'openstudio'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require_relative '../main.rb'
 require 'fileutils'
 require_relative 'util.rb'
@@ -72,20 +72,20 @@ class ERI301ValidationTest < Minitest::Test
                             'hvac-frac-load-served' => ['Expected sum(FractionHeatLoadServed) to be less than or equal to 1',
                                                         'Expected sum(FractionCoolLoadServed) to be less than or equal to 1'],
                             'enclosure-floor-area-exceeds-cfa' => ['Expected ConditionedFloorArea to be greater than or equal to the sum of conditioned slab/floor areas.'],
-                            'energy-star-SF_Florida_3.1' => ['Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="FL"]'],
-                            'energy-star-SF_OregonWashington_3.2' => ['Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'],
-                            'energy-star-SF_Pacific_3.0' => ['Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="HI" or text()="GU" or text()="MP"]'],
-                            'energy-star-MF_OregonWashington_1.2' => ['Expected 1 element(s) for xpath: ../../../../Building/Site/Address/StateCode[text()="OR" or text()="WA"]'] }
+                            'energy-star-SF_Florida_3.1' => ['Expected ../../../../Building/Site/Address/StateCode="FL"'],
+                            'energy-star-SF_OregonWashington_3.2' => ['Expected ../../../../Building/Site/Address/StateCode=("OR" or "WA")'],
+                            'energy-star-SF_Pacific_3.0' => ['Expected ../../../../Building/Site/Address/StateCode=("HI" or "GU" or "MP")'],
+                            'energy-star-MF_OregonWashington_1.2' => ['Expected ../../../../Building/Site/Address/StateCode=("OR" or "WA")'] }
 
     ES::SFVersions.each do |es_version|
       key = "energy-star-#{es_version}"
       all_expected_errors[key] = [] if all_expected_errors[key].nil?
-      all_expected_errors[key] << 'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType[text()="single-family detached" or text()="single-family attached"]]'
+      all_expected_errors[key] << 'Expected ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType=("single-family detached" or "single-family attached")'
     end
     ES::MFVersions.each do |es_version|
       key = "energy-star-#{es_version}"
       all_expected_errors[key] = [] if all_expected_errors[key].nil?
-      all_expected_errors[key] << 'Expected 1 element(s) for xpath: ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction[ResidentialFacilityType="apartment unit"]'
+      all_expected_errors[key] << 'Expected ../../../../Building/BuildingDetails/BuildingSummary/BuildingConstruction/ResidentialFacilityType="apartment unit"'
     end
 
     all_expected_errors.each_with_index do |(error_case, expected_errors), i|

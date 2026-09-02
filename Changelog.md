@@ -1,6 +1,55 @@
+## OpenStudio-ERI v1.13.0
+
+__Features__
+- Updates DENH v2 target home HVAC specifications per policy records SFV2.046 and MFV2.048.
+- Updates garage ventilation rate to be SLA=1/150 (same as a vented crawlspace).
+- To accommodate electric furnaces/boilers, allows heating efficiency with units of "Percent" as an alternative to "AFUE"; the two units are modeled identically.
+- Adds min/max value warnings for clothes washer and dishwasher label inputs (e.g., `LabelElectricRate` and `LabelGasRate`).
+
+__Bugfixes__
+- **Breaking change**: Prevent possible error if HPWH in confined space with very small containment volume; minimum allowed volume now 32 ft3.
+- **Breaking change**: HPWH `EnergyFactor`/`UniformEnergyFactor` must now be >= 1.45 (previously > 1).
+- Fixes ERV supply outlet enthalpy calculation used to calculate latent effectiveness.
+- Removes duplicated ceiling/floor internal mass surfaces between conditioned stories.
+- Fixes heat gain from occupants; heat gains from appliances, lighting, etc. are unaffected.
+- Fixes specific heat for drywall (0.2 -> 0.26 Btu/lb-F).
+- Fixes order-dependent effective below-grade depth when collapsing similar foundation walls.
+
+## OpenStudio-ERI v1.12.0
+
+__Features__
+- Updates to OpenStudio-HPXML 1.12/OpenStudio 3.11/EnergyPlus 25.2.
+- Updates to HPXML v5.0-rc1.
+  - **Breaking change**: HPXML namespace changed from http://hpxmlonline.com/2023/09 to http://hpxmlonline.com/2025/12.
+- Updated DX heat pump and air conditioner models per HERS Addendum 103.
+  - Compressor lockout temperatures for Rated Home defaults and Reference Home updated from 0F (single/two stage) and -20F (variable speed) to 5F and -10F, respectively.
+  - Dual-fuel heat pumps now have the HP sized using the greater of the heating design temperature and 25F.
+  - Pan heaters no longer operate when the outdoor temperature is below the compressor lockout temperature.
+- Adds a warning if there are more than 300 unmet hours for heating or cooling; setpoint tolerance increased from 0.36 deg-F (0.2 deg-C) to 0.5 deg-F.
+- Runtime speed improvements for homes with multiple ground source heat pumps.
+- Utility bill scenarios can now be defined for the Rated/Reference Homes; see [the documentation](https://openstudio-eri.readthedocs.io/en/latest/workflow_inputs.html#hpxml-utility-bill-scenarios) for more information.
+- The `Battery/NominalCapacity` input is no longer used.
+- Output updates:
+  - **Breaking change**: Annual peak load outputs for heating and cooling now use units of Btu/h instead of kBtu/h for consistency with other outputs.
+- Updates schematron validation error messages to be more user friendly.
+
+__Bugfixes__
+- Fixes incorrect hot water (gallons) output for solar thermal systems using `SolarFraction`.
+- Fixes possible "Failed to process String" EnergyPlus error when requesting component loads.
+
+## OpenStudio-ERI v1.11.2
+
+__Bugfixes__
+- Fixes heat pump heating performance sensitivity to indoor temperatures.
+
+## OpenStudio-ERI v1.11.1
+
+__Features__
+- **Breaking change**: Clothes dryers now require `Vented` (true or false) to be provided per ANSI/RESNET/ICC Standard 301-2022 Addendum C.
+
 ## OpenStudio-ERI v1.11.0
 
-__New Features__
+__Features__
 - Updates to HPXML v4.2.
 - Updates shared pump power for ground-source heat pumps on a shared recirculation loop to cycle with heating/cooling load rather than operate continuously per RESNET HERS Addendum 94.
 - Adds RESNET HERS Addendum 77 to adjust HPWH performance when installed in confined space, used when ERI version is "latest".
@@ -18,7 +67,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.10.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.10/EnergyPlus 25.1/HPXML v4.2-rc2.
 - **Breaking change**: ERI version of "latest" now includes RESNET HERS addenda not yet incorporated in ANSI 301.
   - Adds RESNET HERS Addenda 81 and 90f for "latest" (updates calculations for dishwashers, clothes washers, fixtures, and hot water waste).
@@ -53,7 +102,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.9.4
 
-__New Features__
+__Features__
 - Adds ENERGY STAR ERI calculation for SFNH National v3.3 and MFNC National v1.3.
 - Updates to ENERGY STAR SFNH Rev 14 and MFNC Rev 05.
   - **Breaking change**: Building types "single-family detached" and "single-family attached" may only be used for SFNC versions and "apartment unit" may only be used for MFNC versions.
@@ -72,7 +121,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.9.2
 
-__New Features__
+__Features__
 - Updates HERS test outputs to match the latest RESNET accreditation forms.
 
 ## OpenStudio-ERI v1.9.1
@@ -82,7 +131,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.9.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.9/EnergyPlus 24.2/HPXML v4.1-rc1.
 - Adds 2024 IECC ERI pathway calculation.
 - **Breaking change**: Renamed `Emissions: <EmissionsType>: RESNET: XXX` to `Emissions: <EmissionsType>: ANSI301: XXX` in Annual Home CSV output files.
@@ -107,7 +156,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.8.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.8, EnergyPlus 24.1, HPXML 4.0-rc4.
 - Implements ANSI/RESNET/ICC Standard 301-2022 and Addendum C.
   - **Breaking change**: For shared water heaters, `NumberofUnitsServed` is replaced by `extension/NumberofBedroomsServed`.
@@ -144,7 +193,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.7.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.7.0/EnergyPlus 23.2.
 - **Breaking change**: Updates to HPXML v4.0-rc2:
   - HPXML namespace changed from http://hpxmlonline.com/2019/10 to http://hpxmlonline.com/2023/09.
@@ -193,7 +242,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.6.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.6.1/EnergyPlus 23.1.
 - **Breaking change**: CO2e Index results must now be requested through a new optional `SoftwareInfo/extension/CO2IndexCalculation/Version` input.
 - **Breaking change**: Updates to newer proposed HPXML v4.0:
@@ -229,7 +278,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.5.2
 
-__New Features__
+__Features__
 - Adds support for ZERH Single Family v2.
 - Updates to ENERGY STAR SFNH Rev 12 and MFNC Rev 03.
 - `WaterHeatingSystem/RecoveryEfficiency` is now an optional input.
@@ -249,7 +298,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.5.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.5.0/EnergyPlus 22.2.
 - **Breaking change**: Updates to newer proposed HPXML v4.0:
   - Replaces `FrameFloors/FrameFloor` with `Floors/Floor`.
@@ -312,7 +361,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.4.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.4.0/EnergyPlus 22.1.
 - Updates to OpenStudio-HPXML 1.4.0.
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addenda C & D. `ERICalculation/Version` can now be "2019ABC" or "2019ABCD" in the HPXML files.
@@ -336,7 +385,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.3.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.3.0/EnergyPlus 9.6.0.
 - **Breaking change**: HVAC grading inputs `FanPowerNotTested`, `AirflowNotTested`, and `ChargeNotTested` are no longer accepted.
 - **Breaking change**: Replaces "Unmet Load" outputs with "Unmet Hours".
@@ -370,12 +419,12 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.2.1
 
-__New Features__
+__Features__
 - Revises shared mechanical ventilation preconditioning control logic to operate less often.
 
 ## OpenStudio-ERI v1.2.0
 
-__New Features__
+__Features__
 - Adds ENERGY STAR ERI Target workflow for new construction in accordance with [ENERGY STAR Certification System for Homes and Apartments Using an Energy Rating Index-Based Compliance Path](https://www.energystar.gov/sites/default/files/asset/document/ENERGY%20STAR%20Certification%20System.pdf).
   - Optional `SoftwareInfo/extension/EnergyStarCalculation/Version` (values like "SF_National_3.1"; required if running ENERGY STAR calculation).
   - **Breaking change**: `Building/Site/Address/StateCode` (values like "CO" or "FL") now required.
@@ -400,12 +449,12 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.1.2
 
-__New Features__
+__Features__
 - Revises shared mechanical ventilation preconditioning control logic to operate less often.
 
 ## OpenStudio-ERI v1.1.1
 
-__New Features__
+__Features__
 - Allow `Slab/ExposedPerimeter` to be zero.
 - `ClothesDryer/ControlType` is no longer required if 301 version >= 2019A
 - Moves additional error-checking from the ruby measure to the schematron validator.
@@ -421,7 +470,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.1.0
 
-__New Features__
+__Features__
 - Implements ANSI/RESNET/ICC Standard 301-2019 Addendum B. `ERICalculation/Version` can now be "2019AB" in the HPXML files.
   - **Breaking change**: New HVAC installation quality inputs required for air conditioners, heat pumps, and furnaces.
   - Adds modeling of dehumidifiers.
@@ -447,7 +496,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v1.0.0
 
-__New Features__
+__Features__
 - Updates to OpenStudio 3.1.0/EnergyPlus 9.4.0.
 - **Breaking change**: Deprecates `WeatherStation/WMO` HPXML input, use `WeatherStation/extension/EPWFilePath` instead.
 - Implements water heater Uniform Energy Factor (UEF) model; replaces RESNET UEF->EF regression. **Breaking change**: `FirstHourRating` is now a required input for storage water heaters when UEF is provided.
@@ -465,7 +514,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v0.11.0 Beta
 
-__New Features__
+__Features__
 - New [Schematron](http://schematron.com) validation (301validator.xml) replaces custom ruby validation (301validator.rb)
 - Ability to model shared systems for Attached/Multifamily dwelling units
   - Shared HVAC systems (cooling towers, chillers, central boilers, water loop heat pumps, fan coils, ground source heat pumps on shared hydronic circulation loops)
@@ -500,7 +549,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v0.10.0 Beta
 
-__New Features__
+__Features__
 - Implements ANSI/RESNET/ICC Standard 301-2019 and Addendum A. Shared systems are not yet supported.
   - `ERICalculation/Version` can be "2019A" or "2019"
   - **[Breaking change]** `Attic/WithinInfiltrationVolume` is required for unvented attics
@@ -549,7 +598,7 @@ __Bugfixes__
 
 ## OpenStudio-ERI v0.9.0 Beta
 
-__New Features__
+__Features__
 - **[Breaking change]** Updates to OpenStudio v3.0.0 and EnergyPlus 9.3.
 - **[Breaking change]** Allows 301-2014 Addenda D & L to be used by providing inputs for A) duct leakage testing exemptions or B) total duct leakage in lieu of leakage to the outside. These inputs should only be used if the conditions specified in ANSI/RESNET/ICC© 301 have been appropriately met. Enumerations for `SoftwareInfo/extension/ERICalculation/Version` are now "latest", "2014ADEGL", "2014ADEG", "2014ADE", "2014AD", "2014A", "2014".
 - **[Breaking change]** `BuildingConstruction/ResidentialFacilityType` is now required. Valid choices are: "single-family detached", "single-family attached", "apartment unit", "manufactured home".
@@ -581,7 +630,7 @@ __Breaking changes__
 - `extension/StandbyLoss` changed to `StandbyLoss` for indirect water heaters.
 - `Site/extension/DisableNaturalVentilation` changed to `BuildingConstruction/extension/FractionofOperableWindowArea` for ASHRAE 140-based test files.
 
-__New Features__
+__Features__
 - Allows modeling of whole-house fans.
 - Adds optional `CompressorType` input for ACs/ASHPs.
 - Improved natural ventilation algorithm that reduces the potential for incurring additional heating energy.
@@ -608,9 +657,9 @@ __Bugfixes__
 __Breaking changes__
 - OpenStudio version 2.9.1 is now required.
 - The `--hourly-output` argument now only generates hourly output for the Reference/Rated Homes, not the IAD Homes, for faster runtime.
-- Foundation walls described with the `Insulation/Layer` approach now require two layers (i.e., interior and exterior). (Foundation walls described using the `Insulation/AssemblyEffectiveRValue` approach are unchanged.) See [here](https://github.com/NREL/OpenStudio-HPXML/pull/120) for more information.
+- Foundation walls described with the `Insulation/Layer` approach now require two layers (i.e., interior and exterior). (Foundation walls described using the `Insulation/AssemblyEffectiveRValue` approach are unchanged.) See [here](https://github.com/NatLabRockies/OpenStudio-HPXML/pull/120) for more information.
 
-__New Features__
+__Features__
 - Runtime performance improvements for all buildings.
 - Adds dual fuel heat pump model with a switchover temperature input.
 - Adds solar hot water models. Inputs are either a system-level solar fraction or detailed collector inputs for flat-plate, evacuated tube, and ICS systems.
@@ -638,7 +687,7 @@ __Breaking changes__
   - "Other Fuel" is now disaggregated into "Fuel Oil" and "Propane"
   - Peak load units are changed from W to kBtu
 
-__New Features__
+__Features__
 - Adds ability to specify evaporative coolers
 - Adds heating/cooling component loads reporting to results/ERI____Home.csv output files. See the Outputs documentation for more information.
 - When an `AirDistribution` is specified, only supply duct leakage is now required. Return duct leakage, supply ducts, and return ducts are now optional.
@@ -661,7 +710,7 @@ __Known Issues__
 __Breaking changes__
 - None
 
-__New Features__
+__Features__
 - Adds thermostat information (setpoints, setbacks/setups, ceiling fan offset) to all the configured homes' HPXMLs.
 - Runtime improvements for homes with heat pump water heaters.
 - Runtime improvements for homes with slabs/crawlspaces/basements.
@@ -702,7 +751,7 @@ __Breaking changes__
   - Hot water tests: Hot water recirculation pump energy is now disaggregated.
   - ASHRAE 140 tests: Load results are separated into heating/cooling categories.
 
-__New Features__
+__Features__
 - Adds an optional `--hourly-output` argument to request an hourly output CSV file that includes zone temperatures and energy uses disaggregated by fuel.
 - Adds ability to model a desuperheater attached to a ground source heat pump, air source heat pump, or air conditioner.
 - Adds `SensibleHeatFraction` as a new optional input for air conditioners.
@@ -745,7 +794,7 @@ __Breaking changes__
   - Added heating, cooling, and hot water loads.
   - Added *unmet* heating and cooling loads.
 
-__New Features__
+__Features__
 - General runtime performance improvements.
 - Combination boilers, which provide both space and water heating, can be specified. Use `WaterHeatingSystem/WaterHeaterType` and point `WaterHeatingSystem/RelatedHVACSystem` to a `HeatingSystem` of type boiler.
 - Water heater tank wrap insulation can be optionally specified via `WaterHeatingSystem/WaterHeaterInsulation/Jacket/JacketRValue`.
@@ -773,7 +822,7 @@ __Known Issues__
 __Breaking changes__
 - `CoolingSystemType="central air conditioning"` is now `"central air conditioner"` (consistent with `"room air conditioner"`)
 
-__New Features__
+__Features__
 - Now passes Reference Home Auto-Generation tests (specifically e-Ratio test)
 - Allows HRVs/ERVs to be specified with `AdjustedSensibleRecoveryEfficiency` and `AdjustedTotalRecoveryEfficiency` (instead of `SensibleRecoveryEfficiency` and `TotalRecoveryEfficiency`)
 - Allows ducts to be located outside (`DuctLocation="outside"`)

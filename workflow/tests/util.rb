@@ -7,15 +7,11 @@ require_relative '../design'
 require_relative '../util'
 require_relative '../../rulesets/main'
 require_relative '../../rulesets/resources/constants'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/constants'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hotwater_appliances'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hpxml'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/hvac_sizing'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/meta_measure'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/misc_loads'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/unit_conversions'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlhelper'
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/xmlvalidator'
+Dir["#{File.dirname(__FILE__)}/../../hpxml-measures/HPXMLtoOpenStudio/resources/*.rb"].each do |resource_file|
+  next if resource_file.include? 'minitest_helper.rb'
+
+  require resource_file
+end
 
 def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads: false, skip_simulation: false,
                   rated_home_only: false, output_format: 'csv', diagnostic_output: false)
@@ -83,6 +79,12 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
         outputs[:rated_timeseries_results] = File.join(results_dir, "RatedHome_#{timeseries_frequency.capitalize}.#{output_format}")
         outputs[:ref_timeseries_results] = File.join(results_dir, "ReferenceHome_#{timeseries_frequency.capitalize}.#{output_format}")
       end
+      next unless not hpxml.header.utility_bill_scenarios.empty?
+
+      outputs[:rated_annual_bills] = File.join(results_dir, "RatedHome_AnnualBills.#{output_format}")
+      outputs[:rated_monthly_bills] = File.join(results_dir, "RatedHome_MonthlyBills.#{output_format}")
+      outputs[:ref_annual_bills] = File.join(results_dir, "ReferenceHome_AnnualBills.#{output_format}")
+      outputs[:ref_monthly_bills] = File.join(results_dir, "ReferenceHome_MonthlyBills.#{output_format}")
     end
     # CO2e
     co2_versions.each do |co2_version|
@@ -200,15 +202,35 @@ def _run_workflow(xml, test_name, timeseries_frequency: 'none', component_loads:
     assert(valid)
   end
 
-  # Check run.log for OS warnings
-  Dir["#{rundir}/*/run.log"].sort.each do |log_path|
+  # Check run.logs for warnings
+  Dir["#{rundir}/**/run.log"].sort.each do |log_path|
     run_log = File.readlines(log_path).map(&:strip)
     run_log.each do |log_line|
-      next unless log_line.include? 'OS Message:'
-      next if log_line.include?('OS Message: Minutes field (60) on line 9 of EPW file')
-      next if log_line.include?('OS Message: Error removing temporary directory at')
+      next unless log_line.start_with?('Warning:') || log_line.start_with?('Error:')
+      next if log_path.include? 'house096.xml' # Crazy home w/ lots of warnings
+      next if log_line.include? 'No emissions factor found for Scenario=ANSI301'
+      next if log_line.include? 'Could not look up Cambium GEA for zip code'
+      next if log_line.include? 'Ducts are entirely within conditioned space but there is moderate leakage to the outside.'
 
-      flunk "Unexpected warning found in #{log_path} run.log: #{log_line}"
+      if log_path.include? 'base-battery.xml'
+        next if log_line.include? 'Battery without PV specified, and no charging/discharging schedule provided; battery is assumed to operate as backup and will not be modeled.'
+      end
+      if log_path.include? 'real_homes'
+        next if log_line.include? 'this may indicate incorrect ENERGY GUIDE label inputs'
+        next if log_line.include? 'Construction R-value increased'
+        next if log_line.include? 'Thickness is greater than 12 inches; this may indicate incorrect units'
+        next if log_line.include? 'DistanceToTopOfWindow is greater than 12 feet; this may indicate incorrect units.'
+        next if log_line.include? 'Slab has zero exposed perimeter, this may indicate an input error.'
+      end
+      # Skip these warnings (except for the ERI Rated Home, when we want extra checking)
+      if !log_path.include?('ERI_latest/RatedHome/run.log')
+        next if log_line.include? 'There are a large number of unmet hours'
+        next if log_line.include? 'Autosized HVAC equipment (e.g., Capacity=-1) found in the HPXML. This should only be used for research purposes or to run tests. It should *not* be used for a real home.'
+        next if log_line.include? 'capacity should typically be greater than or equal to 1000 Btu/hr'
+        next if log_line.include? 'ResidentialFacilityType is "single-family attached" or "apartment unit", but no attached surfaces were found. This may result in erroneous results (e.g., for infiltration).'
+      end
+
+      flunk "Unexpected message found in #{log_path}: #{log_line}"
     end
   end
 
@@ -315,7 +337,7 @@ def _test_resnet_hers_reference_home_auto_generation(test_name, dir_name, versio
 
   # Run simulations
   all_results = {}
-  xmldir = File.join(File.dirname(__FILE__), dir_name)
+  xmldir = File.join(@resnet_tests_dir, dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, hpxmls, _csvs = _run_workflow(xml, test_name, skip_simulation: true)
 
@@ -385,7 +407,7 @@ def _test_resnet_hers_method(test_name, dir_name)
 
   # Run simulations
   all_results = {}
-  xmldir = File.join(File.dirname(__FILE__), dir_name)
+  xmldir = File.join(@resnet_tests_dir, dir_name)
   Dir["#{xmldir}/*.xml"].sort.each do |xml|
     _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
     results = _get_csv_results([csvs[:eri_results]])
@@ -1082,8 +1104,8 @@ def _get_internal_gains(hpxml_bldg, eri_version)
   # Occupants
   xml_occ_sens = 0.0
   xml_occ_lat = 0.0
-  heat_gain, hrs_per_day, frac_sens, frac_lat = Defaults.get_occupancy_values()
-  btu = nbeds * heat_gain * hrs_per_day * 365.0
+  occ_gain, frac_sens, frac_lat = Defaults.get_occupancy_values()
+  btu = nbeds * occ_gain * 365.0
   xml_occ_sens += (frac_sens * btu)
   xml_occ_lat += (frac_lat * btu)
   s += "#{xml_occ_sens} #{xml_occ_lat}\n"

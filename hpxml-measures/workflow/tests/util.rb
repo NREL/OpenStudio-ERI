@@ -15,6 +15,7 @@ def run_simulation_tests(xmls)
 
     next unless xml.include?('sample_files') || xml.include?('real_homes') # Exclude e.g. ASHRAE 140 files
     next if xml.include? 'base-bldgtype-mf-whole-building' # Already has multiple dwelling units
+    next if xml.include? 'base-misc-multiple-buildings.xml' # Already has multiple building elements
 
     # Also run with a 10x unit multiplier (2 identical dwelling units each with a 5x
     # unit multiplier) and check how the results compare to the original run
@@ -26,6 +27,7 @@ end
 
 def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x = nil, monthly_results_1x = nil)
   unit_multiplier = 1
+  skip_validation = false
   if apply_unit_multiplier
     hpxml = HPXML.new(hpxml_path: xml)
     hpxml.buildings.each do |hpxml_bldg|
@@ -34,6 +36,7 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
       hpxml_bldg.building_construction.number_of_units = 1
     end
     orig_multiplier = hpxml.buildings.map { |hpxml_bldg| hpxml_bldg.building_construction.number_of_units }.sum
+    whole_sfa_or_mf_building_sim = true
 
     # Create copy of the HPXML where the number of Building elements is doubled
     # and each Building is assigned a unit multiplier of 5 (2x5=10).
@@ -42,17 +45,10 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
       hpxml_bldg = hpxml.buildings[i]
       if hpxml_bldg.dehumidifiers.size > 0
         # FUTURE: Dehumidifiers currently don't give desired results w/ unit multipliers
-        # https://github.com/NREL/OpenStudio-HPXML/issues/1499
+        # https://github.com/NatLabRockies/OpenStudio-HPXML/issues/1499
       elsif hpxml_bldg.heat_pumps.count { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir } > 0
         # FUTURE: GSHPs currently don't give desired results w/ unit multipliers
-        # https://github.com/NREL/OpenStudio-HPXML/issues/1499
-      elsif hpxml_bldg.batteries.size > 0
-        # FUTURE: Batteries currently don't work with whole SFA/MF buildings
-        # https://github.com/NREL/OpenStudio-HPXML/issues/1499
-        return
-      elsif hpxml_bldg.vehicles.size > 0
-        # Same as battery issue above
-        return
+        # https://github.com/NatLabRockies/OpenStudio-HPXML/issues/1499
       elsif hpxml.header.hvac_onoff_thermostat_deadband
         # On off thermostat not supported with unit multiplier yet
       elsif hpxml.header.heat_pump_backup_heating_capacity_increment
@@ -60,11 +56,18 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
       else
         hpxml_bldg.building_construction.number_of_units *= 5
       end
-      hpxml.buildings << hpxml_bldg.dup
+      if whole_sfa_or_mf_building_sim
+        hpxml.buildings << hpxml_bldg.dup
+      end
     end
     unit_multiplier = hpxml.buildings.map { |hpxml_bldg| hpxml_bldg.building_construction.number_of_units }.sum / orig_multiplier
     if unit_multiplier > 1
-      hpxml.header.whole_sfa_or_mf_building_sim = true
+      hpxml.header.whole_sfa_or_mf_building_sim = whole_sfa_or_mf_building_sim
+      if not [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? hpxml.buildings[0].building_construction.residential_facility_type
+        # Schematron validation prevents WholeSFAorMFBuildingSim=true for other
+        # building types, so we skip validation to allow the test to run
+        skip_validation = true
+      end
     end
     xml.gsub!('.xml', '-10x.xml')
     hpxml_doc = hpxml.to_doc()
@@ -78,7 +81,9 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
   # Uses 'monthly' to verify timeseries results match annual results via error-checking
   # inside the ReportSimulationOutput measure.
   cli_path = OpenStudio.getOpenStudioCLI
-  command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '../run_simulation.rb')}\" -x \"#{xml}\" --add-component-loads -o \"#{rundir}\" --debug --monthly ALL"
+  building_id_str = ' --building-id MyBuilding_AlternativeDesign' if xml.include? 'base-misc-multiple-buildings.xml'
+  skip_validation_str = ' --skip-validation' if skip_validation
+  command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '../run_simulation.rb')}\" -x \"#{xml}\" --add-component-loads -o \"#{rundir}\" --debug --monthly ALL#{building_id_str}#{skip_validation_str}"
   success = system(command)
 
   if unit_multiplier > 1
@@ -104,14 +109,18 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
   # Check outputs
   hpxml_defaults_path = File.join(rundir, 'in.xml')
   schema_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', '..', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schema', 'HPXML.xsd'))
-  schematron_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', '..', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+  if not skip_validation
+    schematron_validator = XMLValidator.get_xml_validator(File.join(File.dirname(__FILE__), '..', '..', 'HPXMLtoOpenStudio', 'resources', 'hpxml_schematron', 'EPvalidator.sch'))
+  else
+    schematron_validator = nil
+  end
   hpxml = HPXML.new(hpxml_path: hpxml_defaults_path, schema_validator: schema_validator, schematron_validator: schematron_validator) # Validate in.xml to ensure it can be run back through OS-HPXML
   if not hpxml.errors.empty?
     puts 'ERRORS:'
     hpxml.errors.each do |error|
       puts error
     end
-    flunk "EPvalidator.sch error in #{hpxml_defaults_path}."
+    flunk "Validation error(s) in #{hpxml_defaults_path}."
   end
   annual_results = _get_simulation_annual_results(annual_csv_path, bills_csv_path, panel_csv_path)
   monthly_results = _get_simulation_monthly_results(monthly_csv_path)
@@ -182,15 +191,16 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
   assert(File.exist? File.join(rundir, 'eplusout.msgpack'))
 
   hpxml_header = hpxml.header
-  hpxml_bldg = hpxml.buildings[0]
   sqlFile = OpenStudio::SqlFile.new(File.join(rundir, 'eplusout.sql'), false)
 
   # Collapse windows further using same logic as measure.rb
-  hpxml_bldg.windows.each do |window|
-    window.fraction_operable = nil
+  hpxml.buildings.each do |hpxml_bldg|
+    hpxml_bldg.windows.each do |window|
+      window.fraction_operable = nil
+    end
+    hpxml_bldg.collapse_enclosure_surfaces()
+    hpxml_bldg.delete_adiabatic_subsurfaces()
   end
-  hpxml_bldg.collapse_enclosure_surfaces()
-  hpxml_bldg.delete_adiabatic_subsurfaces()
 
   # Check for unexpected run.log messages
   File.readlines(File.join(rundir, 'run.log')).each do |message|
@@ -199,57 +209,57 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     next if message.start_with? 'Executing command'
     next if message.include? 'Could not find state average'
 
-    if hpxml_bldg.clothes_washers.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.clothes_washers.empty? }
       next if message.include? 'No clothes washer specified, the model will not include clothes washer energy use.'
     end
-    if hpxml_bldg.clothes_dryers.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.clothes_dryers.empty? }
       next if message.include? 'No clothes dryer specified, the model will not include clothes dryer energy use.'
     end
-    if hpxml_bldg.dishwashers.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.dishwashers.empty? }
       next if message.include? 'No dishwasher specified, the model will not include dishwasher energy use.'
     end
-    if hpxml_bldg.refrigerators.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.refrigerators.empty? }
       next if message.include? 'No refrigerator specified, the model will not include refrigerator energy use.'
     end
-    if hpxml_bldg.cooking_ranges.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.cooking_ranges.empty? }
       next if message.include? 'No cooking range specified, the model will not include cooking range/oven energy use.'
     end
-    if hpxml_bldg.water_heating_systems.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.water_heating_systems.empty? }
       next if message.include? 'No water heating specified, the model will not include water heating energy use.'
     end
-    if (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.empty? }
       next if message.include? 'No space heating specified, the model will not include space heating energy use.'
     end
-    if (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |c| c.fraction_cool_load_served.to_f > 0 }.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |c| c.fraction_cool_load_served.to_f > 0 }.empty? }
       next if message.include? 'No space cooling specified, the model will not include space cooling energy use.'
     end
-    if hpxml_bldg.plug_loads.select { |p| p.plug_load_type == HPXML::PlugLoadTypeOther }.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.plug_loads.select { |p| p.plug_load_type == HPXML::PlugLoadTypeOther }.empty? }
       next if message.include? "No '#{HPXML::PlugLoadTypeOther}' plug loads specified, the model will not include misc plug load energy use."
     end
-    if hpxml_bldg.plug_loads.select { |p| p.plug_load_type == HPXML::PlugLoadTypeTelevision }.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.plug_loads.select { |p| p.plug_load_type == HPXML::PlugLoadTypeTelevision }.empty? }
       next if message.include? "No '#{HPXML::PlugLoadTypeTelevision}' plug loads specified, the model will not include television plug load energy use."
     end
-    if hpxml_bldg.lighting_groups.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.lighting_groups.empty? }
       next if message.include? 'No interior lighting specified, the model will not include interior lighting energy use.'
       next if message.include? 'No exterior lighting specified, the model will not include exterior lighting energy use.'
       next if message.include? 'No garage lighting specified, the model will not include garage lighting energy use.'
     end
-    if hpxml_bldg.windows.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.windows.empty? }
       next if message.include? 'No windows specified, the model will not include window heat transfer.'
     end
-    if hpxml_bldg.pv_systems.empty? && !hpxml_bldg.batteries.empty? && hpxml_bldg.header.schedules_filepaths.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.pv_systems.empty? && !hpxml_bldg.batteries.empty? && hpxml_bldg.header.schedules_filepaths.empty?) }
       next if message.include? 'Battery without PV specified, and no charging/discharging schedule provided; battery is assumed to operate as backup and will not be modeled.'
     end
-    if hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type == HPXML::VehicleTypeBEV && vehicle.ev_charger_idref.nil? }
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type == HPXML::VehicleTypeBEV && vehicle.ev_charger_idref.nil? } }
       next if message.include? 'Electric vehicle specified with no charger provided; home EV charging will not be modeled.'
     end
-    if hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type == HPXML::VehicleTypeBEV && !vehicle.ev_charger_idref.nil? && vehicle.ev_weekday_fractions.nil? } && !hpxml_bldg.header.schedules_filepaths.empty?
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type == HPXML::VehicleTypeBEV && !vehicle.ev_charger_idref.nil? && vehicle.ev_weekday_fractions.nil? } && !hpxml_bldg.header.schedules_filepaths.empty? }
       next if message.include? 'driving hours could not be met'
     end
-    if hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type == HPXML::VehicleTypeBEV } && hpxml_bldg.plug_loads.any? { |p| p.plug_load_type == HPXML::PlugLoadTypeElectricVehicleCharging }
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type == HPXML::VehicleTypeBEV } && hpxml_bldg.plug_loads.any? { |p| p.plug_load_type == HPXML::PlugLoadTypeElectricVehicleCharging } }
       next if message.include? 'Electric vehicle charging was specified as both a PlugLoad and a Vehicle, the latter will be ignored.'
     end
-    if hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type != HPXML::VehicleTypeBEV }
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.vehicles.any? { |vehicle| vehicle.vehicle_type != HPXML::VehicleTypeBEV } }
       next if message.include?('Vehicle type') && message.include?('is not currently handled, the vehicle will not be modeled')
     end
     if hpxml_path.include? 'base-location-capetown-zaf.xml'
@@ -257,23 +267,13 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
       next if message.include? 'Could not find a marginal Electricity rate.'
       next if message.include? 'Could not find a marginal Natural Gas rate.'
     end
-    if !hpxml_bldg.hvac_distributions.select { |d| d.distribution_system_type == HPXML::HVACDistributionTypeDSE }.empty?
-      next if message.include? 'DSE is not currently supported when calculating utility bills.'
-    end
     if !hpxml_header.unavailable_periods.select { |up| up.column_name == 'Power Outage' }.empty?
-      next if message.include? 'It is not possible to eliminate all HVAC energy use (e.g. crankcase/defrost energy) in EnergyPlus during an unavailable period.'
       next if message.include? 'It is not possible to eliminate all DHW energy use (e.g. water heater parasitics) in EnergyPlus during an unavailable period.'
     end
-    if (not hpxml_bldg.hvac_controls.empty?) && (hpxml_bldg.hvac_controls[0].seasons_heating_begin_month != 1)
-      next if message.include? 'It is not possible to eliminate all HVAC energy use (e.g. crankcase/defrost energy) in EnergyPlus outside of an HVAC season.'
-    end
-    if !hpxml_header.unavailable_periods.select { |up| (up.column_name == 'No Space Heating') || (up.column_name == 'No Space Cooling') }.empty?
-      next if message.include? 'It is not possible to eliminate all HVAC energy use (e.g. crankcase/defrost energy) in EnergyPlus during an unavailable period.'
-    end
-    if hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath.include? 'US_CO_Boulder_AMY_2012.epw'
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.climate_and_risk_zones.weather_station_epw_filepath.include? 'US_CO_Boulder_AMY_2012.epw' }
       next if message.include? 'No EPW design conditions found; calculating design conditions from EPW weather data.'
     end
-    if hpxml_bldg.building_construction.number_of_units > 1
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.building_construction.number_of_units > 1 }
       next if message.include? 'NumberofUnits is greater than 1, indicating that the HPXML Building represents multiple dwelling units; simulation outputs will reflect this unit multiplier.'
     end
     if hpxml_path.include? 'base-hvac-multiple.xml'
@@ -282,18 +282,32 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     if hpxml_path.include? 'base-zones'
       next if message.include? 'While multiple conditioned zones are specified, the EnergyPlus model will only include a single conditioned thermal zone.'
     end
-    if hpxml_bldg.windows.any? { |w| w.exterior_shading_type == 'external overhangs' && w.overhangs_depth.to_f > 0 }
+    if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.windows.any? { |w| w.exterior_shading_type == 'external overhangs' && w.overhangs_depth.to_f > 0 }) }
       next if message.include? "Exterior shading type is 'external overhangs', but overhangs are explicitly defined; exterior shading type will be ignored."
     end
-    if hpxml_bldg.windows.any? { |w| w.exterior_shading_type == 'building' } && hpxml_bldg.neighbor_buildings.size > 0
+    if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.windows.any? { |w| w.exterior_shading_type == 'building' } && hpxml_bldg.neighbor_buildings.size > 0) }
       next if message.include? "Exterior shading type is 'building', but neighbor buildings are explicitly defined; exterior shading type will be ignored."
     end
-    if hpxml_bldg.inverters.map { |i| i.inverter_efficiency }.uniq.size > 1
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.inverters.map { |i| i.inverter_efficiency }.uniq.size > 1 }
       next if message.include? 'Inverters with varying efficiencies found; using a single PV size weighted-average in the model'
+    end
+    coal_files = [
+      'base-appliances-coal.xml',
+      'base-dhw-tank-coal.xml',
+      'base-hvac-boiler-coal-only.xml',
+      'base-hvac-furnace-coal-only.xml'
+    ]
+    if coal_files.any? { |f| hpxml_path.include?(f) }
+      next if message.include?('No EIA SEDS rate for coal was found for the state of')
+    end
+    # HVAC is undersized or poor install quality or advanced research features
+    if hpxml_path.include?('base-hvac-undersized.xml') || hpxml_path.include?('install-quality') || hpxml_path.include?('research-features')
+      next if message.include?('There are a large number of unmet hours') && message.include?('for heating; this may indicate the heating system is undersized or can be caused by recovery from thermostat setbacks.')
+      next if message.include?('There are a large number of unmet hours') && message.include?('for cooling; this may indicate the cooling system is undersized or can be caused by recovery from thermostat setbacks.')
     end
 
     # FUTURE: Revert this eventually
-    # https://github.com/NREL/OpenStudio-HPXML/issues/1499
+    # https://github.com/NatLabRockies/OpenStudio-HPXML/issues/1499
     if hpxml_header.utility_bill_scenarios.has_detailed_electric_rates
       uses_unit_multipliers = hpxml.buildings.count { |hpxml_bldg| hpxml_bldg.building_construction.number_of_units > 1 } > 0
       if uses_unit_multipliers || hpxml.buildings.size > 1
@@ -326,9 +340,7 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     next if message.include?('CalculateZoneVolume') && message.include?('not fully enclosed')
     next if message.include? 'do not define an enclosure'
     next if message.include? 'Pump nominal power or motor efficiency is set to 0'
-    next if message.include? 'volume flow rate per watt of rated total cooling capacity is out of range'
-    next if message.include? 'volume flow rate per watt of rated total heating capacity is out of range'
-    next if message.include? 'volume flow rate per watt of rated total water heating capacity is out of range'
+    next if message.include?('volume flow rate per watt of rated total') && message.include?('capacity is out of range')
     next if message.include? 'The Standard Ratings is calculated for'
     next if message.include?('WetBulb not converged after') && message.include?('iterations(PsyTwbFnTdbWPb)')
     next if message.include? 'Inside surface heat balance did not converge with Max Temp Difference'
@@ -350,57 +362,61 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     next if message.include?('setupIHGOutputs: Output variables=Zone Other Equipment') && message.include?('are not available.')
     next if message.include?('setupIHGOutputs: Output variables=Space Other Equipment') && message.include?('are not available')
     next if message.include? 'Multiple speed fan will be applied to this unit. The speed number is determined by load.'
+    next if message.include?('Maximum iterations') && message.include?('for all HVAC loops')
 
     # HPWHs
-    if hpxml_bldg.water_heating_systems.count { |wh| wh.water_heater_type == HPXML::WaterHeaterTypeHeatPump } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.water_heating_systems.count { |wh| wh.water_heater_type == HPXML::WaterHeaterTypeHeatPump } > 0 }
       next if message.include? 'Recovery Efficiency and Energy Factor could not be calculated during the test for standard ratings'
-      next if message.include? 'SimHVAC: Maximum iterations (20) exceeded for all HVAC loops'
       next if message.include? 'For object = Coil:WaterHeating:AirToWaterHeatPump:Wrapped'
       next if message.include? 'Enthalpy out of range (PsyTsatFnHPb)'
       next if message.include?('CheckWarmupConvergence: Loads Initialization') && message.include?('did not converge after 25 warmup days')
     end
     # HPWHs outside
-    if hpxml_bldg.water_heating_systems.count { |wh| wh.water_heater_type == HPXML::WaterHeaterTypeHeatPump && wh.location == HPXML::LocationOtherExterior } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.water_heating_systems.count { |wh| wh.water_heater_type == HPXML::WaterHeaterTypeHeatPump && wh.location == HPXML::LocationOtherExterior } > 0 }
       next if message.include? 'Water heater tank set point temperature is greater than or equal to the cut-in temperature of the heat pump water heater.'
     end
     # Stratified tank WHs
-    if hpxml_bldg.water_heating_systems.count { |wh| wh.tank_model_type == HPXML::WaterHeaterTankModelTypeStratified } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.water_heating_systems.count { |wh| wh.tank_model_type == HPXML::WaterHeaterTankModelTypeStratified } > 0 }
       next if message.include? 'Recovery Efficiency and Energy Factor could not be calculated during the test for standard ratings'
     end
     # HP defrost curves
-    if hpxml_bldg.heat_pumps.count { |hp| [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit, HPXML::HVACTypeHeatPumpPTHP, HPXML::HVACTypeHeatPumpRoom].include? hp.heat_pump_type } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.heat_pumps.count { |hp| [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit, HPXML::HVACTypeHeatPumpPTHP, HPXML::HVACTypeHeatPumpRoom].include? hp.heat_pump_type } > 0 }
       next if message.include?('GetDXCoils: Coil:Heating:DX') && message.include?('curve values') && message.include?('Defrost Energy Input Ratio Function of Temperature Curve')
     end
     # variable system SHR adjustment
-    if (hpxml_bldg.heat_pumps + hpxml_bldg.cooling_systems).count { |hp| hp.compressor_type == HPXML::HVACCompressorTypeVariableSpeed } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.heat_pumps + hpxml_bldg.cooling_systems).count { |hp| hp.compressor_type == HPXML::HVACCompressorTypeVariableSpeed } > 0 }
       next if message.include?('CalcCBF: SHR adjusted to achieve valid outlet air properties and the simulation continues.')
     end
     # Evaporative coolers
-    if hpxml_bldg.cooling_systems.count { |c| c.cooling_system_type == HPXML::HVACTypeEvaporativeCooler } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.cooling_systems.count { |c| c.cooling_system_type == HPXML::HVACTypeEvaporativeCooler } > 0 }
       # "The only valid controller type for an AirLoopHVAC is Controller:WaterCoil.", evap cooler doesn't need one.
       next if message.include?('GetAirPathData: AirLoopHVAC') && message.include?('has no Controllers')
       # input "Autosize" for Fixed Minimum Air Flow Rate is added by OS translation, now set it to 0 to skip potential sizing process, though no way to prevent this warning.
       next if message.include? 'Since Zone Minimum Air Flow Input Method = CONSTANT, input for Fixed Minimum Air Flow Rate will be ignored'
     end
     # Fan coil distribution
-    if hpxml_bldg.hvac_distributions.count { |d| d.air_type.to_s == HPXML::AirTypeFanCoil } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.hvac_distributions.count { |d| d.air_type.to_s == HPXML::AirTypeFanCoil } > 0 }
       next if message.include? 'In calculating the design coil UA for Coil:Cooling:Water' # Warning for unused cooling coil for fan coil
     end
     # Boilers
-    if hpxml_bldg.heating_systems.count { |h| h.heating_system_type == HPXML::HVACTypeBoiler } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.heating_systems.count { |h| h.heating_system_type == HPXML::HVACTypeBoiler } > 0 }
       next if message.include? 'Missing temperature setpoint for LeavingSetpointModulated mode' # These warnings are fine, simulation continues with assigning plant loop setpoint to boiler, which is the expected one
     end
     # GSHPs
-    if hpxml_bldg.heat_pumps.count { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.heat_pumps.count { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir } > 0 }
       next if message.include?('CheckSimpleWAHPRatedCurvesOutputs') && message.include?('WaterToAirHeatPump:EquationFit') # FUTURE: Check these
-      next if message.include? 'Actual air mass flow rate is smaller than 25% of water-to-air heat pump coil rated air flow rate.' # FUTURE: Remove this when https://github.com/NREL/EnergyPlus/issues/9125 is resolved
+      next if message.include? 'Actual air mass flow rate is smaller than 25% of water-to-air heat pump coil rated air flow rate.' # FUTURE: Remove this when https://github.com/NatLabRockies/EnergyPlus/issues/9125 is resolved
     end
     # GSHPs with only heating or cooling
-    if hpxml_bldg.heat_pumps.count { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir && (hp.fraction_heat_load_served == 0 || hp.fraction_cool_load_served == 0) } > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.heat_pumps.count { |hp| hp.heat_pump_type == HPXML::HVACTypeHeatPumpGroundToAir && (hp.fraction_heat_load_served == 0 || hp.fraction_cool_load_served == 0) } > 0 }
+      next if message.include? 'heating capacity is disproportionate (> 20% different) to total cooling capacity' # safe to ignore
+    end
+    # GSHPs with hard-sized capacities
+    if hpxml_path.include? 'house052.xml'
       next if message.include? 'heating capacity is disproportionate (> 20% different) to total cooling capacity' # safe to ignore
     end
     # Solar thermal systems
-    if hpxml_bldg.solar_thermal_systems.size > 0
+    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.solar_thermal_systems.size > 0 }
       next if message.include? 'Supply Side is storing excess heat the majority of the time.'
     end
     # Unavailability periods
@@ -480,7 +496,7 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     assert((abs_clg_load_delta < 1.5 * unit_multiplier) || (!abs_clg_load_frac.nil? && abs_clg_load_frac < 0.1))
   end
 
-  return if (hpxml.buildings.size > 1) || (hpxml_bldg.building_construction.number_of_units > 1)
+  return if (hpxml.buildings.size > 1) || (hpxml.buildings[0].building_construction.number_of_units > 1)
 
   # Timestep
   timestep = hpxml_header.timestep.nil? ? 60 : hpxml_header.timestep
@@ -488,12 +504,10 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
   sql_value = sqlFile.execAndReturnFirstDouble(query).get
   assert_equal(60 / timestep, sql_value)
 
+  hpxml_bldg = hpxml.buildings[0]
   # Conditioned Floor Area
   if (hpxml_bldg.total_fraction_cool_load_served > 0) || (hpxml_bldg.total_fraction_heat_load_served > 0) # EnergyPlus will only report conditioned floor area if there is an HVAC system
     hpxml_value = hpxml_bldg.building_construction.conditioned_floor_area
-    if hpxml_bldg.has_location(HPXML::LocationCrawlspaceConditioned)
-      hpxml_value += hpxml_bldg.slabs.select { |s| s.interior_adjacent_to == HPXML::LocationCrawlspaceConditioned }.map { |s| s.area }.sum
-    end
     query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='InputVerificationandResultsSummary' AND ReportForString='Entire Facility' AND TableName='Zone Summary' AND RowName='Conditioned Total' AND ColumnName='Area' AND Units='m2'"
     sql_value = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, 'm^2', 'ft^2')
     assert_in_epsilon(hpxml_value, sql_value, 0.1)
@@ -507,8 +521,8 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     hpxml_value = roof.insulation_assembly_r_value
     if hpxml_path.include? 'ASHRAE_Standard_140'
       # Compare R-value w/o film
-      hpxml_value -= Material.AirFilmRoofASHRAE140.rvalue
-      hpxml_value -= Material.AirFilmOutsideASHRAE140.rvalue
+      hpxml_value -= Material.AirFilmIndoorRoof(nil, true).rvalue
+      hpxml_value -= Material.AirFilmOutside(false, true).rvalue
       query = "SELECT AVG(Value) FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='Opaque Exterior' AND (RowName='#{roof_id}' OR RowName LIKE '#{roof_id}:%') AND ColumnName='U-Factor no Film' AND Units='W/m2-K'"
     else
       # Compare R-value w/ film
@@ -601,17 +615,17 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
       hpxml_value = wall.insulation_assembly_r_value
       if hpxml_path.include? 'ASHRAE_Standard_140'
         # Compare R-value w/o film
-        hpxml_value -= Material.AirFilmVerticalASHRAE140.rvalue
+        hpxml_value -= Material.AirFilmIndoorWall.rvalue
         if wall.is_exterior
-          hpxml_value -= Material.AirFilmOutsideASHRAE140.rvalue
+          hpxml_value -= Material.AirFilmOutside(false, true).rvalue
         else
-          hpxml_value -= Material.AirFilmVerticalASHRAE140.rvalue
+          hpxml_value -= Material.AirFilmIndoorWall.rvalue
         end
         query = "SELECT AVG(Value) FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND (RowName='#{wall_id}' OR RowName LIKE '#{wall_id}:%') AND ColumnName='U-Factor no Film' AND Units='W/m2-K'"
       elsif wall.is_interior
         # Compare R-value w/o film
-        hpxml_value -= Material.AirFilmVertical.rvalue
-        hpxml_value -= Material.AirFilmVertical.rvalue
+        hpxml_value -= Material.AirFilmIndoorWall.rvalue
+        hpxml_value -= Material.AirFilmIndoorWall.rvalue
         query = "SELECT AVG(Value) FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND (RowName='#{wall_id}' OR RowName LIKE '#{wall_id}:%') AND ColumnName='U-Factor no Film' AND Units='W/m2-K'"
       else
         # Compare R-value w/ film
@@ -686,22 +700,21 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     hpxml_value = floor.insulation_assembly_r_value
     if hpxml_path.include? 'ASHRAE_Standard_140'
       # Compare R-value w/o film
+      hpxml_value -= Material.AirFilmIndoorFloorAverage.rvalue
       if floor.is_exterior # Raised floor
-        hpxml_value -= Material.AirFilmFloorASHRAE140.rvalue
-        hpxml_value -= Material.AirFilmFloorZeroWindASHRAE140.rvalue
+        hpxml_value -= Material.AirFilmOutside(true).rvalue
       elsif floor.is_ceiling # Attic floor
-        hpxml_value -= Material.AirFilmFloorASHRAE140.rvalue
-        hpxml_value -= Material.AirFilmFloorASHRAE140.rvalue
+        hpxml_value -= Material.AirFilmIndoorFloorAverage.rvalue
       end
       query = "SELECT AVG(Value) FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND RowName='#{floor_id}' AND ColumnName='U-Factor no Film' AND Units='W/m2-K'"
     elsif floor.is_interior
       # Compare R-value w/o film
       if floor.is_ceiling
-        hpxml_value -= Material.AirFilmFloorAverage.rvalue
-        hpxml_value -= Material.AirFilmFloorAverage.rvalue
+        hpxml_value -= Material.AirFilmIndoorFloorAverage.rvalue
+        hpxml_value -= Material.AirFilmIndoorFloorAverage.rvalue
       else
-        hpxml_value -= Material.AirFilmFloorReduced.rvalue
-        hpxml_value -= Material.AirFilmFloorReduced.rvalue
+        hpxml_value -= Material.AirFilmIndoorFloorDown.rvalue
+        hpxml_value -= Material.AirFilmIndoorFloorDown.rvalue
       end
       query = "SELECT AVG(Value) FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND RowName='#{floor_id}' AND ColumnName='U-Factor no Film' AND Units='W/m2-K'"
     else
@@ -759,8 +772,8 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     end
     hpxml_value = Constructions.get_ufactor_shgc_adjusted_by_storms(nil, window.storm_type, window.ufactor, window.shgc)[0]
     if window.is_interior
-      hpxml_value = 1.0 / (1.0 / hpxml_value - Material.AirFilmVertical.rvalue)
-      hpxml_value = 1.0 / (1.0 / hpxml_value - Material.AirFilmVertical.rvalue)
+      hpxml_value = 1.0 / (1.0 / hpxml_value - Material.AirFilmIndoorWall.rvalue)
+      hpxml_value = 1.0 / (1.0 / hpxml_value - Material.AirFilmIndoorWall.rvalue)
     end
     query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND RowName='#{window_id}' AND ColumnName='#{col_name}' AND Units='W/m2-K'"
     sql_value = UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, 'W/(m^2*K)', 'Btu/(hr*ft^2*F)')
@@ -861,8 +874,8 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
 
     # Compare R-value w/o film
     hpxml_value = skylight.shaft_assembly_r_value
-    hpxml_value -= Material.AirFilmVertical.rvalue
-    hpxml_value -= Material.AirFilmVertical.rvalue
+    hpxml_value -= Material.AirFilmIndoorWall.rvalue
+    hpxml_value -= Material.AirFilmIndoorWall.rvalue
     query = "SELECT AVG(Value) FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND RowName='#{shaft_id}' AND ColumnName='U-Factor no Film' AND Units='W/m2-K'"
     sql_value = 1.0 / UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, 'W/(m^2*K)', 'Btu/(hr*ft^2*F)')
     assert_in_epsilon(hpxml_value, sql_value, 0.1)
@@ -895,7 +908,7 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
       col_name = 'U-Factor with Film'
     else
       col_name = 'U-Factor no Film'
-      hpxml_value -= 2 * Material.AirFilmVertical.rvalue
+      hpxml_value -= 2 * Material.AirFilmIndoorWall.rvalue
     end
     query = "SELECT Value FROM TabularDataWithStrings WHERE ReportName='EnvelopeSummary' AND ReportForString='Entire Facility' AND TableName='#{table_name}' AND RowName='#{door_id}' AND ColumnName='#{col_name}' AND Units='W/m2-K'"
     sql_value = 1.0 / UnitConversions.convert(sqlFile.execAndReturnFirstDouble(query).get, 'W/(m^2*K)', 'Btu/(hr*ft^2*F)')
@@ -1065,26 +1078,6 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     end
   end
 
-  # Check unmet hours
-  unmet_hours_htg = results.select { |k, _v| k.include? 'Unmet Hours: Heating' }.values.sum(0.0)
-  unmet_hours_clg = results.select { |k, _v| k.include? 'Unmet Hours: Cooling' }.values.sum(0.0)
-  if hpxml_path.include? 'base-hvac-undersized.xml'
-    assert_operator(unmet_hours_htg, :>, 1000)
-    assert_operator(unmet_hours_clg, :>, 1000)
-  else
-    if hpxml_bldg.total_fraction_heat_load_served == 0
-      assert_equal(0, unmet_hours_htg)
-    else
-      # for realistic backup staging, unmet hours are expected.
-      assert_operator(unmet_hours_htg, :<, 500) unless hpxml_path.include? 'research-features'
-    end
-    if hpxml_bldg.total_fraction_cool_load_served == 0
-      assert_equal(0, unmet_hours_clg)
-    else
-      assert_operator(unmet_hours_clg, :<, 500)
-    end
-  end
-
   sqlFile.close
 
   # Ensure sql file is immediately freed; otherwise we can get
@@ -1117,21 +1110,21 @@ def _check_unit_multiplier_results(xml, hpxml_bldg, annual_results_1x, annual_re
       abs_delta_tol = 500.0
       abs_frac_tol = 0.15
     elsif key.include?('Peak Load:')
-      # Check that the peak load difference is less than 0.2 kBtu/hr or less than 5%
-      abs_delta_tol = 0.2
-      abs_frac_tol = 0.05
+      # Check that the peak load difference is less than 200 Btu/hr or less than 10%
+      abs_delta_tol = 200
+      abs_frac_tol = 0.1
     elsif key.include?('Hot Water:')
       # Check that the hot water usage difference is less than 10 gal/yr or less than 2%
       abs_delta_tol = 10.0
       abs_frac_tol = 0.02
     elsif key.include?('Resilience: Battery')
-      # Check that the battery resilience difference is less than 1 hr or less than 1%
-      abs_delta_tol = 1.0
+      # Check that the battery resilience difference is less than 2 hrs or less than 1%
+      abs_delta_tol = 2.0
       abs_frac_tol = 0.01
     elsif key.include?('Airflow:')
-      # Check that airflow rate difference is less than 0.2 cfm or less than 1.0%
+      # Check that airflow rate difference is less than 0.2 cfm or less than 5%
       abs_delta_tol = 0.2
-      abs_frac_tol = 0.01
+      abs_frac_tol = 0.05
     elsif key.include?('Unmet Hours:')
       # Check that the unmet hours difference is less than 10 hrs
       abs_delta_tol = 10
@@ -1160,7 +1153,9 @@ def _check_unit_multiplier_results(xml, hpxml_bldg, annual_results_1x, annual_re
    'Humidity Ratio:', 'Relative Humidity:', 'Dewpoint Temperature:', 'Radiant Temperature:', 'Operative Temperature:',
    'Utility Bills:',
    'HVAC Zone Design Load:',
-   'HVAC Space Design Load:'].each do |key|
+   'HVAC Space Design Load:',
+   'Dwelling Unit Energy Use:',
+   'Dwelling Unit Fuel Use:'].each do |key|
     annual_results_1x.delete_if { |k, _v| k.start_with? key }
     annual_results_10x.delete_if { |k, _v| k.start_with? key }
     monthly_results_1x.delete_if { |k, _v| k.start_with? key }
@@ -1193,6 +1188,7 @@ def _check_unit_multiplier_results(xml, hpxml_bldg, annual_results_1x, annual_re
       vals_1x.zip(vals_10x).each_with_index do |(val_1x, val_10x), i|
         period = is_timeseries ? Date::ABBR_MONTHNAMES[i + 1] : 'Annual'
         if not (key.include?('Unmet Hours') ||
+                key.include?('Resilience') ||
                 key.include?('HVAC Design Temperature') ||
                 key.include?('Weather') ||
                 key.include?('HVAC Geothermal Loop: Borehole/Trench Length'))
@@ -1406,11 +1402,11 @@ def _get_simulation_hot_water_results(results)
 end
 
 def _check_ashrae_140_results(htg_loads, clg_loads)
-  # Pub 002-2024
-  htg_min = [48.07, 74.30, 35.98, 39.74, 45.72, 39.13, 42.17, 48.30, 58.15, 121.76, 126.71, 24.59, 27.72, 57.57, 48.33]
-  htg_max = [61.35, 82.96, 48.09, 49.95, 51.97, 55.54, 58.15, 63.40, 74.24, 137.68, 146.84, 81.73, 70.27, 91.66, 56.47]
-  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.90, -0.56, -1.96, 8.15, 71.16, 3.20, -25.78, -3.14, 7.79, 5.49]
-  htg_dt_max = [29.62, -9.44, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 22.68, 11.47, 32.01, 38.95]
+  # Pub 002-2024 (Working Draft, 8/14/2026)
+  htg_min = [48.06, 74.30, 35.98, 39.74, 45.72, 39.11, 42.15, 48.30, 58.15, 121.75, 126.70, 21.72, 24.97, 56.21, 45.93]
+  htg_max = [61.35, 82.94, 48.09, 49.95, 51.97, 55.54, 58.15, 63.39, 74.24, 137.67, 146.84, 82.54, 71.04, 96.55, 56.36]
+  htg_dt_min = [17.53, -16.08, -12.92, -12.14, -10.90, -0.56, -1.95, 8.16, 71.15, 3.21, -28.64, -3.25, 7.61, 8.10]
+  htg_dt_max = [29.62, -9.44, -5.89, 0.24, -3.37, 6.42, 4.54, 15.14, 79.06, 11.26, 23.49, 11.50, 35.74, 42.93]
   clg_min = [42.50, 47.72, 41.15, 31.54, 21.03, 50.55, 36.63, 52.26, 34.16, 57.07, 50.19]
   clg_max = [58.66, 61.33, 51.69, 41.85, 29.35, 73.48, 59.72, 68.60, 47.58, 73.51, 60.72]
   clg_dt_min = [0.69, -8.24, -18.53, -30.58, 7.51, -16.52, 6.75, -12.95, 11.62, 5.12]

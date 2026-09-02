@@ -13,6 +13,7 @@ Upon completing an OpenStudio-ERI run, a variety of summary output files and sim
 - :ref:`home_timeseries_outputs_csv`
 - :ref:`home_configurations_hpxml`
 - :ref:`home_energyplus_files`
+- :ref:`bill_outputs`
 - :ref:`hers_diagnostic_output`
 
 Output directories will reflect the requested :ref:`hpxml_calculations`:
@@ -344,8 +345,8 @@ So the sum of all end uses for a given fuel (e.g., sum of all "End Use: Natural 
   End Use: Wood Pellets: Lighting (MBtu)                            Not used by OS-ERI
   End Use: Wood Pellets: Fireplace (MBtu)                           Not used by OS-ERI
   End Use: Wood Pellets: Generator (MBtu)                           Positive value for any fuel consumed
-  End Use: Coal: Heating (MBtu)                                     Excludes heat pump backup
-  End Use: Coal: Heating Heat Pump Backup (MBtu)
+  End Use: Coal: Heating (MBtu)                                     Not used by OS-ERI
+  End Use: Coal: Heating Heat Pump Backup (MBtu)                    Not used by OS-ERI
   End Use: Coal: Hot Water (MBtu)                                   Not used by OS-ERI
   End Use: Coal: Clothes Dryer (MBtu)                               Not used by OS-ERI
   End Use: Coal: Range/Oven (MBtu)                                  Not used by OS-ERI
@@ -458,7 +459,8 @@ Annual unmet hours are listed below.
   Unmet Hours: EV Driving (hr)  Not used by OS-ERI
   ============================  =====
 
-  .. [#] The unmet heating and cooling numbers reflect the number of hours during the heating/cooling season when the conditioned space temperature deviates more than 0.2 deg-C (0.36 deg-F) from the heating/cooling setpoint.
+  .. [#] The unmet heating and cooling numbers reflect the number of hours during the heating/cooling season when the conditioned space temperature deviates more than 0.5 deg-F from the heating/cooling setpoint.
+         OpenStudio-ERI will issue a warning if there are more than 300 unmet hours for heating or cooling.
 
 Peak Building Electricity
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -487,8 +489,8 @@ Peak building loads are listed below.
   =======================================  ==================================
   Type                                     Notes
   =======================================  ==================================
-  Peak Load: Heating: Delivered (kBtu/hr)  Includes HVAC distribution losses.
-  Peak Load: Cooling: Delivered (kBtu/hr)  Includes HVAC distribution losses.
+  Peak Load: Heating: Delivered (Btu/hr)   Includes HVAC distribution losses.
+  Peak Load: Cooling: Delivered (Btu/hr)   Includes HVAC distribution losses.
   =======================================  ==================================
 
 Note that the "Delivered" peak loads represent the energy delivered by the HVAC system; if a system is significantly undersized, there will be unmet peak load not reflected by these values.
@@ -700,6 +702,55 @@ In addition, raw EnergyPlus simulation input/output files are available for each
   It is highly discouraged for software tools to read the raw EnergyPlus output files.
   The EnergyPlus input/output files are made available for inspection, but the outputs for certain situations can be misleading if one does not know how the model was created.
   If there are additional outputs of interest that are not available in the annual/timeseries output files, please send us a request.
+
+.. _bill_outputs:
+
+Home Utility Bills (CSV)
+------------------------
+
+OpenStudio-ERI can optionally generate annual/monthly utility bill output files (e.g., ``RatedHome_AnnualBills.csv`` and ``RatedHome_MonthlyBills.csv`` for the Rated Home).
+
+**Note**: These output files are only available when utility bill scenarios are specified.
+When no utility bill scenarios are specified, utility bill output files are not generated.
+See :ref:`hpxml_utility_bill_scenarios` for more information about specifying utility bill scenarios.
+
+Annual Bills by Fuel Use
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Annual results for each utility bill scenario defined in the HPXML file are listed as shown below.
+
+  =================================================  ====================
+  Type                                               Notes
+  =================================================  ====================
+  <ScenarioName>: Total (USD)                        Scenario annual total charges.
+  <ScenarioName>: Electricity: Fixed (USD)           Scenario annual fixed charges for electricity.
+  <ScenarioName>: Electricity: Energy (USD)          Scenario annual energy charges for electricity.
+  <ScenarioName>: Electricity: PV Credit (USD)       Scenario annual production credit (negative value) for PV.
+  <ScenarioName>: Electricity: Total (USD)           Scenario annual total charges for electricity.
+  <ScenarioName>: Natural Gas: Fixed (USD)           Scenario annual fixed charges for natural gas.
+  <ScenarioName>: Natural Gas: Energy (USD)          Scenario annual energy charges for natural gas.
+  <ScenarioName>: Natural Gas: Total (USD)           Scenario annual total charges for natural gas.
+  <ScenarioName>: Fuel Oil: Fixed (USD)              Scenario annual fixed charges for fuel oil.
+  <ScenarioName>: Fuel Oil: Energy (USD)             Scenario annual energy charges for fuel oil.
+  <ScenarioName>: Fuel Oil: Total (USD)              Scenario annual total charges for fuel oil.
+  <ScenarioName>: Propane: Fixed (USD)               Scenario annual fixed charges for propane.
+  <ScenarioName>: Propane: Energy (USD)              Scenario annual energy charges for propane.
+  <ScenarioName>: Propane: Total (USD)               Scenario annual total charges for propane.
+  <ScenarioName>: Wood Cord: Fixed (USD)             Scenario annual fixed charges for wood cord.
+  <ScenarioName>: Wood Cord: Energy (USD)            Scenario annual energy charges for wood cord.
+  <ScenarioName>: Wood Cord: Total (USD)             Scenario annual total charges for wood cord.
+  <ScenarioName>: Wood Pellets: Fixed (USD)          Scenario annual fixed charges for wood pellets.
+  <ScenarioName>: Wood Pellets: Energy (USD)         Scenario annual energy charges for wood pellets.
+  <ScenarioName>: Wood Pellets: Total (USD)          Scenario annual total charges for wood pellets.
+  <ScenarioName>: Coal: Fixed (USD)                  Not used by OS-ERI
+  <ScenarioName>: Coal: Energy (USD)                 Not used by OS-ERI
+  <ScenarioName>: Coal: Total (USD)                  Not used by OS-ERI
+  =================================================  ====================
+
+Monthly Bills by Fuel Use
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Monthly results for each utility bill scenario defined in the HPXML file are listed as rows corresponding to Month, and columns corresponding to Type.
 
 .. _hers_diagnostic_output:
 

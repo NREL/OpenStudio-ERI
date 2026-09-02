@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
+<HPXML xmlns='http://hpxmlonline.com/2025/12' schemaVersion='5.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -34,6 +34,9 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
+          <Soil>
+            <Conductivity>0.8</Conductivity>
+          </Soil>
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
@@ -88,12 +91,22 @@
             </VentilationRate>
           </Attic>
         </Attics>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='Foundation1'/>
+            <FoundationType>
+              <Ambient/>
+            </FoundationType>
+            <AttachedToFloor idref='Floor1'/>
+          </Foundation>
+        </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='Roof1'/>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
+            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -107,6 +120,7 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
+            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -126,6 +140,7 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>0</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -146,6 +161,7 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>90</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -166,6 +182,7 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>180</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -186,6 +203,7 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>270</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -207,6 +225,7 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>90</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -224,6 +243,7 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>270</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -311,7 +331,7 @@
         <Doors>
           <Door>
             <SystemIdentifier id='Door1'/>
-            <AttachedToWall idref='Wall3'/>
+            <AttachedToWall idref='Wall1'/>
             <Area>20.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>3.04</RValue>
@@ -458,7 +478,7 @@
           <LabelElectricRate>0.08</LabelElectricRate>
           <LabelGasRate>0.58</LabelGasRate>
           <LabelAnnualGasCost>23.0</LabelAnnualGasCost>
-          <LabelUsage>999.0</LabelUsage>
+          <LabelUsage>6.0</LabelUsage>
           <Capacity>2.874</Capacity>
         </ClothesWasher>
         <ClothesDryer>
@@ -468,6 +488,7 @@
           <FuelType>natural gas</FuelType>
           <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>
@@ -475,10 +496,10 @@
           <Location>conditioned space</Location>
           <RatedAnnualkWh>467.0</RatedAnnualkWh>
           <PlaceSettingCapacity>12</PlaceSettingCapacity>
-          <LabelElectricRate>999.0</LabelElectricRate>
-          <LabelGasRate>999.0</LabelGasRate>
-          <LabelAnnualGasCost>999.0</LabelAnnualGasCost>
-          <LabelUsage>999.0</LabelUsage>
+          <LabelElectricRate>0.12</LabelElectricRate>
+          <LabelGasRate>1.09</LabelGasRate>
+          <LabelAnnualGasCost>33.12</LabelAnnualGasCost>
+          <LabelUsage>4.0</LabelUsage>
         </Dishwasher>
         <Refrigerator>
           <SystemIdentifier id='Refrigerator1'/>

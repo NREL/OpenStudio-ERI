@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
+<HPXML xmlns='http://hpxmlonline.com/2025/12' schemaVersion='5.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>redacted</XMLGeneratedBy>
@@ -519,7 +519,7 @@
             <Tracking>fixed</Tracking>
             <ArrayAzimuth>180</ArrayAzimuth>
             <ArrayTilt>22.0</ArrayTilt>
-            <MaxPowerOutput>8.0</MaxPowerOutput>
+            <MaxPowerOutput>8000.0</MaxPowerOutput>
             <SystemLossesFraction>0.14</SystemLossesFraction>
             <AttachedToInverter idref='Inverter1'/>
           </PVSystem>
@@ -549,6 +549,7 @@
           <FuelType>natural gas</FuelType>
           <CombinedEnergyFactor>2.32</CombinedEnergyFactor>
           <ControlType>timer</ControlType>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

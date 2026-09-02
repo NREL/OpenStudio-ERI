@@ -518,11 +518,12 @@ def get_system_eec(system, type, is_dfhp_primary = nil)
       # Get assumed EF for combi system
 
       eta_c = system.related_hvac_system.heating_efficiency_afue
+      system.related_hvac_system.heating_efficiency_percent if eta_c.nil?
       if system.water_heater_type == HPXML::WaterHeaterTypeCombiTankless
         ef = eta_c
       elsif system.water_heater_type == HPXML::WaterHeaterTypeCombiStorage
         # Calculates the energy factor based on UA of the tank and conversion efficiency (eta_c)
-        # Source: Burch and Erickson 2004 - http://www.nrel.gov/docs/gen/fy04/36035.pdf
+        # Source: Burch and Erickson 2004 - https://docs.nlr.gov/docs/gen/fy04/36035.pdf
 
         act_vol = Waterheater.calc_storage_tank_actual_vol(system.tank_volume, nil)
         a_side = Waterheater.calc_tank_areas(act_vol)[1]

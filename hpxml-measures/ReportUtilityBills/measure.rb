@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # see the URL below for information on how to write OpenStudio measures
-# http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
+# http://natlabrockies.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require 'msgpack'
 require 'time'
@@ -106,28 +106,6 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
       end
     end
 
-    # Require not DSE
-    @hpxml_buildings.each do |hpxml_bldg|
-      (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).each do |htg_system|
-        next unless (htg_system.is_a?(HPXML::HeatingSystem) && htg_system.is_heat_pump_backup_system) || htg_system.fraction_heat_load_served > 0
-        next if htg_system.distribution_system_idref.nil?
-        next unless htg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeDSE
-        next if htg_system.distribution_system.annual_heating_dse.nil?
-        next if htg_system.distribution_system.annual_heating_dse == 1
-
-        warnings << 'DSE is not currently supported when calculating utility bills.'
-      end
-      (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).each do |clg_system|
-        next unless clg_system.fraction_cool_load_served > 0
-        next if clg_system.distribution_system_idref.nil?
-        next unless clg_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeDSE
-        next if clg_system.distribution_system.annual_cooling_dse.nil?
-        next if clg_system.distribution_system.annual_cooling_dse == 1
-
-        warnings << 'DSE is not currently supported when calculating utility bills.'
-      end
-    end
-
     return warnings.uniq
   end
 
@@ -188,7 +166,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
 
     # Fuel outputs
     fuels.each do |(fuel_type, is_production), fuel|
-      next unless has_fuel[get_hpxml_fuel(fuel_type)]
+      next unless has_fuel[Outputs::FT_to_HPXML_fuel_map[fuel_type]]
       next if is_production && !has_pv # we don't need to request this meter if there isn't pv
 
       Model.add_output_meter(model, meter_name: fuel.meter, reporting_frequency: 'monthly')
@@ -346,7 +324,10 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
         end
       end
     elsif not bill_scenario.pv_monthly_grid_connection_fee_dollars.nil?
-      pv_monthly_fee = bill_scenario.pv_monthly_grid_connection_fee_dollars
+      has_pv = hpxml_buildings.map { |hpxml_bldg| hpxml_bldg.pv_systems.map { |pv_system| pv_system.max_power_output }.sum }.sum > 0
+      if has_pv
+        pv_monthly_fee = bill_scenario.pv_monthly_grid_connection_fee_dollars
+      end
     end
 
     return pv_monthly_fee
@@ -388,6 +369,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
   # @param utility_bills [Hash] Fuel type => UtilityRate object
   # @param annual_output_path [String] the file path containing annual utility bills
   # @param bill_scenario_name [String] the name of the HPXML Utility Bill Scenario
+  # @return [nil]
   def report_runperiod_output_results(runner, args, utility_bills, annual_output_path, bill_scenario_name)
     return unless (args[:include_annual_bills] || args[:register_annual_bills])
 
@@ -421,6 +403,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
   # @param bill_scenario_name [String] the name of the HPXML Utility Bill Scenario
   # @param monthly_data [Array<String>] lines of monthly utility bill data
   # @param header [HPXML::Header] HPXML Header object (one per HPXML file)
+  # @return [nil]
   def get_monthly_output_results(args, utility_bills, bill_scenario_name, monthly_data, header)
     run_period = (header.sim_begin_month - 1)..(header.sim_end_month - 1)
     monthly_data << ["#{bill_scenario_name}: Total", 'USD'] + ([0.0] * run_period.size)
@@ -444,6 +427,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
   # @param timestamps [Array<String>] array of monthly timestamps (e.g., 2007-01-01T00:00:00)
   # @param monthly_data [Array<String>] lines of monthly utility bill data
   # @param monthly_output_path [String] the file path containing monthly utility bills
+  # @return [nil]
   def report_monthly_output_results(runner, args, timestamps, monthly_data, monthly_output_path)
     return unless (args[:include_monthly_bills] || args[:register_monthly_bills])
 
@@ -513,7 +497,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
   def get_utility_rates(hpxml_path, has_fuel, utility_rates, bill_scenario, pv_monthly_fee, num_units = 1)
     warnings = []
     utility_rates.each do |fuel_type, rate|
-      next unless has_fuel[get_hpxml_fuel(fuel_type)]
+      next unless has_fuel[Outputs::FT_to_HPXML_fuel_map[fuel_type]]
 
       case fuel_type
       when FT::Elec
@@ -630,6 +614,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
   # @param utility_bills [Hash] Fuel type => UtilityBill object
   # @param utility_bill_scenario [HPXML::UtilityBillScenario] HPXML Utility Bill Scenario object
   # @param header [HPXML::Header] HPXML Header object (one per HPXML file)
+  # @return [nil]
   def get_utility_bills(fuels, utility_rates, utility_bills, utility_bill_scenario, header)
     net_elec = 0
 
@@ -717,6 +702,7 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
   #
   # @param fuels [Hash] Fuel type, is_production => Fuel object
   # @param utility_bill_scenario [HPXML::UtilityBillScenario] HPXML Utility Bill Scenario object
+  # @return [nil]
   def get_outputs(fuels, utility_bill_scenario)
     fuels.each do |(fuel_type, _is_production), fuel|
       unit_conv = UnitConversions.convert(1.0, 'J', fuel.units)
@@ -749,20 +735,6 @@ class ReportUtilityBills < OpenStudio::Measure::ReportingMeasure
       vals << row[row.keys[0]][index] * unit_conv
     end
     return vals
-  end
-
-  # Get HPXML fuel type according to output reporting fuel type constant.
-  #
-  # @param fuel_type [String] Constant fuel type for output reporting
-  # @return [String] HPXML fuel type
-  def get_hpxml_fuel(fuel_type)
-    return { FT::Elec => HPXML::FuelTypeElectricity,
-             FT::Gas => HPXML::FuelTypeNaturalGas,
-             FT::Oil => HPXML::FuelTypeOil,
-             FT::Propane => HPXML::FuelTypePropane,
-             FT::WoodCord => HPXML::FuelTypeWoodCord,
-             FT::WoodPellets => HPXML::FuelTypeWoodPellets,
-             FT::Coal => HPXML::FuelTypeCoal }[fuel_type]
   end
 end
 

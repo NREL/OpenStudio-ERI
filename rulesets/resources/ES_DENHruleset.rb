@@ -225,7 +225,7 @@ module ES_DENH_Ruleset
 
     solar_absorptance = lookup_reference_value('roof_solar_abs')
     emittance = lookup_reference_value('roof_emittance')
-    default_roof_pitch = 5.0 # assume 5:12 pitch
+    default_roof_pitch = 6.0 # assume 6:12 pitch
     has_vented_attic = (new_bldg.attics.select { |a| a.attic_type == HPXML::AtticTypeVented }.size > 0)
 
     orig_bldg.roofs.each do |orig_roof|
@@ -233,7 +233,7 @@ module ES_DENH_Ruleset
       roof_interior_adjacent_to = orig_roof.interior_adjacent_to.gsub('unvented', 'vented')
       if orig_roof.interior_adjacent_to == HPXML::LocationConditionedSpace && has_vented_attic
         roof_interior_adjacent_to = HPXML::LocationAtticVented
-        roof_pitch = default_roof_pitch if roof_pitch == 0
+        roof_pitch = default_roof_pitch
       end
       if roof_interior_adjacent_to != HPXML::LocationConditionedSpace
         insulation_assembly_r_value = [orig_roof.insulation_assembly_r_value, 2.3].min # uninsulated
@@ -1001,7 +1001,8 @@ module ES_DENH_Ruleset
                                 location: location,
                                 is_shared_appliance: false,
                                 fuel_type: fuel_type,
-                                combined_energy_factor: lookup_reference_value('clothes_dryer_cef'))
+                                combined_energy_factor: lookup_reference_value('clothes_dryer_cef'),
+                                is_vented: true)
   end
 
   def self.set_appliances_dishwasher_reference(orig_bldg, new_bldg)
@@ -1200,7 +1201,7 @@ module ES_DENH_Ruleset
     infil_air_leakage_ach50 = lookup_reference_value('infil_air_leakage_ach50') if infil_air_leakage_ach50.nil?
 
     if not infil_air_leakage_cfm50_per_sqft.nil?
-      tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
+      tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg, nil)
       infil_air_leakage = tot_cb_area * infil_air_leakage_cfm50_per_sqft
       infil_unit_of_measure = HPXML::UnitsCFM
     elsif not infil_air_leakage_ach50.nil?
@@ -1486,6 +1487,10 @@ module ES_DENH_Ruleset
   def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system)
     seer = lookup_reference_value('hvac_ac_seer')
     eer = lookup_reference_value('hvac_ac_eer')
+    if seer.nil? && eer.nil?
+      seer2 = lookup_reference_value('hvac_ac_seer2')
+      eer2 = lookup_reference_value('hvac_ac_eer2')
+    end
     compressor_type = lookup_reference_value('hvac_ac_compressor')
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
@@ -1502,7 +1507,9 @@ module ES_DENH_Ruleset
                                  cooling_capacity: -1, # Use auto-sizing
                                  fraction_cool_load_served: load_frac,
                                  cooling_efficiency_seer: seer,
+                                 cooling_efficiency_seer2: seer2,
                                  cooling_efficiency_eer: eer,
+                                 cooling_efficiency_eer2: eer2,
                                  compressor_type: compressor_type,
                                  charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
@@ -1556,6 +1563,11 @@ module ES_DENH_Ruleset
         hspf = lookup_reference_value('hvac_ashp_hspf')
         seer = lookup_reference_value('hvac_ashp_seer')
         eer = lookup_reference_value('hvac_ashp_eer')
+        if hspf.nil? && seer.nil? && eer.nil?
+          hspf2 = lookup_reference_value('hvac_ashp_hspf2')
+          seer2 = lookup_reference_value('hvac_ashp_seer2')
+          eer2 = lookup_reference_value('hvac_ashp_eer2')
+        end
         compressor_type = lookup_reference_value('hvac_ashp_compressor')
       end
       if orig_htg_system.is_shared_system && orig_htg_system.is_a?(HPXML::HeatPump) &&
@@ -1620,8 +1632,11 @@ module ES_DENH_Ruleset
                             fraction_heat_load_served: heat_load_frac,
                             fraction_cool_load_served: cool_load_frac,
                             cooling_efficiency_seer: seer,
+                            cooling_efficiency_seer2: seer2,
                             cooling_efficiency_eer: eer,
+                            cooling_efficiency_eer2: eer2,
                             heating_efficiency_hspf: hspf,
+                            heating_efficiency_hspf2: hspf2,
                             heating_efficiency_cop: cop,
                             compressor_type: compressor_type,
                             pump_watts_per_ton: pump_watts_per_ton,

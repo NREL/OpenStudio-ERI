@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # see the URL below for information on how to write OpenStudio measures
-# http://nrel.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
+# http://natlabrockies.github.io/OpenStudio-user-documentation/reference/measure_writing_guide/
 
 require 'openstudio'
 require 'pathname'
@@ -238,6 +238,7 @@ class BuildResidentialScheduleFile < OpenStudio::Measure::ModelMeasure
   #
   # @param hpxml [HPXML] HPXML object
   # @param args [Hash] Map of :argument_name => value
+  # @return [nil]
   def get_simulation_parameters(hpxml, args)
     args[:minutes_per_step] = 60
     if !hpxml.header.timestep.nil?
@@ -250,10 +251,11 @@ class BuildResidentialScheduleFile < OpenStudio::Measure::ModelMeasure
     args[:total_days_in_year] = Calendar.num_days_in_year(hpxml.header.sim_calendar_year)
   end
 
-  # Get generator inputs that are required for the stochastic schedule generator.
+  # Updates the inputs that are required for the stochastic schedule generator.
   #
   # @param hpxml_bldg [HPXML::Building] HPXML Building object representing an individual dwelling unit
   # @param args [Hash] Map of :argument_name => value
+  # @return [nil]
   def get_generator_inputs(hpxml_bldg, args)
     if Constants::StateCodesMap.keys.include?(hpxml_bldg.state_code)
       args[:state] = hpxml_bldg.state_code

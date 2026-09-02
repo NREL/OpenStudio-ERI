@@ -39,8 +39,8 @@ module ElectricPanel
   # Get the component attached to the given service feeder.
   #
   # @param components [Array<HPXML::XXX>] List of HPXML objects
-  # @param [HPXML::ServiceFeeder] Object that defines a single electric panel service feeder
-  # @return [HPXML::XXX] The component referenced by the service_feeder
+  # @param service_feeder [HPXML::ServiceFeeder] Object that defines a single electric panel service feeder
+  # @return [HPXML::XXX] The HPXML component referenced by the service feeder
   def self.get_service_feeder_component(components, service_feeder)
     components.each do |component|
       next if !service_feeder.component_idrefs.include?(component.id)
@@ -145,10 +145,10 @@ module ElectricPanel
 
   # Get the discounted load given the total load, threshold, and demand factor.
   #
-  # @param [Double] load (W)
-  # @param [Double] threshold (W)
-  # @param [Double] demand factor (frac)
-  # @return [Double] the discounted load (W)
+  # @param load [Double] Load to be discounted (W)
+  # @param threshold [Double] Load threshold (W)
+  # @param demand_factor [Double] Demand factor (frac)
+  # @return [Double] The discounted load (W)
   def self.discount_load(load, threshold, demand_factor)
     return 1.0 * [threshold, load].min + demand_factor * [0, load - threshold].max
   end
@@ -201,6 +201,29 @@ module ElectricPanel
       electric_panel.headroom_spaces = rated_total_spaces - occupied_spaces
       electric_panel.headroom_spaces_isdefaulted = true
     end
+  end
+
+  # Returns the list of all possible electric panel load types
+  #
+  # @return [Array<String>] List of load types
+  def self.all_panel_load_types
+    return [HPXML::ElectricPanelLoadTypeHeating,
+            HPXML::ElectricPanelLoadTypeCooling,
+            HPXML::ElectricPanelLoadTypeWaterHeater,
+            HPXML::ElectricPanelLoadTypeClothesDryer,
+            HPXML::ElectricPanelLoadTypeDishwasher,
+            HPXML::ElectricPanelLoadTypeRangeOven,
+            HPXML::ElectricPanelLoadTypeMechVent,
+            HPXML::ElectricPanelLoadTypePermanentSpaHeater,
+            HPXML::ElectricPanelLoadTypePermanentSpaPump,
+            HPXML::ElectricPanelLoadTypePoolHeater,
+            HPXML::ElectricPanelLoadTypePoolPump,
+            HPXML::ElectricPanelLoadTypeWellPump,
+            HPXML::ElectricPanelLoadTypeElectricVehicleCharging,
+            HPXML::ElectricPanelLoadTypeLighting,
+            HPXML::ElectricPanelLoadTypeKitchen,
+            HPXML::ElectricPanelLoadTypeLaundry,
+            HPXML::ElectricPanelLoadTypeOther]
   end
 end
 

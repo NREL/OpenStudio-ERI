@@ -195,7 +195,7 @@ def create_test_hpxmls
       hpxml.buildings.add(building_id: 'MyBuilding')
       hpxml_files.each do |hpxml_file|
         if hpxml_file.include? 'RESNET_Tests/4.1_Standard_140'
-          hpxml = HPXML.new(hpxml_path: File.join(tests_dir, hpxml_file))
+          hpxml = get_standard_140_hpxml(File.join(tests_dir, hpxml_file))
           next
         end
         hpxml_bldg = hpxml.buildings[0]
@@ -226,7 +226,7 @@ def create_test_hpxmls
         set_hpxml_water_fixtures(hpxml_file, hpxml_bldg)
         set_hpxml_clothes_washer(hpxml_file, eri_version, hpxml_bldg)
         set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
-        set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
+        set_hpxml_dishwasher(hpxml_file, hpxml_bldg)
         set_hpxml_refrigerator(hpxml_file, hpxml_bldg)
         set_hpxml_cooking_range(hpxml_file, hpxml_bldg)
         set_hpxml_oven(hpxml_file, hpxml_bldg)
@@ -283,6 +283,11 @@ end
 
 def get_standard_140_hpxml(hpxml_path)
   hpxml = HPXML.new(hpxml_path: hpxml_path)
+
+  hpxml_bldg = hpxml.buildings[0]
+  if hpxml_bldg.air_infiltration_measurements[0].infiltration_volume.nil?
+    hpxml_bldg.air_infiltration_measurements[0].infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
+  end
 
   return hpxml
 end
@@ -534,7 +539,7 @@ def set_hpxml_air_infiltration_measurements(hpxml_file, hpxml_bldg)
                                                  air_leakage: ach50,
                                                  infiltration_volume: hpxml_bldg.building_construction.conditioned_floor_area * 8.5)
   elsif hpxml_file.include?('EPA_Tests/MF')
-    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg)
+    tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(hpxml_bldg, nil)
     if hpxml_file.include?('MF_National_1.3')
       air_leakage = 0.27
     else
@@ -2533,7 +2538,8 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
                                   location: HPXML::LocationConditionedSpace,
                                   fuel_type: HPXML::FuelTypeNaturalGas,
                                   control_type: default_values[:control_type],
-                                  combined_energy_factor: default_values[:combined_energy_factor])
+                                  combined_energy_factor: default_values[:combined_energy_factor],
+                                  is_vented: true)
   elsif ['RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/02-L100.xml',
          'RESNET_Tests/Other_HERS_AutoGen_Reference_Home_301_2014/03-L304.xml',
          'RESNET_Tests/4.3_HERS_Method/L100A-01.xml',
@@ -2552,11 +2558,12 @@ def set_hpxml_clothes_dryer(hpxml_file, eri_version, hpxml_bldg)
                                   location: HPXML::LocationConditionedSpace,
                                   fuel_type: HPXML::FuelTypeElectricity,
                                   control_type: default_values[:control_type],
-                                  combined_energy_factor: default_values[:combined_energy_factor])
+                                  combined_energy_factor: default_values[:combined_energy_factor],
+                                  is_vented: true)
   end
 end
 
-def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
+def set_hpxml_dishwasher(hpxml_file, hpxml_bldg)
   if hpxml_file.include?('EPA_Tests')
     if hpxml_file.include?('SF_National_3.3') || hpxml_file.include?('MF_National_1.3')
       rated_annual_kwh = 240
@@ -2580,7 +2587,7 @@ def set_hpxml_dishwasher(hpxml_file, eri_version, hpxml_bldg)
                                label_annual_gas_cost: label_annual_gas_cost,
                                label_usage: 208 / 52)
   elsif hpxml_file.include?('HERS_AutoGen') || hpxml_file.include?('HERS_Method') || hpxml_file.include?('Hot_Water') || hpxml_file.include?('Multi_Climate')
-    default_values = Defaults.get_dishwasher_values(eri_version)
+    default_values = Defaults.get_dishwasher_values()
     hpxml_bldg.dishwashers.clear
     hpxml_bldg.dishwashers.add(id: "Dishwasher#{hpxml_bldg.dishwashers.size + 1}",
                                is_shared_appliance: false,
@@ -2921,6 +2928,11 @@ def create_sample_hpxmls
                   'base-mechvent-multiple.xml',
                   'base-mechvent-supply.xml',
                   'base-mechvent-whole-house-fan.xml',
+                  'base-misc-bills.xml',
+                  'base-misc-bills-detailed-only.xml',
+                  'base-misc-bills-pv.xml',
+                  'base-misc-bills-pv-detailed-only.xml',
+                  'base-misc-bills-pv-mixed.xml',
                   'base-misc-generators.xml',
                   'base-pv.xml',
                   'base-pv-battery.xml']
@@ -2945,7 +2957,12 @@ def create_sample_hpxmls
     hpxml.header.eri_calculation_versions = ['latest']
     hpxml.header.co2index_calculation_versions = ['latest']
     hpxml.header.iecc_eri_calculation_versions = [IECC::AllVersions[-1]]
-    hpxml.header.utility_bill_scenarios.clear
+    hpxml.header.utility_bill_scenarios.clear unless hpxml_path.include? 'misc-bills'
+    hpxml.header.utility_bill_scenarios.each do |bill_scenario|
+      next if bill_scenario.elec_tariff_filepath.nil?
+
+      bill_scenario.elec_tariff_filepath = File.join('..', '..', 'hpxml-measures', 'ReportUtilityBills', 'resources', 'detailed_rates', File.basename(bill_scenario.elec_tariff_filepath))
+    end
     hpxml.header.timestep = nil
     hpxml_bldg.site.site_type = nil
     hpxml_bldg.site.surroundings = nil
@@ -2956,19 +2973,28 @@ def create_sample_hpxmls
     hpxml_bldg.site.ground_conductivity = nil
     hpxml_bldg.building_construction.number_of_units_in_building = nil
     hpxml_bldg.building_construction.number_of_bathrooms = nil
+    hpxml_bldg.air_infiltration_measurements.each do |measurement|
+      measurement.infiltration_type = nil
+      if measurement.infiltration_volume.nil?
+        measurement.infiltration_volume = hpxml_bldg.building_construction.conditioned_building_volume
+      end
+    end
     hpxml_bldg.building_construction.conditioned_building_volume = nil
     hpxml_bldg.building_construction.average_ceiling_height = nil
     hpxml_bldg.building_construction.unit_height_above_grade = nil
-    hpxml_bldg.air_infiltration_measurements.each do |measurement|
-      measurement.infiltration_type = nil
-    end
     hpxml_bldg.attics.each do |attic|
+      if attic.attic_type == HPXML::AtticTypeVented
+        attic.vented_attic_sla = 0.003 if attic.vented_attic_sla.nil?
+      end
       if [HPXML::AtticTypeVented,
           HPXML::AtticTypeUnvented].include? attic.attic_type
         attic.within_infiltration_volume = false if attic.within_infiltration_volume.nil?
       end
     end
     hpxml_bldg.foundations.each do |foundation|
+      if foundation.foundation_type == HPXML::FoundationTypeCrawlspaceVented
+        foundation.vented_crawlspace_sla = 0.00667 if foundation.vented_crawlspace_sla.nil?
+      end
       next unless [HPXML::FoundationTypeBasementUnconditioned,
                    HPXML::FoundationTypeCrawlspaceUnvented,
                    HPXML::FoundationTypeCrawlspaceVented].include? foundation.foundation_type
@@ -2982,6 +3008,9 @@ def create_sample_hpxmls
       if roof.radiant_barrier && roof.radiant_barrier_grade.nil?
         roof.radiant_barrier_grade = 2
       end
+      roof.roof_color = nil
+      roof.solar_absorptance = 0.7
+      roof.emittance = 0.92
     end
     (hpxml_bldg.rim_joists + hpxml_bldg.walls).each do |wall_or_rim_joist|
       wall_or_rim_joist.siding = nil
@@ -3088,7 +3117,10 @@ def create_sample_hpxmls
       end
     end
     if not hpxml_bldg.clothes_dryers.empty?
-      hpxml_bldg.clothes_dryers[0].drying_method = nil
+      if hpxml_bldg.clothes_dryers[0].is_vented.nil?
+        hpxml_bldg.clothes_dryers[0].is_vented = (![HPXML::DryingMethodCondensing, HPXML::DryingMethodHeatPump].include? hpxml_bldg.clothes_dryers[0].drying_method)
+        hpxml_bldg.clothes_dryers[0].drying_method = nil
+      end
       if hpxml_bldg.clothes_dryers[0].is_shared_appliance
         hpxml_bldg.clothes_dryers[0].number_of_units_served = shared_water_heaters[0].number_of_bedrooms_served / hpxml_bldg.building_construction.number_of_bedrooms
         hpxml_bldg.clothes_dryers[0].count = 2
@@ -3177,6 +3209,10 @@ def create_sample_hpxmls
       heat_pump.backup_heating_lockout_temp = nil
       heat_pump.backup_heating_switchover_temp = nil
 
+      if hpxml_path.include? 'base-hvac-air-to-air-heat-pump-1-speed-lockout-temperatures.xml'
+        heat_pump.compressor_lockout_temp = 10.0 # Change from the OS-ERI default of 5F
+      end
+
       if heat_pump.heating_capacity_17F.nil?
         if [HPXML::HVACTypeHeatPumpAirToAir,
             HPXML::HVACTypeHeatPumpMiniSplit,
@@ -3252,6 +3288,7 @@ def create_sample_hpxmls
       battery.is_shared_system = false if battery.is_shared_system.nil?
       battery.location = nil
       battery.round_trip_efficiency = 0.925
+      battery.nominal_capacity_kwh = nil
     end
     n_htg_systems = (hpxml_bldg.heating_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_heat_load_served.to_f > 0 }.size
     n_clg_systems = (hpxml_bldg.cooling_systems + hpxml_bldg.heat_pumps).select { |h| h.fraction_cool_load_served.to_f > 0 }.size
@@ -3455,7 +3492,16 @@ def create_sample_hpxmls
   end
 end
 
-command_list = [:update_measures, :update_hpxmls, :create_release_zips]
+command_list = [
+  :update_measures,
+  :update_hpxmls,
+  :ruleset_tests,
+  :sample_files_tests1,
+  :sample_files_tests2,
+  :real_home_tests,
+  :other_tests,
+  :create_release_zip
+]
 
 def display_usage(command_list)
   puts "Usage: openstudio #{File.basename(__FILE__)} [COMMAND]\nCommands:\n  " + command_list.join("\n  ")
@@ -3476,16 +3522,12 @@ elsif not command_list.include? ARGV[0].to_sym
 end
 
 if ARGV[0].to_sym == :update_measures
-  # Prevent NREL error regarding U: drive when not VPNed in
-  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
-  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
-
   # Apply rubocop (uses .rubocop.yml)
   commands = ["\"require 'rubocop/rake_task'\"",
               "\"require 'stringio' \"",
               "\"RuboCop::RakeTask.new(:rubocop) do |t| t.options = ['--autocorrect', '--format', 'simple'] end\"",
               '"Rake.application[:rubocop].invoke"']
-  command = "#{OpenStudio.getOpenStudioCLI} -e #{commands.join(' -e ')}"
+  command = "\"#{OpenStudio.getOpenStudioCLI}\" -e #{commands.join(' -e ')}"
   puts 'Applying rubocop auto-correct to measures...'
   system(command)
 
@@ -3496,22 +3538,60 @@ if ARGV[0].to_sym == :update_hpxmls
   require 'oga'
   require_relative 'rulesets/resources/constants'
 
-  # Prevent NREL error regarding U: drive when not VPNed in
-  ENV['HOME'] = 'C:' if !ENV['HOME'].nil? && ENV['HOME'].start_with?('U:')
-  ENV['HOMEDRIVE'] = 'C:\\' if !ENV['HOMEDRIVE'].nil? && ENV['HOMEDRIVE'].start_with?('U:')
-
   t = Time.now
   create_test_hpxmls
   create_sample_hpxmls
   puts "Completed in #{(Time.now - t).round(1)}s"
 end
 
-if ARGV[0].to_sym == :create_release_zips
+if [:ruleset_tests, :sample_files_tests1, :sample_files_tests2, :real_home_tests, :other_tests].include? ARGV[0].to_sym
+  case ARGV[0].to_sym
+  when :ruleset_tests
+    tests_rbs = Dir['rulesets/tests/*.rb']
+  when :sample_files_tests1
+    tests_rbs = Dir['workflow/tests/sample_files1_test.rb']
+  when :sample_files_tests2
+    tests_rbs = Dir['workflow/tests/sample_files2_test.rb']
+  when :real_home_tests
+    tests_rbs = Dir['workflow/tests/real_homes_test.rb']
+  when :other_tests
+    tests_rbs = Dir['workflow/tests/*test.rb'] - Dir['workflow/tests/real_homes_test.rb'] - Dir['workflow/tests/sample_files*test.rb']
+  end
+
+  # Run tests in random order; we don't want them to only
+  # work when run in a specific order
+  tests_rbs.shuffle!
+
+  # Ensure we run all tests even if there are failures
+  failed_tests = []
+  tests_rbs.each do |test_rb|
+    success = system("\"#{OpenStudio.getOpenStudioCLI}\" #{test_rb}")
+    failed_tests << test_rb unless success
+  end
+
+  puts
+  puts
+
+  if not failed_tests.empty?
+    puts 'The following tests FAILED:'
+    failed_tests.each do |failed_test|
+      puts "- #{failed_test}"
+    end
+    exit! 1
+  end
+
+  puts 'All tests passed.'
+end
+
+if ARGV[0].to_sym == :create_release_zip
   require_relative 'workflow/version'
 
   if ENV['CI']
     # CI doesn't have git, so default to everything
     git_files = Dir['**/*.*']
+    git_files -= Dir['workflow/tests/run*/*.*']
+    git_files -= Dir['workflow/tests/test_results/*.*']
+    git_files -= Dir['workflow/tests/test_files/**/*.*']
   else
     # Only include files under git version control
     command = 'git ls-files'
@@ -3528,6 +3608,8 @@ if ARGV[0].to_sym == :create_release_zips
            'hpxml-measures/HPXMLtoOpenStudio/resources/**/*.*',
            'hpxml-measures/ReportSimulationOutput/measure.*',
            'hpxml-measures/ReportSimulationOutput/resources/**/*.*',
+           'hpxml-measures/ReportUtilityBills/measure.*',
+           'hpxml-measures/ReportUtilityBills/resources/**/*.*',
            'hpxml-measures/workflow/tests/util.rb',
            'rulesets/**/*.*',
            'weather/*.*',
@@ -3536,30 +3618,7 @@ if ARGV[0].to_sym == :create_release_zips
            'workflow/sample_files/*.*',
            'workflow/tests/*.rb',
            'workflow/tests/**/*.csv',
-           'workflow/tests/**/*.xml',
-           'documentation/index.html',
-           'documentation/_static/**/*.*']
-
-  if not ENV['CI']
-    # Generate documentation
-    puts 'Generating documentation...'
-    command = 'sphinx-build -b singlehtml docs/source documentation'
-    begin
-      `#{command}`
-      if not File.exist? File.join(File.dirname(__FILE__), 'documentation', 'index.html')
-        puts 'Documentation was not successfully generated. Aborting...'
-        exit!
-      end
-    rescue
-      puts "Command failed: '#{command}'. Perhaps sphinx needs to be installed?"
-      exit!
-    end
-
-    fonts_dir = File.join(File.dirname(__FILE__), 'documentation', '_static', 'fonts')
-    if Dir.exist? fonts_dir
-      FileUtils.rm_r(fonts_dir)
-    end
-  end
+           'workflow/tests/**/*.xml']
 
   # Create zip files
   require 'zip'
@@ -3569,23 +3628,14 @@ if ARGV[0].to_sym == :create_release_zips
   Zip::File.open(zip_path, create: true) do |zipfile|
     files.each do |f|
       Dir[f].each do |file|
-        if file.start_with? 'documentation'
-          # always include
-        else
-          if not git_files.include? file
-            next
-          end
+        if not git_files.include? file
+          next
         end
+
         zipfile.add(File.join('OpenStudio-ERI', file), file)
       end
     end
-    puts "Wrote file at #{zip_path}."
   end
-
-  # Cleanup
-  if not ENV['CI']
-    FileUtils.rm_r(File.join(File.dirname(__FILE__), 'documentation'))
-  end
-
+  puts "Wrote file at #{zip_path}."
   puts 'Done.'
 end

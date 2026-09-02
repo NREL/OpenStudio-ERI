@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<HPXML xmlns='http://hpxmlonline.com/2023/09' schemaVersion='4.2'>
+<HPXML xmlns='http://hpxmlonline.com/2025/12' schemaVersion='5.0'>
   <XMLTransactionHeaderInformation>
     <XMLType>HPXML</XMLType>
     <XMLGeneratedBy>tasks.rb</XMLGeneratedBy>
@@ -34,6 +34,9 @@
             <Fuel>electricity</Fuel>
             <Fuel>natural gas</Fuel>
           </FuelTypesAvailable>
+          <Soil>
+            <Conductivity>0.8</Conductivity>
+          </Soil>
         </Site>
         <BuildingConstruction>
           <ResidentialFacilityType>single-family detached</ResidentialFacilityType>
@@ -87,12 +90,22 @@
             </VentilationRate>
           </Attic>
         </Attics>
+        <Foundations>
+          <Foundation>
+            <SystemIdentifier id='Foundation1'/>
+            <FoundationType>
+              <Ambient/>
+            </FoundationType>
+            <AttachedToFloor idref='Floor1'/>
+          </Foundation>
+        </Foundations>
         <Roofs>
           <Roof>
             <SystemIdentifier id='Roof1'/>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>0</Azimuth>
+            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -106,6 +119,7 @@
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
             <Area>811.1</Area>
             <Azimuth>180</Azimuth>
+            <RoofType>asphalt or fiberglass shingles</RoofType>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Pitch>4.0</Pitch>
@@ -125,6 +139,7 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>0</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -145,6 +160,7 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>90</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -165,6 +181,7 @@
             </WallType>
             <Area>456.0</Area>
             <Azimuth>180</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -185,6 +202,7 @@
             </WallType>
             <Area>216.0</Area>
             <Azimuth>270</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <InteriorFinish>
@@ -206,6 +224,7 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>90</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -223,6 +242,7 @@
             </WallType>
             <Area>60.8</Area>
             <Azimuth>270</Azimuth>
+            <Siding>masonite siding</Siding>
             <SolarAbsorptance>0.6</SolarAbsorptance>
             <Emittance>0.9</Emittance>
             <Insulation>
@@ -310,7 +330,7 @@
         <Doors>
           <Door>
             <SystemIdentifier id='Door1'/>
-            <AttachedToWall idref='Wall3'/>
+            <AttachedToWall idref='Wall1'/>
             <Area>20.0</Area>
             <Azimuth>180</Azimuth>
             <RValue>3.04</RValue>
@@ -462,6 +482,7 @@
           <Location>conditioned space</Location>
           <FuelType>electricity</FuelType>
           <CombinedEnergyFactor>3.01</CombinedEnergyFactor>
+          <Vented>true</Vented>
         </ClothesDryer>
         <Dishwasher>
           <SystemIdentifier id='Dishwasher1'/>

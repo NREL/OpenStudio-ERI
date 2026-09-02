@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require 'openstudio'
-require 'openstudio/measure/ShowRunnerOutput'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require 'fileutils'
 require 'csv'
 require_relative 'util.rb'
@@ -10,11 +9,12 @@ require_relative '../util.rb'
 
 class ESDENHTest < Minitest::Test
   def setup
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
     @root_path = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     @sample_files_path = File.join(@root_path, 'workflow', 'sample_files')
-    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
+    @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
+    @test_files_dir = File.join(@test_base_dir, 'test_files')
     FileUtils.mkdir_p @test_files_dir
   end
 

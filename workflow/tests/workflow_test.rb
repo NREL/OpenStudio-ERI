@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require 'openstudio'
-require 'openstudio/measure/ShowRunnerOutput'
+require_relative '../../hpxml-measures/HPXMLtoOpenStudio/resources/minitest_helper'
 require 'fileutils'
 require 'csv'
 require_relative 'util.rb'
 
 class WorkflowTest < Minitest::Test
   def setup
-    @test_results_dir = File.join(File.dirname(__FILE__), 'test_results')
+    @test_base_dir = ENV['OS_ERI_TEST_BASE_DIR'] || File.dirname(__FILE__)
+    @test_results_dir = File.join(@test_base_dir, 'test_results')
     FileUtils.mkdir_p @test_results_dir
-    @test_files_dir = File.join(File.dirname(__FILE__), 'test_files')
+    @test_files_dir = File.join(@test_base_dir, 'test_files')
     FileUtils.mkdir_p @test_files_dir
   end
 
@@ -84,6 +84,20 @@ class WorkflowTest < Minitest::Test
     _run_workflow(xml, test_name, rated_home_only: true)
   end
 
+  def test_utility_bills
+    test_name = 'utility_bills'
+
+    # Run ERI workflow
+    xml = "#{File.dirname(__FILE__)}/../sample_files/base-misc-bills.xml"
+    _rundir, _hpxmls, csvs = _run_workflow(xml, test_name)
+
+    # Check for utility bill CSV files
+    assert(File.exist?(csvs[:rated_annual_bills]))
+    assert(File.exist?(csvs[:rated_monthly_bills]))
+    assert(File.exist?(csvs[:ref_annual_bills]))
+    assert(File.exist?(csvs[:ref_monthly_bills]))
+  end
+
   def test_co2index_without_extra_simulation
     # Check that if we run an all-electric home, it reuses the ERI Reference Home
     # simulation results for the CO2e Reference Home, rather than running an additional
@@ -115,7 +129,7 @@ class WorkflowTest < Minitest::Test
   def test_release_zips
     # Check release zips successfully created
     top_dir = File.join(File.dirname(__FILE__), '..', '..')
-    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.join(top_dir, 'tasks.rb')} create_release_zips"
+    command = "\"#{OpenStudio.getOpenStudioCLI}\" #{File.join(top_dir, 'tasks.rb')} create_release_zip"
     system(command)
     assert_equal(1, Dir["#{top_dir}/*.zip"].size)
 
@@ -140,7 +154,9 @@ class WorkflowTest < Minitest::Test
       system(command)
       assert(File.exist? 'OpenStudio-ERI/workflow/tests/test_results/RESNET_Test_4.3_HERS_Method.csv')
 
-      File.delete(zip_path)
+      if not ENV['CI'] # Keep on CI to store as an artifact
+        File.delete(zip_path)
+      end
       rm_path('OpenStudio-ERI')
     end
   end

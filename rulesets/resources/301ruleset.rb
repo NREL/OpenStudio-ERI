@@ -22,7 +22,8 @@ module ERI_301_Ruleset
     end
 
     # Add HPXML defaults to, e.g., RatedHome.xml
-    Defaults.apply(nil, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
+    runner = OpenStudio::Measure::OSRunner.new(OpenStudio::WorkflowJSON.new)
+    Defaults.apply(runner, hpxml, hpxml.buildings[0], @weather, convert_shared_systems: false)
 
     # Ensure two otherwise identical HPXML files don't differ by create time
     hpxml.header.created_date_and_time = create_time
@@ -227,6 +228,9 @@ module ERI_301_Ruleset
     new_bldg.header.manualj_heating_setpoint = 70
     new_bldg.header.manualj_cooling_setpoint = 75
     new_hpxml.header.temperature_capacitance_multiplier = 1.0
+    orig_hpxml.header.utility_bill_scenarios.each do |ub_scenario|
+      new_hpxml.header.utility_bill_scenarios << ub_scenario
+    end
 
     new_bldg.site.available_fuels = orig_bldg.site.available_fuels
     new_bldg.site.site_type = HPXML::SiteTypeSuburban
@@ -1336,7 +1340,7 @@ module ERI_301_Ruleset
         backup_type = HPXML::HeatPumpBackupTypeIntegrated
         backup_heating_fuel = HPXML::FuelTypeElectricity
         backup_heating_efficiency_percent = 1.0
-        backup_heating_capacity = 1 # Non-zero value will allow backup heating capacity to be increased as needed
+        backup_heating_capacity = 1000 # Capacity will be increased as needed
       end
       if [HPXML::HVACTypeHeatPumpAirToAir,
           HPXML::HVACTypeHeatPumpMiniSplit].include? orig_heat_pump.heat_pump_type
@@ -1721,8 +1725,6 @@ module ERI_301_Ruleset
 
       energy_factor = get_reference_water_heater_ef(fuel_type, tank_volume)
 
-      heating_capacity = Defaults.get_water_heater_heating_capacity(fuel_type, @nbeds, orig_bldg.water_heating_systems.size)
-
       # If 2022, reference WH is in default location, regardless of rated home location
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022')
         location = Defaults.get_water_heater_location(orig_bldg, @iecc_zone)
@@ -1744,7 +1746,6 @@ module ERI_301_Ruleset
                                          performance_adjustment: 1.0,
                                          tank_volume: tank_volume,
                                          fraction_dhw_load_served: 1.0,
-                                         heating_capacity: heating_capacity.round(0),
                                          energy_factor: energy_factor,
                                          uses_desuperheater: false,
                                          temperature: Defaults.get_water_heater_temperature(@eri_version))
@@ -1762,9 +1763,6 @@ module ERI_301_Ruleset
 
     orig_bldg.water_heating_systems.each do |orig_water_heater|
       heating_capacity = orig_water_heater.heating_capacity
-      if (orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeStorage) && heating_capacity.nil?
-        heating_capacity = Defaults.get_water_heater_heating_capacity(orig_water_heater.fuel_type, @nbeds, orig_bldg.water_heating_systems.size)
-      end
 
       if orig_water_heater.water_heater_type == HPXML::WaterHeaterTypeTankless
         performance_adjustment = Defaults.get_water_heater_performance_adjustment(orig_water_heater)
@@ -1947,7 +1945,6 @@ module ERI_301_Ruleset
                                is_shared_system: orig_battery.is_shared_system,
                                type: orig_battery.type,
                                location: orig_battery.location,
-                               nominal_capacity_kwh: orig_battery.nominal_capacity_kwh,
                                usable_capacity_kwh: orig_battery.usable_capacity_kwh,
                                rated_power_output: orig_battery.rated_power_output,
                                round_trip_efficiency: orig_battery.round_trip_efficiency,
@@ -2069,7 +2066,7 @@ module ERI_301_Ruleset
                                 combined_energy_factor: reference_values[:combined_energy_factor],
                                 control_type: reference_values[:control_type],
                                 is_vented: true,
-                                vented_flow_rate: 0.0)
+                                vented_flow_rate: 0) # FUTURE: Propose dryer venting for ANSI 301
   end
 
   def self.set_appliances_clothes_dryer_rated(orig_bldg, new_bldg)
@@ -2085,6 +2082,14 @@ module ERI_301_Ruleset
       return
     end
 
+    if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2022C')
+      # Vented vs unvented dryers introduced in 301-2022 Addendum C
+      is_vented = clothes_dryer.is_vented
+    else
+      # Dryers previously assumed to be vented (same as Reference Home)
+      is_vented = true
+    end
+
     new_bldg.clothes_dryers.add(id: clothes_dryer.id,
                                 is_shared_appliance: clothes_dryer.is_shared_appliance,
                                 location: clothes_dryer.location,
@@ -2092,8 +2097,8 @@ module ERI_301_Ruleset
                                 energy_factor: clothes_dryer.energy_factor,
                                 combined_energy_factor: clothes_dryer.combined_energy_factor,
                                 control_type: clothes_dryer.control_type,
-                                is_vented: true,
-                                vented_flow_rate: 0.0)
+                                is_vented: is_vented,
+                                vented_flow_rate: 0) # FUTURE: Propose dryer venting for ANSI 301
   end
 
   def self.set_appliances_clothes_dryer_iad(orig_bldg, new_bldg)
@@ -2113,7 +2118,7 @@ module ERI_301_Ruleset
       location = dishwasher.location.gsub('unvented', 'vented')
     end
 
-    reference_values = Defaults.get_dishwasher_values(@eri_version)
+    reference_values = Defaults.get_dishwasher_values()
     new_bldg.dishwashers.add(id: id,
                              is_shared_appliance: false,
                              location: location,
@@ -2382,12 +2387,10 @@ module ERI_301_Ruleset
                             frac_latent: frac_latent.round(3))
 
     # Television
-    kwh_per_year, frac_sensible, frac_latent = Defaults.get_televisions_values(@cfa, @nbeds)
+    kwh_per_year = Defaults.get_televisions_values(@cfa, @nbeds)
     new_bldg.plug_loads.add(id: 'TelevisionPlugLoad',
                             plug_load_type: HPXML::PlugLoadTypeTelevision,
-                            kwh_per_year: kwh_per_year,
-                            frac_sensible: frac_sensible.round(3),
-                            frac_latent: frac_latent.round(3))
+                            kwh_per_year: kwh_per_year)
   end
 
   def self.set_misc_loads_rated(new_bldg)
@@ -2509,13 +2512,13 @@ module ERI_301_Ruleset
     if @bldg_type == HPXML::ResidentialTypeSFD
       a_ext = 1.0
     else
-      tot_cb_area, ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
+      tot_cb_area, ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg, nil)
       a_ext = ext_cb_area / tot_cb_area
 
       if Constants::ERIVersions.index(@eri_version) >= Constants::ERIVersions.index('2019')
         if [HPXML::ResidentialTypeApartment, HPXML::ResidentialTypeSFA].include? @bldg_type
           cfm50 = infil_values[:ach50] * infil_values[:volume] / 60.0
-          tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg)
+          tot_cb_area, _ext_cb_area = Defaults.get_compartmentalization_boundary_areas(orig_bldg, nil)
           if cfm50 / tot_cb_area > 0.30
             a_ext = 1.0
           end
@@ -2829,7 +2832,6 @@ module ERI_301_Ruleset
     wh_tank_vol = 40.0
 
     wh_ef = get_reference_water_heater_ef(wh_fuel_type, wh_tank_vol)
-    wh_cap = Defaults.get_water_heater_heating_capacity(wh_fuel_type, @nbeds, 1)
 
     new_bldg.water_heating_systems.add(id: 'WaterHeatingSystem',
                                        is_shared_system: false,
@@ -2839,7 +2841,6 @@ module ERI_301_Ruleset
                                        performance_adjustment: 1.0,
                                        tank_volume: wh_tank_vol,
                                        fraction_dhw_load_served: 1.0,
-                                       heating_capacity: wh_cap.round(0),
                                        energy_factor: wh_ef,
                                        uses_desuperheater: false,
                                        temperature: Defaults.get_water_heater_temperature(@eri_version))
@@ -3169,12 +3170,12 @@ module ERI_301_Ruleset
 
       # No user input, default
       if compressor_type == HPXML::HVACCompressorTypeVariableSpeed
-        return -20.0 # F
+        return -10.0 # F, Addendum 103 AC/HP Supplement
       else
-        return 0.0 # F
+        return 5.0 # F, Addendum 103 AC/HP Supplement
       end
     else # Fossil fuel
-      # Use RESNET prescribed value
+      # Always use RESNET prescribed value
       return 40.0 # F
     end
   end
