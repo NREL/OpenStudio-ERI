@@ -168,7 +168,7 @@ For each scenario, PV compensation information can be optionally entered in ``/H
   Element                                                        Type      Units    Constraints  Required  Default         Notes
   =============================================================  ========  =======  ===========  ========  ==============  ==============================
   ``CompensationType[NetMetering | FeedInTariff]``               element                         No        NetMetering     PV compensation type
-  ``MonthlyGridConnectionFee[Units="$/kW" or Units="$"]/Value``  double                          No        0               PV monthly grid connection fee
+  ``MonthlyGridConnectionFee[Units="$/kW" or "$"]/Value``        double                          No        0               PV monthly grid connection fee
   =============================================================  ========  =======  ===========  ========  ==============  ==============================
 
 **Net-Metering**
@@ -921,7 +921,7 @@ Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/H
   ``HeatingSystemType/Furnace``                                       element                           Yes                    Type of heating system
   ``HeatingSystemFuel``                                               string           See [#]_         Yes                    Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr  >= 0 [#]_        Yes                    Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                    Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac    > 0, <= 1        Yes                    Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  Yes                    Fraction of heating load served
   ``extension/FanMotorType``                                          string           See [#]_         No        See [#]_     Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                   double   W/cfm   >= 0 [#]_        Yes                    Blower fan efficiency at maximum fan speed [#]_
@@ -963,7 +963,7 @@ Each wall furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC
   ``HeatingSystemType/WallFurnace``                                   element                           Yes                Type of heating system
   ``HeatingSystemFuel``                                               string           See [#]_         Yes                Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr  >= 0 [#]_        Yes                Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac    > 0, <= 1        Yes                Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  Yes                Fraction of heating load served
   ``extension/FanPowerWatts``                                         double   W       >= 0             No        0        Fan power
   ==================================================================  =======  ======  ===============  ========  =======  ===================
@@ -986,7 +986,7 @@ Each floor furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVA
   ``HeatingSystemType/FloorFurnace``                                  element                           Yes                Type of heating system
   ``HeatingSystemFuel``                                               string           See [#]_         Yes                Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr  >= 0 [#]_        Yes                Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac    > 0, <= 1        Yes                Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  Yes                Fraction of heating load served
   ``extension/FanPowerWatts``                                         double   W       >= 0             No        0        Fan power
   ==================================================================  =======  ======  ===============  ========  =======  ===================
@@ -1010,7 +1010,7 @@ Each in-unit boiler is entered as a ``/HPXML/Building/BuildingDetails/Systems/HV
   ``HeatingSystemType/Boiler``                                        element                            Yes                 Type of heating system
   ``HeatingSystemFuel``                                               string            See [#]_         Yes                 Fuel type
   ``HeatingCapacity``                                                 double    Btu/hr  >= 0 [#]_        Yes                 Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double    frac    > 0, <= 1        Yes                 Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double    frac    > 0, <= 1        Yes                 Rated heating efficiency
   ``FractionHeatLoadServed``                                          double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
   ==================================================================  ========  ======  ===============  ========  ========  =========================================
 
@@ -1037,7 +1037,7 @@ Each shared boiler (serving multiple dwelling units) is entered as a ``/HPXML/Bu
   ``HeatingSystemType/Boiler``                                        element                            Yes                 Type of heating system
   ``HeatingSystemFuel``                                               string            See [#]_         Yes                 Fuel type
   ``HeatingCapacity``                                                 double    Btu/hr  >= 0             Yes                 Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double    frac    > 0, <= 1        Yes                 Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double    frac    > 0, <= 1        Yes                 Rated heating efficiency
   ``FractionHeatLoadServed``                                          double    frac    >= 0, <= 1 [#]_  Yes                 Fraction of heating load served
   ``extension/SharedLoopWatts``                                       double    W       >= 0             Yes                 Shared loop power
   ``extension/SharedLoopMotorEfficiency``                             double    frac    > 0, < 1         No        0.85      Shared loop motor efficiency
@@ -1152,8 +1152,8 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   ``CoolingCapacity``                                               double  Btu/hr  >= 0 [#]_                Yes                     Cooling output capacity
   ``CompressorType``                                                string          See [#]_                 Yes                     Type of compressor
   ``FractionCoolLoadServed``                                        double  frac    >= 0, <= 1 [#]_          Yes                     Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``  double  Btu/Wh  > 0                      Yes                     Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double  Btu/Wh  > 0 [#]_                 Yes                     Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``        double  Btu/Wh  > 0                      Yes                     Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``          double  Btu/Wh  > 0 [#]_                 Yes                     Rated cooling efficiency [#]_
   ``extension/FanMotorType``                                        string          See [#]_                 No        See [#]_      Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0 [#]_                Yes                     Blower fan efficiency at maximum fan speed [#]_
   ``extension/CoolingDesignAirflowCFM``                             double  cfm     >= 0                     No        360 cfm/ton   Blower fan cooling design airflow rate [#]_
@@ -1205,7 +1205,7 @@ Each room air conditioner is entered as a ``/HPXML/Building/BuildingDetails/Syst
   ``CoolingSystemFuel``                                           string            electricity           Yes                  Fuel type
   ``CoolingCapacity``                                             double    Btu/hr  >= 0 [#]_             Yes                  Cooling output capacity
   ``FractionCoolLoadServed``                                      double    frac    >= 0, <= 1 [#]_       Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``  double    Btu/Wh  > 0                   Yes                  Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``        double    Btu/Wh  > 0                   Yes                  Rated cooling efficiency
   ``IntegratedHeatingSystemFuel``                                 string            See [#]_              No        <none>     Fuel type of integrated heater
   ==============================================================  ========  ======  ====================  ========  =========  ==============================
 
@@ -1242,7 +1242,7 @@ Each packaged terminal air conditioner (PTAC) is entered as a ``/HPXML/Building/
   ``CoolingSystemFuel``                                           string            electricity                        Yes                  Fuel type
   ``CoolingCapacity``                                             double    Btu/hr  >= 0 [#]_                          Yes                  Cooling output capacity
   ``FractionCoolLoadServed``                                      double    frac    >= 0, <= 1 [#]_                    Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``  double    Btu/Wh  > 0                                Yes                  Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``        double    Btu/Wh  > 0                                Yes                  Rated cooling efficiency
   ``IntegratedHeatingSystemFuel``                                 string            See [#]_                           No        <none>     Fuel type of integrated heater
   ==============================================================  ========  ======  =================================  ========  =========  ==============================
 
@@ -1303,8 +1303,8 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
   ``CoolingCapacity``                                               double  Btu/hr  >= 0 [#]_        Yes                       Cooling output capacity
   ``CompressorType``                                                string          variable speed   Yes                       Type of compressor
   ``FractionCoolLoadServed``                                        double  frac    >= 0, <= 1 [#]_  Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``  double  Btu/Wh  > 0              Yes                       Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double  Btu/Wh  > 0 [#]_         Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``        double  Btu/Wh  > 0              Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``          double  Btu/Wh  > 0 [#]_         Yes                       Rated cooling efficiency [#]_
   ``extension/FanMotorType``                                        string          See [#]_         No        BPM             Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm   >= 0 [#]_        Yes                       Blower fan efficiency at maximum fan speed [#]_
   ``extension/CoolingDesignAirflowCFM``                             double  cfm     >= 0             No        360 cfm/ton     Blower fan cooling design airflow rate [#]_
@@ -1427,9 +1427,9 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   ``BackupType``                                                    string            integrated                No        <none>        Type of backup heating [#]_
   ``FractionHeatLoadServed``                                        double  frac      >= 0, <= 1 [#]_           Yes                     Fraction of heating load served
   ``FractionCoolLoadServed``                                        double  frac      >= 0, <= 1 [#]_           Yes                     Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``  double  Btu/Wh    > 0                       Yes                     Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double  Btu/Wh    > 0 [#]_                  Yes                     Rated cooling efficiency [#]_
-  ``AnnualHeatingEfficiency[Units="HSPF2" or Units="HSPF"]/Value``  double  Btu/Wh    > 0                       Yes                     Rated heating efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``        double  Btu/Wh    > 0                       Yes                     Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``          double  Btu/Wh    > 0 [#]_                  Yes                     Rated cooling efficiency [#]_
+  ``AnnualHeatingEfficiency[Units="HSPF2" or "HSPF"]/Value``        double  Btu/Wh    > 0                       Yes                     Rated heating efficiency [#]_
   ``extension/FanMotorType``                                        string            See [#]_                  No        See [#]_      Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm     >= 0                      Yes                     Blower fan efficiency at maximum fan speed [#]_
   ``extension/HeatingDesignAirflowCFM``                             double  cfm       >= 0                      No        See [#]_      Blower fan heating design airflow rate [#]_
@@ -1496,9 +1496,9 @@ Each ``HeatPump`` should represent a single outdoor unit, whether connected to o
   ``BackupType``                                                    string            integrated                No        <none>          Type of backup heating [#]_
   ``FractionHeatLoadServed``                                        double  frac      >= 0, <= 1 [#]_           Yes                       Fraction of heating load served
   ``FractionCoolLoadServed``                                        double  frac      >= 0, <= 1 [#]_           Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``  double  Btu/Wh    > 0                       Yes                       Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double  Btu/Wh    > 0 [#]_                  Yes                       Rated cooling efficiency [#]_
-  ``AnnualHeatingEfficiency[Units="HSPF2" or Units="HSPF"]/Value``  double  Btu/Wh    > 0                       Yes                       Rated heating efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``        double  Btu/Wh    > 0                       Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``          double  Btu/Wh    > 0 [#]_                  Yes                       Rated cooling efficiency [#]_
+  ``AnnualHeatingEfficiency[Units="HSPF2" or "HSPF"]/Value``        double  Btu/Wh    > 0                       Yes                       Rated heating efficiency [#]_
   ``extension/FanMotorType``                                        string            See [#]_                  No        BPM             Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double  W/cfm     >= 0                      Yes                       Blower fan efficiency at maximum fan speed [#]_
   ``extension/HeatingDesignAirflowCFM``                             double  cfm       >= 0                      No        See [#]_        Blower fan heating design airflow rate [#]_
@@ -1558,7 +1558,7 @@ Each packaged terminal heat pump is entered as a ``/HPXML/Building/BuildingDetai
   ``BackupType``                                                   string              integrated                   No        <none>     Type of backup heating [#]_
   ``FractionHeatLoadServed``                                       double    frac      >= 0, <= 1 [#]_              Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                                       double    frac      >= 0, <= 1 [#]_              Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``   double    Btu/Wh    > 0                          Yes                  Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``         double    Btu/Wh    > 0                          Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                   double    W/W       > 0                          Yes                  Rated heating efficiency
   ===============================================================  ========  ========  ===========================  ========  =========  ==============================================
 
@@ -1589,7 +1589,7 @@ Each room air conditioner with reverse cycle is entered as a ``/HPXML/Building/B
   ``BackupType``                                                   string              integrated                               No        <none>     Type of backup heating [#]_
   ``FractionHeatLoadServed``                                       double    frac      >= 0, <= 1 [#]_                          Yes                  Fraction of heating load served
   ``FractionCoolLoadServed``                                       double    frac      >= 0, <= 1 [#]_                          Yes                  Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``   double    Btu/Wh    > 0                                      Yes                  Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``         double    Btu/Wh    > 0                                      Yes                  Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                   double    W/W       > 0                                      Yes                  Rated heating efficiency
   ===============================================================  ========  ========  =======================================  ========  =========  ==============================================
 
@@ -1708,7 +1708,7 @@ If a backup type of "integrated" is provided, additional information is entered 
   Element                                                                        Type      Units   Constraints  Required  Default   Notes
   =============================================================================  ========  ======  ===========  ========  ========  ==========================================
   ``BackupSystemFuel``                                                           string            See [#]_     Yes                 Integrated backup heating fuel type
-  ``BackupAnnualHeatingEfficiency[Units="Percent" or Units="AFUE"]/Value``       double    frac    > 0, <= 1    Yes                 Integrated backup heating efficiency
+  ``BackupAnnualHeatingEfficiency[Units="Percent" or "AFUE"]/Value``             double    frac    > 0, <= 1    Yes                 Integrated backup heating efficiency
   ``BackupHeatingCapacity``                                                      double    Btu/hr  >= 0 [#]_    Yes                 Integrated backup heating output capacity
   =============================================================================  ========  ======  ===========  ========  ========  ==========================================
 
@@ -2207,7 +2207,7 @@ Each instantaneous tankless water heater is entered as a ``/HPXML/Building/Build
 Heat Pump
 ~~~~~~~~~
 
-Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
+Each heat pump water heater (HPWH) is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
 
   ===================================================  =======  ============  ======================  ========  ========  ==========================================
   Element                                              Type     Units         Constraints             Required  Default   Notes

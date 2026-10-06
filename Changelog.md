@@ -7,13 +7,16 @@ __Features__
 - Adds min/max value warnings for clothes washer and dishwasher label inputs (e.g., `LabelElectricRate` and `LabelGasRate`).
 
 __Bugfixes__
-- **Breaking change**: Prevent possible error if HPWH in confined space with very small containment volume; minimum allowed volume now 32 ft3.
-- **Breaking change**: HPWH `EnergyFactor`/`UniformEnergyFactor` must now be >= 1.45 (previously > 1).
+- **Breaking change**: Prevent possible error if heat pump water heater in confined space with very small containment volume; minimum allowed volume now 32 ft3.
+- **Breaking change**: Heat pump water heater `EnergyFactor`/`UniformEnergyFactor` must now be >= 1.45 (previously > 1).
+- Fixes heat pump water heater modeled COP (derived from EF/UEF).
 - Fixes ERV supply outlet enthalpy calculation used to calculate latent effectiveness.
 - Removes duplicated ceiling/floor internal mass surfaces between conditioned stories.
 - Fixes heat gain from occupants; heat gains from appliances, lighting, etc. are unaffected.
 - Fixes specific heat for drywall (0.2 -> 0.26 Btu/lb-F).
 - Fixes order-dependent effective below-grade depth when collapsing similar foundation walls.
+- **Breaking change**: HVAC efficiencies must be paired by generation, i.e., SEER2 with EER2/HSPF2 or SEER with EER/HSPF; a mixed pair previously passed validation and could cause an EnergyPlus error.
+- Fixes a failed simulation being reported as an unrelated error (e.g., `TypeError` or `JSON::ParserError`); the workflow now stops with "Errors encountered. Aborting...".
 
 ## OpenStudio-ERI v1.12.0
 

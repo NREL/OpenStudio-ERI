@@ -245,7 +245,7 @@ For each scenario, PV compensation information can be optionally entered in ``/H
   Element                                                        Type      Units    Constraints  Required  Default         Notes
   =============================================================  ========  =======  ===========  ========  ==============  ==============================
   ``CompensationType[NetMetering | FeedInTariff]``               element                         No        NetMetering     PV compensation type
-  ``MonthlyGridConnectionFee[Units="$/kW" or Units="$"]/Value``  double                          No        0               PV monthly grid connection fee
+  ``MonthlyGridConnectionFee[Units="$/kW" or "$"]/Value``        double                          No        0               PV monthly grid connection fee
   =============================================================  ========  =======  ===========  ========  ==============  ==============================
 
 **Net-Metering**
@@ -291,13 +291,15 @@ If not entered, the simulation will not include unavailable periods.
   ``ColumnName``                        string                            Yes                         Column name associated with unavailable_periods.csv below
   ``BeginMonth``                        integer            >= 1, <= 12    Yes                         Begin month
   ``BeginDayOfMonth``                   integer            >= 1, <= 31    Yes                         Begin day
-  ``BeginHourOfDay``                    integer            >= 0, <= 23    No        0                 Begin hour
+  ``BeginHourOfDay``                    integer            >= 0, <= 23    No        0                 Begin hour [#]_
   ``EndMonth``                          integer            >= 1, <= 12    Yes                         End month
   ``EndDayOfMonth``                     integer            >= 1, <= 31    Yes                         End day
-  ``EndHourOfDay``                      integer            >= 1, <= 24    No        24                End hour
+  ``EndHourOfDay``                      integer            >= 1, <= 24    No        24                End hour [#]_
   ``NaturalVentilation``                string             See [#]_       No        regular schedule  Natural ventilation availability
   ====================================  ========  =======  =============  ========  ================  ===========
 
+  .. [#] The hour when the unavailable period begins (i.e., hour 0 = 12am, hour 23 = 11pm).
+  .. [#] The hour when the unavailable period ends (i.e., hour 1 = 1am, hour 24 = 12am midnight of next day).
   .. [#] NaturalVentilation choices are "regular schedule", "always available", or "always unavailable".
 
 See the table below to understand which components are affected by an unavailable period with a given ``ColumnName``.
@@ -720,7 +722,7 @@ The column names available in the schedule CSV files are:
   ``cooling_setpoint``              F        Thermostat cooling setpoint schedule.                                                          No
   ``hvac_maximum_power_ratio``      frac     Variable speed system maximum power ratio schedule. [#]_                                       No
   ``water_heater_setpoint``         F        Water heater setpoint schedule.                                                                No
-  ``water_heater_operating_mode``   0/1      Heat pump water heater operating mode schedule. 0=hybrid/auto, 1=heat pump only.               No
+  ``water_heater_operating_mode``   0/1      240V heat pump water heater operating mode schedule. 0=hybrid/auto, 1=heat pump only.          No
   ``battery``                       -1 to 1  Battery availability schedule. Positive for charging, negative for discharging.                No
   ``electric_vehicle``              -1 to 1  Electric vehicle schedule. Positive for charging, negative for discharging. [#]_               Yes
   ================================  =======  =============================================================================================  ===============================
@@ -2158,7 +2160,7 @@ Each central furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/H
   ``HeatingSystemType/Furnace/extension/PilotLightBtuh``              double   Btu/hr     >= 0             No        500             Pilot light burn rate
   ``HeatingSystemFuel``                                               string              See [#]_         Yes                       Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr     >= 0             No        autosized [#]_  Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac       > 0, <= 1        Yes                       Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac       > 0, <= 1        Yes                       Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac       >= 0, <= 1 [#]_  See [#]_                  Fraction of heating load served
   ``extension/FanMotorType``                                          string              See [#]_         No        See [#]_        Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                   double   W/cfm      >= 0 [#]_        No        See [#]_        Blower fan efficiency at maximum fan speed
@@ -2208,7 +2210,7 @@ Each wall furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVAC
   ``HeatingSystemType/WallFurnace/extension/PilotLightBtuh``          double   Btu/hr  >= 0             No        500             Pilot light burn rate
   ``HeatingSystemFuel``                                               string           See [#]_         Yes                       Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr  >= 0             No        autosized [#]_  Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                       Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac    > 0, <= 1        Yes                       Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  See [#]_                  Fraction of heating load served
   ``extension/FanPowerWatts``                                         double   W       >= 0             No        0               Fan power
   ``extension/HeatingAutosizingFactor``                               double   frac    > 0              No        1.0             Heating autosizing capacity multiplier
@@ -2240,7 +2242,7 @@ Each floor furnace is entered as a ``/HPXML/Building/BuildingDetails/Systems/HVA
   ``HeatingSystemType/FloorFurnace/extension/PilotLightBtuh``         double   Btu/hr  >= 0             No        500             Pilot light burn rate
   ``HeatingSystemFuel``                                               string           See [#]_         Yes                       Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr  >= 0             No        autosized [#]_  Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac    > 0, <= 1        Yes                       Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac    > 0, <= 1        Yes                       Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac    >= 0, <= 1 [#]_  See [#]_                  Fraction of heating load served
   ``extension/FanPowerWatts``                                         double   W       >= 0             No        0               Fan power
   ``extension/HeatingAutosizingFactor``                               double   frac    > 0              No        1.0             Heating autosizing capacity multiplier
@@ -2274,7 +2276,7 @@ Each in-unit boiler is entered as a ``/HPXML/Building/BuildingDetails/Systems/HV
   ``HeatingSystemType/Boiler/extension/PilotLightBtuh``               double   Btu/hr     >= 0             No        500             Pilot light burn rate
   ``HeatingSystemFuel``                                               string              See [#]_         Yes                       Fuel type
   ``HeatingCapacity``                                                 double   Btu/hr     >= 0             No        autosized [#]_  Heating output capacity
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac       > 0, <= 1        Yes                       Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac       > 0, <= 1        Yes                       Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac       >= 0, <= 1 [#]_  See [#]_                  Fraction of heating load served
   ``ElectricAuxiliaryEnergy``                                         double   kWh/yr     >= 0             No        See [#]_        Electric auxiliary energy
   ``extension/HeatingAutosizingFactor``                               double   frac       > 0              No        1.0             Heating autosizing capacity multiplier
@@ -2323,7 +2325,7 @@ Each shared boiler (serving multiple dwelling units) is entered as a ``/HPXML/Bu
   ``HeatingSystemType/Boiler/PilotLight``                             boolean                                No        false               Presence of standing pilot light (older systems)
   ``HeatingSystemType/Boiler/extension/PilotLightBtuh``               double   Btu/hr       >= 0             No        500                 Pilot light burn rate
   ``HeatingSystemFuel``                                               string                See [#]_         Yes                           Fuel type
-  ``AnnualHeatingEfficiency[Units="AFUE" or Units="Percent"]/Value``  double   frac         > 0, <= 1        Yes                           Rated heating efficiency
+  ``AnnualHeatingEfficiency[Units="AFUE" or "Percent"]/Value``        double   frac         > 0, <= 1        Yes                           Rated heating efficiency
   ``FractionHeatLoadServed``                                          double   frac         >= 0, <= 1 [#]_  See [#]_                      Fraction of heating load served
   ``ElectricAuxiliaryEnergy`` or ``extension/SharedLoopWatts``        double   kWh/yr or W  >= 0             No        See [#]_            Electric auxiliary energy or shared loop power
   ``ElectricAuxiliaryEnergy`` or ``extension/FanCoilWatts``           double   kWh/yr or W  >= 0             No [#]_                       Electric auxiliary energy or fan coil power
@@ -2480,8 +2482,8 @@ Each central air conditioner is entered as a ``/HPXML/Building/BuildingDetails/S
   ``CoolingCapacity``                                               double   Btu/hr       >= 0                     No        autosized [#]_  Cooling output capacity at 95F
   ``CompressorType``                                                string                See [#]_                 Yes                       Type of compressor
   ``FractionCoolLoadServed``                                        double   frac         >= 0, <= 1 [#]_          Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``  double   Btu/Wh       > 0                      Yes                       Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double   Btu/Wh       > 0 [#]_                 No        See [#]_        Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``        double   Btu/Wh       > 0                      Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``          double   Btu/Wh       > 0 [#]_                 No        See [#]_        Rated cooling efficiency [#]_
   ``CoolingDetailedPerformanceData``                                element                                        No        <none>          Cooling detailed performance data [#]_
   ``extension/FanMotorType``                                        string                See [#]_                 No        See [#]_        Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double   W/cfm        >= 0 [#]_                No        See [#]_        Blower fan efficiency at maximum fan speed
@@ -2542,7 +2544,7 @@ Each room air conditioner is entered as a ``/HPXML/Building/BuildingDetails/Syst
   ``CoolingSystemFuel``                                           string          electricity           Yes                       Fuel type
   ``CoolingCapacity``                                             double  Btu/hr  >= 0                  No        autosized [#]_  Cooling output capacity
   ``FractionCoolLoadServed``                                      double  frac    >= 0, <= 1 [#]_       Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``  double  Btu/Wh  > 0                   Yes                       Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``        double  Btu/Wh  > 0                   Yes                       Rated cooling efficiency
   ``IntegratedHeatingSystemFuel``                                 string          See [#]_              No        <none>          Fuel type of integrated heater
   ``extension/CrankcaseHeaterPowerWatts``                         double  W       >= 0                  No        0.0             Crankcase heater power
   ``extension/CoolingAutosizingFactor``                           double  frac    > 0                   No        1.0             Cooling autosizing capacity multiplier
@@ -2588,7 +2590,7 @@ Each packaged terminal air conditioner (PTAC) is entered as a ``/HPXML/Building/
   ``CoolingSystemFuel``                                           string          electricity                        Yes                       Fuel type
   ``CoolingCapacity``                                             double  Btu/hr  >= 0                               No        autosized [#]_  Cooling output capacity
   ``FractionCoolLoadServed``                                      double  frac    >= 0, <= 1 [#]_                    Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``  double  Btu/Wh  > 0                                Yes                       Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``        double  Btu/Wh  > 0                                Yes                       Rated cooling efficiency
   ``IntegratedHeatingSystemFuel``                                 string          See [#]_                           No        <none>          Fuel type of integrated heater
   ``extension/CrankcaseHeaterPowerWatts``                         double  W       >= 0                               No        0.0             Crankcase heater power
   ``extension/CoolingAutosizingFactor``                           double  frac    > 0                                No        1.0             Cooling autosizing capacity multiplier
@@ -2663,8 +2665,8 @@ Each mini-split air conditioner is entered as a ``/HPXML/Building/BuildingDetail
   ``CoolingCapacity``                                               double    Btu/hr  >= 0                     No        autosized [#]_  Cooling output capacity at 95F
   ``CompressorType``                                                string            variable speed           Yes                       Type of compressor
   ``FractionCoolLoadServed``                                        double    frac    >= 0, <= 1 [#]_          Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``  double    Btu/Wh  > 0                      Yes                       Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``    double    Btu/Wh  > 0 [#]_                 No        See [#]_        Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``        double    Btu/Wh  > 0                      Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``          double    Btu/Wh  > 0 [#]_                 No        See [#]_        Rated cooling efficiency [#]_
   ``CoolingDetailedPerformanceData``                                element                                    No        <none>          Cooling detailed performance data [#]_
   ``extension/FanMotorType``                                        string            See [#]_                 No        BPM             Blower fan model type
   ``extension/FanPowerWattsPerCFM``                                 double    W/cfm   >= 0 [#]_                No        See [#]_        Blower fan efficiency at maximum fan speed
@@ -2813,9 +2815,9 @@ Each air-to-air heat pump is entered as a ``/HPXML/Building/BuildingDetails/Syst
   ``BackupType``                                                      string                   See [#]_                         No        <none>          Type of backup heating
   ``FractionHeatLoadServed``                                          double   frac            >= 0, <= 1 [#]_                  Yes                       Fraction of heating load served
   ``FractionCoolLoadServed``                                          double   frac            >= 0, <= 1 [#]_                  Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``    double   Btu/Wh          > 0                              Yes                       Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``      double   Btu/Wh          > 0 [#]_                         No        See [#]_        Rated cooling efficiency [#]_
-  ``AnnualHeatingEfficiency[Units="HSPF2" or Units="HSPF"]/Value``    double   Btu/Wh          > 0                              Yes                       Rated heating efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``          double   Btu/Wh          > 0                              Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``            double   Btu/Wh          > 0 [#]_                         No        See [#]_        Rated cooling efficiency [#]_
+  ``AnnualHeatingEfficiency[Units="HSPF2" or "HSPF"]/Value``          double   Btu/Wh          > 0                              Yes                       Rated heating efficiency [#]_
   ``CoolingDetailedPerformanceData``                                  element                                                   No        <none>          Cooling detailed performance data [#]_
   ``HeatingDetailedPerformanceData``                                  element                                                   No        <none>          Heating detailed performance data [#]_
   ``extension/FanMotorType``                                          string                   See [#]_                         No        See [#]_        Blower fan model type
@@ -2911,9 +2913,9 @@ Each ``HeatPump`` should represent a single outdoor unit, whether connected to o
   ``BackupType``                                                      string                    See [#]_                         No        <none>          Type of backup heating
   ``FractionHeatLoadServed``                                          double    frac            >= 0, <= 1 [#]_                  Yes                       Fraction of heating load served
   ``FractionCoolLoadServed``                                          double    frac            >= 0, <= 1 [#]_                  Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="SEER2" or Units="SEER"]/Value``    double    Btu/Wh          > 0                              Yes                       Rated cooling efficiency [#]_
-  ``AnnualCoolingEfficiency[Units="EER2" or Units="EER"]/Value``      double    Btu/Wh          > 0 [#]_                         No        See [#]_        Rated cooling efficiency [#]_
-  ``AnnualHeatingEfficiency[Units="HSPF2" or Units="HSPF"]/Value``    double    Btu/Wh          > 0                              Yes                       Rated heating efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="SEER2" or "SEER"]/Value``          double    Btu/Wh          > 0                              Yes                       Rated cooling efficiency [#]_
+  ``AnnualCoolingEfficiency[Units="EER2" or "EER"]/Value``            double    Btu/Wh          > 0 [#]_                         No        See [#]_        Rated cooling efficiency [#]_
+  ``AnnualHeatingEfficiency[Units="HSPF2" or "HSPF"]/Value``          double    Btu/Wh          > 0                              Yes                       Rated heating efficiency [#]_
   ``CoolingDetailedPerformanceData``                                  element                                                    No        <none>          Cooling detailed performance data [#]_
   ``HeatingDetailedPerformanceData``                                  element                                                    No        <none>          Heating detailed performance data [#]_
   ``extension/FanMotorType``                                          string                    See [#]_                         No        BPM             Blower fan model type
@@ -3003,7 +3005,7 @@ Each packaged terminal heat pump is entered as a ``/HPXML/Building/BuildingDetai
   ``BackupType``                                                      string                    See [#]_                         No        <none>          Type of backup heating
   ``FractionHeatLoadServed``                                          double    frac            >= 0, <= 1 [#]_                  Yes                       Fraction of heating load served
   ``FractionCoolLoadServed``                                          double    frac            >= 0, <= 1 [#]_                  Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``      double    Btu/Wh          > 0                              Yes                       Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``            double    Btu/Wh          > 0                              Yes                       Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                      double    W/W             > 0                              Yes                       Rated heating efficiency
   ``extension/CrankcaseHeaterPowerWatts``                             double    W               >= 0                             No        0.0             Crankcase heater power
   ``extension/BackupHeatingActiveDuringDefrost``                      boolean                                                    No        false           Whether integrated backup heat is used during defrost [#]_
@@ -3055,7 +3057,7 @@ Each room air conditioner with reverse cycle is entered as a ``/HPXML/Building/B
   ``BackupType``                                                      string                    See [#]_                                 No        <none>          Type of backup heating
   ``FractionHeatLoadServed``                                          double    frac            >= 0, <= 1 [#]_                          Yes                       Fraction of heating load served
   ``FractionCoolLoadServed``                                          double    frac            >= 0, <= 1 [#]_                          Yes                       Fraction of cooling load served
-  ``AnnualCoolingEfficiency[Units="CEER" or Units="EER"]/Value``      double    Btu/Wh          > 0                                      Yes                       Rated cooling efficiency
+  ``AnnualCoolingEfficiency[Units="CEER" or "EER"]/Value``            double    Btu/Wh          > 0                                      Yes                       Rated cooling efficiency
   ``AnnualHeatingEfficiency[Units="COP"]/Value``                      double    W/W             > 0                                      Yes                       Rated heating efficiency
   ``extension/CrankcaseHeaterPowerWatts``                             double    W               >= 0                                     No        0.0             Crankcase heater power
   ``extension/BackupHeatingActiveDuringDefrost``                      boolean                                                            No        false           Whether integrated backup heat is used during defrost [#]_
@@ -3250,7 +3252,7 @@ If a backup type of "integrated" is provided, additional information is entered 
   Element                                                                        Type      Units   Constraints  Required  Default         Notes
   =============================================================================  ========  ======  ===========  ========  ==============  ==========================================
   ``BackupSystemFuel``                                                           string            See [#]_     Yes                       Integrated backup heating fuel type
-  ``BackupAnnualHeatingEfficiency[Units="Percent" or Units="AFUE"]/Value``       double    frac    > 0, <= 1    Yes                       Integrated backup heating efficiency
+  ``BackupAnnualHeatingEfficiency[Units="Percent" or "AFUE"]/Value``             double    frac    > 0, <= 1    Yes                       Integrated backup heating efficiency
   ``BackupHeatingCapacity``                                                      double    Btu/hr  >= 0         No        autosized [#]_  Integrated backup heating output capacity
   ``extension/BackupHeatingAutosizingFactor``                                    double    frac    > 0          No        1.0             Backup Heating autosizing capacity multiplier
   ``extension/BackupHeatingAutosizingLimit``                                     double    Btu/hr  > 0          No        <none>          Backup Heating autosizing capacity limit
@@ -4103,26 +4105,28 @@ Conventional Storage
 
 Each conventional storage water heater is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
 
-  =============================================  =================  =============  ====================  ========  ========  =============================================
-  Element                                        Type               Units          Constraints           Required  Default   Notes
-  =============================================  =================  =============  ====================  ========  ========  =============================================
-  ``SystemIdentifier``                           id                                                      Yes                 Unique identifier
-  ``FuelType``                                   string                            See [#]_              Yes                 Fuel type
-  ``WaterHeaterType``                            string                            storage water heater  Yes                 Type of water heater
-  ``Location``                                   string                            See [#]_              No        See [#]_  Water heater location
-  ``IsSharedSystem``                             boolean                                                 No        false     Whether it serves multiple dwelling units or shared laundry room
-  ``TankVolume``                                 double             gal            > 0                   No        See [#]_  Nominal tank volume
-  ``FractionDHWLoadServed``                      double             frac           >= 0, <= 1 [#]_       Yes                 Fraction of hot water load served [#]_
-  ``HeatingCapacity``                            double             Btu/hr         > 0                   No        See [#]_  Heating input capacity
-  ``UniformEnergyFactor`` or ``EnergyFactor``    double             frac           < 1                   Yes                 EnergyGuide label rated efficiency
-  ``UsageBin`` or ``FirstHourRating``            string or double   str or gal/hr  See [#]_ or > 0       No        See [#]_  EnergyGuide label usage bin/first hour rating
-  ``RecoveryEfficiency``                         double             frac           > 0, <= 1 [#]_        No        See [#]_  Recovery efficiency
-  ``WaterHeaterInsulation/Jacket/JacketRValue``  double             F-ft2-hr/Btu   >= 0                  No        0         R-value of additional tank insulation wrap
-  ``HotWaterTemperature``                        double             F              > 0                   No        125       Water heater setpoint [#]_
-  ``UsesDesuperheater``                          boolean                                                 No        false     Presence of desuperheater? [#]_
-  ``extension/TankModelType``                    string                            See [#]_              No        mixed     Tank model type
-  ``extension/NumberofBedroomsServed``           integer                           > NumberofBedrooms    See [#]_            Number of bedrooms served directly or indirectly
-  =============================================  =================  =============  ====================  ========  ========  =============================================
+  =============================================  =================  =============  ==============================  ========  ========  =============================================
+  Element                                        Type               Units          Constraints                     Required  Default   Notes
+  =============================================  =================  =============  ==============================  ========  ========  =============================================
+  ``SystemIdentifier``                           id                                                                Yes                 Unique identifier
+  ``FuelType``                                   string                            See [#]_                        Yes                 Fuel type
+  ``WaterHeaterType``                            string                            storage water heater            Yes                 Type of water heater
+  ``Location``                                   string                            See [#]_                        No        See [#]_  Water heater location
+  ``IsSharedSystem``                             boolean                                                           No        false     Whether it serves multiple dwelling units or shared laundry room
+  ``TankVolume``                                 double             gal            > 0                             No        See [#]_  Nominal tank volume
+  ``FractionDHWLoadServed``                      double             frac           >= 0, <= 1 [#]_                 Yes                 Fraction of hot water load served [#]_
+  ``HeatingCapacity``                            double             Btu/hr         > 0                             No        See [#]_  Heating input capacity
+  ``UniformEnergyFactor`` or ``EnergyFactor``    double             frac           < 1                             Yes                 EnergyGuide label rated efficiency
+  ``UsageBin`` or ``FirstHourRating``            string or double   str or gal/hr  See [#]_ or > 0                 No        See [#]_  EnergyGuide label usage bin/first hour rating
+  ``RecoveryEfficiency``                         double             frac           > 0, <= 1 [#]_                  No        See [#]_  Recovery efficiency
+  ``WaterHeaterInsulation/Jacket/JacketRValue``  double             F-ft2-hr/Btu   >= 0                            No        0         R-value of additional tank insulation wrap
+  ``HotWaterTemperature``                        double             F              >= 105                          No        125       Water heater setpoint [#]_
+  ``HasMixingValve``                             boolean                                                           No        See [#]_  Presence of a water heater mixing valve?
+  ``MixingValveSetpoint``                        double             F              >= 105, <= HotWaterTemperature  No        See [#]_  Temperature setpoint for the mixing valve
+  ``UsesDesuperheater``                          boolean                                                           No        false     Presence of desuperheater? [#]_
+  ``extension/TankModelType``                    string                            See [#]_                        No        mixed     Tank model type
+  ``extension/NumberofBedroomsServed``           integer                           > NumberofBedrooms              See [#]_            Number of bedrooms served directly or indirectly
+  =============================================  =================  =============  ==============================  ========  ========  =============================================
 
   .. [#] FuelType choices are "natural gas", "fuel oil", "fuel oil 1", "fuel oil 2", "fuel oil 4", "fuel oil 5/6", "diesel", "propane", "kerosene", "coal", "coke", "bituminous coal", "anthracite coal", "electricity", "wood", or "wood pellets".
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
@@ -4131,7 +4135,7 @@ Each conventional storage water heater is entered as a ``/HPXML/Building/Buildin
 
          \- **IECC zones 1-3**: "garage", "conditioned space"
 
-         \- **IECC zones 3-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
+         \- **IECC zones 4-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
 
   .. [#] If TankVolume not provided, defaults based on Table 8 in the `2014 BAHSP <https://www.energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf>`_.
   .. [#] The sum of all ``FractionDHWLoadServed`` (across all WaterHeatingSystems) must equal to 1.
@@ -4150,6 +4154,8 @@ Each conventional storage water heater is entered as a ``/HPXML/Building/Buildin
          \- **Non-electric, EnergyFactor >= 0.75**: 0.561 * EnergyFactor + 0.439
 
   .. [#] The water heater setpoint can alternatively be defined using :ref:`schedules_detailed`.
+  .. [#] If HasMixingValve not provided, defaults to true if HotWaterTemperature is greater than 140F, otherwise false.
+  .. [#] If MixingValveSetpoint not provided and HasMixingValve=true, defaults to the lesser of 125 deg-F and HotWaterTemperature.
   .. [#] Additional desuperheater inputs are described in :ref:`water_heater_desuperheater`.
   .. [#] TankModelType choices are "mixed" or "stratified". Only currently allowed if FuelType is "electricity".
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
@@ -4163,21 +4169,23 @@ Tankless
 
 Each instantaneous tankless water heater is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
 
-  ===========================================  =======  ============  ==========================  ============  ========  ==========================================================
-  Element                                      Type     Units         Constraints                 Required      Default   Notes
-  ===========================================  =======  ============  ==========================  ============  ========  ==========================================================
-  ``SystemIdentifier``                         id                                                 Yes                     Unique identifier
-  ``FuelType``                                 string                 See [#]_                    Yes                     Fuel type
-  ``WaterHeaterType``                          string                 instantaneous water heater  Yes                     Type of water heater
-  ``Location``                                 string                 See [#]_                    No            See [#]_  Water heater location
-  ``IsSharedSystem``                           boolean                                            No            false     Whether it serves multiple dwelling units or shared laundry room
-  ``PerformanceAdjustment``                    double   frac          >= 0, <= 1                  No            See [#]_  Multiplier on efficiency, typically to account for cycling
-  ``FractionDHWLoadServed``                    double   frac          >= 0, <= 1 [#]_             Yes                     Fraction of hot water load served [#]_
-  ``UniformEnergyFactor`` or ``EnergyFactor``  double   frac          < 1                         Yes                     EnergyGuide label rated efficiency
-  ``HotWaterTemperature``                      double   F             > 0                         No            125       Water heater setpoint [#]_
-  ``UsesDesuperheater``                        boolean                                            No            false     Presence of desuperheater? [#]_
-  ``extension/NumberofBedroomsServed``         integer                > NumberofBedrooms          See [#]_                Number of bedrooms served directly or indirectly
-  ===========================================  =======  ============  ==========================  ============  ========  ==========================================================
+  ===========================================  =======  ============  ==============================  ============  ========  ==========================================================
+  Element                                      Type     Units         Constraints                     Required      Default   Notes
+  ===========================================  =======  ============  ==============================  ============  ========  ==========================================================
+  ``SystemIdentifier``                         id                                                     Yes                     Unique identifier
+  ``FuelType``                                 string                 See [#]_                        Yes                     Fuel type
+  ``WaterHeaterType``                          string                 instantaneous water heater      Yes                     Type of water heater
+  ``Location``                                 string                 See [#]_                        No            See [#]_  Water heater location
+  ``IsSharedSystem``                           boolean                                                No            false     Whether it serves multiple dwelling units or shared laundry room
+  ``PerformanceAdjustment``                    double   frac          >= 0, <= 1                      No            See [#]_  Multiplier on efficiency, typically to account for cycling
+  ``FractionDHWLoadServed``                    double   frac          >= 0, <= 1 [#]_                 Yes                     Fraction of hot water load served [#]_
+  ``UniformEnergyFactor`` or ``EnergyFactor``  double   frac          < 1                             Yes                     EnergyGuide label rated efficiency
+  ``HotWaterTemperature``                      double   F             >= 105                          No            125       Water heater setpoint [#]_
+  ``HasMixingValve``                           boolean                                                No            See [#]_  Presence of a water heater mixing valve?
+  ``MixingValveSetpoint``                      double   F             >= 105, <= HotWaterTemperature  No            See [#]_  Temperature setpoint for the mixing valve
+  ``UsesDesuperheater``                        boolean                                                No            false     Presence of desuperheater? [#]_
+  ``extension/NumberofBedroomsServed``         integer                > NumberofBedrooms              See [#]_                Number of bedrooms served directly or indirectly
+  ===========================================  =======  ============  ==============================  ============  ========  ==========================================================
 
   .. [#] FuelType choices are "natural gas", "fuel oil", "fuel oil 1", "fuel oil 2", "fuel oil 4", "fuel oil 5/6", "diesel", "propane", "kerosene", "coal", "coke", "bituminous coal", "anthracite coal", "electricity", "wood", or "wood pellets".
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
@@ -4186,13 +4194,15 @@ Each instantaneous tankless water heater is entered as a ``/HPXML/Building/Build
 
          \- **IECC zones 1-3**: "garage", "conditioned space"
 
-         \- **IECC zones 3-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
+         \- **IECC zones 4-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
 
   .. [#] If PerformanceAdjustment not provided, defaults to 0.94 (UEF) or 0.92 (EF) based on `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
   .. [#] The sum of all ``FractionDHWLoadServed`` (across all WaterHeatingSystems) must equal to 1.
   .. [#] FractionDHWLoadServed represents only the fraction of the hot water load associated with the hot water **fixtures**.
          Additional hot water load from clothes washers/dishwashers will be automatically assigned to the appropriate water heater(s).
   .. [#] The water heater setpoint can alternatively be defined using :ref:`schedules_detailed`.
+  .. [#] If HasMixingValve not provided, defaults to true if HotWaterTemperature is greater than 140F, otherwise false.
+  .. [#] If MixingValveSetpoint not provided and HasMixingValve=true, defaults to the lesser of 125 deg-F and HotWaterTemperature.
   .. [#] Additional desuperheater inputs are described in :ref:`water_heater_desuperheater`.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          Each dwelling unit w/zero bedrooms should be counted as 1 bedroom -- e.g., a value of 3 should be entered for a shared system serving 3 studio (zero bedroom) apartments.
@@ -4202,31 +4212,34 @@ Each instantaneous tankless water heater is entered as a ``/HPXML/Building/Build
 Heat Pump
 ~~~~~~~~~
 
-Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
+Each heat pump water heater (HPWH) is entered as a ``/HPXML/Building/BuildingDetails/Systems/WaterHeating/WaterHeatingSystem``.
 
-  ===================================================  ================  =============  ======================  ========  ==============  =============================================
-  Element                                              Type              Units          Constraints             Required  Default         Notes
-  ===================================================  ================  =============  ======================  ========  ==============  =============================================
-  ``SystemIdentifier``                                 id                                                       Yes                       Unique identifier
-  ``FuelType``                                         string                           electricity             Yes                       Fuel type
-  ``WaterHeaterType``                                  string                           heat pump water heater  Yes                       Type of water heater
-  ``Location``                                         string                           See [#]_                No        See [#]_        Water heater location
-  ``IsSharedSystem``                                   boolean                                                  No        false           Whether it serves multiple dwelling units or shared laundry room
-  ``TankVolume``                                       double            gal            > 0                     No        See [#]_        Nominal tank volume
-  ``FractionDHWLoadServed``                            double            frac           >= 0, <= 1 [#]_         Yes                       Fraction of hot water load served [#]_
-  ``HeatingCapacity``                                  double            Btu/hr         > 0                     No        See [#]_        Heating input capacity
-  ``BackupHeatingCapacity``                            double            Btu/hr         >= 0                    No        15355 (4.5 kW)  Heating capacity of the electric resistance backup
-  ``UniformEnergyFactor`` or ``EnergyFactor``          double            frac           >= 1.45, <= 5           Yes                       EnergyGuide label rated efficiency
-  ``HPWHDucting/ExhaustAirTermination``                string                           See [#]_                No        <none>          The location where HPWH exhaust air is ducted to
-  ``HPWHOperatingMode``                                string                           See [#]_                No        hybrid/auto     Operating mode [#]_
-  ``UsageBin`` or ``FirstHourRating``                  string or double  str or gal/hr  See [#]_ or > 0         No        See [#]_        EnergyGuide label usage bin/first hour rating
-  ``WaterHeaterInsulation/Jacket/JacketRValue``        double            F-ft2-hr/Btu   >= 0                    No        0               R-value of additional tank insulation wrap
-  ``HotWaterTemperature``                              double            F              > 0                     No        125             Water heater setpoint [#]_
-  ``UsesDesuperheater``                                boolean                                                  No        false           Presence of desuperheater? [#]_
-  ``extension/NumberofBedroomsServed``                 integer                          > NumberofBedrooms      See [#]_                  Number of bedrooms served directly or indirectly
-  ``extension/HPWHInConfinedSpaceWithoutMitigation``   boolean                                                  No        false           Whether HPWH is installed in confined space without mitigation [#]_
-  ``extension/HPWHContainmentVolume``                  double            ft3            >= 32                   See [#]_                  Containment volume of the space where HPWH is installed
-  ===================================================  ================  =============  ======================  ========  ==============  =============================================
+  ===================================================  ================  =============  ==============================  ========  ==============  =============================================
+  Element                                              Type              Units          Constraints                     Required  Default         Notes
+  ===================================================  ================  =============  ==============================  ========  ==============  =============================================
+  ``SystemIdentifier``                                 id                                                               Yes                       Unique identifier
+  ``FuelType``                                         string                           electricity                     Yes                       Fuel type
+  ``WaterHeaterType``                                  string                           heat pump water heater          Yes                       Type of water heater
+  ``Location``                                         string                           See [#]_                        No        See [#]_        Water heater location
+  ``IsSharedSystem``                                   boolean                                                          No        false           Whether it serves multiple dwelling units or shared laundry room
+  ``TankVolume``                                       double            gal            > 0                             No        See [#]_        Nominal tank volume
+  ``FractionDHWLoadServed``                            double            frac           >= 0, <= 1 [#]_                 Yes                       Fraction of hot water load served [#]_
+  ``HeatingCapacity``                                  double            Btu/hr         > 0                             No        See [#]_        Heating input capacity
+  ``BackupHeatingCapacity``                            double            Btu/hr         >= 0                            No        See [#]_        Heating capacity of the electric resistance backup
+  ``UniformEnergyFactor`` or ``EnergyFactor``          double            frac           >= 1.45, <= 5                   Yes                       EnergyGuide label rated efficiency
+  ``HPWHOperatingMode``                                string                           See [#]_                        No        See [#]_        HPWH operating mode [#]_
+  ``HPWHVoltage``                                      string                           See [#]_                        No        240V            HPWH voltage
+  ``HPWHDucting/ExhaustAirTermination``                string                           See [#]_                        No        <none>          The location where HPWH exhaust air is ducted to
+  ``UsageBin`` or ``FirstHourRating``                  string or double  str or gal/hr  See [#]_ or > 0                 No        See [#]_        EnergyGuide label usage bin/first hour rating
+  ``WaterHeaterInsulation/Jacket/JacketRValue``        double            F-ft2-hr/Btu   >= 0                            No        0               R-value of additional tank insulation wrap
+  ``HotWaterTemperature``                              double            F              >= 105                          No        125             Water heater setpoint [#]_
+  ``HasMixingValve``                                   boolean                                                          No        See [#]_        Presence of a water heater mixing valve?
+  ``MixingValveSetpoint``                              double            F              >= 105, <= HotWaterTemperature  No        See [#]_        Temperature setpoint for the mixing valve
+  ``UsesDesuperheater``                                boolean                                                          No        false           Presence of desuperheater? [#]_
+  ``extension/NumberofBedroomsServed``                 integer                          > NumberofBedrooms              See [#]_                  Number of bedrooms served directly or indirectly
+  ``extension/HPWHInConfinedSpaceWithoutMitigation``   boolean                                                          No        false           Whether HPWH is installed in confined space without mitigation [#]_
+  ``extension/HPWHContainmentVolume``                  double            ft3            >= 32                           See [#]_                  Containment volume of the space where HPWH is installed
+  ===================================================  ================  =============  ==============================  ========  ==============  =============================================
 
   .. [#] Location choices are "conditioned space", "basement - unconditioned", "basement - conditioned", "attic - unvented", "attic - vented", "garage", "crawlspace - unvented", "crawlspace - vented", "other exterior", "other housing unit", "other heated space", "other multifamily buffer space", or "other non-freezing space".
          See :ref:`hpxml_locations` for descriptions.
@@ -4234,7 +4247,7 @@ Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Sy
 
          \- **IECC zones 1-3**: "garage", "conditioned space"
 
-         \- **IECC zones 3-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
+         \- **IECC zones 4-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
 
   .. [#] If TankVolume not provided, defaults as follows:
 
@@ -4245,16 +4258,24 @@ Each heat pump water heater is entered as a ``/HPXML/Building/BuildingDetails/Sy
   .. [#] The sum of all ``FractionDHWLoadServed`` (across all WaterHeatingSystems) must equal to 1.
   .. [#] FractionDHWLoadServed represents only the fraction of the hot water load associated with the hot water **fixtures**.
          Additional hot water load from clothes washers/dishwashers will be automatically assigned to the appropriate water heater(s).
-  .. [#] If HeatingCapacity not provided, defaults to 1706 Btu/hr (0.5 kW).
+  .. [#] If HeatingCapacity not provided, defaults to 1706 Btu/hr (0.5 kW) for 240V HPWHs and 1443 Btu/hr (0.423 kW) for 120V HPWHs.
+  .. [#] If BackupHeatingCapacity not provided, defaults to 15355 Btu/hr (4.5 kW) for 240V HPWHs and 0 (no backup elements) for 120V HPWHs.
+  .. [#] HPWHOperatingMode choices are "hybrid/auto" or "heat pump only"; "hybrid/auto" is not allowed for 120V HPWHs.
+  .. [#] If HPWHOperatingMode not provided, defaults to "hybrid/auto" for 240V HPWHs, otherwise "heat pump only".
+  .. [#] When "hybrid/auto" is used, the HPWH will prioritize using the heat pump and will resort to electric resistance backup if heat pump capacity is not sufficient to meet demand.
+         When "heat pump only", the HPWH will not run the electric resistance to meet demand.
+         In both cases, electric resistance may also operate if the ambient temperature is outside the minimum/maximum compressor operating temperatures.
+         Note that the operating mode for 240V systems can alternatively be defined using :ref:`schedules_detailed`.
+  .. [#] HPWHVoltage choices are "240V", "120V", "120V dedicated circuit", or "120V shared circuit".
   .. [#] OpenStudio-HPXML currently only supports ExhaustAirTermination="outside" for heat pump water heaters located in conditioned space.
          Any other combination of ExhaustAirTermination value and water heater location will be ignored w/ a warning.
-  .. [#] HPWHOperatingMode choices are "hybrid/auto" or "heat pump only".
-  .. [#] The heat pump water heater operating mode can alternatively be defined using :ref:`schedules_detailed`.
   .. [#] UsageBin choices are "very small", "low", "medium", or "high".
   .. [#] UsageBin/FirstHourRating are only used for water heaters that use UniformEnergyFactor.
          If neither UsageBin nor FirstHourRating provided, UsageBin defaults to "medium".
          If FirstHourRating provided and UsageBin not provided, UsageBin is determined based on the FirstHourRating value.
   .. [#] The water heater setpoint can alternatively be defined using :ref:`schedules_detailed`.
+  .. [#] If HasMixingValve not provided, defaults to true if HotWaterTemperature is greater than 140F, otherwise false.
+  .. [#] If MixingValveSetpoint not provided and HasMixingValve=true, defaults to the lesser of 125 deg-F and HotWaterTemperature.
   .. [#] Additional desuperheater inputs are described in :ref:`water_heater_desuperheater`.
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          Tank losses will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the water heating system per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
@@ -4285,7 +4306,9 @@ Each combination boiler w/ storage tank (sometimes referred to as an indirect wa
   ``FractionDHWLoadServed``                      double   frac          >= 0, <= 1 [#]_                         Yes                     Fraction of hot water load served [#]_
   ``WaterHeaterInsulation/Jacket/JacketRValue``  double   F-ft2-hr/Btu  >= 0                                    No            0         R-value of additional storage tank insulation wrap
   ``StandbyLoss[Units="F/hr"]/Value``            double   F/hr          > 0                                     No            See [#]_  Storage tank standby losses
-  ``HotWaterTemperature``                        double   F             > 0                                     No            125       Water heater setpoint [#]_
+  ``HotWaterTemperature``                        double   F             >= 105                                  No            125       Water heater setpoint [#]_
+  ``HasMixingValve``                             boolean                                                        No            See [#]_  Presence of a water heater mixing valve?
+  ``MixingValveSetpoint``                        double   F             >= 105, <= HotWaterTemperature          No            See [#]_  Temperature setpoint for the mixing valve
   ``RelatedHVACSystem``                          idref                  See [#]_                                Yes                     ID of boiler
   ``extension/NumberofBedroomsServed``           integer                > NumberofBedrooms                      See [#]_                Number of bedrooms served directly or indirectly
   =============================================  =======  ============  ======================================  ============  ========  ==================================================
@@ -4296,7 +4319,7 @@ Each combination boiler w/ storage tank (sometimes referred to as an indirect wa
 
          \- **IECC zones 1-3**: "garage", "conditioned space"
 
-         \- **IECC zones 3-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
+         \- **IECC zones 4-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
 
   .. [#] If TankVolume not provided, defaults based on Table 8 in the `2014 BAHSP <https://www.energy.gov/sites/prod/files/2014/03/f13/house_simulation_protocols_2014.pdf>`_.
   .. [#] The sum of all ``FractionDHWLoadServed`` (across all WaterHeatingSystems) must equal to 1.
@@ -4304,6 +4327,8 @@ Each combination boiler w/ storage tank (sometimes referred to as an indirect wa
          Additional hot water load from clothes washers/dishwashers will be automatically assigned to the appropriate water heater(s).
   .. [#] If StandbyLoss not provided, defaults based on a regression analysis of `AHRI Directory of Certified Product Performance <https://www.ahridirectory.org>`_.
   .. [#] The water heater setpoint can alternatively be defined using :ref:`schedules_detailed`.
+  .. [#] If HasMixingValve not provided, defaults to true if HotWaterTemperature is greater than 140F, otherwise false.
+  .. [#] If MixingValveSetpoint not provided and HasMixingValve=true, defaults to the lesser of 125 deg-F and HotWaterTemperature.
   .. [#] RelatedHVACSystem must reference a ``HeatingSystem`` (Boiler).
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          Tank losses will be apportioned to the dwelling unit using its number of bedrooms divided by the total number of bedrooms served by the water heating system per `ANSI/RESNET/ICC 301-2022 <https://codes.iccsafe.org/content/RESNET3012022P1>`_.
@@ -4324,7 +4349,9 @@ Each combination boiler w/ tankless coil is entered as a ``/HPXML/Building/Build
   ``Location``                          string          See [#]_                                 No            See [#]_  Water heater location
   ``IsSharedSystem``                    boolean                                                  No            false     Whether it serves multiple dwelling units or shared laundry room
   ``FractionDHWLoadServed``             double   frac   >= 0, <= 1 [#]_                          Yes                     Fraction of hot water load served [#]_
-  ``HotWaterTemperature``               double   F      > 0                                      No            125       Water heater setpoint [#]_
+  ``HotWaterTemperature``               double   F      >= 105                                   No            125       Water heater setpoint [#]_
+  ``HasMixingValve``                    boolean                                                  No            See [#]_  Presence of a water heater mixing valve?
+  ``MixingValveSetpoint``               double   F      >= 105, <= HotWaterTemperature           No            See [#]_  Temperature setpoint for the mixing valve
   ``RelatedHVACSystem``                 idref           See [#]_                                 Yes                     ID of boiler
   ``extension/NumberofBedroomsServed``  integer         > NumberofBedrooms                       See [#]_                Number of bedrooms served directly or indirectly
   ====================================  =======  =====  =======================================  ============  ========  ==================================================
@@ -4335,12 +4362,14 @@ Each combination boiler w/ tankless coil is entered as a ``/HPXML/Building/Build
 
          \- **IECC zones 1-3**: "garage", "conditioned space"
 
-         \- **IECC zones 3-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
+         \- **IECC zones 4-8, unknown**: "basement - unconditioned", "basement - conditioned", "conditioned space"
 
   .. [#] The sum of all ``FractionDHWLoadServed`` (across all WaterHeatingSystems) must equal to 1.
   .. [#] FractionDHWLoadServed represents only the fraction of the hot water load associated with the hot water **fixtures**.
          Additional hot water load from clothes washers/dishwashers will be automatically assigned to the appropriate water heater(s).
   .. [#] The water heater setpoint can alternatively be defined using :ref:`schedules_detailed`.
+  .. [#] If HasMixingValve not provided, defaults to true if HotWaterTemperature is greater than 140F, otherwise false.
+  .. [#] If MixingValveSetpoint not provided and HasMixingValve=true, defaults to the lesser of 125 deg-F and HotWaterTemperature.
   .. [#] RelatedHVACSystem must reference a ``HeatingSystem`` (Boiler).
   .. [#] NumberofBedroomsServed only required if IsSharedSystem is true.
          Each dwelling unit w/zero bedrooms should be counted as 1 bedroom -- e.g., a value of 3 should be entered for a shared system serving 3 studio (zero bedroom) apartments.
@@ -4779,7 +4808,7 @@ Individual branch circuits entered in ``BranchCircuits/BranchCircuit``.
 
          \- ``HeatPump[HeatPumpFuel="electricity"]``: 240
 
-         \- ``WaterHeatingSystem[FuelType="electricity"]``: 240
+         \- ``WaterHeatingSystem[FuelType="electricity"]``: 240, or 120 for a heat pump water heater with any 120V ``HPWHVoltage`` option
 
          \- ``ClothesDryer[FuelType="electricity"]``: 240
 
@@ -4922,8 +4951,8 @@ If not entered, the simulation will not include batteries.
   ``IsSharedSystem``                                    boolean                                      No        false     Whether it serves multiple dwelling units
   ``Location``                                          string              See [#]_                 No        See [#]_  Location
   ``BatteryType``                                       string              See [#]_                 Yes                 Battery type
-  ``NominalCapacity[Units="kWh" or Units="Ah"]/Value``  double   kWh or Ah  >= 0                     No        See [#]_  Nominal (total) capacity
-  ``UsableCapacity[Units="kWh" or Units="Ah"]/Value``   double   kWh or Ah  >= 0, < NominalCapacity  No        See [#]_  Usable capacity
+  ``NominalCapacity[Units="kWh" or "Ah"]/Value``        double   kWh or Ah  >= 0                     No        See [#]_  Nominal (total) capacity
+  ``UsableCapacity[Units="kWh" or "Ah"]/Value``         double   kWh or Ah  >= 0, < NominalCapacity  No        See [#]_  Usable capacity
   ``RatedPowerOutput``                                  double   W          >= 0                     No        See [#]_  Power output under non-peak conditions
   ``NominalVoltage``                                    double   V          >= 0                     No        50        Nominal voltage
   ``RoundTripEfficiency``                               double   frac       > 0, <= 1                No        0.925     Round trip efficiency
@@ -4967,8 +4996,8 @@ If not entered, the simulation will not include a detailed electric vehicle mode
   ===============================================================================================  ======  =========  =======================  ========  =============  =======================================================
   ``SystemIdentifier``                                                                             id                                          Yes                      Unique identifier
   ``VehicleType/BatteryElectricVehicle/Battery/BatteryType``                                       string                                      No        Li-ion [#]_    EV battery type
-  ``VehicleType/BatteryElectricVehicle/Battery/NominalCapacity[Units="kWh" or Units="Ah"]/Value``  double  kWh or Ah  >= 0                     No        See [#]_       Nominal (total) capacity
-  ``VehicleType/BatteryElectricVehicle/Battery/UsableCapacity[Units="kWh" or Units="Ah"]/Value``   double  kWh or Ah  >= 0, < NominalCapacity  No        See [#]_       Usable capacity
+  ``VehicleType/BatteryElectricVehicle/Battery/NominalCapacity[Units="kWh" or "Ah"]/Value``        double  kWh or Ah  >= 0                     No        See [#]_       Nominal (total) capacity
+  ``VehicleType/BatteryElectricVehicle/Battery/UsableCapacity[Units="kWh" or "Ah"]/Value``         double  kWh or Ah  >= 0, < NominalCapacity  No        See [#]_       Usable capacity
   ``VehicleType/BatteryElectricVehicle/Battery/NominalVoltage``                                    double  V          >= 0                     No                       Nominal voltage
   ``VehicleType/BatteryElectricVehicle/FractionChargedLocation[Location="Home"]/Percentage``       double  frac       >= 0                     No        See [#]_       Fraction of EV charging energy provided by home charger
   ``VehicleType/BatteryElectricVehicle/ConnectedCharger``                                          idref              See [#]_                 No                       ID of connected EV charger [#]_
@@ -4978,7 +5007,7 @@ If not entered, the simulation will not include a detailed electric vehicle mode
   ``VehicleType/BatteryElectricVehicle/extension/MonthlyScheduleMultipliers``                      array                                       No        See [#]_       12 comma-separated monthly multipliers
   ``MilesDrivenPerYear``                                                                           double  miles      >= 0                     No        See [#]_       Number of miles driven per year
   ``HoursDrivenPerWeek``                                                                           double  hours      >= 0                     No        See [#]_       Number of hours driven per week
-  ``FuelEconomyCombined[Units="kWh/mile" or Units="mile/kWh" or Units="mpge"]/Value``              double             > 0                      No        See [#]_       The vehicle combined city and highway fuel economy
+  ``FuelEconomyCombined[Units="kWh/mile" or "mile/kWh" or "mpge"]/Value``                          double             > 0                      No        See [#]_       The vehicle combined city and highway fuel economy
   ===============================================================================================  ======  =========  =======================  ========  =============  =======================================================
 
   .. [#] Only the "Li-ion" battery type is supported.
@@ -5535,7 +5564,7 @@ If not entered, the simulation will not include a pool heater.
   ======================================================  =======  ==================  ===========  ========  ========  ======================================
   ``SystemIdentifier``                                    id                                        Yes                 Unique identifier
   ``Type``                                                string                       See [#]_     Yes                 Pool heater type
-  ``Load[Units="kWh/year" or Units="therm/year"]/Value``  double   kWh/yr or therm/yr  >= 0         No        See [#]_  Pool heater energy use
+  ``Load[Units="kWh/year" or "therm/year"]/Value``        double   kWh/yr or therm/yr  >= 0         No        See [#]_  Pool heater energy use
   ``extension/UsageMultiplier``                           double                       >= 0         No        1.0       Multiplier on pool heater energy use
   ``extension/WeekdayScheduleFractions``                  array                                     No        See [#]_  24 comma-separated weekday fractions
   ``extension/WeekendScheduleFractions``                  array                                     No                  24 comma-separated weekend fractions
@@ -5614,7 +5643,7 @@ If not entered, the simulation will not include a permanent spa heater.
   ======================================================  =======  ==================  ===========  ========  ========  =======================================
   ``SystemIdentifier``                                    id                                        Yes                 Unique identifier
   ``Type``                                                string                       See [#]_     Yes                 Permanent spa heater type
-  ``Load[Units="kWh/year" or Units="therm/year"]/Value``  double   kWh/yr or therm/yr  >= 0         No        See [#]_  Permanent spa heater energy use
+  ``Load[Units="kWh/year" or "therm/year"]/Value``        double   kWh/yr or therm/yr  >= 0         No        See [#]_  Permanent spa heater energy use
   ``extension/UsageMultiplier``                           double                       >= 0         No        1.0       Multiplier on permanent spa heater energy use
   ``extension/WeekdayScheduleFractions``                  array                                     No        See [#]_  24 comma-separated weekday fractions
   ``extension/WeekendScheduleFractions``                  array                                     No                  24 comma-separated weekend fractions

@@ -3577,6 +3577,7 @@ if [:ruleset_tests, :sample_files_tests1, :sample_files_tests2, :real_home_tests
     failed_tests.each do |failed_test|
       puts "- #{failed_test}"
     end
+    $stdout.flush
     exit! 1
   end
 

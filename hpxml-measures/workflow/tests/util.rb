@@ -86,17 +86,17 @@ def _run_xml(xml, worker_num, apply_unit_multiplier = false, annual_results_1x =
   command = "\"#{cli_path}\" \"#{File.join(File.dirname(__FILE__), '../run_simulation.rb')}\" -x \"#{xml}\" --add-component-loads -o \"#{rundir}\" --debug --monthly ALL#{building_id_str}#{skip_validation_str}"
   success = system(command)
 
-  if unit_multiplier > 1
-    # Clean up
-    File.delete(xml)
-    xml.gsub!('-10x.xml', '.xml')
-  end
-
   rundir = File.join(rundir, 'run')
 
   # Check results
   print "Simulation failed: #{xml}.\n" unless success
   assert_equal(true, success)
+
+  if unit_multiplier > 1
+    # Clean up
+    File.delete(xml)
+    xml.gsub!('-10x.xml', '.xml')
+  end
 
   # Check for output files
   annual_csv_path = File.join(rundir, 'results_annual.csv')
@@ -378,10 +378,6 @@ def _verify_outputs(rundir, hpxml_path, results, hpxml, unit_multiplier)
     # Stratified tank WHs
     if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.water_heating_systems.count { |wh| wh.tank_model_type == HPXML::WaterHeaterTankModelTypeStratified } > 0 }
       next if message.include? 'Recovery Efficiency and Energy Factor could not be calculated during the test for standard ratings'
-    end
-    # HP defrost curves
-    if hpxml.buildings.any? { |hpxml_bldg| hpxml_bldg.heat_pumps.count { |hp| [HPXML::HVACTypeHeatPumpAirToAir, HPXML::HVACTypeHeatPumpMiniSplit, HPXML::HVACTypeHeatPumpPTHP, HPXML::HVACTypeHeatPumpRoom].include? hp.heat_pump_type } > 0 }
-      next if message.include?('GetDXCoils: Coil:Heating:DX') && message.include?('curve values') && message.include?('Defrost Energy Input Ratio Function of Temperature Curve')
     end
     # variable system SHR adjustment
     if hpxml.buildings.any? { |hpxml_bldg| (hpxml_bldg.heat_pumps + hpxml_bldg.cooling_systems).count { |hp| hp.compressor_type == HPXML::HVACCompressorTypeVariableSpeed } > 0 }
