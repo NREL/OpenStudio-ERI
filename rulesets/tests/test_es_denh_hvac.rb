@@ -46,81 +46,81 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     if hvac_type == 'central_ac'
       if cz == 5
         vals = {
-          ES::SFNationalVer3_0 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::SFNationalVer3_1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::SFNationalVer3_2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::SFNationalVer3_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::SFPacificVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::SFFloridaVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::SFOregonWashingtonVer3_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::MFNationalVer1_0 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::MFNationalVer1_1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::MFNationalVer1_2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::MFNationalVer1_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage },
-          ES::MFOregonWashingtonVer1_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage },
-          DENH::SFVer2 => { seer2: 13.3, eer2: 11.7, comptype: HPXML::HVACCompressorTypeSingleStage },
-          DENH::MFVer2 => { seer2: 13.3, eer2: 11.7, comptype: HPXML::HVACCompressorTypeSingleStage },
+          ES::SFNationalVer3_0 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::SFNationalVer3_1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::SFNationalVer3_2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::SFNationalVer3_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::SFPacificVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::SFFloridaVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::SFOregonWashingtonVer3_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::MFNationalVer1_0 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::MFNationalVer1_2 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { seer: 14.0, eer: 11.9, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          ES::MFOregonWashingtonVer1_2 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: nil },
+          DENH::SFVer2 => { seer2: 13.3, eer2: 11.7, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: HPXML::HVACFanMotorTypePSC },
+          DENH::MFVer2 => { seer2: 13.3, eer2: 11.7, comptype: HPXML::HVACCompressorTypeSingleStage, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       end
 
     elsif hvac_type == 'ashp'
       if cz == 5
         vals = {
-          ES::SFNationalVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
-          ES::SFNationalVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
-          ES::SFNationalVer3_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
-          ES::SFNationalVer3_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          ES::SFPacificVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 8.20 },
-          ES::SFFloridaVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 8.20 },
-          ES::SFOregonWashingtonVer3_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50 },
-          ES::MFNationalVer1_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
-          ES::MFNationalVer1_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25 },
-          ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
-          ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          ES::MFOregonWashingtonVer1_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50 },
-          DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 10.0 },
-          DENH::SFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
-          DENH::MFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
+          ES::SFNationalVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25, fan_motor_type: nil },
+          ES::SFNationalVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25, fan_motor_type: nil },
+          ES::SFNationalVer3_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20, fan_motor_type: nil },
+          ES::SFNationalVer3_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50, fan_motor_type: nil },
+          ES::SFPacificVer3_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 8.20, fan_motor_type: nil },
+          ES::SFFloridaVer3_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 8.20, fan_motor_type: nil },
+          ES::SFOregonWashingtonVer3_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50, fan_motor_type: nil },
+          ES::MFNationalVer1_0 => { seer: 14.5, eer: 12.2, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.25, fan_motor_type: nil },
+          ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50, fan_motor_type: nil },
+          ES::MFOregonWashingtonVer1_2 => { seer: 15.0, eer: 12.4, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 9.50, fan_motor_type: nil },
+          DENH::Ver1 => { seer: 13.0, eer: 11.3, comptype: HPXML::HVACCompressorTypeSingleStage, hspf: 10.0, fan_motor_type: nil },
+          DENH::SFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00, fan_motor_type: HPXML::HVACFanMotorTypePSC },
+          DENH::MFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       elsif cz == 7
         vals = {
-          ES::SFNationalVer3_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
-          ES::SFNationalVer3_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
-          ES::SFNationalVer3_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          ES::MFNationalVer1_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
-          ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20 },
-          ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50 },
-          DENH::SFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
-          DENH::MFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00 },
+          ES::SFNationalVer3_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20, fan_motor_type: nil },
+          ES::SFNationalVer3_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20, fan_motor_type: nil },
+          ES::SFNationalVer3_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20, fan_motor_type: nil },
+          ES::MFNationalVer1_2 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.20, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { seer: 16.0, eer: 13.0, comptype: HPXML::HVACCompressorTypeTwoStage, hspf: 9.50, fan_motor_type: nil },
+          DENH::SFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00, fan_motor_type: HPXML::HVACFanMotorTypePSC },
+          DENH::MFVer2 => { seer2: 15.2, eer2: 11.0, comptype: HPXML::HVACCompressorTypeVariableSpeed, hspf2: 8.00, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       end
 
     elsif hvac_type == 'gshp'
       if cz == 5
         vals = {
-          ES::SFNationalVer3_3 => { cop: 2.8, eer: 14.0 },
-          ES::MFNationalVer1_0 => { cop: 2.7, eer: 12.7 },
-          ES::MFNationalVer1_1 => { cop: 2.7, eer: 13.0 },
-          ES::MFNationalVer1_2 => { cop: 2.7, eer: 14.0 },
-          ES::MFNationalVer1_3 => { cop: 2.8, eer: 14.0 },
-          ES::MFOregonWashingtonVer1_2 => { cop: 2.8, eer: 13.0 },
-          DENH::MFVer2 => { cop: 2.8, eer: 14.0 },
+          ES::SFNationalVer3_3 => { cop: 2.8, eer: 14.0, fan_motor_type: nil },
+          ES::MFNationalVer1_0 => { cop: 2.7, eer: 12.7, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { cop: 2.7, eer: 13.0, fan_motor_type: nil },
+          ES::MFNationalVer1_2 => { cop: 2.7, eer: 14.0, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { cop: 2.8, eer: 14.0, fan_motor_type: nil },
+          ES::MFOregonWashingtonVer1_2 => { cop: 2.8, eer: 13.0, fan_motor_type: nil },
+          DENH::MFVer2 => { cop: 2.8, eer: 14.0, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       elsif cz == 7
         vals = {
-          ES::SFNationalVer3_0 => { cop: 3.5, eer: 16.1 },
-          ES::SFNationalVer3_1 => { cop: 3.6, eer: 17.1 },
-          ES::SFNationalVer3_3 => { cop: 2.8, eer: 14.0 },
-          ES::SFPacificVer3_0 => { cop: 3.5, eer: 16.1 },
-          ES::SFFloridaVer3_1 => { cop: 3.5, eer: 16.1 },
-          ES::SFOregonWashingtonVer3_2 => { cop: 3.5, eer: 16.1 },
-          ES::MFNationalVer1_0 => { cop: 3.5, eer: 16.1 },
-          ES::MFNationalVer1_1 => { cop: 2.7, eer: 17.1 },
-          ES::MFNationalVer1_2 => { cop: 2.7, eer: 14.0 },
-          ES::MFNationalVer1_3 => { cop: 2.8, eer: 14.0 },
-          DENH::Ver1 => { cop: 3.6, eer: 17.1 },
-          DENH::MFVer2 => { cop: 2.8, eer: 14.0 },
+          ES::SFNationalVer3_0 => { cop: 3.5, eer: 16.1, fan_motor_type: nil },
+          ES::SFNationalVer3_1 => { cop: 3.6, eer: 17.1, fan_motor_type: nil },
+          ES::SFNationalVer3_3 => { cop: 2.8, eer: 14.0, fan_motor_type: nil },
+          ES::SFPacificVer3_0 => { cop: 3.5, eer: 16.1, fan_motor_type: nil },
+          ES::SFFloridaVer3_1 => { cop: 3.5, eer: 16.1, fan_motor_type: nil },
+          ES::SFOregonWashingtonVer3_2 => { cop: 3.5, eer: 16.1, fan_motor_type: nil },
+          ES::MFNationalVer1_0 => { cop: 3.5, eer: 16.1, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { cop: 2.7, eer: 17.1, fan_motor_type: nil },
+          ES::MFNationalVer1_2 => { cop: 2.7, eer: 14.0, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { cop: 2.8, eer: 14.0, fan_motor_type: nil },
+          DENH::Ver1 => { cop: 3.6, eer: 17.1, fan_motor_type: nil },
+          DENH::MFVer2 => { cop: 2.8, eer: 14.0, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       end
 
@@ -148,40 +148,40 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
     elsif hvac_type == 'gas_furnace'
       if cz == 5
         vals = {
-          ES::SFNationalVer3_0 => { afue: 0.90 },
-          ES::SFNationalVer3_1 => { afue: 0.95 },
-          ES::SFNationalVer3_2 => { afue: 0.95 },
-          ES::SFNationalVer3_3 => { afue: 0.95 },
-          ES::SFPacificVer3_0 => { afue: 0.80 },
-          ES::SFFloridaVer3_1 => { afue: 0.80 },
-          ES::SFOregonWashingtonVer3_2 => { afue: 0.95 },
-          ES::MFNationalVer1_0 => { afue: 0.90 },
-          ES::MFNationalVer1_1 => { afue: 0.95 },
-          ES::MFNationalVer1_2 => { afue: 0.95 },
-          ES::MFNationalVer1_3 => { afue: 0.95 },
-          ES::MFOregonWashingtonVer1_2 => { afue: 0.95 },
-          DENH::Ver1 => { afue: 0.94 },
-          DENH::SFVer2 => { afue: 0.95 },
-          DENH::MFVer2 => { afue: 0.95 },
+          ES::SFNationalVer3_0 => { afue: 0.90, fan_motor_type: nil },
+          ES::SFNationalVer3_1 => { afue: 0.95, fan_motor_type: nil },
+          ES::SFNationalVer3_2 => { afue: 0.95, fan_motor_type: nil },
+          ES::SFNationalVer3_3 => { afue: 0.95, fan_motor_type: nil },
+          ES::SFPacificVer3_0 => { afue: 0.80, fan_motor_type: nil },
+          ES::SFFloridaVer3_1 => { afue: 0.80, fan_motor_type: nil },
+          ES::SFOregonWashingtonVer3_2 => { afue: 0.95, fan_motor_type: nil },
+          ES::MFNationalVer1_0 => { afue: 0.90, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { afue: 0.95, fan_motor_type: nil },
+          ES::MFNationalVer1_2 => { afue: 0.95, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { afue: 0.95, fan_motor_type: nil },
+          ES::MFOregonWashingtonVer1_2 => { afue: 0.95, fan_motor_type: nil },
+          DENH::Ver1 => { afue: 0.94, fan_motor_type: nil },
+          DENH::SFVer2 => { afue: 0.95, fan_motor_type: HPXML::HVACFanMotorTypePSC },
+          DENH::MFVer2 => { afue: 0.95, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       end
 
     elsif hvac_type == 'oil_furnace'
       if cz == 5
         vals = {
-          ES::SFNationalVer3_0 => { afue: 0.85 },
-          ES::SFNationalVer3_1 => { afue: 0.85 },
-          ES::SFNationalVer3_3 => { afue: 0.95 },
-          ES::SFPacificVer3_0 => { afue: 0.80 },
-          ES::SFFloridaVer3_1 => { afue: 0.80 },
-          ES::SFOregonWashingtonVer3_2 => { afue: 0.85 },
-          ES::MFNationalVer1_0 => { afue: 0.85 },
-          ES::MFNationalVer1_1 => { afue: 0.85 },
-          ES::MFNationalVer1_3 => { afue: 0.95 },
-          ES::MFOregonWashingtonVer1_2 => { afue: 0.85 },
-          DENH::Ver1 => { afue: 0.94 },
-          DENH::SFVer2 => { afue: 0.95 },
-          DENH::MFVer2 => { afue: 0.95 },
+          ES::SFNationalVer3_0 => { afue: 0.85, fan_motor_type: nil },
+          ES::SFNationalVer3_1 => { afue: 0.85, fan_motor_type: nil },
+          ES::SFNationalVer3_3 => { afue: 0.95, fan_motor_type: nil },
+          ES::SFPacificVer3_0 => { afue: 0.80, fan_motor_type: nil },
+          ES::SFFloridaVer3_1 => { afue: 0.80, fan_motor_type: nil },
+          ES::SFOregonWashingtonVer3_2 => { afue: 0.85, fan_motor_type: nil },
+          ES::MFNationalVer1_0 => { afue: 0.85, fan_motor_type: nil },
+          ES::MFNationalVer1_1 => { afue: 0.85, fan_motor_type: nil },
+          ES::MFNationalVer1_3 => { afue: 0.95, fan_motor_type: nil },
+          ES::MFOregonWashingtonVer1_2 => { afue: 0.85, fan_motor_type: nil },
+          DENH::Ver1 => { afue: 0.94, fan_motor_type: nil },
+          DENH::SFVer2 => { afue: 0.95, fan_motor_type: HPXML::HVACFanMotorTypePSC },
+          DENH::MFVer2 => { afue: 0.95, fan_motor_type: HPXML::HVACFanMotorTypePSC },
         }[program_version]
       end
 
@@ -1928,6 +1928,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       else
         assert_equal(expected_values[:fan_watts_per_cfm], heating_system.fan_watts_per_cfm)
       end
+      if expected_values[:fan_motor_type].nil?
+        assert_nil(heating_system.fan_motor_type)
+      else
+        assert_equal(expected_values[:fan_motor_type], heating_system.fan_motor_type)
+      end
       if expected_values[:airflow_defect_ratio].nil?
         assert_nil(heating_system.airflow_defect_ratio)
       else
@@ -2038,6 +2043,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
       else
         assert_equal(expected_values[:fan_watts_per_cfm], heat_pump.fan_watts_per_cfm)
       end
+      if expected_values[:fan_motor_type].nil?
+        assert_nil(heat_pump.fan_motor_type)
+      else
+        assert_equal(expected_values[:fan_motor_type], heat_pump.fan_motor_type)
+      end
       if expected_values[:airflow_defect_ratio].nil?
         assert_nil(heat_pump.airflow_defect_ratio)
       else
@@ -2119,6 +2129,11 @@ class EnergyStarDOEEfficientNewHomeHVACtest < Minitest::Test
         assert_nil(cooling_system.fan_watts_per_cfm)
       else
         assert_equal(expected_values[:fan_watts_per_cfm], cooling_system.fan_watts_per_cfm)
+      end
+      if expected_values[:fan_motor_type].nil?
+        assert_nil(cooling_system.fan_motor_type)
+      else
+        assert_equal(expected_values[:fan_motor_type], cooling_system.fan_motor_type)
       end
       if expected_values[:airflow_defect_ratio].nil?
         assert_nil(cooling_system.airflow_defect_ratio)

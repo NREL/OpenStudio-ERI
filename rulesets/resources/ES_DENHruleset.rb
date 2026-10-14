@@ -1464,12 +1464,12 @@ module ES_DENH_Ruleset
   def self.add_reference_furnace(orig_bldg, new_bldg, load_frac, orig_system, heating_fuel)
     heating_system_fuel = get_furnace_boiler_fuel(heating_fuel)
     furnace_afue = get_default_furnace_afue(heating_system_fuel)
-
     if (not orig_system.distribution_system.nil?) && (orig_system.distribution_system.distribution_system_type == HPXML::HVACDistributionTypeAir)
       dist_id = orig_system.distribution_system.id
     else
       dist_id = add_air_distribution(orig_bldg, orig_system)
     end
+    fan_motor_type = lookup_reference_value('hvac_fan_type')
 
     hvac_installation = get_hvac_installation_quality()
 
@@ -1481,7 +1481,8 @@ module ES_DENH_Ruleset
                                  heating_efficiency_afue: furnace_afue,
                                  fraction_heat_load_served: load_frac,
                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
-                                 fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
+                                 fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm],
+                                 fan_motor_type: fan_motor_type)
   end
 
   def self.add_reference_air_conditioner(orig_bldg, new_bldg, load_frac, orig_system)
@@ -1497,6 +1498,7 @@ module ES_DENH_Ruleset
     else
       dist_id = add_air_distribution(orig_bldg, orig_system)
     end
+    fan_motor_type = lookup_reference_value('hvac_fan_type')
 
     hvac_installation = get_hvac_installation_quality()
 
@@ -1513,7 +1515,8 @@ module ES_DENH_Ruleset
                                  compressor_type: compressor_type,
                                  charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                                  airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
-                                 fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm])
+                                 fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm],
+                                 fan_motor_type: fan_motor_type)
   end
 
   def self.add_reference_chiller_or_cooling_tower(new_bldg, orig_system)
@@ -1612,8 +1615,10 @@ module ES_DENH_Ruleset
     end
 
     hvac_installation = {}
+    fan_motor_type = nil
     if heat_pump_type != HPXML::HVACTypeHeatPumpWaterLoopToAir
       hvac_installation = get_hvac_installation_quality()
+      fan_motor_type = lookup_reference_value('hvac_fan_type')
     end
 
     new_bldg.heat_pumps.add(id: "TargetHeatPump#{new_bldg.heat_pumps.size + 1}",
@@ -1643,6 +1648,7 @@ module ES_DENH_Ruleset
                             charge_defect_ratio: hvac_installation[:charge_defect_ratio],
                             airflow_defect_ratio: hvac_installation[:airflow_defect_ratio],
                             fan_watts_per_cfm: hvac_installation[:fan_watts_per_cfm],
+                            fan_motor_type: fan_motor_type,
                             shared_loop_watts: shared_loop_watts)
   end
 
