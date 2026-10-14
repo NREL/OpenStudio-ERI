@@ -103,26 +103,13 @@
           <Roof>
             <SystemIdentifier id='Roof1_Ceiling'/>
             <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
-            <Area>1307.0</Area>
+            <Area>1300.0</Area>
             <SolarAbsorptance>0.75</SolarAbsorptance>
             <Emittance>0.9</Emittance>
-            <Pitch>9.0</Pitch>
+            <Pitch>5.0</Pitch>
             <RadiantBarrier>false</RadiantBarrier>
             <Insulation>
               <SystemIdentifier id='Roof1_CeilingInsulation'/>
-              <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
-            </Insulation>
-          </Roof>
-          <Roof>
-            <SystemIdentifier id='Roof2_Eave'/>
-            <InteriorAdjacentTo>attic - vented</InteriorAdjacentTo>
-            <Area>193.0</Area>
-            <SolarAbsorptance>0.75</SolarAbsorptance>
-            <Emittance>0.9</Emittance>
-            <Pitch>9.0</Pitch>
-            <RadiantBarrier>false</RadiantBarrier>
-            <Insulation>
-              <SystemIdentifier id='Roof2_EaveInsulation'/>
               <AssemblyEffectiveRValue>1.99</AssemblyEffectiveRValue>
             </Insulation>
           </Roof>
@@ -178,27 +165,14 @@
             <FloorType>
               <WoodFrame/>
             </FloorType>
-            <Area>895.2</Area>
+            <Area>1200.0</Area>
             <Insulation>
               <SystemIdentifier id='Floor1_CeilingInsulation'/>
               <AssemblyEffectiveRValue>50.0</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
-            <SystemIdentifier id='Floor2_Eave'/>
-            <ExteriorAdjacentTo>attic - vented</ExteriorAdjacentTo>
-            <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
-            <FloorType>
-              <WoodFrame/>
-            </FloorType>
-            <Area>304.8</Area>
-            <Insulation>
-              <SystemIdentifier id='Floor2_EaveInsulation'/>
-              <AssemblyEffectiveRValue>50.0</AssemblyEffectiveRValue>
-            </Insulation>
-          </Floor>
-          <Floor>
-            <SystemIdentifier id='Floor3_CarpetFloor'/>
+            <SystemIdentifier id='Floor2_CarpetFloor'/>
             <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorType>
@@ -206,12 +180,12 @@
             </FloorType>
             <Area>960.0</Area>
             <Insulation>
-              <SystemIdentifier id='Floor3_CarpetFloorInsulation'/>
+              <SystemIdentifier id='Floor2_CarpetFloorInsulation'/>
               <AssemblyEffectiveRValue>34.483</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
           <Floor>
-            <SystemIdentifier id='Floor4_TileFloor'/>
+            <SystemIdentifier id='Floor3_TileFloor'/>
             <ExteriorAdjacentTo>crawlspace - vented</ExteriorAdjacentTo>
             <InteriorAdjacentTo>conditioned space</InteriorAdjacentTo>
             <FloorType>
@@ -219,7 +193,7 @@
             </FloorType>
             <Area>240.0</Area>
             <Insulation>
-              <SystemIdentifier id='Floor4_TileFloorInsulation'/>
+              <SystemIdentifier id='Floor3_TileFloorInsulation'/>
               <AssemblyEffectiveRValue>32.258</AssemblyEffectiveRValue>
             </Insulation>
           </Floor>
@@ -333,12 +307,12 @@
               <CompressorType>single stage</CompressorType>
               <FractionCoolLoadServed>1.0</FractionCoolLoadServed>
               <AnnualCoolingEfficiency>
-                <Units>SEER</Units>
-                <Value>15.0</Value>
+                <Units>SEER2</Units>
+                <Value>14.25</Value>
               </AnnualCoolingEfficiency>
               <AnnualCoolingEfficiency>
-                <Units>EER</Units>
-                <Value>12.4</Value>
+                <Units>EER2</Units>
+                <Value>12.0</Value>
               </AnnualCoolingEfficiency>
               <extension>
                 <AirflowDefectRatio>-0.25</AirflowDefectRatio>
@@ -377,14 +351,14 @@
                   <DuctType>supply</DuctType>
                   <DuctInsulationRValue>4.2</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
-                  <DuctSurfaceArea>486.0</DuctSurfaceArea>
+                  <DuctSurfaceArea>648.0</DuctSurfaceArea>
                 </Ducts>
                 <Ducts>
                   <SystemIdentifier id='Duct2'/>
                   <DuctType>return</DuctType>
                   <DuctInsulationRValue>4.2</DuctInsulationRValue>
                   <DuctLocation>attic - vented</DuctLocation>
-                  <DuctSurfaceArea>90.0</DuctSurfaceArea>
+                  <DuctSurfaceArea>120.0</DuctSurfaceArea>
                 </Ducts>
                 <NumberofReturnRegisters>2</NumberofReturnRegisters>
               </AirDistribution>

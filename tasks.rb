@@ -642,18 +642,10 @@ def set_hpxml_roofs(hpxml_file, hpxml_bldg)
     hpxml_bldg.roofs.clear
     hpxml_bldg.roofs.add(id: "Roof#{hpxml_bldg.roofs.size + 1}_Ceiling",
                          interior_adjacent_to: HPXML::LocationAtticVented,
-                         area: 1307,
+                         area: 1300,
                          solar_absorptance: 0.75,
                          emittance: 0.9,
-                         pitch: 9,
-                         radiant_barrier: false,
-                         insulation_assembly_r_value: 1.99)
-    hpxml_bldg.roofs.add(id: "Roof#{hpxml_bldg.roofs.size + 1}_Eave",
-                         interior_adjacent_to: HPXML::LocationAtticVented,
-                         area: 193,
-                         solar_absorptance: 0.75,
-                         emittance: 0.9,
-                         pitch: 9,
+                         pitch: 5,
                          radiant_barrier: false,
                          insulation_assembly_r_value: 1.99)
   end
@@ -1142,23 +1134,17 @@ def set_hpxml_floors(hpxml_file, hpxml_bldg)
   elsif hpxml_file.include?('Multi_Climate')
     hpxml_bldg.floors.clear
     if hpxml_file.include?('MiamiFL')
-      ceiling_r, eave_area = 1.0 / 0.032, 154.4
+      ceiling_r = 1.0 / 0.032
     elsif hpxml_file.include?('PhoenixAZ') || hpxml_file.include?('SanFranCA')
-      ceiling_r, eave_area = 1.0 / 0.026, 217.7
+      ceiling_r = 1.0 / 0.026
     elsif hpxml_file.include?('BaltimoreMD') || hpxml_file.include?('DuluthMN')
-      ceiling_r, eave_area = 1.0 / 0.020, 304.8
+      ceiling_r = 1.0 / 0.020
     end
     hpxml_bldg.floors.add(id: "Floor#{hpxml_bldg.floors.size + 1}_Ceiling",
                           exterior_adjacent_to: HPXML::LocationAtticVented,
                           interior_adjacent_to: HPXML::LocationConditionedSpace,
                           floor_type: HPXML::FloorTypeWoodFrame,
-                          area: (1200.0 - eave_area).round(1),
-                          insulation_assembly_r_value: ceiling_r.round(3))
-    hpxml_bldg.floors.add(id: "Floor#{hpxml_bldg.floors.size + 1}_Eave",
-                          exterior_adjacent_to: HPXML::LocationAtticVented,
-                          interior_adjacent_to: HPXML::LocationConditionedSpace,
-                          floor_type: HPXML::FloorTypeWoodFrame,
-                          area: eave_area,
+                          area: 1200.0,
                           insulation_assembly_r_value: ceiling_r.round(3))
     if hpxml_file.include?('SlabOnGrade') || hpxml_file.include?('ConditionedBasement')
       return
@@ -1746,8 +1732,8 @@ def set_hpxml_cooling_systems(hpxml_file, hpxml_bldg)
                                    compressor_type: HPXML::HVACCompressorTypeSingleStage,
                                    cooling_capacity: cooling_capacity,
                                    fraction_cool_load_served: 1,
-                                   cooling_efficiency_seer: 15,
-                                   cooling_efficiency_eer: 12.4,
+                                   cooling_efficiency_seer2: 14.25,
+                                   cooling_efficiency_eer2: 12.0,
                                    fan_watts_per_cfm: 0.58,
                                    airflow_defect_ratio: -0.25,
                                    charge_defect_ratio: -0.25)
@@ -1896,19 +1882,18 @@ def set_hpxml_heat_pumps(hpxml_file, hpxml_bldg)
                               heat_pump_type: HPXML::HVACTypeHeatPumpAirToAir,
                               heat_pump_fuel: HPXML::FuelTypeElectricity,
                               compressor_type: HPXML::HVACCompressorTypeSingleStage,
-                              compressor_lockout_temp: 0,
                               cooling_capacity: 25000,
                               heating_capacity: 31000,
-                              heating_capacity_17F: 18290,
+                              heating_capacity_17F: 21390,
                               backup_type: HPXML::HeatPumpBackupTypeIntegrated,
                               backup_heating_fuel: HPXML::FuelTypeElectricity,
                               backup_heating_capacity: -1,
                               backup_heating_efficiency_percent: 1.0,
                               fraction_heat_load_served: 1,
                               fraction_cool_load_served: 1,
-                              heating_efficiency_hspf: 8.2,
-                              cooling_efficiency_seer: 15,
-                              cooling_efficiency_eer: 12.4,
+                              heating_efficiency_hspf2: 6.97,
+                              cooling_efficiency_seer2: 14.25,
+                              cooling_efficiency_eer2: 12.0,
                               fan_watts_per_cfm: 0.58,
                               airflow_defect_ratio: -0.25,
                               charge_defect_ratio: -0.25)
@@ -2101,12 +2086,12 @@ def set_hpxml_hvac_distributions(hpxml_file, hpxml_bldg)
                                                duct_type: HPXML::DuctTypeSupply,
                                                duct_insulation_r_value: 4.2,
                                                duct_location: location,
-                                               duct_surface_area: 486)
+                                               duct_surface_area: 648)
     hpxml_bldg.hvac_distributions[0].ducts.add(id: "Duct#{hpxml_bldg.hvac_distributions[0].ducts.size + 1}",
                                                duct_type: HPXML::DuctTypeReturn,
                                                duct_insulation_r_value: 4.2,
                                                duct_location: location,
-                                               duct_surface_area: 90)
+                                               duct_surface_area: 120)
   end
 
   # CFA served
