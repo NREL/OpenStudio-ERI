@@ -1,7 +1,7 @@
 ## OpenStudio-ERI v1.13.0
 
 __Features__
-- Updates DENH v2 target home HVAC specifications per policy records SFV2.046 and MFV2.048.
+- Updates DENH v2 target home specifications to SF Rev 4 and MF Rev 3.
 - Updates garage ventilation rate to be SLA=1/150 (same as a vented crawlspace).
 - To accommodate electric furnaces/boilers, allows heating efficiency with units of "Percent" as an alternative to "AFUE"; the two units are modeled identically.
 - Adds min/max value warnings for clothes washer and dishwasher label inputs (e.g., `LabelElectricRate` and `LabelGasRate`).
