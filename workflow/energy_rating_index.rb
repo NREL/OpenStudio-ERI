@@ -986,7 +986,11 @@ def write_es_denh_results(program_name, rd_eri_results, rated_eri_results, rated
   # for user confusion when comparing the actual/target ERIs.
   rd_eri = rd_eri_results[:eri].round(2)
   target_eri = target_eri.round(2)
-  rated_eri = rated_eri_results[:eri].round(2)
+  if rated_eri_results[:opp] == 0
+    rated_w_opp_eri = 'N/A'
+  else
+    rated_w_opp_eri = rated_eri_results[:eri].round(2)
+  end
   rated_wo_opp_eri = rated_eri_results_wo_opp[:eri].round(2)
 
   output_dir = File.join(rd_eri_results[:output_dir], '..', '..', 'results')
@@ -998,7 +1002,7 @@ def write_es_denh_results(program_name, rd_eri_results, rated_eri_results, rated
   results_out << ['SAF (Size Adjustment Factor)', "#{saf.nil? ? 'N/A' : saf.round(3)}"]
   results_out << ['SAF Adjusted ERI Target', target_eri]
   results_out << [nil] if output_format == 'csv' # line break
-  results_out << ['Rated Home ERI', rated_eri]
+  results_out << ['Rated Home ERI w/ OPP', rated_w_opp_eri]
   results_out << ['Rated Home ERI w/o OPP', rated_wo_opp_eri]
   results_out << [nil] if output_format == 'csv' # line break
   results_out << ["#{program_name} Certification", "#{passes ? 'PASS' : 'FAIL'}"]
@@ -1437,21 +1441,28 @@ def main(options)
       saf = get_saf(esrd_eri_results, es_version, options[:hpxml])
       target_eri = esrd_eri_results[:eri] * saf
 
-      # Calculate ES Rated ERI, w/ On-site Power Production (OPP) restriction as appropriate
+      # Calculate ES Rated ERI
       opp_reduction_limit = calc_opp_eri_limit(esrd_eri_results[:eri], saf, es_version)
       rated_eri_designs = designs.select { |d| d.run_type == RunType::ES && d.init_calc_type == InitCalcType::RatedHome && d.version == es_version }
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
       rated_eri_results = calculate_eri(rated_eri_outputs, options[:output_format], opp_reduction_limit: opp_reduction_limit)
 
-      if rated_eri_results[:eri].round(0) <= target_eri.round(0)
+      # Calculate ES Rated ERI w/o OPP
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
+
+      # Determine compliance
+      if opp_reduction_limit.to_f > 0 # Use restricted OPP (older versions)
+        compare_eri = rated_eri_results[:eri]
+      else # OPP isn't allowed or home has no OPP (newer versions)
+        compare_eri = rated_eri_results_wo_opp[:eri]
+      end
+      if compare_eri.round(0) <= target_eri.round(0)
         passes = true
       else
         passes = false
       end
 
-      # Calculate ES Rated ERI w/o OPP for extra information
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
-
+      # Write results
       write_es_denh_results('ENERGY STAR', esrd_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "ENERGY STAR (#{es_version}): #{passes ? 'PASS' : 'FAIL'}"
@@ -1474,15 +1485,22 @@ def main(options)
       rated_eri_outputs = retrieve_design_outputs(rated_eri_designs)
       rated_eri_results = calculate_eri(rated_eri_outputs, options[:output_format], opp_reduction_limit: opp_reduction_limit)
 
-      if rated_eri_results[:eri].round(0) <= target_eri.round(0)
+      # Calculate DENH Rated ERI w/o OPP
+      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
+
+      # Determine compliance
+      if opp_reduction_limit.to_f > 0 # Use restricted OPP (older versions)
+        compare_eri = rated_eri_results[:eri]
+      else # OPP isn't allowed or home has no OPP (newer versions)
+        compare_eri = rated_eri_results_wo_opp[:eri]
+      end
+      if compare_eri.round(0) <= target_eri.round(0)
         passes = true
       else
         passes = false
       end
 
-      # Calculate DENH Rated ERI w/o OPP for extra information
-      rated_eri_results_wo_opp = calculate_eri(rated_eri_outputs, options[:output_format], skip_csv: true, opp_reduction_limit: 0.0)
-
+      # Write results
       write_es_denh_results('DOE Efficient New Home', denhrref_eri_results, rated_eri_results, rated_eri_results_wo_opp, target_eri, saf, passes, options[:output_format])
 
       puts "DENH (#{denh_version}): #{passes ? 'PASS' : 'FAIL'}"
