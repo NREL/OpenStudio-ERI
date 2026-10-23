@@ -311,6 +311,8 @@ def _get_csv_results(csvs)
 
       if value.to_s.include? ',' # Sum values for visualization on CI
         results[key] = value.split(',').map(&:to_f).sum
+      elsif value == "N/A"
+        results[key] = 0 # Use numeric value for CI comparison
       else
         results[key] = Float(value)
       end

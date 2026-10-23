@@ -69,9 +69,6 @@ def calc_opp_eri_limit(rd_eri, saf, program_version)
     orig_eri = rd_eri.round(0)
     saf_eri = (rd_eri * saf).round(0)
     return orig_eri - saf_eri
-  else
-    # on-site power generation may not be used to meet the ENERGY STAR/DENH ERI Target
-    return 0.0
   end
 end
 
